@@ -1,5 +1,7 @@
 import DashView from './components/Dash.vue'
 import LoginView from './components/Login.vue'
+import ForgetView from './components/Forgot.vue'
+import ResetView from './components/Reset.vue'
 import NotFoundView from './components/404.vue'
 
 // Import Views - Dash
@@ -16,8 +18,13 @@ const routes = [
   {
     path: '/login',
     component: LoginView
-  },
-  {
+  }, {
+    path: '/forgot',
+    component: ForgetView
+  }, {
+    path: '/reset',
+    component: ResetView
+  }, {
     path: '/',
     component: DashView,
     children: [
