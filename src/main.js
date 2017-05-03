@@ -12,6 +12,8 @@ import { domain, count, prettyDate, pluralize } from './filters'
 // Import Views - Top level
 import AppView from './components/App.vue'
 
+import ElementUI from 'element-ui'
+
 // Import Install and register helper items
 Vue.filter('count', count)
 Vue.filter('domain', domain)
@@ -19,6 +21,7 @@ Vue.filter('prettyDate', prettyDate)
 Vue.filter('pluralize', pluralize)
 
 Vue.use(VueRouter)
+Vue.use(ElementUI)
 
 // Routing logic
 var router = new VueRouter({
