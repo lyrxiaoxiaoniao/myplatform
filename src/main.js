@@ -13,6 +13,7 @@ import { domain, count, prettyDate, pluralize } from './filters'
 import AppView from './components/App.vue'
 
 import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-default/index.css'
 
 // Import Install and register helper items
 Vue.filter('count', count)
