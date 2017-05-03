@@ -5,13 +5,15 @@ import ResetView from './components/Reset.vue'
 import NotFoundView from './components/404.vue'
 
 // Import Views - Dash
-import DashboardView from './components/views/Dashboard.vue'
+// import DashboardView from './components/views/Dashboard.vue'
 import TablesView from './components/views/Tables.vue'
 import TasksView from './components/views/Tasks.vue'
 import SettingView from './components/views/Setting.vue'
 import AccessView from './components/views/Access.vue'
 import ServerView from './components/views/Server.vue'
 import ReposView from './components/views/Repos.vue'
+
+import SCTabelView from './components/views/SCTables.vue'
 
 // Routes
 const routes = [
@@ -29,10 +31,10 @@ const routes = [
     component: DashView,
     children: [
       {
-        path: 'dashboard',
+        path: 'sctable',
         alias: '',
-        component: DashboardView,
-        name: 'Dashboard',
+        component: SCTabelView,
+        name: 'sc-table',
         meta: {description: 'Overview of environment'}
       }, {
         path: 'tables',
