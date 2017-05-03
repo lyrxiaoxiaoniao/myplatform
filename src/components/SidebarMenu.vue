@@ -3,10 +3,7 @@
     <div @click='toggle' class="display-text">
       <i v-if='isFolder' class="fa " :class="[showopen?'fa-folder-open':'fa-folder']"></i>
       <!--isFolder判断是否存在子级改变图标-->
-      <i v-if='!isFolder' class="fa fa-file-textpageLink"></i> {{model.display_name}}
-
-
-
+      <i v-if='!isFolder' class="fa fa-file-textpageLink"></i> {{model.displayName}}
     </div>
     <ul v-show="showopen" v-if='isFolder'>
       <template v-for="item in model.children" v-if="(model.children && model.children.length)">
@@ -17,28 +14,28 @@
   </li>
 </template>
 <script>
-  export default {
-    name: 'SidebarMenu',
-    props: ['model'],
-    components: {},
-    data () {
-      return {
-        showopen: false
-      }
-    },
-    computed: {
-      isFolder: function () {
-        return this.model.children && this.model.children.length || true
-      }
-    },
-    methods: {
-      toggle: function () {
-        if (this.isFolder) {
-          this.showopen = !this.showopen
-        }
+export default {
+  name: 'SidebarMenu',
+  props: ['model'],
+  components: {},
+  data () {
+    return {
+      showopen: false
+    }
+  },
+  computed: {
+    isFolder: function () {
+      return this.model.children && this.model.children.length || true
+    }
+  },
+  methods: {
+    toggle: function () {
+      if (this.isFolder) {
+        this.showopen = !this.showopen
       }
     }
   }
+}
 </script>
 <style>
   /* override default */
