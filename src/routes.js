@@ -13,7 +13,7 @@ import AccessView from './components/views/Access.vue'
 import ServerView from './components/views/Server.vue'
 import ReposView from './components/views/Repos.vue'
 
-import SCTabelView from './components/views/SCTables.vue'
+import SCUserTableView from './components/views/UserTable.vue'
 
 // Routes
 const routes = [
@@ -31,10 +31,10 @@ const routes = [
     component: DashView,
     children: [
       {
-        path: 'sctable',
+        path: 'usertables',
         alias: '',
-        component: SCTabelView,
-        name: 'sc-table',
+        component: SCUserTableView,
+        name: 'sc-user-table',
         meta: {description: 'Overview of environment'}
       }, {
         path: 'tables',

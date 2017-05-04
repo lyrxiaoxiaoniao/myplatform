@@ -33,17 +33,18 @@
         </el-col>
       </el-row>
     </div>
-    <div class="sc-table-content">
-      <el-table :data="tableData" border stripe :default-sort="{prop: 'date', order: 'descending'}" style="width: 100%;">
+    <div v-if="response" class="sc-table-content">
+      <el-table :data="response.data" border stripe :default-sort="{prop: 'date', order: 'descending'}" style="width: 100%;">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="id" label="ID" width="80" sortable></el-table-column>
-        <el-table-column prop="date" label="日期" width="150" sortable></el-table-column>
-        <el-table-column prop="name" label="用户名" width="100"></el-table-column>
-        <el-table-column prop="address" label="地址" width="280"></el-table-column>
+        <el-table-column prop="createdAt" label="创建日期" width="150" sortable></el-table-column>
+        <el-table-column prop="username" label="用户名" width="100"></el-table-column>
+        <el-table-column prop="email" label="Email" width="190"></el-table-column>
+        <el-table-column prop="address" label="地址" width="200"></el-table-column>
         <el-table-column
           prop="tags"
           label="标签"
-          width="280">
+          width="180">
           <template scope="scope">
             <el-tag
               :key="tag"
@@ -52,7 +53,6 @@
               :close-transition="false"
               @close="handleClose(tag,scope.row.tags)">
               {{tag}}
-
             </el-tag>
             <el-input
               class="input-new-tag"
@@ -81,11 +81,11 @@
       <el-row type="flex" justify="center">
         <el-col :span="12">
           <el-pagination
-            :current-page="currentPage"
+            :current-page="response.currentPage"
             :page-sizes="[10, 20, 50, 100]"
             :page-size="10"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="contentTotal">
+            :total="response.count"
+            layout="total, sizes, prev, pager, next, jumper">
           </el-pagination>
         </el-col>
       </el-row>
@@ -94,9 +94,10 @@
 </template>
 
 <script>
-import faker from 'faker'
+import axios from 'axios'
+
 export default {
-  name: 'sc-table',
+  name: 'sc-user-table',
   data () {
     return {
       options: [{
@@ -117,44 +118,14 @@ export default {
       }],
       value: '',
       input: '',
-      tableData: [{
-        date: '2016-05-02',
-        id: '1',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄',
-        tags: ['标签一', '标签二', '标签三'],
-        inputValue: '',
-        inputVisible: false
-      }, {
-        date: '2016-05-04',
-        id: '2',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄',
-        tags: ['标签4', '标签5', '标签6'],
-        inputValue: '',
-        inputVisible: false
-      }, {
-        date: '2016-05-01',
-        id: '3',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄',
-        tags: ['标签7', '标签8', '标签9'],
-        inputValue: '',
-        inputVisible: false
-      }, {
-        date: '2016-05-03',
-        id: '4',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄',
-        tags: ['标签一', '标签二', '标签三'],
-        inputValue: '',
-        inputVisible: false
-      }],
       contentTotal: 1000,
-      currentPage: 1
+      userListURL: 'http://192.168.1.2:8080/admin/user/index',
+      response: null,
+      error: null
     }
   },
-  computed: {},
+  computed: {
+  },
   components: {},
   methods: {
     handleClose (tag, tagList) {
@@ -174,10 +145,33 @@ export default {
       }
       this.tableData[parseInt(id) - 1].inputVisible = false
       this.tableData[parseInt(id) - 1].inputValue = ''
+    },
+    createdTime (time) {
+      console.log(new Date(time))
+      return '111'
+    },
+    getUserLists () {
+      axios.get('http://192.168.1.2:8080/admin/user/index')
+      .then(response => {
+        console.log(response)
+
+        if (response.status !== 200) {
+          this.error = response.statusText
+          return
+        }
+
+        if (response.data.errcode === '0000') {
+          this.response = response.data.data
+        }
+      })
+      .catch(error => {
+        console.log(error)
+      })
     }
   },
   mounted () {
-    console.log(faker.fake('{{name.firstName}}, {{name.lastName}}, {{name.suffix}}'))
+    console.log('222')
+    this.getUserLists()
   }
 }
 </script>
