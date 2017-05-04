@@ -26,7 +26,7 @@
         </el-col>
         <el-col :span="8">
           <el-row type="flex" justify="end">
-            <el-button type="primary" icon="plus"></el-button>
+            <el-button type="primary" icon="plus" @click="showDialogForm"></el-button>
             <el-button type="primary" icon="upload2"></el-button>
             <el-button type="primary" icon="setting"></el-button>
           </el-row>
@@ -34,7 +34,8 @@
       </el-row>
     </div>
     <div class="sc-table-content">
-      <el-table :data="response.data" border stripe :default-sort="{prop: 'date', order: 'descending'}" style="width: 100%;">
+      <el-table :data="response.data" border stripe :default-sort="{prop: 'date', order: 'descending'}"
+                style="width: 100%;">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="id" label="ID" width="80" sortable></el-table-column>
         <el-table-column prop="createdAt" label="创建日期" width="150" sortable></el-table-column>
@@ -53,6 +54,7 @@
               :close-transition="false"
               @close="handleClose(tag,scope.row.tags)">
               {{tag}}
+
             </el-tag>
             <el-input
               class="input-new-tag"
@@ -64,6 +66,7 @@
               @blur="handleInputConfirm(scope.row.id)"
             ></el-input>
             <el-button v-else class="button-new-tag" size="small" @click="showInput(scope.row.id)">+ New Tag
+
 
             </el-button>
           </template>
@@ -90,92 +93,161 @@
         </el-col>
       </el-row>
     </div>
+    <div class="dialog">
+      <el-dialog title="新增用户" v-model="dialogFormVisible">
+        <el-form :model="form">
+          <el-form-item label="用户名" :label-width="'120px'">
+            <el-input v-model="form.name" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="密码" :label-width="'120px'">
+            <el-input :label-width="'120px'"></el-input>
+          </el-form-item>
+          <el-form-item label="用户昵称" :label-width="'120px'">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="邮箱" :label-width="'120px'">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="真实姓名" :label-width="'120px'">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="身份证号" :label-width="'120px'">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="身份证正面照" :label-width="'120px'">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="身份证反面照" :label-width="'120px'">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="用户个人头像" :label-width="'120px'">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="用户电话" :label-width="'120px'">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="联系地址" :label-width="'120px'">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="紧急联系人信息" :label-width="'120px'">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="用户类型" :label-width="'120px'">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="备注" :label-width="'120px'">
+            <el-input></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        </div>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios'
+  import axios from 'axios'
 
-export default {
-  name: 'sc-user-table',
-  data () {
-    return {
-      value: '',
-      input: '',
-      contentTotal: 1000,
-      userListURL: 'http://192.168.1.2:8080/admin/user/index',
-      response: null,
-      options: [],
-      error: null
-    }
-  },
-  computed: {
-  },
-  components: {},
-  methods: {
-    handleClose (tag, tagList) {
-      //  todo
-      tagList.splice(tagList.indexOf(tag), 1)
-    },
-    showInput (id) {
-      this.tableData[parseInt(id) - 1].inputVisible = true
-      this.$nextTick(_ => {
-        this.$refs.saveTagInput.$refs.input.focus()
-      })
-    },
-    handleInputConfirm (id) {
-      let inputValue = this.tableData[parseInt(id) - 1].inputValue
-      if (inputValue) {
-        this.tableData[parseInt(id) - 1].tags.push(inputValue)
+  export default {
+    name: 'sc-user-table',
+    data () {
+      return {
+        value: '',
+        input: '',
+        contentTotal: 1000,
+        userListURL: 'http://192.168.1.2:8080/admin/user/index',
+        response: null,
+        options: [],
+        error: null,
+        dialogFormVisible: false,
+        form: {
+          name: '',
+          region: '',
+          date1: '',
+          date2: '',
+          delivery: false,
+          type: [],
+          resource: '',
+          desc: ''
+        }
       }
-      this.tableData[parseInt(id) - 1].inputVisible = false
-      this.tableData[parseInt(id) - 1].inputValue = ''
     },
-    getUserLists () {
-      axios.get('http://192.168.1.2:8080/admin/user/index')
-      .then(response => {
-        console.log(response)
-
-        if (response.status !== 200) {
-          this.error = response.statusText
-          return
+    computed: {},
+    components: {},
+    methods: {
+      handleClose (tag, tagList) {
+        //  todo
+        tagList.splice(tagList.indexOf(tag), 1)
+      },
+      showInput (id) {
+        this.tableData[parseInt(id) - 1].inputVisible = true
+        this.$nextTick(_ => {
+          this.$refs.saveTagInput.$refs.input.focus()
+        })
+      },
+      handleInputConfirm (id) {
+        let inputValue = this.tableData[parseInt(id) - 1].inputValue
+        if (inputValue) {
+          this.tableData[parseInt(id) - 1].tags.push(inputValue)
         }
+        this.tableData[parseInt(id) - 1].inputVisible = false
+        this.tableData[parseInt(id) - 1].inputValue = ''
+      },
+      getUserLists () {
+        axios.get('http://192.168.1.2:8080/admin/user/index')
+          .then(response => {
+            console.log(response)
 
-        if (response.data.errcode === '0000') {
-          this.response = response.data.data
-          for (let value in this.response.data[0]) {
-            let object = {}
-            object.value = value
-            this.options.push(object)
-          }
-        }
-      })
-      .catch(error => {
-        console.log(error)
-      })
+            if (response.status !== 200) {
+              this.error = response.statusText
+              return
+            }
+
+            if (response.data.errcode === '0000') {
+              this.response = response.data.data
+              for (let value in this.response.data[0]) {
+                let object = {}
+                object.value = value
+                this.options.push(object)
+              }
+            }
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      },
+      showDialogForm () {
+        this.dialogFormVisible = true
+        console.log(1, this.dialogFormVisible)
+      }
+    },
+    mounted () {
+      console.log('222')
+      this.getUserLists()
     }
-  },
-  mounted () {
-    console.log('222')
-    this.getUserLists()
   }
-}
 </script>
 <style scoped>
-.sc-user-table {
-  border-top: 1px solid lightgray;
-  padding-top: 2rem;
-  margin-left: 2rem;
-  margin-top: 2rem;
-  margin-right: 2rem;
-}
-.sc-table-header {
-  margin-bottom: 20px;
-}
-.sc-table-content {
-  margin-bottom: 10px;
-}
-.sc-table-search-btn {
-  margin-left: 20px;
-}
+  .sc-user-table {
+    border-top: 1px solid lightgray;
+    padding-top: 2rem;
+    margin-left: 2rem;
+    margin-top: 2rem;
+    margin-right: 2rem;
+  }
+
+  .sc-table-header {
+    margin-bottom: 20px;
+  }
+
+  .sc-table-content {
+    margin-bottom: 10px;
+  }
+
+  .sc-table-search-btn {
+    margin-left: 20px;
+  }
 </style>
