@@ -51,6 +51,10 @@
     background-color: #344;
   }
 
+  .sidebar-menu > .pageLink  ul {
+    padding-left: 2rem;
+  }
+
   .sidebar-menu > .pageLink > ul .display-text {
     color: #bbb;
   }
