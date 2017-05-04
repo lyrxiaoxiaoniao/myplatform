@@ -46,17 +46,19 @@
               :close-transition="false"
               @close="handleClose(tag,scope.row.tags)">
               {{tag}}
+
             </el-tag>
             <el-input
               class="input-new-tag"
               v-if="scope.row.inputVisible"
-              v-model="inputValue"
+              v-model="scope.row.inputValue"
               ref="saveTagInput"
               size="mini"
               @keyup.enter.native="handleInputConfirm(scope.row.id)"
               @blur="handleInputConfirm(scope.row.id)"
             ></el-input>
             <el-button v-else class="button-new-tag" size="small" @click="showInput(scope.row.id)">+ New Tag
+
             </el-button>
           </template>
         </el-table-column>
@@ -86,92 +88,92 @@
 </template>
 
 <script>
-import faker from 'faker'
-export default {
-  name: 'sc-table',
-  data () {
-    return {
-      options: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
-      }],
-      value: '',
-      input: '',
-      tableData: [{
-        date: '2016-05-02',
-        id: '1',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄',
-        tags: ['标签一', '标签二', '标签三'],
-        inputValue: '',
-        inputVisible: false
-      }, {
-        date: '2016-05-04',
-        id: '2',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄',
-        tags: ['标签4', '标签5', '标签6'],
-        inputValue: '',
-        inputVisible: false
-      }, {
-        date: '2016-05-01',
-        id: '3',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄',
-        tags: ['标签7', '标签8', '标签9'],
-        inputValue: '',
-        inputVisible: false
-      }, {
-        date: '2016-05-03',
-        id: '4',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄',
-        tags: ['标签一', '标签二', '标签三'],
-        inputValue: '',
-        inputVisible: false
-      }],
-      contentTotal: 1000,
-      currentPage: 1
-    }
-  },
-  computed: {},
-  components: {},
-  methods: {
-    handleClose (tag, tagList) {
-      //  todo
-      tagList.splice(tagList.indexOf(tag), 1)
+  import faker from 'faker'
+  export default {
+    name: 'sc-table',
+    data () {
+      return {
+        options: [{
+          value: '选项1',
+          label: '黄金糕'
+        }, {
+          value: '选项2',
+          label: '双皮奶'
+        }, {
+          value: '选项3',
+          label: '蚵仔煎'
+        }, {
+          value: '选项4',
+          label: '龙须面'
+        }, {
+          value: '选项5',
+          label: '北京烤鸭'
+        }],
+        value: '',
+        input: '',
+        tableData: [{
+          date: '2016-05-02',
+          id: '1',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1518 弄',
+          tags: ['标签一', '标签二', '标签三'],
+          inputValue: '',
+          inputVisible: false
+        }, {
+          date: '2016-05-04',
+          id: '2',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1517 弄',
+          tags: ['标签4', '标签5', '标签6'],
+          inputValue: '',
+          inputVisible: false
+        }, {
+          date: '2016-05-01',
+          id: '3',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1519 弄',
+          tags: ['标签7', '标签8', '标签9'],
+          inputValue: '',
+          inputVisible: false
+        }, {
+          date: '2016-05-03',
+          id: '4',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1516 弄',
+          tags: ['标签一', '标签二', '标签三'],
+          inputValue: '',
+          inputVisible: false
+        }],
+        contentTotal: 1000,
+        currentPage: 1
+      }
     },
-    showInput (id) {
-      console.log(this.tableData[parseInt(id) - 1].inputVisible)
-      this.tableData[parseInt(id) - 1].inputVisible = true
-      this.$nextTick(_ => {
-        console.log(this)
-        this.$refs.saveTagInput.$refs.input.focus()
-      })
+    computed: {},
+    components: {},
+    methods: {
+      handleClose (tag, tagList) {
+        //  todo
+        tagList.splice(tagList.indexOf(tag), 1)
+      },
+      showInput (id) {
+        this.tableData[parseInt(id) - 1].inputVisible = true
+        this.$nextTick(_ => {
+          this.$refs.saveTagInput.$refs.input.focus()
+        })
+      },
+      handleInputConfirm (id) {
+        let inputValue = this.tableData[parseInt(id) - 1].inputValue
+        if (inputValue) {
+          this.tableData[parseInt(id) - 1].tags.push(inputValue)
+        }
+        this.tableData[parseInt(id) - 1].inputVisible = false
+        this.tableData[parseInt(id) - 1].inputValue = ''
+      }
     },
-    handleInputConfirm (id) {
-//        let inputValue = this.tableData[parseInt(id) - 1].inputValue
-//        if(inputValue) {
-//          this
-//        }
+    mounted () {
+      console.log(faker.fake('{{name.firstName}}, {{name.lastName}}, {{name.suffix}}'))
     }
-  },
-  mounted () {
-    console.log(faker.fake('{{name.firstName}}, {{name.lastName}}, {{name.suffix}}'))
   }
-}
 </script>
 <style scoped>
   .sc-table {
@@ -179,6 +181,7 @@ export default {
     padding-top: 2rem;
     margin-top: 2rem;
   }
+
   .sc-table-header .header-add-button {
     margin-bottom: 1rem;
     margin-left: 2rem;
