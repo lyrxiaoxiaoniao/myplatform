@@ -5,7 +5,7 @@ import ResetView from './components/Reset.vue'
 import NotFoundView from './components/404.vue'
 
 // Import Views - Dash
-// import DashboardView from './components/views/Dashboard.vue'
+import DashboardView from './components/views/Dashboard.vue'
 import TablesView from './components/views/Tables.vue'
 import TasksView from './components/views/Tasks.vue'
 import SettingView from './components/views/Setting.vue'
@@ -31,10 +31,10 @@ const routes = [
     component: DashView,
     children: [
       {
-        path: 'usertables',
+        path: 'dashboard',
         alias: '',
-        component: SCUserTableView,
-        name: 'sc-user-table',
+        component: DashboardView,
+        name: 'Dashboard',
         meta: {description: 'Overview of environment'}
       }, {
         path: 'tables',
@@ -66,7 +66,13 @@ const routes = [
         component: ReposView,
         name: 'Repository',
         meta: {description: 'List of popular javascript repos'}
+      }, {
+        path: 'users',
+        component: SCUserTableView,
+        name: '用户列表',
+        meta: {description: '这是用户列表的描述'}
       }
+
     ]
   }, {
     // not found handler

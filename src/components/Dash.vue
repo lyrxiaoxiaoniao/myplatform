@@ -141,7 +141,7 @@
           <small>{{ $route.meta.description }}</small>
         </h1>
         <ol class="breadcrumb">
-          <li><a href="javascript:;"><i class="fa fa-home"></i>Home</a></li>
+          <li><a href="javascript:;"><i class="fa fa-home"></i>主页</a></li>
           <li class="active">{{$route.name.toUpperCase()}}</li>
         </ol>
       </section>

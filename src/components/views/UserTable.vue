@@ -1,5 +1,5 @@
 <template>
-  <div class="sc-table">
+  <div v-if="response" class="sc-user-table">
     <div class="sc-table-header">
       <el-row type="flex" justify="space-around">
         <el-col :span="16">
@@ -33,7 +33,7 @@
         </el-col>
       </el-row>
     </div>
-    <div v-if="response" class="sc-table-content">
+    <div class="sc-table-content">
       <el-table :data="response.data" border stripe :default-sort="{prop: 'date', order: 'descending'}" style="width: 100%;">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="id" label="ID" width="80" sortable></el-table-column>
@@ -100,27 +100,12 @@ export default {
   name: 'sc-user-table',
   data () {
     return {
-      options: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
-      }],
       value: '',
       input: '',
       contentTotal: 1000,
       userListURL: 'http://192.168.1.2:8080/admin/user/index',
       response: null,
+      options: [],
       error: null
     }
   },
@@ -146,10 +131,6 @@ export default {
       this.tableData[parseInt(id) - 1].inputVisible = false
       this.tableData[parseInt(id) - 1].inputValue = ''
     },
-    createdTime (time) {
-      console.log(new Date(time))
-      return '111'
-    },
     getUserLists () {
       axios.get('http://192.168.1.2:8080/admin/user/index')
       .then(response => {
@@ -162,6 +143,11 @@ export default {
 
         if (response.data.errcode === '0000') {
           this.response = response.data.data
+          for (let value in this.response.data[0]) {
+            let object = {}
+            object.value = value
+            this.options.push(object)
+          }
         }
       })
       .catch(error => {
@@ -176,7 +162,7 @@ export default {
 }
 </script>
 <style scoped>
-.sc-table {
+.sc-user-table {
   border-top: 1px solid lightgray;
   padding-top: 2rem;
   margin-left: 2rem;
