@@ -1,7 +1,7 @@
 <template>
   <li class="pageLink">
     <div @click='toggle' class="display-text">
-      <i v-if='isFolder' class="fa " :class="[showopen?'fa-folder-open':'fa-folder']"></i>
+      <i v-if='isFolder' :class="model.icon"></i>
       <!--isFolder判断是否存在子级改变图标-->
       <i v-if='!isFolder' class="fa fa-file-textpageLink"></i> {{model.displayName}}
     </div>
@@ -39,6 +39,21 @@ export default {
 </script>
 <style>
   /* override default */
+  .sidebar-menu>.pageLink:hover {
+    background-color: #233;
+    cursor: pointer;
+  }
+  .sidebar-menu>.pageLink>ul {
+    background-color: #344;
+  }
+
+  .sidebar-menu>.pageLink>ul .display-text {
+    color: #bbb;
+  }
+
+  .sidebar-menu>.pageLink>ul .display-text:hover {
+    color: white;
+  }
   .sidebar-menu > li > a {
     padding: 12px 15px 12px 15px;
   }
@@ -60,9 +75,14 @@ export default {
   }
 
   .display-text {
-    font-size: 18px;
+    font-size: 1rem;
     color: white;
-    padding-top: 20px;
-    padding-left: 20px;
+    padding: 1rem;
   }
+
+  .fa-mobile {
+    font-size: 20px;
+  }
+
+
 </style>
