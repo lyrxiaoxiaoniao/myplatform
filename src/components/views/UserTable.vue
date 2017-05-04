@@ -8,7 +8,7 @@
         <el-input :model="advancedForm.username"></el-input>
       </el-form-item>
       <el-form-item label="手机号">
-        <el-input :model="advancedForm.username"></el-input>
+        <el-input :model="advancedForm.phone"></el-input>
       </el-form-item>
       <el-form-item label="地址">
         <el-input :model="advancedForm.address"></el-input>
@@ -49,7 +49,7 @@
         </el-col>
         <el-col :span="8">
           <el-row type="flex" justify="end">
-            <el-button type="primary" icon="plus"></el-button>
+            <el-button type="primary" icon="plus" @click="showDialogForm"></el-button>
             <el-button type="primary" icon="upload2"></el-button>
             <el-button type="primary" icon="setting"></el-button>
           </el-row>
@@ -76,6 +76,7 @@
               :close-transition="false"
               @close="handleClose(tag,scope.row.tags)">
               {{tag}}
+
             </el-tag>
             <el-input
               class="input-new-tag"
@@ -112,6 +113,58 @@
         </el-col>
       </el-row>
     </div>
+    <div class="dialog">
+      <el-dialog title="新增用户" v-model="dialogFormVisible">
+        <el-form :model="form">
+          <el-form-item label="用户名" :label-width="'120px'">
+            <el-input v-model="form.name" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="密码" :label-width="'120px'">
+            <el-input :label-width="'120px'"></el-input>
+          </el-form-item>
+          <el-form-item label="用户昵称" :label-width="'120px'">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="邮箱" :label-width="'120px'">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="真实姓名" :label-width="'120px'">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="身份证号" :label-width="'120px'">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="身份证正面照" :label-width="'120px'">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="身份证反面照" :label-width="'120px'">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="用户个人头像" :label-width="'120px'">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="用户电话" :label-width="'120px'">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="联系地址" :label-width="'120px'">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="紧急联系人信息" :label-width="'120px'">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="用户类型" :label-width="'120px'">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="备注" :label-width="'120px'">
+            <el-input></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        </div>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -133,6 +186,17 @@ export default {
         endDate: '',
         address: '',
         createdAt: ''
+      },
+      dialogFormVisible: false,
+      form: {
+        name: '',
+        region: '',
+        date1: '',
+        date2: '',
+        delivery: false,
+        type: [],
+        resource: '',
+        desc: ''
       },
       userListURL: 'http://192.168.1.2:8080/admin/user/index',
       removeUserURL: 'http://192.168.1.2:8080/admin/user/delete',
@@ -160,8 +224,6 @@ export default {
       if (inputValue) {
         this.tableData[parseInt(id) - 1].tags.push(inputValue)
       }
-      this.tableData[parseInt(id) - 1].inputVisible = false
-      this.tableData[parseInt(id) - 1].inputValue = ''
     },
     onSingleSearch () {
       if (this.searchSelect === '') {
@@ -208,7 +270,6 @@ export default {
           this.error = response.statusText
           return
         }
-
         if (response.data.errcode === '0000') {
           this.response = response.data.data
           for (let value in this.response.data[0]) {
@@ -221,29 +282,36 @@ export default {
       .catch(error => {
         console.log(error)
       })
+    },
+    showDialogForm () {
+      this.dialogFormVisible = true
+      console.log(1, this.dialogFormVisible)
     }
   },
   mounted () {
-    console.log(this.$store)
+    console.log('222')
     this.getUserLists()
   }
 }
 </script>
 <style scoped>
-.sc-user-table {
-  border-top: 1px solid lightgray;
-  padding-top: 2rem;
-  margin-left: 2rem;
-  margin-top: 2rem;
-  margin-right: 2rem;
-}
-.sc-table-header {
-  margin-bottom: 20px;
-}
-.sc-table-content {
-  margin-bottom: 10px;
-}
-.sc-table-search-btn {
-  margin-left: 20px;
-}
+  .sc-user-table {
+    border-top: 1px solid lightgray;
+    padding-top: 2rem;
+    margin-left: 2rem;
+    margin-top: 2rem;
+    margin-right: 2rem;
+  }
+
+  .sc-table-header {
+    margin-bottom: 20px;
+  }
+
+  .sc-table-content {
+    margin-bottom: 10px;
+  }
+
+  .sc-table-search-btn {
+    margin-left: 20px;
+  }
 </style>
