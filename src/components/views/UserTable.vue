@@ -113,63 +113,13 @@
         </el-col>
       </el-row>
     </div>
-    <div class="dialog">
-      <el-dialog title="新增用户" v-model="dialogFormVisible">
-        <el-form :model="form">
-          <el-form-item label="用户名" :label-width="'120px'">
-            <el-input v-model="form.name" auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="密码" :label-width="'120px'">
-            <el-input :label-width="'120px'"></el-input>
-          </el-form-item>
-          <el-form-item label="用户昵称" :label-width="'120px'">
-            <el-input></el-input>
-          </el-form-item>
-          <el-form-item label="邮箱" :label-width="'120px'">
-            <el-input></el-input>
-          </el-form-item>
-          <el-form-item label="真实姓名" :label-width="'120px'">
-            <el-input></el-input>
-          </el-form-item>
-          <el-form-item label="身份证号" :label-width="'120px'">
-            <el-input></el-input>
-          </el-form-item>
-          <el-form-item label="身份证正面照" :label-width="'120px'">
-            <el-input></el-input>
-          </el-form-item>
-          <el-form-item label="身份证反面照" :label-width="'120px'">
-            <el-input></el-input>
-          </el-form-item>
-          <el-form-item label="用户个人头像" :label-width="'120px'">
-            <el-input></el-input>
-          </el-form-item>
-          <el-form-item label="用户电话" :label-width="'120px'">
-            <el-input></el-input>
-          </el-form-item>
-          <el-form-item label="联系地址" :label-width="'120px'">
-            <el-input></el-input>
-          </el-form-item>
-          <el-form-item label="紧急联系人信息" :label-width="'120px'">
-            <el-input></el-input>
-          </el-form-item>
-          <el-form-item label="用户类型" :label-width="'120px'">
-            <el-input></el-input>
-          </el-form-item>
-          <el-form-item label="备注" :label-width="'120px'">
-            <el-input></el-input>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
-        </div>
-      </el-dialog>
-    </div>
+
   </div>
 </template>
 
 <script>
 import axios from 'axios'
+import UserAddForm from './UserAddForm.vue'
 
 export default {
   name: 'sc-user-table',
@@ -207,7 +157,7 @@ export default {
   },
   computed: {
   },
-  components: {},
+  components: { UserAddForm },
   methods: {
     handleClose (tag, tagList) {
       //  todo
