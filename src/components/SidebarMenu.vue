@@ -1,19 +1,33 @@
 <template>
-  <li class="pageLink">
-    <div @click='toggle' class="display-text">
-      <i v-if='isFolder' :class="model.icon"></i>
-      <!--isFolder判断是否存在子级改变图标-->
-      {{model.displayName}}
-      <i v-show="isFolder" :class="[showopen? 'fa-angle-down':'fa-angle-left']" class="fa arrow"></i>
-    </div>
-    <transition name="slide">
-      <ul v-show="showopen" v-if='isFolder'>
-        <template v-for="item in model.children" v-if="(model.children && model.children.length)">
-          <sidebar-menu :model="item"/>
-        </template>
-        <!--<sidebar-menu v-for='cel in model.children' :model='cel' v-if="(model && model.length)"></sidebar-menu>-->
-      </ul>
-    </transition>
+  <!--<li class="pageLink">-->
+    <!--<div @click='toggle' class="display-text">-->
+      <!--<i v-if='isFolder' :class="model.icon"></i>-->
+      <!--&lt;!&ndash;isFolder判断是否存在子级改变图标&ndash;&gt;-->
+      <!--{{model.displayName}}-->
+      <!--<i v-show="isFolder" :class="[showopen? 'fa-angle-down':'fa-angle-left']" class="fa arrow"></i>-->
+    <!--</div>-->
+    <!--<transition name="slide">-->
+      <!--<ul v-show="showopen" v-if='isFolder'>-->
+        <!--<template v-for="item in model.children" v-if="(model.children && model.children.length)">-->
+          <!--<sidebar-menu :model="item"/>-->
+        <!--</template>-->
+        <!--&lt;!&ndash;<sidebar-menu v-for='cel in model.children' :model='cel' v-if="(model && model.length)"></sidebar-menu>&ndash;&gt;-->
+      <!--</ul>-->
+    <!--</transition>-->
+  <!--</li>-->
+  <li class="treeview">
+    <a href="#">
+      <i :class="model.icon"></i>
+      <span>{{ model.displayName }}</span>
+      <span class="pull-right-container">
+          <i class="fa fa-angle-left fa-fw pull-right" v-show="isFolder"></i>
+        </span>
+    </a>
+    <ul class="treeview-menu" v-if="isFolder">
+      <template v-for="item in model.children" v-if="(model.children && model.children.length)">
+        <sidebar-menu :model="item"/>
+      </template>
+    </ul>
   </li>
 </template>
 <script>
@@ -72,13 +86,19 @@
     float: right;
   }
 
+  .sidebar-menu li.active>a>.fa-angle-left, .sidebar-menu li.active>a>.pull-right-container>.fa-angle-left {
+    animation-name: rotate;
+    animation-duration: .2s;
+    animation-fill-mode: forwards;
+  }
+
   @keyframes rotate {
     0% {
       transform: rotate(0deg);
     }
 
     100% {
-      transform: rotate(-45deg);
+      transform: rotate(-90deg);
     }
   }
 
@@ -90,17 +110,6 @@
 
   .fa-mobile {
     font-size: 20px;
-  }
-
-  .slide-enter-active, .slide-leave-active {
-    transition: all 1s;
-    overflow: hidden;
-    max-height: 800px;
-  }
-
-  .slide-enter,
-  .slide-leave-active {
-    max-height: 0;
   }
 
 </style>
