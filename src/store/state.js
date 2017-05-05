@@ -8,5 +8,7 @@ export default {
     messages: [{1: 'test', 2: 'test'}],
     notifications: [],
     tasks: []
+  },
+  appInfo: {
   }
 }
