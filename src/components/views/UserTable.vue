@@ -174,7 +174,7 @@ export default {
       return config.serverURI + config.removeUserAPI
     }
   },
-  components: { UserAddForm },
+  components: {},
   methods: {
     handleClose (tag, tagList) {
       //  todo
