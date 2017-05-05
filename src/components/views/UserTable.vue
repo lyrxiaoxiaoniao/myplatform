@@ -1,27 +1,37 @@
 <template>
   <div v-if="response" class="sc-user-table">
-    <el-form v-if="advancedForm" class="search-form" :model="searchForm">
-      <el-form-item label="ID">
-        <el-input :model="advancedForm.id"></el-input>
-      </el-form-item>
-      <el-form-item label="用户名">
-        <el-input :model="advancedForm.username"></el-input>
-      </el-form-item>
-      <el-form-item label="手机号">
-        <el-input :model="advancedForm.phone"></el-input>
-      </el-form-item>
-      <el-form-item label="地址">
-        <el-input :model="advancedForm.address"></el-input>
-      </el-form-item>
+    <el-form :inline="true" v-if="advancedForm" class="search-form" :model="searchForm">
+      <el-row :gutter="10">
+        <el-span :xs="4" :sm="6" :md="4" :lg="3">
+          <el-form-item label="ID">
+            <el-input :model="advancedForm.id"></el-input>
+          </el-form-item>
+        </el-span>
+        <el-span :xs="8" :sm="6" :md="8" :lg="9">
+          <el-form-item label="用户名">
+            <el-input :model="advancedForm.username"></el-input>
+          </el-form-item>
+        </el-span>
+        <el-span :xs="4" :sm="6" :md="4" :lg="3">
+          <el-form-item label="手机号">
+            <el-input :model="advancedForm.phone"></el-input>
+          </el-form-item>
+        </el-span>
+        <el-span :xs="8" :sm="6" :md="8" :lg="9">
+          <el-form-item label="地址">
+            <el-input :model="advancedForm.address"></el-input>
+          </el-form-item>
+        </el-span>
+      </el-row>
       <el-form-item label="创建时间">
-          <el-col :span="11">
-            <el-date-picker type="date" placeholder="选择日期" v-model="searchForm.startDate" style="width: 100%;"></el-date-picker>
-          </el-col>
-          <el-col class="line" :span="2">-</el-col>
-          <el-col :span="11">
-            <el-time-picker type="fixed-time" placeholder="选择时间" v-model="searchForm.endDate" style="width: 100%;"></el-time-picker>
-          </el-col>
-        </el-form-item>
+        <el-col :span="11">
+          <el-date-picker type="date" placeholder="开始日期" v-model="searchForm.startDate" style="width: 100%;"></el-date-picker>
+        </el-col>
+        <el-col class="line" :span="2">-</el-col>
+        <el-col :span="11">
+          <el-date-picker type="date" placeholder="结束日期" v-model="searchForm.endDate" style="width: 100%;"></el-date-picker>
+        </el-col>
+      </el-form-item>
     </el-form>
     <div class="sc-table-header">
       <el-row type="flex" justify="space-around">
@@ -61,7 +71,7 @@
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="id" label="ID" width="80" sortable></el-table-column>
         <el-table-column prop="username" label="用户名" width="100"></el-table-column>
-        <el-table-column prop="phone" label="手机号码" width="150" sortable></el-table-column>
+        <el-table-column prop="phone" label="手机号码" width="120" sortable></el-table-column>
         <el-table-column prop="email" label="Email" width="190"></el-table-column>
         <el-table-column prop="address" label="地址" width="200"></el-table-column>
         <el-table-column
@@ -91,6 +101,7 @@
             </el-button>
           </template>
         </el-table-column>
+        <el-table-column class="user-status-column" @click.native="toggleStatus(scope.row.isLock)" prop="isLock" label="状态" width="70"></el-table-column>
         <el-table-column label="操作">
           <template scope="scope">
             <el-button size="small" icon="document"></el-button>
@@ -104,9 +115,11 @@
       <el-row type="flex" justify="center">
         <el-col :span="12">
           <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
             :current-page="response.currentPage"
             :page-sizes="[10, 20, 50, 100]"
-            :page-size="10"
+            :page-size="response.pageSize"
             :total="response.count"
             layout="total, sizes, prev, pager, next, jumper">
           </el-pagination>
@@ -170,6 +183,7 @@
 
 <script>
 import axios from 'axios'
+import config from 'src/config'
 
 export default {
   name: 'sc-user-table',
@@ -198,14 +212,18 @@ export default {
         resource: '',
         desc: ''
       },
-      userListURL: 'http://192.168.1.2:8080/admin/user/index',
-      removeUserURL: 'http://192.168.1.2:8080/admin/user/delete',
       response: null,
       options: [],
       error: null
     }
   },
   computed: {
+    userListURL () {
+      return config.serverURI + config.userListAPI
+    },
+    removeUserURL () {
+      return config.serverURI + config.removeUserAPI
+    }
   },
   components: {},
   methods: {
@@ -235,8 +253,18 @@ export default {
       // TODO search user
     },
     onAdvancedSearch () {
-      console.log('111')
       this.advancedForm = !this.advancedForm
+    },
+    handleSizeChange (value) {
+      console.log(this.response.currentPage)
+      this.getUserLists(value, this.response.currentPage)
+    },
+    handleCurrentChange (value) {
+      this.getUserLists(this.response.pageSize, value)
+    },
+    toggleStatus (isLock) {
+      console.log('toggle')
+      console.log(isLock)
     },
     onDeleteUser (id) {
       this.$confirm('此操作将删除, 是否继续?', '提示', {
@@ -249,7 +277,7 @@ export default {
           id: id
         })
         .then(response => {
-          console.log(response.data)
+          console.log(`delete user ${response.data}`)
         })
         .catch(error => {
           console.log(error)
@@ -261,10 +289,32 @@ export default {
         })
       })
     },
-    getUserLists () {
-      axios.get(this.userListURL)
+    transformData (response) {
+      if (this.options.length === 0) {
+        for (let value in response.data[0]) {
+          let object = {}
+          object.value = value
+          this.options.push(object)
+        }
+      }
+      response.data.forEach(item => {
+        for (let key in item) {
+          if (key === 'isLock') {
+            item[key] === '0' ? item[key] = '锁定' : item[key] = '正常'
+          }
+        }
+      })
+      return response
+    },
+    getUserLists (pageSize = 10, currentPage = 1) {
+      axios.get(this.userListURL, {
+        params: {
+          pageSize,
+          currentPage
+        }
+      })
       .then(response => {
-        console.log(response)
+        console.log(`user lists response ${response}`)
 
         if (response.status !== 200) {
           this.error = response.statusText
@@ -272,11 +322,9 @@ export default {
         }
         if (response.data.errcode === '0000') {
           this.response = response.data.data
-          for (let value in this.response.data[0]) {
-            let object = {}
-            object.value = value
-            this.options.push(object)
-          }
+          this.transformData(this.response)
+          console.log('user list')
+          console.log(this.response)
         }
       })
       .catch(error => {
@@ -289,7 +337,8 @@ export default {
     }
   },
   mounted () {
-    console.log('222')
+    console.log('User Table mounted')
+    console.log(config)
     this.getUserLists()
   }
 }
@@ -311,7 +360,17 @@ export default {
     margin-bottom: 10px;
   }
 
+  .search-form {
+    border: 1px solid gray;
+    padding: 20px;
+    margin-bottom: 10px;
+  }
+
   .sc-table-search-btn {
     margin-left: 20px;
+  }
+
+  .user-status-column:hover {
+    cursor: pointer;
   }
 </style>
