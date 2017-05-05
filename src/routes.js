@@ -15,7 +15,8 @@ import ReposView from './components/views/Repos.vue'
 
 import SCUserTableView from './components/views/UserTable.vue'
 import SCReportTableView from './components/views/ReportTable'
-import SCUserAddForm from './components/views/UserAddForm'
+import SCUserAddFormView from './components/views/UserAddForm'
+import SCReportDeatilView from './components/views/ReportDetail'
 
 // Routes
 const routes = [
@@ -80,9 +81,14 @@ const routes = [
         meta: {description: '这是案件列表的描述'}
       }, {
         path: 'useradd',
-        component: SCUserAddForm,
+        component: SCUserAddFormView,
         name: '添加用户',
         meta: {description: '添加用户描述'}
+      }, {
+        path: 'reportdetail',
+        component: SCReportDeatilView,
+        name: '案件详情',
+        meta: {description: '案件详情列表'}
       }
     ]
   }, {

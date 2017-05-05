@@ -312,7 +312,7 @@ export default {
   }
 
   .search-form {
-    border: 1px solid gray;
+    border: 1px solid lightgray;
     padding: 20px;
     margin-bottom: 10px;
   }
