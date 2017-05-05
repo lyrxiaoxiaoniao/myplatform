@@ -14,6 +14,8 @@ import ServerView from './components/views/Server.vue'
 import ReposView from './components/views/Repos.vue'
 
 import SCUserTableView from './components/views/UserTable.vue'
+import SCReportTableView from './components/views/ReportTable'
+import SCUserAddForm from './components/views/UserAddForm'
 
 // Routes
 const routes = [
@@ -71,8 +73,17 @@ const routes = [
         component: SCUserTableView,
         name: '用户列表',
         meta: {description: '这是用户列表的描述'}
+      }, {
+        path: 'reports',
+        component: SCReportTableView,
+        name: '案件列表',
+        meta: {description: '这是案件列表的描述'}
+      }, {
+        path: 'useradd',
+        component: SCUserAddForm,
+        name: '添加用户',
+        meta: {description: '添加用户描述'}
       }
-
     ]
   }, {
     // not found handler
