@@ -59,7 +59,9 @@
         </el-col>
         <el-col :span="8">
           <el-row type="flex" justify="end">
-            <el-button type="primary" icon="plus" @click="showDialogForm"></el-button>
+            <router-link to="/useradd">
+              <el-button type="primary" icon="plus"></el-button>
+            </router-link>
             <el-button type="primary" icon="upload2"></el-button>
             <el-button type="primary" icon="setting"></el-button>
           </el-row>
