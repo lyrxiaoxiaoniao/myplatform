@@ -17,6 +17,7 @@ import SCUserTableView from './components/views/UserTable.vue'
 import SCReportTableView from './components/views/ReportTable'
 import SCUserAddFormView from './components/views/UserAddForm'
 import SCReportDeatilView from './components/views/ReportDetail'
+import SCReportDeal from './components/views/ReportDeal.vue'
 
 // Routes
 const routes = [
@@ -89,6 +90,11 @@ const routes = [
         component: SCReportDeatilView,
         name: '案件详情',
         meta: {description: '案件详情列表'}
+      }, {
+        path: 'reportdeal',
+        component: SCReportDeal,
+        name: '案件处理',
+        meta: {description: '案件处理'}
       }
     ]
   }, {
