@@ -1,37 +1,41 @@
 <template>
   <div v-if="response" class="sc-user-table">
-    <el-form :inline="true" v-if="advancedForm" class="search-form" :model="searchForm">
-      <el-row :gutter="10">
-        <el-span :xs="4" :sm="6" :md="4" :lg="3">
+    <el-form v-if="advancedForm" class="search-form" :model="searchForm" :label-position="left" :label-width="'80px'">
+      <el-row>
+        <el-col :span="8">
           <el-form-item label="ID">
             <el-input :model="advancedForm.id"></el-input>
           </el-form-item>
-        </el-span>
-        <el-span :xs="8" :sm="6" :md="8" :lg="9">
+        </el-col>
+        <el-col :span="8">
           <el-form-item label="用户名">
             <el-input :model="advancedForm.username"></el-input>
           </el-form-item>
-        </el-span>
-        <el-span :xs="4" :sm="6" :md="4" :lg="3">
+        </el-col>
+        <el-col :span="8">
           <el-form-item label="手机号">
             <el-input :model="advancedForm.phone"></el-input>
           </el-form-item>
-        </el-span>
-        <el-span :xs="8" :sm="6" :md="8" :lg="9">
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="15">
           <el-form-item label="地址">
             <el-input :model="advancedForm.address"></el-input>
           </el-form-item>
-        </el-span>
+        </el-col>
+        <el-col :span="9">
+          <el-form-item label="创建时间">
+            <el-col :span="11">
+              <el-date-picker type="date" placeholder="开始日期" v-model="searchForm.startDate" style="width: 100%;"></el-date-picker>
+            </el-col>
+            <el-col class="line" :span="2">-</el-col>
+            <el-col :span="11">
+              <el-date-picker type="date" placeholder="结束日期" v-model="searchForm.endDate" style="width: 100%;"></el-date-picker>
+            </el-col>
+          </el-form-item>
+        </el-col>
       </el-row>
-      <el-form-item label="创建时间">
-        <el-col :span="11">
-          <el-date-picker type="date" placeholder="开始日期" v-model="searchForm.startDate" style="width: 100%;"></el-date-picker>
-        </el-col>
-        <el-col class="line" :span="2">-</el-col>
-        <el-col :span="11">
-          <el-date-picker type="date" placeholder="结束日期" v-model="searchForm.endDate" style="width: 100%;"></el-date-picker>
-        </el-col>
-      </el-form-item>
     </el-form>
     <div class="sc-table-header">
       <el-row type="flex" justify="space-around">
@@ -59,7 +63,7 @@
         </el-col>
         <el-col :span="8">
           <el-row type="flex" justify="end">
-            <router-link to="/useradd">
+            <router-link class="add-user-link" to="/useradd">
               <el-button type="primary" icon="plus"></el-button>
             </router-link>
             <el-button type="primary" icon="upload2"></el-button>
@@ -319,6 +323,10 @@ export default {
 
   .sc-table-search-btn {
     margin-left: 20px;
+  }
+
+  .add-user-link {
+    margin-right: 10px;
   }
 
   .user-status-column:hover {

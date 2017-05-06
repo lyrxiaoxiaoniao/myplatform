@@ -37,8 +37,10 @@
           :value="item.value">
         </el-option>
       </el-select>
-      <el-select class="status-select" mutiple placeholder="案件状态">
-        <el-option>
+      <el-select class="status-select" mutiple placeholder="案件状态" v-model="caseStatus">
+        <el-option
+          v-for="item in caseStatusCatlg"
+          :value="item.value">
         </el-option>
       </el-select>
     </div>
@@ -48,18 +50,16 @@
         <el-table-column prop="acceptNo" label="受理号" sortable min-width="100"></el-table-column>
         <el-table-column prop="reportName" label="举报人"></el-table-column>
         <el-table-column prop="catlgName" label="案件分类" min-width="80"></el-table-column>
-        <el-table-column prop="createDate" label="举报时间" sortable></el-table-column>
-        <el-table-column prop="mobile" label="手机号码" sortable min-width="120"></el-table-column>
         <el-table-column prop="address" label="事发地址" min-width="180"></el-table-column>
         <el-table-column prop="description" label="案件描述" min-width="280"></el-table-column>
-        <el-table-column prop="status" label="受理状态"></el-table-column>
-        <el-table-column fixed="right" label="操作" width="180">
+        <el-table-column prop="createDate" label="举报时间" sortable></el-table-column>
+        <el-table-column fixed="right" label="操作" width="150">
           <template scope="scope">
             <router-link to="reportdeal">
               <el-button size="small" icon="edit"></el-button>
             </router-link>
-            <el-button size="small" icon="circle-cross"></el-button>
-            <el-button size="small" icon="information"></el-button>
+            <el-button size="small" icon="circle-cross" @click="shieldReport(scope.row.id)"></el-button>
+            <el-button size="small" icon="information" @click="selectCase(scope.row)"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -91,7 +91,10 @@ export default {
   data () {
     return {
       options: [],
+      singleSelect: '',
       selectedCatlg: '',
+      caseStatus: '',
+      caseCatlg: [],
       response: null,
       error: null
     }
@@ -103,9 +106,8 @@ export default {
     removeCaseURL () {
       return config.serverURI + config.removeCaseAPI
     },
-    caseCatlg () {
-      let array = []
-      console.log(array)
+    caseStatusCatlg () {
+      return config.reportsStatusCatlg
     }
   },
   methods: {
@@ -114,6 +116,53 @@ export default {
     },
     handleCurrentChange (value) {
       this.getCaseList(this.response.pageSize, value)
+    },
+    toDate (row, column) {
+      console.log('222')
+      console.log(row)
+      console.log(column)
+    },
+    selectCase (object) {
+      this.$store.commit('SET_CURRENT_CASE', object)
+      this.$router.push('reportdetail')
+    },
+    shieldReport (id) {
+      const caseShieldURL = config.serverURI + config.shieldCaseAPI
+
+      this.$confirm('是否确认删除该条记录？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        axios.post(caseShieldURL, {
+          id: id
+        })
+        .then(response => {
+          console.log(`Case Lists response ${response}`)
+
+          if (response.status !== 200) {
+            this.error = response.statusText
+            return
+          }
+
+          if (response.data.errcode === '0000') {
+            this.$notify({
+              title: '成功',
+              message: '屏蔽成功',
+              type: 'success'
+            })
+            this.getCaseList(this.response.pageSize, this.response.currentPage)
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     },
     getCaseList (pageSize = 10, currentPage) {
       axios.get(this.caseListURL, {
@@ -138,12 +187,39 @@ export default {
         .catch(error => {
           console.log(error)
         })
+    },
+    getCaseCatlg () {
+      const caseCatlgURL = config.serverURI + config.caseCatlgAPI
+
+      axios.get(caseCatlgURL)
+        .then(response => {
+          console.log(`Case Catlogory response ${response}`)
+
+          if (response.status !== 200) {
+            this.error = response.statusText
+            return
+          }
+
+          if (response.data.errcode === '0000') {
+            console.log('111')
+            response.data.data.forEach(item => {
+              let object = {}
+              object.id = item.id
+              object.value = item.name
+              this.caseCatlg.push(object)
+            })
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        })
     }
   },
   components: {
   },
   mounted () {
     this.getCaseList()
+    this.getCaseCatlg()
   }
 }
 </script>

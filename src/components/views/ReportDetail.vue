@@ -60,6 +60,7 @@ export default {
   },
   mounted () {
     console.log('Report Detail Mounted')
+    console.log(this.$store.state.selectedCase)
   }
 }
 </script>

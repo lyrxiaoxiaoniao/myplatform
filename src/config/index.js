@@ -1,12 +1,18 @@
 export default {
-  serverURI: 'http://192.168.1.5:8080',
+  serverURI: 'http://192.168.1.34:8080',
   menuAPI: '/admin/menu/show_left',
-  appInfoAPI: '/admin/option/show',
+  appInfoAPI: '/admin/appinfo/show?code=gmaj',
   userListAPI: '/admin/user/index',
   removeUserAPI: '/admin/user/delete',
   caseListAPI: '/cmplnt/content/index',
-  removeCaseAPI: '',
+  shieldCaseAPI: '/cmplnt/content/delete',
   caseDetailAPI: '/cmplnt/content/show',
+  caseCatlgAPI: '/cmplnt/category/index',
   fixedLayout: false,
-  hideLogoOnMobile: false
+  hideLogoOnMobile: false,
+  reportsStatusCatlg: [
+    { value: '进行中' },
+    { value: '已结案' },
+    { value: '已驳回' }
+  ]
 }
