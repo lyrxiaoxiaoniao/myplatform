@@ -59,7 +59,7 @@ export default {
   components: { SidebarMenu },
   data () {
     return {
-      menuURL: 'http://192.168.1.2:8080/admin/menu/show_left',
+      menuURL: 'http://192.168.1.5:8080/admin/menu/show_left',
       model: null,
       error: null
     }
