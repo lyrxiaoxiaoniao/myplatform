@@ -7,7 +7,7 @@
             <el-col :span="4">
               <el-select v-model="searchSelect" placeholder="请选择">
                 <el-option
-                  v-for="item in options"
+                  v-for="item in searchOptions"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
@@ -37,7 +37,7 @@
           :value="item.value">
         </el-option>
       </el-select>
-      <el-select class="status-select" mutiple placeholder="案件状态" v-model="caseStatus">
+      <el-select class="status-select" mutiple placeholder="案件状态" v-model="caseStatus" @change="onStatusChanged" clearable>
         <el-option
           v-for="item in caseStatusCatlg"
           :value="item.value">
@@ -51,8 +51,9 @@
         <el-table-column prop="reportName" label="举报人"></el-table-column>
         <el-table-column prop="catlgName" label="案件分类" min-width="80"></el-table-column>
         <el-table-column prop="address" label="事发地址" min-width="180"></el-table-column>
-        <el-table-column prop="description" label="案件描述" min-width="280"></el-table-column>
+        <el-table-column prop="description" label="案件描述" min-width="200"></el-table-column>
         <el-table-column prop="createDate" label="举报时间" sortable></el-table-column>
+        <el-table-column prop="status" label="状态"></el-table-column>
         <el-table-column fixed="right" label="操作" width="150">
           <template scope="scope">
             <router-link to="reportdeal">
@@ -90,11 +91,13 @@ export default {
   name: 'sc-report-table',
   data () {
     return {
-      options: [],
+      searchOptions: [],
       singleSelect: '',
       selectedCatlg: '',
       caseStatus: '',
+      caseCode: -1,
       caseCatlg: [],
+      advancedForm: false,
       response: null,
       error: null
     }
@@ -111,21 +114,64 @@ export default {
     }
   },
   methods: {
+    // Handle Page Size Change
     handleSizeChange (value) {
+      if (this.caseCode !== -1) {
+        this.updateCase({
+          pageSize: value,
+          currentPage: this.response.CurrentPage,
+          status: this.caseCode
+        })
+        return
+      }
       this.getCaseList(value, this.response.currentPage)
     },
+    // Handle Page Change
     handleCurrentChange (value) {
+      if (this.caseCode !== -1) {
+        this.updateCase({
+          pageSize: this.response.pageSize,
+          currentPage: value,
+          status: this.caseCode
+        })
+        return
+      }
       this.getCaseList(this.response.pageSize, value)
     },
-    toDate (row, column) {
-      console.log('222')
-      console.log(row)
-      console.log(column)
+    // Toggle Advanced Search Form
+    onAdvancedSearch () {
+      this.advancedForm = !this.advancedForm
+    },
+    // Report Status Change
+    onStatusChanged () {
+      config.reportsStatusCatlg.forEach(item => {
+        if (item.value === this.caseStatus) {
+          this.caseCode = item.code
+        }
+      })
+
+      if (this.caseStatus === '') {
+        this.caseCode = -1
+      }
+
+      if (this.caseCode === -1) {
+        this.getCaseList(this.response.pageSize, 1)
+        return
+      }
+
+      const data = {
+        pageSize: this.response.pageSize,
+        currentPage: 1,
+        status: this.caseCode
+      }
+      console.log(`data: ${data}`)
+      this.updateCase(data)
     },
     selectCase (object) {
       this.$store.commit('SET_CURRENT_CASE', object)
       this.$router.push('reportdetail')
     },
+    // Shield Report
     shieldReport (id) {
       const caseShieldURL = config.serverURI + config.shieldCaseAPI
 
@@ -179,7 +225,7 @@ export default {
             return
           }
           if (response.data.errcode === '0000') {
-            this.response = response.data.data
+            this.response = this.transformData(response.data.data)
             console.log('Case List')
             console.log(this.response)
           }
@@ -188,6 +234,7 @@ export default {
           console.log(error)
         })
     },
+    // GET Report Catlgory Request
     getCaseCatlg () {
       const caseCatlgURL = config.serverURI + config.caseCatlgAPI
 
@@ -201,7 +248,6 @@ export default {
           }
 
           if (response.data.errcode === '0000') {
-            console.log('111')
             response.data.data.forEach(item => {
               let object = {}
               object.id = item.id
@@ -213,6 +259,52 @@ export default {
         .catch(error => {
           console.log(error)
         })
+    },
+    // Update Report List With Extra Conditions
+    updateCase (data) {
+      // TODO
+      axios.get(this.caseListURL, {
+        params: data
+      })
+      .then(response => {
+        console.log(`Case Lists Update response ${response}`)
+
+        if (response.status !== 200) {
+          this.error = response.statusText
+          return
+        }
+        if (response.data.errcode === '0000') {
+          this.response = this.transformData(response.data.data)
+          console.log('Update Case List Response Data')
+          console.log(this.response)
+        }
+      })
+      .catch(error => {
+        console.log(error)
+      })
+    },
+    // Transform Response Data
+    transformData (res) {
+      res.data.forEach(item => {
+        switch (item.status) {
+          case 1:
+            item.status = '进行中'
+            break
+          case 2:
+            item.status = '已结束'
+            break
+          case 3:
+            item.status = '已驳回'
+            break
+        }
+
+        if (item.createDate) {
+          let date = new Date(item.createDate)
+          item.createDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
+        }
+      })
+
+      return res
     }
   },
   components: {

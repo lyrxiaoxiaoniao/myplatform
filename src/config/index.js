@@ -1,5 +1,5 @@
 export default {
-  serverURI: 'http://192.168.1.34:8080',
+  serverURI: 'http://53d626cd.ngrok.io',
   menuAPI: '/admin/menu/show_left',
   appInfoAPI: '/admin/appinfo/show?code=gmaj',
   userListAPI: '/admin/user/index',
@@ -11,8 +11,8 @@ export default {
   fixedLayout: false,
   hideLogoOnMobile: false,
   reportsStatusCatlg: [
-    { value: '进行中' },
-    { value: '已结案' },
-    { value: '已驳回' }
+    { value: '进行中', code: 1 },
+    { value: '已结案', code: 2 },
+    { value: '已驳回', code: 3 }
   ]
 }
