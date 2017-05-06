@@ -52,6 +52,7 @@
 <script>
 import SidebarMenu from './SidebarMenu'
 import axios from 'axios'
+import config from 'src/config'
 
 export default {
   name: 'Sidebar',
@@ -59,9 +60,13 @@ export default {
   components: { SidebarMenu },
   data () {
     return {
-      menuURL: 'http://192.168.1.2:8080/admin/menu/show_left',
       model: null,
       error: null
+    }
+  },
+  computed: {
+    menuURL () {
+      return config.serverURI + config.menuAPI
     }
   },
   methods: {

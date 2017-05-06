@@ -1,12 +1,15 @@
 <template>
   <div v-if="response" class="sc-report-detail">
     <template>
-      <el-carousel :interval="4000" type="card" height="200px">
+      <el-carousel :interval="4000" type="card" height="300px">
         <el-carousel-item v-for="item in 6">
           <h3>{{ item }}</h3>
         </el-carousel-item>
       </el-carousel>
     </template>
+    <div class="sc-report-detail-content">
+      <h3>基本信息</h3>
+    </div>
   </div>
 </template>
 
@@ -18,7 +21,7 @@ export default {
   name: 'sc-report-detail',
   data () {
     return {
-      response: null,
+      response: 1,
       error: null
     }
   },
@@ -62,4 +65,11 @@ export default {
 </script>
 
 <style>
+ .el-carousel__item:nth-child(2n) {
+    background-color: #99a9bf;
+  }
+  
+  .el-carousel__item:nth-child(2n+1) {
+    background-color: #d3dce6;
+  }
 </style>
