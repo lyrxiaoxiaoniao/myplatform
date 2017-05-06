@@ -31,18 +31,28 @@
           </el-row>
         </el-col>
       </el-row>
+      <el-select class="catlg-select" multiple placeholder="案件分类" v-model="selectedCatlg">
+        <el-option 
+          v-for="item in caseCatlg"
+          :value="item.value">
+        </el-option>
+      </el-select>
+      <el-select class="status-select" mutiple placeholder="案件状态">
+        <el-option>
+        </el-option>
+      </el-select>
     </div>
     <div class="sc-report-table-content">
       <el-table :data="response.data" border stripe>
-        <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="id" label="ID" sortable></el-table-column>
+        <el-table-column type="selection" width="50"></el-table-column>
+        <el-table-column prop="acceptNo" label="受理号" sortable min-width="100"></el-table-column>
         <el-table-column prop="reportName" label="举报人"></el-table-column>
+        <el-table-column prop="catlgName" label="案件分类" min-width="80"></el-table-column>
         <el-table-column prop="createDate" label="举报时间" sortable></el-table-column>
-        <el-table-column prop="mobile" label="手机号码" sortable></el-table-column>
-        <el-table-column prop="address" label="事发地址"></el-table-column>
-        <el-table-column prop="description" label="案件描述"></el-table-column>
+        <el-table-column prop="mobile" label="手机号码" sortable min-width="120"></el-table-column>
+        <el-table-column prop="address" label="事发地址" min-width="180"></el-table-column>
+        <el-table-column prop="description" label="案件描述" min-width="280"></el-table-column>
         <el-table-column prop="status" label="受理状态"></el-table-column>
-        <el-table-column prop="acceptNo" label="受理号" sortable></el-table-column>
         <el-table-column fixed="right" label="操作" width="180">
           <template scope="scope">
             <router-link to="reportdeal">
@@ -81,6 +91,7 @@ export default {
   data () {
     return {
       options: [],
+      selectedCatlg: '',
       response: null,
       error: null
     }
@@ -91,6 +102,10 @@ export default {
     },
     removeCaseURL () {
       return config.serverURI + config.removeCaseAPI
+    },
+    caseCatlg () {
+      let array = []
+      console.log(array)
     }
   },
   methods: {
@@ -116,7 +131,7 @@ export default {
           }
           if (response.data.errcode === '0000') {
             this.response = response.data.data
-            console.log('user list')
+            console.log('Case List')
             console.log(this.response)
           }
         })
@@ -148,5 +163,9 @@ export default {
 
   .sc-report-table-content {
     margin-bottom: 20px;
+  }
+
+  .catlg-select {
+    margin-top: 10px;
   }
 </style>
