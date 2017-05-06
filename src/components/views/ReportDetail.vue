@@ -12,28 +12,31 @@
       <el-row type="flex">
         <el-col :span="15" :offset="2">
           <el-form labelWidth="120px" label-position="left">
-            <el-form-item label="用户昵称">
-              <el-input :disabled="true"></el-input>
+            <el-form-item label="举报人">
+              <el-input :disabled="true" v-model="response.reportName"></el-input>
             </el-form-item>
             <el-form-item label="联系方式">
-              <el-input :disabled="true" :model="response.mobile"></el-input>
+              <el-input :disabled="true" v-model="response.mobile"></el-input>
             </el-form-item>
             <el-form-item label="分类名称">
               <el-input :disabled="true"></el-input>
             </el-form-item>
-            <el-form-item label="案件地址" :model="response.address">
-              <el-input :disabled="true">
+            <el-form-item label="案件地址">
+              <el-input :disabled="true"  v-model="response.address">
                 <el-button slot="append" icon="picture" @click="openMap"></el-button>
               </el-input>
             </el-form-item>
             <el-form-item label="案件描述">
-              <el-input :disabled="true" :model="response.description"></el-input>
+              <el-input :disabled="true" v-model="response.description"></el-input>
             </el-form-item>
             <el-form-item label="提交时间">
-              <el-input :disabled="true" :model="response.createdAt"></el-input>
+              <el-input :disabled="true" v-model="response.createdAt"></el-input>
             </el-form-item>
             <el-form-item label="提交ip">
-              <el-input :disabled="true" :model="response.createOn"></el-input>
+              <el-input :disabled="true" v-model="response.createOn"></el-input>
+            </el-form-item>
+            <el-form-item label="是否匿名">
+              <el-checkbox v-model="isAnonymous" :disabled="true"></el-checkbox>
             </el-form-item>
           </el-form>
         </el-col>
@@ -45,19 +48,16 @@
         <el-col :span="15" :offset="2">
           <el-form labelWidth="120px" labelPosition="left">
             <el-form-item label="受理编号">
-              <el-input :disabled="true"></el-input>
-            </el-form-item>
-            <el-form-item label="案件编号">
-              <el-input :disabled="true"></el-input>
+              <el-input :disabled="true" v-model="response.acceptNo"></el-input>
             </el-form-item>
             <el-form-item label="上报时间">
-              <el-input :disabled="true"></el-input>
+              <el-input :disabled="true" v-model="response.createdAt"></el-input>
             </el-form-item>
             <el-form-item label="受理时间">
-              <el-input :disabled="true"></el-input>
+              <el-input :disabled="true" v-model="response.acceptDate"></el-input>
             </el-form-item>
-            <el-form-item label="处理时间">
-              <el-input :disabled="true"></el-input>
+            <el-form-item label="受理状态">
+              <el-input :disabled="true" v-model="status"></el-input>
             </el-form-item>
             <el-form-item label="处理部门">
               <el-input :disabled="true"></el-input>
@@ -117,11 +117,22 @@
   import axios from 'axios'
   import config from 'src/config'
 
+  let map = {
+    0: '新案件',
+    1: '待立案',
+    2: '立案通过',
+    3: '专业部门处理',
+    4: '结案，作废',
+    5: '结案'
+  }
+
   export default {
     name: 'sc-report-detail',
     data () {
       return {
-        response: {},
+        response: {
+          address: ''
+        },
         error: null,
         dialogFormVisible: false,
         dialogMapVisible: false,
@@ -132,10 +143,10 @@
         },
         mapData: {
           zoom: 14,
-          center: [114.130888, 22.553357],
+          center: [],
           markers: [
             {
-              position: [114.130888, 22.553357],
+              position: [],
               visible: true,
               draggable: false
             }
@@ -150,6 +161,12 @@
       },
       caseID () {
         return this.$route.params.id
+      },
+      isAnonymous () {
+        return this.response.isAnonymous
+      },
+      status () {
+        return map[this.response.status]
       }
     },
     methods: {
@@ -184,9 +201,18 @@
         this.dialogMapVisible = true
       }
     },
-    mounted () {
+    created () {
       console.log('Report Detail Mounted')
       console.log(this.$store.state.selectedCase)
+      this.response = this.$store.state.selectedCase
+      console.log(this.response.position.split(',').map((item) => {
+        return Number(item)
+      }))
+      this.mapData.center = this.response.position.split(',').map((item) => {
+        return Number(item)
+      })
+      this.mapData.markers[0].position = this.mapData.center
+      this.response.isAnonymous = !!this.response.isAnonymous
     }
   }
 </script>
