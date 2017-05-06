@@ -7,7 +7,7 @@
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel">
         <div class="pull-left image">
-          <img :src="pictureUrl" />
+          <img :src="pictureUrl"/>
         </div>
         <div class="pull-left info">
           <div>
@@ -23,12 +23,12 @@
       <form v-on:submit.prevent class="sidebar-form">
         <div class="input-group">
           <input type="text"
-            name="search"
-            id="search"
-            class="search form-control"
-            data-toggle="hideseek" p
-            laceholder="Search Menus"
-            data-list=".sidebar-menu">
+                 name="search"
+                 id="search"
+                 class="search form-control"
+                 data-toggle="hideseek" p
+                 laceholder="Search Menus"
+                 data-list=".sidebar-menu">
           <span class="input-group-btn">
             <button type="submit" name="search" id="search-btn" class="btn btn-flat">
               <i class="fa fa-search"></i>
@@ -50,50 +50,50 @@
   </aside>
 </template>
 <script>
-import SidebarMenu from './SidebarMenu'
-import axios from 'axios'
-import config from 'src/config'
+  import SidebarMenu from './SidebarMenu'
+  import axios from 'axios'
+  import config from 'src/config'
 
-export default {
-  name: 'Sidebar',
-  props: ['displayName', 'pictureUrl'],
-  components: { SidebarMenu },
-  data () {
-    return {
-      model: null,
-      error: null
-    }
-  },
-  computed: {
-    menuURL () {
-      return config.serverURI + config.menuAPI
-    }
-  },
-  methods: {
-    callMenuLeft () {
-      const _this = this
-      axios.get(this.menuURL)
-        .then(response => {
-          console.log('menuleft Response:', response.data)
+  export default {
+    name: 'Sidebar',
+    props: ['displayName', 'pictureUrl'],
+    components: {SidebarMenu},
+    data () {
+      return {
+        model: null,
+        error: null
+      }
+    },
+    computed: {
+      menuURL () {
+        return config.serverURI + config.menuAPI
+      }
+    },
+    methods: {
+      callMenuLeft () {
+        const _this = this
+        axios.get(this.menuURL)
+          .then(response => {
+            console.log('menuleft Response:', response.data)
 
-          if (response.status !== 200) {
-            this.error = response.statusText
-            return
-          }
-          console.log(response.data.data)
-          _this.model = response.data.data
-        })
-        .catch(error => {
-          // Request failed.
-          console.log('error', error.response)
-          this.error = error.response.statusText
-        })
+            if (response.status !== 200) {
+              this.error = response.statusText
+              return
+            }
+            console.log(response.data.data)
+            _this.model = response.data.data
+          })
+          .catch(error => {
+            // Request failed.
+            console.log('error', error.response)
+            this.error = error.response.statusText
+          })
+      }
+    },
+    mounted () {
+      this.callMenuLeft()
     }
-  },
-  mounted () {
-    this.callMenuLeft()
   }
-}
 </script>
 <style>
   .user-panel .image img {

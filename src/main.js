@@ -14,6 +14,7 @@ import AppView from './components/App.vue'
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
+import AMap from 'vue-amap'
 
 // Import Install and register helper items
 Vue.filter('count', count)
@@ -23,6 +24,12 @@ Vue.filter('pluralize', pluralize)
 
 Vue.use(VueRouter)
 Vue.use(ElementUI)
+Vue.use(AMap)
+
+AMap.initAMapApiLoader({
+  key: 'f0642298eddc1513362e37775c466d70',
+  plugin: ['AMap.Autocomplete', 'AMap.PlaceSearch', 'AMap.Scale', 'AMap.OverView', 'AMap.ToolBar', 'AMap.MapType', 'AMap.PolyEditor', 'AMap.CircleEditor']
+})
 
 // Routing logic
 var router = new VueRouter({
@@ -48,7 +55,6 @@ router.beforeEach((to, from, next) => {
 })
 
 sync(store, router)
-
 // Start out app!
 // eslint-disable-next-line no-new
 new Vue({
