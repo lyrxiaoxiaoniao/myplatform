@@ -30,16 +30,15 @@ export default {
       this.$router.push('/login')
     },
     setAppInfo () {
-      const URL = config.serverURI + config.appInfoAPI
-      api.request('GET', URL, {params: {id: 1}})
+      const URI = config.appInfoAPI
+      api.request('GET', URI, {params: {id: 1}})
         .then(response => {
-          console.log(`App info Response: ${response}`)
-
           if (response.status !== 200) {
             this.error = response.statusText
             return
           }
 
+          console.log(`App info Response: ${this.response}`)
           this.response = response.data.data
         })
         .catch(error => {
