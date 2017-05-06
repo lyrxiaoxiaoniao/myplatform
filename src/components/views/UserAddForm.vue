@@ -1,40 +1,34 @@
 <template>
   <div class="userAddForm">
-    <el-row type="flex" justify="center">
-      <el-col :span="12">
+    <el-row type="flex" >
+      <el-col :span="10" :offset="5">
         <el-form :model="dataForm" :rules="rules" ref="dataForm"
-                 labelWidth="120px" class="addUser">
-          <el-row>
-            <el-col :span="12">
-              <el-form-item label="用户名" prop="username">
-                <el-input v-model="dataForm.username"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="密码" prop="password">
-                <el-input v-model="dataForm.password" type="password"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12">
+                 labelWidth="120px" class="addUser" label-position="top">
+          <el-form-item label="用户名" prop="username">
+            <el-input v-model="dataForm.username"></el-input>
+          </el-form-item>
+          <el-form-item label="密码" prop="password">
+            <el-input v-model="dataForm.password" type="password"></el-input>
+          </el-form-item>
+          <el-row type="flex" justify="space-between">
+            <el-col :span="11">
               <el-form-item label="昵称" prop="nickname">
                 <el-input v-model="dataForm.nickname"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="11">
               <el-form-item label="邮箱" prop="email">
                 <el-input v-model="dataForm.email" type="email"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row>
-            <el-col :span="12">
+          <el-row type="flex" justify="space-between">
+            <el-col :span="11">
               <el-form-item label="移动/固定电话" prop="phone">
                 <el-input v-model="dataForm.phone"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="11">
               <el-form-item label="用户类型" prop="userType">
                 <el-select v-model="dataForm.userType" placeholder="请选择">
                   <el-option label="游客" value="visitor"></el-option>
@@ -44,39 +38,39 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row>
-            <el-col :span="12">
+          <div class="formGap"></div>
+          <el-row type="flex" justify="space-between">
+            <el-col :span="11">
               <el-form-item label='真实姓名' prop="realName">
                 <el-input v-model="dataForm.realName"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="11">
               <el-form-item label="身份证号">
                 <el-input v-model="dataForm.pid"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row>
-            <el-col :span="12">
+          <el-row type="flex" justify="space-between">
+            <el-col :span="11">
               <el-form-item label="联系地址">
                 <el-input v-model="dataForm.address"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="11">
               <el-form-item label="紧急联系人信息">
                 <el-input v-model="dataForm.emergencyContact"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
-            <el-col :span="12">
+            <el-col :span="11">
               <el-form-item label="备注">
                 <el-input v-model="dataForm.info"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="12"></el-col>
           </el-row>
-          <el-row>
+          <el-row type="flex" justify="space-between">
             <el-col :span="12">
               <el-form-item label="身份证正面照">
                 <el-upload
@@ -187,8 +181,12 @@
 
   .userAddForm {
     border-top: 1px solid lightgray;
-    padding-top: 2rem;
+    padding-top: 4rem;
     margin-top: 2rem;
+  }
+
+  .formGap {
+
   }
 
   .avatar-uploader .el-upload {

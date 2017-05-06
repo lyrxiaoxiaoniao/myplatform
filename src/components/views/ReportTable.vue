@@ -55,7 +55,9 @@
         <el-table-column prop="status" label="受理状态"></el-table-column>
         <el-table-column fixed="right" label="操作" width="180">
           <template scope="scope">
-            <el-button size="small" icon="edit"></el-button>
+            <router-link to="reportdeal">
+              <el-button size="small" icon="edit"></el-button>
+            </router-link>
             <el-button size="small" icon="circle-cross"></el-button>
             <el-button size="small" icon="information"></el-button>
           </template>
