@@ -53,3 +53,8 @@ export default {
   }
 }
 </script>
+<style>
+  .el-upload__input {
+    display: none !important;
+  }
+</style>
