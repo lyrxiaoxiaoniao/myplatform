@@ -1,5 +1,37 @@
 <template>
   <div v-if="response" class="sc-report-table">
+    <transition name="fade">
+      <el-form v-if="advancedForm" class="search-form" :model="searchForm" :label-position="left" :label-width="'80px'">
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="受理号">
+              <el-input v-model="searchForm.acceptNo"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="举报人">
+              <el-input v-model="searchForm.reportName"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="隐患单位">
+              <el-input v-model="searchForm.hiddenUint"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-form-item label="创建时间">
+            <el-col :span="4">
+              <el-date-picker type="date" placeholder="开始日期" v-model="searchForm.startTime"></el-date-picker>
+            </el-col>
+            <el-col :span="1">-</el-col>
+            <el-col :span="4">
+              <el-date-picker type="date" placeholder="结束日期" v-model="searchForm.endTime"></el-date-picker>
+            </el-col>
+          </el-form-item>
+        </el-row>
+      </el-form>
+    </transition>
     <div class="sc-report-table-header">
       <el-row type="flex" justify="space-around">
         <el-col :span="16">
@@ -19,8 +51,8 @@
               <el-input v-model="searchInput" placeholder="请输入内容" class="sc-table-header-select"></el-input>
             </el-col>
             <el-col :span="8">
-              <el-button class="sc-table-search-btn" type="primary">搜索</el-button>
-              <el-button type="primary" icon="search">高级搜索</el-button>
+              <el-button class="sc-table-search-btn" type="primary" @click="onSearch">搜索</el-button>
+              <el-button type="primary" icon="search" @click="onAdvancedSearch">高级搜索</el-button>
             </el-col>
           </el-row>
         </el-col>
@@ -37,7 +69,7 @@
           :value="item.value">
         </el-option>
       </el-select>
-      <el-select class="status-select" mutiple placeholder="案件状态" v-model="caseStatus" @change="onStatusChanged" clearable>
+      <el-select class="status-select" mutiple placeholder="案件状态" v-model="searchForm.status" @change="onStatusChanged" clearable>
         <el-option
           v-for="item in caseStatusCatlg"
           :value="item.value">
@@ -52,7 +84,7 @@
         <el-table-column prop="catlgName" label="案件分类" min-width="80"></el-table-column>
         <el-table-column prop="address" label="事发地址" min-width="180"></el-table-column>
         <el-table-column prop="description" label="案件描述" min-width="200"></el-table-column>
-        <el-table-column prop="createDate" label="举报时间" sortable></el-table-column>
+        <el-table-column prop="createdAt" label="举报时间" sortable></el-table-column>
         <el-table-column prop="status" label="状态"></el-table-column>
         <el-table-column fixed="right" label="操作" width="150">
           <template scope="scope">
@@ -91,13 +123,27 @@ export default {
   name: 'sc-report-table',
   data () {
     return {
-      searchOptions: [],
-      singleSelect: '',
+      searchOptions: [
+        { value: 'acceptNo', label: '受理号' },
+        { value: 'reportName', label: '举报人' },
+        { value: 'hiddenUnit', label: '隐患单位' }
+      ],
+      // Single Search Select
+      searchSelect: '',
+      // Single Search Input
+      searchInput: '',
       selectedCatlg: '',
-      caseStatus: '',
       caseCode: -1,
       caseCatlg: [],
       advancedForm: false,
+      searchForm: {
+        status: '',
+        acceptNo: '',
+        reportName: '',
+        hiddenUnit: '',
+        startTime: '',
+        endTime: ''
+      },
       response: null,
       error: null
     }
@@ -116,24 +162,30 @@ export default {
   methods: {
     // Handle Page Size Change
     handleSizeChange (value) {
-      if (this.caseCode !== -1) {
-        this.updateCase({
+      if (this.caseCode !== -1 || this.searchInput !== '' || this.advancedForm) {
+        let data = {
           pageSize: value,
-          currentPage: this.response.CurrentPage,
-          status: this.caseCode
-        })
+          currentPage: this.response.currentPage,
+          ...this.searchForm
+        }
+        data[this.searchSelect] = this.searchInput
+        data.status = this.caseCode === -1 ? '' : this.caseCode
+        this.updateCase(data)
         return
       }
       this.getCaseList(value, this.response.currentPage)
     },
     // Handle Page Change
     handleCurrentChange (value) {
-      if (this.caseCode !== -1) {
-        this.updateCase({
+      if (this.caseCode !== -1 || this.searchInput !== '' || this.advancedForm) {
+        let data = {
           pageSize: this.response.pageSize,
           currentPage: value,
-          status: this.caseCode
-        })
+          ...this.searchForm
+        }
+        data[this.searchSelect] = this.searchInput
+        data.status = this.caseCode === -1 ? '' : this.caseCode
+        this.updateCase(data)
         return
       }
       this.getCaseList(this.response.pageSize, value)
@@ -145,31 +197,56 @@ export default {
     // Report Status Change
     onStatusChanged () {
       config.reportsStatusCatlg.forEach(item => {
-        if (item.value === this.caseStatus) {
+        if (item.value === this.searchForm.status) {
           this.caseCode = item.code
         }
       })
 
-      if (this.caseStatus === '') {
+      if (this.searchForm.status === '') {
         this.caseCode = -1
       }
 
-      if (this.caseCode === -1) {
-        this.getCaseList(this.response.pageSize, 1)
-        return
-      }
-
-      const data = {
+      let data = {
         pageSize: this.response.pageSize,
         currentPage: 1,
-        status: this.caseCode
+        ...this.searchForm
       }
-      console.log(`data: ${data}`)
+      data.status = this.caseCode === -1 ? '' : this.caseCode
+      if (this.searchInput !== '') {
+        data[this.searchSelect] = this.searchInput
+      }
       this.updateCase(data)
     },
     selectCase (object) {
       this.$store.commit('SET_CURRENT_CASE', object)
       this.$router.push('reportdetail')
+    },
+    // Calling Search API
+    onSearch () {
+      if (this.advancedForm) {
+        // Advanced Search
+        const data = {
+          currentPage: this.response.currentPage,
+          pageSize: this.response.pageSize,
+          ...this.searchForm
+        }
+
+        this.updateCase(data)
+      } else {
+        // Single Search
+        let data = {
+          currentPage: 1,
+          pageSize: this.response.pageSize
+          // caseCatlg
+        }
+
+        if (this.caseCode !== -1) {
+          data.status = this.caseCode
+        }
+
+        data[this.searchSelect] = this.searchInput
+        this.updateCase(data)
+      }
     },
     // Shield Report
     shieldReport (id) {
@@ -197,6 +274,7 @@ export default {
               message: '屏蔽成功',
               type: 'success'
             })
+            // TODO
             this.getCaseList(this.response.pageSize, this.response.currentPage)
           }
         })
@@ -261,8 +339,9 @@ export default {
         })
     },
     // Update Report List With Extra Conditions
-    updateCase (data) {
+    updateCase (form) {
       // TODO
+      const data = this.transformSearchForm(form)
       axios.get(this.caseListURL, {
         params: data
       })
@@ -291,20 +370,32 @@ export default {
             item.status = '进行中'
             break
           case 2:
-            item.status = '已结束'
+            item.status = '已结案'
             break
           case 3:
             item.status = '已驳回'
             break
         }
 
-        if (item.createDate) {
-          let date = new Date(item.createDate)
-          item.createDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
+        if (item.createdAt) {
+          let date = new Date(item.createdAt)
+          const month = date.getMonth() + 1
+          item.createdAt = `${date.getFullYear()}-${month}-${date.getDate()}`
         }
       })
 
       return res
+    },
+    transformSearchForm (data) {
+      if (data.startTime && data.startTime !== '') {
+        const start = new Date(data.startTime.toString()).getTime()
+        data.startTime = start
+      }
+      if (data.endTime && data.endTime !== '') {
+        const end = new Date(data.endTime.toString()).getTime()
+        data.endTime = end
+      }
+      return data
     }
   },
   components: {
@@ -325,8 +416,18 @@ export default {
     margin-right: 2rem;
   }
 
+  .search-form {
+    border: 1px solid lightgray;
+    padding: 20px;
+    margin-bottom: 10px;
+  }
+
   .sc-report-table-header {
     margin-bottom: 20px;
+  }
+
+  .sc-table-search-btn {
+    margin-left: 20px;
   }
 
   .sc-report-table-content {
@@ -335,5 +436,12 @@ export default {
 
   .catlg-select {
     margin-top: 10px;
+  }
+
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity .5s
+  }
+  .fade-enter, .fade-leave-active {
+    opacity: 0
   }
 </style>
