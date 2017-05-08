@@ -285,12 +285,7 @@
       }
     },
     created () {
-      console.log('Report Detail Mounted')
-      console.log(this.$store.state.selectedCase)
       this.response = this.$store.state.selectedCase
-      console.log(this.response.position.split(',').map((item) => {
-        return Number(item)
-      }))
       this.mapData.center = this.response.position.split(',').map((item) => {
         return Number(item)
       })

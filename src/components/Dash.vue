@@ -3,11 +3,12 @@
     <header class="main-header">
       <a href="/" class="logo">
         <!-- mini logo for sidebar mini 40x50 pixels -->
-        <span class="logo-mini"><img src="/static/img/copilot-logo-white.svg" alt="Logo" class="img-responsive center-block"></span>
+        <span class="logo-mini"><img src="/static/img/copilot-logo-white.svg" alt="Logo"
+                                     class="img-responsive center-block"></span>
         <!-- logo for regular state and mobile devices -->
         <div class="logo-lg">
           <img src="/static/img/copilot-logo-white.svg" alt="Logo" class="img-responsive">
-          <span>CoPilot</span>
+          <span>{{ appInfo.appName }}</span>
         </div>
       </a>
 
@@ -36,6 +37,10 @@
                         <!-- Message title and timestamp -->
                         <h4>
                           Support Team
+
+
+
+
                           <small><i class="fa fa-clock-o"></i> 5 mins</small>
                         </h4>
                         <!-- The message -->
@@ -90,17 +95,21 @@
                         <!-- Task title and progress text -->
                         <h3>
                           Design some buttons
+
+
+
+
                           <small class="pull-right">20%</small>
                         </h3>
                         <!-- The progress bar -->
                         <div class="progress xs">
                           <!-- Change the css width attribute to simulate progress -->
                           <div class="progress-bar progress-bar-aqua"
-                            style="width: 20%"
-                            role="progressbar"
-                            aria-valuenow="20"
-                            aria-valuemin="0"
-                            aria-valuemax="100">
+                               style="width: 20%"
+                               role="progressbar"
+                               aria-valuenow="20"
+                               aria-valuemin="0"
+                               aria-valuemax="100">
                             <span class="sr-only">20% Complete</span>
                           </div>
                         </div>
@@ -130,7 +139,7 @@
     </header>
     <!-- Left side column. contains the logo and sidebar -->
     <sidebar :display-name="demo.displayName"
-             :picture-url="demo.avatar" />
+             :picture-url="demo.avatar"/>
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
@@ -138,6 +147,10 @@
       <section class="content-header">
         <h1>
           {{$route.name.toUpperCase() }}
+
+
+
+
           <small>{{ $route.meta.description }}</small>
         </h1>
         <ol class="breadcrumb">
@@ -152,103 +165,132 @@
 
     <!-- Main Footer -->
     <footer class="main-footer">
-      <strong>Copyright &copy; {{year}} <a href="javascript:;">CoPilot</a>.</strong> All rights reserved.
+      <strong>Copyright &copy; {{year}} <a href="http://www.shencom.cn/">{{ appInfo.systemAuthor }}</a>.</strong> All rights reserved.
+
+
+
+
     </footer>
   </div>
   <!-- ./wrapper -->
 </template>
 
 <script>
-import faker from 'faker'
-import { mapState } from 'vuex'
-import config from '../config'
-import Sidebar from './Sidebar'
-import 'hideseek'
+  import faker from 'faker'
+  import api from '../api'
+  import {mapState} from 'vuex'
+  import config from '../config'
+  import Sidebar from './Sidebar'
+  import 'hideseek'
 
-export default {
-  name: 'Dash',
-  components: {
-    Sidebar
-  },
-  data: function () {
-    return {
-      // section: 'Dash',
-      year: new Date().getFullYear(),
-      classes: {
-        fixed_layout: config.fixedLayout,
-        hide_logo: config.hideLogoOnMobile
-      },
-      error: ''
-    }
-  },
-  computed: {
-    ...mapState([
-      'userInfo'
-    ]),
-    demo () {
+  export default {
+    name: 'Dash',
+    components: {
+      Sidebar
+    },
+    data: function () {
       return {
-        displayName: faker.name.findName(),
-        avatar: faker.image.avatar(),
-        email: faker.internet.email(),
-        randomCard: faker.helpers.createCard()
+        // section: 'Dash',
+        year: new Date().getFullYear(),
+        classes: {
+          fixed_layout: config.fixedLayout,
+          hide_logo: config.hideLogoOnMobile
+        },
+        error: '',
+        appInfo: {}
       }
-    }
-  },
-  methods: {
-    changeloading () {
-      this.$store.commit('TOGGLE_SEARCHING')
+    },
+    computed: {
+      ...mapState([
+        'userInfo'
+      ]),
+      demo () {
+        return {
+          displayName: faker.name.findName(),
+          avatar: faker.image.avatar(),
+          email: faker.internet.email(),
+          randomCard: faker.helpers.createCard()
+        }
+      }
+    },
+    methods: {
+      changeloading () {
+        this.$store.commit('TOGGLE_SEARCHING')
+      },
+      getAppInfo () {
+        this.appInfo = this.$store.state.appInfo
+      },
+      setAppInfo () {
+        const URI = config.appInfoAPI
+        api.request('GET', URI, {params: {id: 1}})
+          .then(response => {
+            if (response.status !== 200) {
+              this.error = response.statusText
+              return
+            }
+
+            console.log(response.data.data, 'appinfo')
+            this.appInfo = response.data.data
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      }
+    },
+    created () {
+      this.setAppInfo()
     }
   }
-}
 </script>
 
 <style lang="scss">
-.wrapper.fixed_layout {
-  .main-header {
-    position: fixed;
-    width: 100%;
-  }
+  .wrapper.fixed_layout {
+    .main-header {
+      position: fixed;
+      width: 100%;
+    }
 
-  .content-wrapper {
-    padding-top: 50px;
-  }
+    .content-wrapper {
+      padding-top: 50px;
+    }
 
-  .main-sidebar {
-    position: fixed;
-    height: 100vh;
-  }
-}
-
-.wrapper.hide_logo {
-  @media (max-width: 767px) {
-    .main-header .logo {
-      display: none;
+    .main-sidebar {
+      position: fixed;
+      height: 100vh;
     }
   }
-}
 
-.logo-mini, .logo-lg {
-  text-align: left;
-
-  img {
-    padding: .4em;
+  .wrapper.hide_logo {
+    @media (max-width: 767px) {
+      .main-header .logo {
+        display: none;
+      }
+    }
   }
-}
 
-.logo-lg {
-  img {
-    display: -webkit-inline-box;
-    width: 25%;
+  .logo-mini, .logo-lg {
+    text-align: left;
+
+    img {
+      padding: .4em;
+    }
   }
-}
-.user-panel {
-  height: 4em;
-}
 
-hr.visible-xs-block {
-  width: 100%;
-  background-color: rgba(0, 0, 0, 0.17);
-  height: 1px;
-  border-color: transparent;
-}
+  .logo-lg {
+    img {
+      display: -webkit-inline-box;
+      width: 25%;
+    }
+  }
+
+  .user-panel {
+    height: 4em;
+  }
+
+  hr.visible-xs-block {
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.17);
+    height: 1px;
+    border-color: transparent;
+  }
 </style>
