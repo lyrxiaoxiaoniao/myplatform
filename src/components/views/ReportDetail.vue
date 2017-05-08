@@ -2,8 +2,8 @@
   <div v-if="response" class="sc-report-detail">
     <template>
       <el-carousel :interval="4000" type="card" height="300px">
-        <el-carousel-item v-for="item in 6">
-          <h3>{{ item }}</h3>
+        <el-carousel-item v-for="item in this.response.images">
+          <img :src="item.fileUrl" alt="image">
         </el-carousel-item>
       </el-carousel>
     </template>
@@ -114,107 +114,105 @@
 </template>
 
 <script>
-  import axios from 'axios'
-  import config from 'src/config'
+import axios from 'axios'
+import config from 'src/config'
 
-  let map = {
-    0: '新案件',
-    1: '待立案',
-    2: '立案通过',
-    3: '专业部门处理',
-    4: '结案，作废',
-    5: '结案'
-  }
+let map = {
+  0: '新案件',
+  1: '待立案',
+  2: '立案通过',
+  3: '专业部门处理',
+  4: '结案，作废',
+  5: '结案'
+}
 
-  export default {
-    name: 'sc-report-detail',
-    data () {
-      return {
-        response: {
-          address: ''
-        },
-        error: null,
-        dialogFormVisible: false,
-        dialogMapVisible: false,
-        detailDealForm: {
-          method: '',
-          status: ''
+export default {
+  name: 'sc-report-detail',
+  data () {
+    return {
+      response: {
+        address: ''
+      },
+      error: null,
+      dialogFormVisible: false,
+      dialogMapVisible: false,
+      detailDealForm: {
+        method: '',
+        status: ''
 
-        },
-        mapData: {
-          zoom: 14,
-          center: [],
-          markers: [
-            {
-              position: [],
-              visible: true,
-              draggable: false
-            }
-          ]
-        },
-        formLabelWidth: '120px'
-      }
-    },
-    computed: {
-      reportDetailURL () {
-        return config.serverURI + config.caseDetailAPI
       },
-      caseID () {
-        return this.$route.params.id
+      mapData: {
+        zoom: 14,
+        center: [],
+        markers: [
+          {
+            position: [],
+            visible: true,
+            draggable: false
+          }
+        ]
       },
-      isAnonymous () {
-        return this.response.isAnonymous
-      },
-      status () {
-        return map[this.response.status]
-      }
-    },
-    methods: {
-      getCaseDetail (id) {
-        axios.get(this.reportdetail, {
-          id: this.caseID
-        })
-          .then(response => {
-            console.log(`Case Detail response ${response}`)
-
-            if (response.status !== 200) {
-              this.error = response.statusText
-              return
-            }
-            if (response.data.errcode === '0000') {
-              this.response = response.data.data
-              console.log('case detail')
-              console.log(this.response, 'aaa')
-            }
-          })
-          .catch(error => {
-            console.log(error)
-          })
-      },
-      detailBack () {
-        window.history.back()
-      },
-      detailDeal () {
-        this.dialogFormVisible = true
-      },
-      openMap () {
-        this.dialogMapVisible = true
-      }
-    },
-    created () {
-      console.log('Report Detail Mounted')
-      console.log(this.$store.state.selectedCase)
-      this.response = this.$store.state.selectedCase
-      console.log(this.response.position.split(',').map((item) => {
-        return Number(item)
-      }))
-      this.mapData.center = this.response.position.split(',').map((item) => {
-        return Number(item)
-      })
-      this.mapData.markers[0].position = this.mapData.center
-      this.response.isAnonymous = !!this.response.isAnonymous
+      formLabelWidth: '120px'
     }
+  },
+  computed: {
+    reportDetailURL () {
+      return config.serverURI + config.caseDetailAPI
+    },
+    caseID () {
+      return this.$route.params.id
+    },
+    isAnonymous () {
+      return this.response.isAnonymous
+    },
+    status () {
+      return map[this.response.status]
+    }
+  },
+  methods: {
+    getCaseDetail (id) {
+      axios.get(this.reportdetail, {
+        id: this.caseID
+      })
+        .then(response => {
+          console.log(`Case Detail response ${response}`)
+
+          if (response.status !== 200) {
+            this.error = response.statusText
+            return
+          }
+          if (response.data.errcode === '0000') {
+            this.response = response.data.data
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
+    detailBack () {
+      window.history.back()
+    },
+    detailDeal () {
+      this.dialogFormVisible = true
+    },
+    openMap () {
+      this.dialogMapVisible = true
+    }
+  },
+  created () {
+    console.log('Report Detail Mounted')
+    console.log(this.$store.state.selectedCase)
+    this.response = this.$store.state.selectedCase
+    console.log(this.response.position.split(',').map((item) => {
+      return Number(item)
+    }))
+    this.mapData.center = this.response.position.split(',').map((item) => {
+      return Number(item)
+    })
+    this.mapData.markers[0].position = this.mapData.center
+    this.response.isAnonymous = !!this.response.isAnonymous
   }
+}
 </script>
 
 <style>

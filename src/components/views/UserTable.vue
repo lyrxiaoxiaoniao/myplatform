@@ -73,7 +73,7 @@
       </el-row>
     </div>
     <div class="sc-table-content">
-      <el-table :data="response.data" border stripe :default-sort="{prop: 'date', order: 'descending'}">
+      <el-table :data="response.data" @cell-click="onTableClick" border stripe :default-sort="{prop: 'date', order: 'descending'}">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="id" label="ID" width="80" sortable></el-table-column>
         <el-table-column prop="username" label="用户名" width="100"></el-table-column>
@@ -182,8 +182,14 @@ export default {
   },
   components: {},
   methods: {
+    onTableClick (row, column, cell, event) {
+      console.log(row)
+      console.log(column)
+      // TODO
+      // call isLock API
+    },
     handleClose (tag, tagList) {
-      //  todo
+      //  Todo
       tagList.splice(tagList.indexOf(tag), 1)
     },
     showInput (id) {
