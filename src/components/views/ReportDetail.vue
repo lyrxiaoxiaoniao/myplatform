@@ -4,7 +4,7 @@
       <el-row type="flex">
         <el-col :span="10" :offset="1" style="padding: 1rem">
           <ul class="sc-report-detail-content-basement">
-            <li><h2>基本信息</h2></li>
+            <li><h3>基本信息</h3></li>
             <li>
               <el-row :span="10">
                 <el-col :span="5">举报人： </el-col>
@@ -67,7 +67,7 @@
             </li>
           </ul>
           <ul class="sc-report-detail-content-deal">
-            <li><h2>受理信息</h2></li>
+            <li><h3>受理信息</h3></li>
             <li>
               <el-row :span="10">
                 <el-col :span="5">受理编号： </el-col>
@@ -285,12 +285,7 @@
       }
     },
     created () {
-      console.log('Report Detail Mounted')
-      console.log(this.$store.state.selectedCase)
       this.response = this.$store.state.selectedCase
-      console.log(this.response.position.split(',').map((item) => {
-        return Number(item)
-      }))
       this.mapData.center = this.response.position.split(',').map((item) => {
         return Number(item)
       })
@@ -330,7 +325,8 @@
 
   .sc-report-detail-content-basement, .sc-report-detail-content-deal {
     list-style: none;
-    font-size: 2rem;
+    font-size: 1.5rem;
+    color: #666;
     border: 1px solid lightgray;
     background-color: white;
     padding-right: 2rem;
