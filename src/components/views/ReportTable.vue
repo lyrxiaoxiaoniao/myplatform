@@ -33,7 +33,7 @@
       </el-form>
     </transition>
     <div class="sc-report-table-header">
-      <el-row type="flex" justify="space-around">
+      <el-row type="flex" justify="space-between">
         <el-col :span="16">
           <el-row type="flex">
             <el-col :span="4">
@@ -50,13 +50,14 @@
             <el-col :span="6">
               <el-input v-model="searchInput" placeholder="请输入内容" class="sc-table-header-select"></el-input>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="10" justify="start">
               <el-button class="sc-table-search-btn" type="primary" @click="onSearch">搜索</el-button>
               <el-button type="primary" icon="search" @click="onAdvancedSearch">高级搜索</el-button>
+              <el-button type="primary" @click="resetTable">重置</el-button>
             </el-col>
           </el-row>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="6">
           <el-row type="flex" justify="end">
             <el-button type="primary" icon="upload2"></el-button>
             <el-button type="primary" icon="setting"></el-button>
@@ -88,11 +89,8 @@
         <el-table-column prop="status" label="状态"></el-table-column>
         <el-table-column fixed="right" label="操作" width="150">
           <template scope="scope">
-            <router-link to="reportdeal">
-              <el-button size="small" icon="edit"></el-button>
-            </router-link>
-            <el-button size="small" icon="circle-cross" @click="shieldReport(scope.row.id)"></el-button>
             <el-button size="small" icon="information" @click="selectCase(scope.row)"></el-button>
+            <el-button size="small" icon="circle-cross" @click="shieldReport(scope.row.id)"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -160,6 +158,14 @@ export default {
     }
   },
   methods: {
+    resetTable () {
+      this.getCaseList()
+      this.searchSelect = ''
+      this.searchInput = ''
+      for (let key in this.searchForm) {
+        this.searchForm[key] = ''
+      }
+    },
     // Handle Page Size Change
     handleSizeChange (value) {
       if (this.caseCode !== -1 || this.searchInput !== '' || this.advancedForm) {
