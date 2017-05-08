@@ -1,5 +1,5 @@
 export default {
-  serverURI: 'http://192.168.1.34:8080',
+  serverURI: 'http://c57e044c.ngrok.io',
   menuAPI: '/admin/menu/show_left',
   appInfoAPI: '/admin/appinfo/show?code=gmaj',
   userListAPI: '/admin/user/index',

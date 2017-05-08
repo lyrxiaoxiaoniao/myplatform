@@ -280,8 +280,15 @@ export default {
               message: '屏蔽成功',
               type: 'success'
             })
-            // TODO
-            this.getCaseList(this.response.pageSize, this.response.currentPage)
+            let data = {
+              pageSize: this.response.pageSize,
+              currentPage: this.response.currentPage,
+              ...this.searchForm
+            }
+            if (this.searchInput !== '') {
+              data[this.searchSelect] = this.searchInput
+            }
+            this.updateCase(data)
           }
         })
         .catch(error => {
