@@ -19,6 +19,7 @@ import SCUserAddFormView from './components/views/UserAddForm'
 import SCReportDeatilView from './components/views/ReportDetail'
 import SCArticleTableView from './components/views/ArticleTable'
 import SCArticleAddFormView from './components/views/ArticleAddForm.vue'
+import SCArticleDetailView from './components/views/ArticleDetail.vue'
 
 // Routes
 const routes = [
@@ -97,10 +98,15 @@ const routes = [
         name: '文章管理',
         meta: {description: '文章管理列表'}
       }, {
-        path: 'articleAdd',
+        path: 'articleadd',
         component: SCArticleAddFormView,
         name: '文章添加',
         meta: {description: '添加文章信息'}
+      }, {
+        path: 'articledetail',
+        component: SCArticleDetailView,
+        name: '文章详情',
+        meta: {description: '查看文章详情'}
       }
     ]
   }, {

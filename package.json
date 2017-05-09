@@ -31,8 +31,7 @@
     "vue-resource": "^1.0.3",
     "vue-router": "^2.0.1",
     "vuex": "^2.0.0",
-    "vuex-router-sync": "^4.1.2",
-    "wangeditor": "^2.1.23"
+    "vuex-router-sync": "^4.1.2"
   },
   "devDependencies": {
     "autoprefixer": "^6.4.0",
