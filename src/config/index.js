@@ -1,5 +1,5 @@
 export default {
-  serverURI: 'http://192.168.1.34:8080',
+  serverURI: 'http://192.168.1.5:8080',
   menuAPI: '/admin/menu/show_left',
   appInfoAPI: '/admin/appinfo/show?code=gmaj',
   userListAPI: '/admin/user/index',
@@ -11,6 +11,7 @@ export default {
   uploadImgAPI: '/cms/image/upload',
   articleAPI: '/cms/article/index',
   articleCatlgAPI: '/cms/category/index',
+  deleteArticleAPI: '/cms/article/delete',
   fixedLayout: false,
   hideLogoOnMobile: false,
   reportsStatusCatlg: [
