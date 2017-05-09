@@ -116,7 +116,8 @@
             </li>
           </ul>
         </el-col>
-        <el-col :span="11" :offset="1">
+        <el-col :span="11" :offset="1" class="imgListWrapper">
+          <h3>图片列表</h3>
           <ul class="sc-report-detail-img-wrapper">
             <li v-for="(item,index) in response.images" :key="item">
               <a href="javascript:;" class="thumbnail" @click="openImg(item.fileUrl,index)">
@@ -168,7 +169,8 @@
       </div>
     </el-dialog>
     <el-dialog title="现场照片" v-model="dialogImgVisible">
-      <el-carousel indicator-position="outside" :autoplay="false" :height="imgNaturalWidth" @change="changeImg" ref="carousel">
+      <el-carousel indicator-position="outside" :autoplay="false" :height="imgNaturalWidth" @change="changeImg"
+                   ref="carousel">
         <el-carousel-item v-for="(item, index) in response.images" :key="item" :name="item.fileName">
           <img :src="item.fileUrl">
         </el-carousel-item>
@@ -352,14 +354,24 @@
     border: none;
   }
 
-  .sc-report-detail-img-wrapper {
-    list-style: none;
-    display: flex;
+  .imgListWrapper {
     padding: 1rem;
     margin-top: 1rem;
+    margin-bottom: 2rem;
 
     border: 1px solid lightgray;
     background-color: white;
+  }
+
+  .imgListWrapper h3 {
+    margin-left: 3rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid lightgray;
+  }
+
+  .sc-report-detail-img-wrapper {
+    list-style: none;
+    display: flex;
   }
 
   .sc-report-detail-img-wrapper img {
