@@ -1,5 +1,5 @@
 export default {
-  serverURI: 'http://c57e044c.ngrok.io',
+  serverURI: 'http://192.168.1.5:8080',
   menuAPI: '/admin/menu/show_left',
   appInfoAPI: '/admin/appinfo/show?code=gmaj',
   userListAPI: '/admin/user/index',
@@ -9,11 +9,13 @@ export default {
   caseDetailAPI: '/cmplnt/content/show',
   caseCatlgAPI: '/cmplnt/category/index',
   uploadImgAPI: '/cms/image/upload',
+  articleAPI: '/cms/article/index',
+  articleCatlgAPI: '/cms/category/index',
   fixedLayout: false,
   hideLogoOnMobile: false,
   reportsStatusCatlg: [
-    { value: '进行中', code: 1 },
-    { value: '已结案', code: 2 },
-    { value: '已驳回', code: 3 }
+    { label: '进行中', value: 1 },
+    { label: '已结案', value: 2 },
+    { label: '已驳回', value: 3 }
   ]
 }

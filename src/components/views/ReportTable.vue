@@ -20,12 +20,36 @@
           </el-col>
         </el-row>
         <el-row>
+          <el-col :span="6">
+            <el-form-item label="案件分类">
+              <el-select class="catlg-select" placeholder="案件分类" v-model="searchForm.catlgName">
+                <el-option 
+                  v-for="item in caseCatlg"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="案件状态">
+              <el-select class="status-select" placeholder="案件状态" v-model="searchForm.status" clearable>
+                <el-option
+                  v-for="item in caseStatusCatlg"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
           <el-form-item label="创建时间">
-            <el-col :span="4">
+            <el-col :span="5">
               <el-date-picker type="date" placeholder="开始日期" v-model="searchForm.startTime"></el-date-picker>
             </el-col>
-            <el-col :span="1">-</el-col>
-            <el-col :span="4">
+            <el-col :span="5">
               <el-date-picker type="date" placeholder="结束日期" v-model="searchForm.endTime"></el-date-picker>
             </el-col>
           </el-form-item>
@@ -64,30 +88,19 @@
           </el-row>
         </el-col>
       </el-row>
-      <el-select class="catlg-select" multiple placeholder="案件分类" v-model="selectedCatlg">
-        <el-option 
-          v-for="item in caseCatlg"
-          :value="item.value">
-        </el-option>
-      </el-select>
-      <el-select class="status-select" mutiple placeholder="案件状态" v-model="searchForm.status" @change="onStatusChanged" clearable>
-        <el-option
-          v-for="item in caseStatusCatlg"
-          :value="item.value">
-        </el-option>
-      </el-select>
     </div>
     <div class="sc-report-table-content">
       <el-table :data="response.data" border stripe>
-        <el-table-column type="selection" width="50"></el-table-column>
-        <el-table-column prop="acceptNo" label="受理号" sortable min-width="100"></el-table-column>
-        <el-table-column prop="reportName" label="举报人"></el-table-column>
-        <el-table-column prop="catlgName" label="案件分类" min-width="80"></el-table-column>
+        <el-table-column type="selection" width="40"></el-table-column>
+        <el-table-column prop="acceptNo" label="受理号" sortable min-width="90"></el-table-column>
+        <el-table-column prop="reportName" label="举报人" width="80"></el-table-column>
+        <el-table-column prop="catlgName" label="案件分类" min-width="90"></el-table-column>
+        <el-table-column prop="hiddenUnit" label="隐患单位" width="100"></el-table-column>
         <el-table-column prop="address" label="事发地址" min-width="180"></el-table-column>
         <el-table-column prop="description" label="案件描述" min-width="200"></el-table-column>
-        <el-table-column prop="createdAt" label="举报时间" sortable></el-table-column>
-        <el-table-column prop="status" label="状态"></el-table-column>
-        <el-table-column fixed="right" label="操作" width="150">
+        <el-table-column prop="createdAt" label="举报时间" sortable width="100"></el-table-column>
+        <el-table-column prop="status" label="状态" min-width="80"></el-table-column>
+        <el-table-column label="操作" min-width="120">
           <template scope="scope">
             <el-button size="small" icon="information" @click="selectCase(scope.row)"></el-button>
             <el-button size="small" icon="circle-cross" @click="shieldReport(scope.row.id)"></el-button>
@@ -131,7 +144,6 @@ export default {
       // Single Search Input
       searchInput: '',
       selectedCatlg: '',
-      caseCode: -1,
       caseCatlg: [],
       advancedForm: false,
       searchForm: {
@@ -139,6 +151,7 @@ export default {
         acceptNo: '',
         reportName: '',
         hiddenUnit: '',
+        selectedCatlg: '',
         startTime: '',
         endTime: ''
       },
@@ -168,14 +181,13 @@ export default {
     },
     // Handle Page Size Change
     handleSizeChange (value) {
-      if (this.caseCode !== -1 || this.searchInput !== '' || this.advancedForm) {
+      if (this.searchInput !== '' || this.advancedForm) {
         let data = {
           pageSize: value,
           currentPage: this.response.currentPage,
           ...this.searchForm
         }
         data[this.searchSelect] = this.searchInput
-        data.status = this.caseCode === -1 ? '' : this.caseCode
         this.updateCase(data)
         return
       }
@@ -183,14 +195,13 @@ export default {
     },
     // Handle Page Change
     handleCurrentChange (value) {
-      if (this.caseCode !== -1 || this.searchInput !== '' || this.advancedForm) {
+      if (this.searchInput !== '' || this.advancedForm) {
         let data = {
           pageSize: this.response.pageSize,
           currentPage: value,
           ...this.searchForm
         }
         data[this.searchSelect] = this.searchInput
-        data.status = this.caseCode === -1 ? '' : this.caseCode
         this.updateCase(data)
         return
       }
@@ -199,29 +210,6 @@ export default {
     // Toggle Advanced Search Form
     onAdvancedSearch () {
       this.advancedForm = !this.advancedForm
-    },
-    // Report Status Change
-    onStatusChanged () {
-      config.reportsStatusCatlg.forEach(item => {
-        if (item.value === this.searchForm.status) {
-          this.caseCode = item.code
-        }
-      })
-
-      if (this.searchForm.status === '') {
-        this.caseCode = -1
-      }
-
-      let data = {
-        pageSize: this.response.pageSize,
-        currentPage: 1,
-        ...this.searchForm
-      }
-      data.status = this.caseCode === -1 ? '' : this.caseCode
-      if (this.searchInput !== '') {
-        data[this.searchSelect] = this.searchInput
-      }
-      this.updateCase(data)
     },
     selectCase (object) {
       this.$store.commit('SET_CURRENT_CASE', object)
@@ -243,11 +231,6 @@ export default {
         let data = {
           currentPage: 1,
           pageSize: this.response.pageSize
-          // caseCatlg
-        }
-
-        if (this.caseCode !== -1) {
-          data.status = this.caseCode
         }
 
         data[this.searchSelect] = this.searchInput
@@ -341,6 +324,7 @@ export default {
           if (response.data.errcode === '0000') {
             response.data.data.forEach(item => {
               let object = {}
+              object.label = item.name
               object.id = item.id
               object.value = item.name
               this.caseCatlg.push(object)
@@ -445,10 +429,6 @@ export default {
 
   .sc-report-table-content {
     margin-bottom: 20px;
-  }
-
-  .catlg-select {
-    margin-top: 10px;
   }
 
   .fade-enter-active, .fade-leave-active {
