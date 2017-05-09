@@ -1,6 +1,10 @@
 <template>
   <div v-if="response" class="sc-report-detail">
     <div class="sc-report-detail-content">
+      <el-row class="detailBtnWrap" type="flex" justify="end">
+        <el-button @click="detailDeal" type="primary">案件处理</el-button>
+        <el-button @click="detailBack">返回上一页</el-button>
+      </el-row>
       <el-row type="flex">
         <el-col :span="10" :offset="1" style="padding: 1rem">
           <ul class="sc-report-detail-content-basement">
@@ -114,8 +118,8 @@
         </el-col>
         <el-col :span="11" :offset="1">
           <ul class="sc-report-detail-img-wrapper">
-            <li v-for="item in response.images" :key="item">
-              <a href="#" class="thumbnail" @click="openImg(item.fileUrl)">
+            <li v-for="(item,index) in response.images" :key="item">
+              <a href="javascript:;" class="thumbnail" @click="openImg(item.fileUrl,index)">
                 <img :src="item.fileUrl" :alt="item.fileName">
               </a>
             </li>
@@ -123,10 +127,6 @@
         </el-col>
       </el-row>
     </div>
-    <el-row class="detailBtnWrap" type="flex" justify="center">
-      <el-button @click="detailDeal" type="primary">案件处理</el-button>
-      <el-button @click="detailBack">返回上一页</el-button>
-    </el-row>
     <el-dialog title="案件处理" v-model="dialogFormVisible">
       <el-form :model="form">
         <el-form-item label="处理方式" :label-width="formLabelWidth">
@@ -168,9 +168,11 @@
       </div>
     </el-dialog>
     <el-dialog title="现场照片" v-model="dialogImgVisible">
-      <div class="imgWrapper">
-        <img :src="showImgUrl">
-      </div>
+      <el-carousel indicator-position="outside" :autoplay="false" :height="imgNaturalWidth" @change="changeImg" ref="carousel">
+        <el-carousel-item v-for="(item, index) in response.images" :key="item" :name="item.fileName">
+          <img :src="item.fileUrl">
+        </el-carousel-item>
+      </el-carousel>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogImgVisible = false" type="danger">关 闭</el-button>
       </div>
@@ -181,7 +183,7 @@
 <script>
   import axios from 'axios'
   import config from 'src/config'
-//  import request from '../../api/index'
+  //  import request from '../../api/index'
 
   let map = {
     0: '新案件',
@@ -222,7 +224,8 @@
         },
         formLabelWidth: '120px',
         uploadUrl: config.serverURI + config.uploadImgAPI,
-        fileList: []
+        fileList: [],
+        imgNaturalWidth: ''
       }
     },
     computed: {
@@ -268,9 +271,13 @@
       openMap () {
         this.dialogMapVisible = true
       },
-      openImg (url) {
+      openImg (url, i) {
         this.dialogImgVisible = true
         this.showImgUrl = url
+        const imgNHeight = document.getElementsByClassName('sc-report-detail-img-wrapper')[0].getElementsByTagName('img')[i].naturalHeight
+        this.imgNaturalWidth = imgNHeight + 'px'
+        this.setActiveItem(i)
+        console.log('imgNHeight', imgNHeight)
         console.log(this.showImgUrl, 'url')
       },
       uploadRemove (file, fileList) {
@@ -282,6 +289,14 @@
       },
       postDetail () {
         this.dialogFormVisible = false
+      },
+      changeImg (i) {
+        const imgNHeight = document.getElementsByClassName('sc-report-detail-img-wrapper')[0].getElementsByTagName('img')[i].naturalHeight
+        this.imgNaturalWidth = imgNHeight + 'px'
+      },
+      setActiveItem (i) {
+        this.$refs.carousel.setActiveItem(i)
+        console.log(i)
       }
     },
     created () {
@@ -303,12 +318,8 @@
     margin-top: 2rem;
   }
 
-  .el-carousel__item h3 {
-    color: #475669;
-    font-size: 18px;
-    opacity: 0.75;
-    line-height: 300px;
-    margin: 0;
+  .el-carousel__item {
+    text-align: center;
   }
 
   .el-carousel__item:nth-child(2n) {
@@ -344,8 +355,11 @@
   .sc-report-detail-img-wrapper {
     list-style: none;
     display: flex;
-
     padding: 1rem;
+    margin-top: 1rem;
+
+    border: 1px solid lightgray;
+    background-color: white;
   }
 
   .sc-report-detail-img-wrapper img {
@@ -356,6 +370,11 @@
   .imgWrapper {
     display: flex;
     justify-content: center;
+  }
+
+  .imgWrapper img {
+    width: 100%;
+    height: 100%;
   }
 
 </style>
