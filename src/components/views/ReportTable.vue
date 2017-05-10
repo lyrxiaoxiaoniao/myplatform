@@ -22,7 +22,7 @@
         <el-row>
           <el-col :span="6">
             <el-form-item label="案件分类">
-              <el-select class="catlg-select" placeholder="案件分类" v-model="searchForm.catlgName">
+              <el-select class="catlg-select" placeholder="案件分类" v-model="searchForm.catlgId">
                 <el-option 
                   v-for="item in caseCatlg"
                   :label="item.label"
@@ -43,16 +43,12 @@
               </el-select>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
-          <el-form-item label="创建时间">
-            <el-col :span="5">
+          <el-col :span="12">
+            <el-form-item label="创建时间">
               <el-date-picker type="date" placeholder="开始日期" v-model="searchForm.startTime"></el-date-picker>
-            </el-col>
-            <el-col :span="5">
               <el-date-picker type="date" placeholder="结束日期" v-model="searchForm.endTime"></el-date-picker>
-            </el-col>
-          </el-form-item>
+            </el-form-item>
+          </el-col>
         </el-row>
       </el-form>
     </transition>
@@ -153,6 +149,7 @@ export default {
         hiddenUnit: '',
         selectedCatlg: '',
         startTime: '',
+        catlgId: '',
         endTime: ''
       },
       response: null,
@@ -326,7 +323,7 @@ export default {
               let object = {}
               object.label = item.name
               object.id = item.id
-              object.value = item.name
+              object.value = item.id
               this.caseCatlg.push(object)
             })
           }
