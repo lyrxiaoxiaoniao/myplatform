@@ -127,7 +127,6 @@ Vue.use(VueHtml5Editor, {
     'hr',
     'eraser',
     'undo',
-    'full-screen',
     'info'
   ]
 })
