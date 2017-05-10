@@ -13,5 +13,8 @@ export default {
   },
   SET_CURRENT_CASE (state, object) {
     state.selectedCase = object
+  },
+  SET_ARTICLE_CATLG (state, array) {
+    state.articleCatlg = array
   }
 }

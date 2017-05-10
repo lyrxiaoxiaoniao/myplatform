@@ -11,5 +11,8 @@ export default {
     notifications: [],
     tasks: []
   },
-  selectedCase: null
+  // Current Selected Case
+  selectedCase: null,
+  // Article Category
+  articleCatlg: []
 }
