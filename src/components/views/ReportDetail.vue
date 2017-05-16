@@ -332,7 +332,7 @@
             if (response.data.errcode === '0000') {
               this.$notify({
                 title: '成功',
-                message: '屏蔽成功',
+                message: '处理成功',
                 type: 'success'
               })
               setTimeout(this.$router.push('reports'), 2000)
