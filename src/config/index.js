@@ -1,5 +1,5 @@
 export default {
-  serverURI: 'http://192.168.1.34:8080',
+  serverURI: 'http://test.java.shencom.cn/gm',
   menuAPI: '/admin/menu/show_left',
   appInfoAPI: '/admin/appinfo/show?code=gmaj',
   userListAPI: '/admin/user/index',
@@ -9,9 +9,11 @@ export default {
   caseDetailAPI: '/cmplnt/content/show',
   caseCatlgAPI: '/cmplnt/category/index',
   uploadImgAPI: '/cms/image/upload',
+  uploadCaseImgAPI: '/cmplnt/content/upload',
   articleAPI: '/cms/article/index',
   articleCatlgAPI: '/cms/category/index',
   deleteArticleAPI: '/cms/article/delete',
+  updateCaseAPI: '/cmplnt/content/update',
   fixedLayout: false,
   hideLogoOnMobile: false,
   reportsStatusCatlg: [

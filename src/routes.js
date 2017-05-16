@@ -21,19 +21,21 @@ import SCArticleTableView from './components/views/ArticleTable'
 import SCArticleAddFormView from './components/views/ArticleAddForm.vue'
 import SCArticleDetailView from './components/views/ArticleDetail.vue'
 
+const base = '/gm/admingmum'
+
 // Routes
 const routes = [
   {
-    path: '/login',
+    path: base + '/login',
     component: LoginView
   }, {
-    path: '/forgot',
+    path: base + '/forgot',
     component: ForgetView
   }, {
-    path: '/reset',
+    path: base + '/reset',
     component: ResetView
   }, {
-    path: '/',
+    path: base + '/',
     component: DashView,
     children: [
       {
@@ -113,6 +115,9 @@ const routes = [
     // not found handler
     path: '*',
     component: NotFoundView
+  }, {
+    path: base + '/index.html',
+    redirect: base + '/reports'
   }
 ]
 

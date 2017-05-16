@@ -15,7 +15,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="隐患单位">
-              <el-input v-model="searchForm.hiddenUint"></el-input>
+              <el-input v-model="searchForm.hiddenUnit"></el-input>
             </el-form-item>
           </el-col>
         </el-row>

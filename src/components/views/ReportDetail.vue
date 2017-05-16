@@ -24,7 +24,7 @@
             <li>
               <el-row :span="10">
                 <el-col :span="5">分类名称： </el-col>
-                <el-col :span="19">{{ }}</el-col>
+                <el-col :span="19">{{ response.catlgName }}</el-col>
               </el-row>
             </li>
             <li>
@@ -131,13 +131,13 @@
     <el-dialog title="案件处理" v-model="dialogFormVisible">
       <el-form :model="form">
         <el-form-item label="处理方式" :label-width="formLabelWidth">
-          <el-select v-model="detailDealForm.method" placeholder="请选择处理方案">
-            <el-option label="结案" value="0"></el-option>
-            <el-option label="驳回" value="1"></el-option>
+          <el-select v-model="detailDealForm.status" placeholder="请选择处理方案">
+            <el-option label="结案" value="2"></el-option>
+            <el-option label="驳回" value="3"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="处理意见" :label-width="formLabelWidth">
-          <el-input type="textarea" :rows="4" v-model="detailDealForm.input"></el-input>
+          <el-input type="textarea" :rows="4" v-model="detailDealForm.summary"></el-input>
         </el-form-item>
         <el-form-item label="图片上传" :label-width="formLabelWidth">
           <el-upload class="upload-demo" :action="uploadUrl"
@@ -148,8 +148,8 @@
           </el-upload>
         </el-form-item>
         <el-form-item :label-width="formLabelWidth">
-          <el-checkbox label="是否短信通知" v-model="detailDealForm.mail"></el-checkbox>
-          <el-checkbox label="是否微信通知" v-model="detailDealForm.wx"></el-checkbox>
+          <el-checkbox label="是否短信通知" v-model="detailDealForm.mail" :disabled="isSMSNotify"></el-checkbox>
+          <el-checkbox label="是否微信通知" v-model="detailDealForm.wx" :disabled="isWXNotify"></el-checkbox>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -185,7 +185,6 @@
 <script>
   import axios from 'axios'
   import config from 'src/config'
-  //  import request from '../../api/index'
 
   let map = {
     0: '新案件',
@@ -207,8 +206,8 @@
         dialogImgVisible: false,
         showImgUrl: '',
         detailDealForm: {
-          method: '',
-          input: '',
+          status: '',
+          summary: '',
           imageName: [],
           mail: '',
           wx: ''
@@ -225,7 +224,8 @@
           ]
         },
         formLabelWidth: '120px',
-        uploadUrl: config.serverURI + config.uploadImgAPI,
+        uploadUrl: config.serverURI + config.uploadCaseImgAPI,
+        updateURL: config.serverURI + config.updateCaseAPI,
         fileList: [],
         imgNaturalWidth: ''
       }
@@ -242,6 +242,24 @@
       },
       status () {
         return map[this.response.status]
+      },
+      isSMSNotify () {
+        if (this.response.isNotify.indexOf('sms') !== -1) {
+          this.detailDealForm.mail = true
+          return true
+        }
+
+        this.detailDealForm.mail = false
+        return false
+      },
+      isWXNotify () {
+        if (this.response.isNotify.indexOf('wx') !== -1) {
+          this.detailDealForm.wx = true
+          return true
+        }
+
+        this.detailDealForm.wx = false
+        return false
       }
     },
     methods: {
@@ -291,6 +309,41 @@
       },
       postDetail () {
         this.dialogFormVisible = false
+        let form = {
+          status: this.detailDealForm.status,
+          summary: this.detailDealForm.summary,
+          imageName: this.detailDealForm.imageName,
+          isNotify: [],
+          id: this.response.id
+        }
+        if (this.detailDealForm.wx === true) {
+          form.isNotify.push('wx')
+        }
+        if (this.detailDealForm.mail === true) {
+          form.isNotify.push('sms')
+        }
+        form.isNotify = form.isNotify.join()
+        axios.post(this.updateURL, form)
+          .then(response => {
+            if (response.status !== 200) {
+              this.error = response.statusText
+              return
+            }
+            if (response.data.errcode === '0000') {
+              this.$notify({
+                title: '成功',
+                message: '屏蔽成功',
+                type: 'success'
+              })
+              setTimeout(this.$router.push('reports'), 2000)
+            }
+          })
+          .catch(error => {
+            this.$message({
+              type: 'info',
+              message: error
+            })
+          })
       },
       changeImg (i) {
         const imgNHeight = document.getElementsByClassName('sc-report-detail-img-wrapper')[0].getElementsByTagName('img')[i].naturalHeight
@@ -308,6 +361,8 @@
       })
       this.mapData.markers[0].position = this.mapData.center
       this.response.isAnonymous = !!this.response.isAnonymous
+      console.log('111')
+      console.log(this.response)
     }
   }
 </script>
