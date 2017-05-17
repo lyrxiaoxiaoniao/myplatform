@@ -308,11 +308,25 @@
         this.detailDealForm.imageName.push(response.errmsg)
       },
       postDetail () {
+        if (this.detailDealForm.status === '') {
+          this.$message({
+            type: 'info',
+            message: '请选择处理方式'
+          })
+          return
+        }
+        if (this.detailDealForm.summary === '') {
+          this.$message({
+            type: 'info',
+            message: '请填写处理意见'
+          })
+          return
+        }
         this.dialogFormVisible = false
         let form = {
           status: this.detailDealForm.status,
           summary: this.detailDealForm.summary,
-          imageName: this.detailDealForm.imageName,
+          imageNames: this.detailDealForm.imageName,
           isNotify: [],
           id: this.response.id
         }
@@ -321,18 +335,6 @@
         }
         if (this.detailDealForm.mail === true) {
           form.isNotify.push('sms')
-        }
-        if (this.detailDealForm.status === '') {
-          this.$message({
-            type: 'info',
-            message: '请选择处理方式'
-          })
-        }
-        if (this.detailDealForm.summary === '') {
-          this.$message({
-            type: 'info',
-            message: '请填写处理意见'
-          })
         }
         form.isNotify = form.isNotify.join()
         axios.post(this.updateURL, form)
