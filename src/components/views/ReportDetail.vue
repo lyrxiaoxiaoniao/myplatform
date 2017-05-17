@@ -322,6 +322,18 @@
         if (this.detailDealForm.mail === true) {
           form.isNotify.push('sms')
         }
+        if (this.detailDealForm.status === '') {
+          this.$message({
+            type: 'info',
+            message: '请选择处理方式'
+          })
+        }
+        if (this.detailDealForm.summary === '') {
+          this.$message({
+            type: 'info',
+            message: '请填写处理意见'
+          })
+        }
         form.isNotify = form.isNotify.join()
         axios.post(this.updateURL, form)
           .then(response => {
@@ -351,7 +363,6 @@
       },
       setActiveItem (i) {
         this.$refs.carousel.setActiveItem(i)
-        console.log(i)
       }
     },
     created () {
@@ -361,8 +372,6 @@
       })
       this.mapData.markers[0].position = this.mapData.center
       this.response.isAnonymous = !!this.response.isAnonymous
-      console.log('111')
-      console.log(this.response)
     }
   }
 </script>
