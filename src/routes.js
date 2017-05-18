@@ -21,7 +21,7 @@ import SCArticleTableView from './components/views/ArticleTable'
 import SCArticleAddFormView from './components/views/ArticleAddForm.vue'
 import SCArticleDetailView from './components/views/ArticleDetail.vue'
 
-const base = '/gm/admingmum'
+const base = ''
 
 // Routes
 const routes = [

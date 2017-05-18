@@ -15,7 +15,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="作者">
-              <el-input v-model="searchForm.nickname"></el-input>
+              <el-input v-model="searchForm.author"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -56,7 +56,7 @@
         <el-table-column prop="id" label="ID" sortable width="80"></el-table-column>
         <el-table-column prop="title" label="文章标题" min-width="100"></el-table-column>
         <el-table-column prop="category.name" label="类别" width="100"></el-table-column>
-        <el-table-column prop="user.nickname" label="发布者"></el-table-column>
+        <el-table-column prop="author" label="发布者"></el-table-column>
         <el-table-column prop="createdAt" label="发布时间" sortable></el-table-column>
         <el-table-column prop="click" label="点击量" width="100px" sortable></el-table-column>
         <el-table-column prop="state" label="状态" width="120px"></el-table-column>
@@ -102,7 +102,7 @@ export default {
       searchForm: {
         id: '',
         title: '',
-        nickname: '',
+        author: '',
         startTime: '',
         endTime: '',
         feature: '',

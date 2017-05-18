@@ -128,7 +128,7 @@
         </el-col>
       </el-row>
     </div>
-    <el-dialog title="案件处理" v-model="dialogFormVisible">
+    <el-dialog title="案件处理" v-model="dialogFormVisible" class="deal-dialog">
       <el-form :model="form">
         <el-form-item label="处理方式" :label-width="formLabelWidth">
           <el-select v-model="detailDealForm.status" placeholder="请选择处理方案">
@@ -160,8 +160,11 @@
     <el-dialog title="案件地址" v-model="dialogMapVisible">
       <div class="mapWrapper">
         <el-amap vid="amap" :zoom="mapData.zoom" :center="mapData.center">
-          <el-amap-marker v-for="marker in mapData.markers" :position="marker.position" :visible="marker.visible"
-                          :draggable="marker.draggable"></el-amap-marker>
+          <el-amap-marker 
+            v-for="marker in mapData.markers" 
+            :position="marker.position" 
+            :visible="marker.visible"
+            :draggable="marker.draggable"></el-amap-marker>
         </el-amap>
       </div>
       <div slot="footer" class="dialog-footer">
@@ -183,188 +186,186 @@
 </template>
 
 <script>
-  import axios from 'axios'
-  import config from 'src/config'
+import axios from 'axios'
+import config from 'src/config'
 
-  let map = {
-    0: '新案件',
-    1: '待立案',
-    2: '立案通过',
-    3: '专业部门处理',
-    4: '结案，作废',
-    5: '结案'
-  }
+let map = {
+  0: '新案件',
+  1: '待立案',
+  2: '立案通过',
+  3: '专业部门处理',
+  4: '结案，作废',
+  5: '结案'
+}
 
-  export default {
-    name: 'sc-report-detail',
-    data () {
-      return {
-        response: {},
-        error: null,
-        dialogFormVisible: false,
-        dialogMapVisible: false,
-        dialogImgVisible: false,
-        showImgUrl: '',
-        detailDealForm: {
-          status: '',
-          summary: '',
-          imageName: [],
-          mail: '',
-          wx: ''
-        },
-        mapData: {
-          zoom: 14,
-          center: [],
-          markers: [
-            {
-              position: [],
-              visible: true,
-              draggable: false
-            }
-          ]
-        },
-        formLabelWidth: '120px',
-        uploadUrl: config.serverURI + config.uploadCaseImgAPI,
-        updateURL: config.serverURI + config.updateCaseAPI,
-        fileList: [],
-        imgNaturalWidth: ''
-      }
-    },
-    computed: {
-      reportDetailURL () {
-        return config.serverURI + config.caseDetailAPI
+export default {
+  name: 'sc-report-detail',
+  data () {
+    return {
+      response: {},
+      error: null,
+      dialogFormVisible: false,
+      dialogMapVisible: false,
+      dialogImgVisible: false,
+      showImgUrl: '',
+      detailDealForm: {
+        status: '',
+        summary: '',
+        imageName: [],
+        mail: '',
+        wx: ''
       },
-      caseID () {
-        return this.$route.params.id
+      mapData: {
+        zoom: 14,
+        center: [],
+        markers: [
+          {
+            position: [],
+            visible: true,
+            draggable: false
+          }
+        ]
       },
-      isAnonymous () {
-        return this.response.isAnonymous
-      },
-      status () {
-        return map[this.response.status]
-      },
-      isSMSNotify () {
-        if (this.response.isNotify.indexOf('sms') !== -1) {
-          this.detailDealForm.mail = true
-          return true
-        }
-
-        this.detailDealForm.mail = false
-        return false
-      },
-      isWXNotify () {
-        if (this.response.isNotify.indexOf('wx') !== -1) {
-          this.detailDealForm.wx = true
-          return true
-        }
-
-        this.detailDealForm.wx = false
-        return false
-      }
-    },
-    methods: {
-      getCaseDetail (id) {
-        axios.get(this.reportdetail, {
-          id: this.caseID
-        })
-          .then(response => {
-            console.log(`Case Detail response ${response}`)
-
-            if (response.status !== 200) {
-              this.error = response.statusText
-              return
-            }
-            if (response.data.errcode === '0000') {
-              this.response = response.data.data
-            }
-          })
-          .catch(error => {
-            console.log(error)
-          })
-      },
-      detailBack () {
-        window.history.back()
-      },
-      detailDeal () {
-        this.dialogFormVisible = true
-      },
-      openMap () {
-        this.dialogMapVisible = true
-      },
-      openImg (url, i) {
-        this.dialogImgVisible = true
-        this.showImgUrl = url
-        const imgNHeight = document.getElementsByClassName('sc-report-detail-img-wrapper')[0].getElementsByTagName('img')[i].naturalHeight
-        this.imgNaturalWidth = imgNHeight + 'px'
-        this.setActiveItem(i)
-        console.log('imgNHeight', imgNHeight)
-        console.log(this.showImgUrl, 'url')
-      },
-      uploadRemove (file, fileList) {
-        console.log(file, fileList)
-      },
-      uploadSuccess (response, file, fileList) {
-        console.log(response, file, fileList)
-        this.detailDealForm.imageName.push(response.errmsg)
-      },
-      postDetail () {
-        this.dialogFormVisible = false
-        let form = {
-          status: this.detailDealForm.status,
-          summary: this.detailDealForm.summary,
-          imageName: this.detailDealForm.imageName,
-          isNotify: [],
-          id: this.response.id
-        }
-        if (this.detailDealForm.wx === true) {
-          form.isNotify.push('wx')
-        }
-        if (this.detailDealForm.mail === true) {
-          form.isNotify.push('sms')
-        }
-        form.isNotify = form.isNotify.join()
-        axios.post(this.updateURL, form)
-          .then(response => {
-            if (response.status !== 200) {
-              this.error = response.statusText
-              return
-            }
-            if (response.data.errcode === '0000') {
-              this.$notify({
-                title: '成功',
-                message: '处理成功',
-                type: 'success'
-              })
-              setTimeout(this.$router.push('reports'), 2000)
-            }
-          })
-          .catch(error => {
-            this.$message({
-              type: 'info',
-              message: error
-            })
-          })
-      },
-      changeImg (i) {
-        const imgNHeight = document.getElementsByClassName('sc-report-detail-img-wrapper')[0].getElementsByTagName('img')[i].naturalHeight
-        this.imgNaturalWidth = imgNHeight + 'px'
-      },
-      setActiveItem (i) {
-        this.$refs.carousel.setActiveItem(i)
-        console.log(i)
-      }
-    },
-    created () {
-      this.response = this.$store.state.selectedCase
-      this.mapData.center = this.response.position.split(',').map((item) => {
-        return Number(item)
-      })
-      this.mapData.markers[0].position = this.mapData.center
-      this.response.isAnonymous = !!this.response.isAnonymous
-      console.log('111')
-      console.log(this.response)
+      formLabelWidth: '120px',
+      uploadUrl: config.serverURI + config.uploadCaseImgAPI,
+      updateURL: config.serverURI + config.updateCaseAPI,
+      fileList: [],
+      imgNaturalWidth: ''
     }
+  },
+  computed: {
+    reportDetailURL () {
+      return config.serverURI + config.caseDetailAPI
+    },
+    caseID () {
+      return this.$route.params.id
+    },
+    isAnonymous () {
+      return this.response.isAnonymous
+    },
+    status () {
+      return map[this.response.status]
+    },
+    isSMSNotify () {
+      if (this.response.isNotify.indexOf('sms') !== -1) {
+        this.detailDealForm.mail = true
+        return true
+      }
+
+      this.detailDealForm.mail = false
+      return false
+    },
+    isWXNotify () {
+      if (this.response.isNotify.indexOf('wx') !== -1) {
+        this.detailDealForm.wx = true
+        return true
+      }
+
+      this.detailDealForm.wx = false
+      return false
+    }
+  },
+  methods: {
+    getCaseDetail (id) {
+      axios.get(this.reportdetail, {
+        id: this.caseID
+      })
+        .then(response => {
+          if (response.status !== 200) {
+            this.error = response.statusText
+            return
+          }
+          if (response.data.errcode === '0000') {
+            this.response = response.data.data
+          }
+        })
+        .catch(error => {
+          this.$message({
+            type: 'info',
+            message: error
+          })
+        })
+    },
+    detailBack () {
+      window.history.back()
+    },
+    detailDeal () {
+      this.dialogFormVisible = true
+    },
+    openMap () {
+      this.dialogMapVisible = true
+    },
+    openImg (url, i) {
+      this.dialogImgVisible = true
+      this.showImgUrl = url
+      const imgNHeight = document.getElementsByClassName('sc-report-detail-img-wrapper')[0].getElementsByTagName('img')[i].naturalHeight
+      this.imgNaturalWidth = imgNHeight + 'px'
+      this.setActiveItem(i)
+    },
+    uploadRemove (file, fileList) {
+      const index = this.detailDealForm.imageName.indexOf(file.response.errmsg)
+      if (index !== -1) {
+        this.detailDealForm.imageName.split(index, 1)
+      }
+    },
+    uploadSuccess (response, file, fileList) {
+      this.detailDealForm.imageName.push(response.errmsg)
+    },
+    postDetail () {
+      this.dialogFormVisible = false
+      let form = {
+        status: this.detailDealForm.status,
+        summary: this.detailDealForm.summary,
+        imageName: this.detailDealForm.imageName,
+        isNotify: [],
+        id: this.response.id
+      }
+      if (this.detailDealForm.wx === true) {
+        form.isNotify.push('wx')
+      }
+      if (this.detailDealForm.mail === true) {
+        form.isNotify.push('sms')
+      }
+      form.isNotify = form.isNotify.join()
+      axios.post(this.updateURL, form)
+        .then(response => {
+          if (response.status !== 200) {
+            this.error = response.statusText
+            return
+          }
+          if (response.data.errcode === '0000') {
+            this.$notify({
+              title: '成功',
+              message: '处理成功',
+              type: 'success'
+            })
+            setTimeout(this.$router.push('reports'), 2000)
+          }
+        })
+        .catch(error => {
+          this.$message({
+            type: 'info',
+            message: error
+          })
+        })
+    },
+    changeImg (i) {
+      const imgNHeight = document.getElementsByClassName('sc-report-detail-img-wrapper')[0].getElementsByTagName('img')[i].naturalHeight
+      this.imgNaturalWidth = imgNHeight + 'px'
+    },
+    setActiveItem (i) {
+      this.$refs.carousel.setActiveItem(i)
+    }
+  },
+  created () {
+    this.response = this.$store.state.selectedCase
+    this.mapData.center = this.response.position.split(',').map((item) => {
+      return Number(item)
+    })
+    this.mapData.markers[0].position = this.mapData.center
+    this.response.isAnonymous = !!this.response.isAnonymous
   }
+}
 </script>
 
 <style>

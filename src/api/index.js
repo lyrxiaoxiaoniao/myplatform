@@ -13,7 +13,17 @@ export default {
       return
     }
 
-    var url = config.serverURI + uri
+    const url = config.serverURI + uri
     return axios({ method, url, data })
+  },
+
+  POST (uri, data = null) {
+    if (!uri) {
+      console.error('API function call requires uri argument')
+      return
+    }
+
+    const URL = config.serverURI + uri
+    return axios.post(URL, data)
   }
 }
