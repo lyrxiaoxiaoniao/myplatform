@@ -1,19 +1,20 @@
 <template>
   <div class="articleAddForm" v-if="catlgList">
-    <el-form ref="form" :model="form" labelWidth="80px" :rules="formRules">
-      <el-row>
-        <el-col class="content-left" :span="5">
+    <el-row>
+      <el-col class="content-left" :span="5">
+        <el-form class="left-form" label-position="top" ref="form" :model="form" labelWidth="80px" :rules="leftFormRules">
           <el-form-item prop="pictures" class="upload-item">
             <el-upload
               class="upload-picture"
               :action="uploadUrl"
+              :show-file-list="false"
               :before-upload="beforeAvatarUpload"
               :file-list="imageList"
               :on-success="onUploadSuccess"
               :on-remove="onRemovePic"
               :on-error="onUploadError"
               list-type="picture">
-              <img v-if="imageUrl" :src="imageUrl" class="avatar">
+              <img v-if="imageURL !== ''" :src="imageURL" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </el-form-item>
@@ -27,12 +28,14 @@
             </el-cascader>
           </el-form-item>
           <div class="item-label">作者</div>
-          <el-form-item prop="author">
+          <el-form-item class="item-author" prop="author">
             <el-input v-model="form.author" type="text" placeholder="请输入作者"></el-input>
           </el-form-item>
           <el-button class="reset-button" @click="resetForm('form')">重置</el-button>
-        </el-col>
-        <el-col class="content-main" :span="18">
+        </el-form>
+      </el-col>
+      <el-col class="content-main" :span="18">
+        <el-form class="main-form" ref="form" :model="form" labelWidth="80px" :rules="formRules">
           <el-form-item label="标题" prop="title">
             <el-input v-model="form.title" type="text" placeholder="请输入文章标题"></el-input>
           </el-form-item>
@@ -75,9 +78,9 @@
             <el-checkbox v-model="form.isTrend">热点</el-checkbox>
           </el-form-item>
           <el-button class="submit-button" type="primary" @click="addArticle('form')">提交</el-button>
-        </el-col>
-      </el-row>
-    </el-form>
+        </el-form>
+      </el-col>
+    </el-row>
   </div>
 </template>
 <script>
@@ -99,18 +102,21 @@ export default {
         isTrend: false,
         tags: []
       },
-      formRules: {
+      imageURL: '',
+      leftFormRules: {
         categoryId: [
           { required: true, message: '请选择文章板块', trigger: 'blur' }
         ],
+        author: [
+          { required: true, message: '请输入文章作者', trigger: 'change' }
+        ]
+      },
+      formRules: {
         title: [
           { required: true, message: '请输入文章标题', trigger: 'change' }
         ],
         digest: [
           { required: true, message: '请输入文章摘要', trigger: 'change' }
-        ],
-        author: [
-          { required: true, message: '请输入文章作者', trigger: 'change' }
         ],
         content: [
           { required: true, message: '请输入文章内容', trigger: 'change' }
@@ -171,10 +177,6 @@ export default {
       this.form.content = data
     },
     beforeAvatarUpload (file) {
-      if (this.form.pictures.length !== 0) {
-        this.$message.error('只能选取一张图片')
-        return false
-      }
       const isJPG = file.type === 'image/jpeg'
       const isLt2M = file.size / 1024 / 1024 < 2
 
@@ -188,7 +190,8 @@ export default {
     },
     onUploadSuccess (response, file, fileList) {
       if (response.errcode === '0000') {
-        this.form.pictures.push(response.errmsg)
+        this.imageURL = file.url
+        this.form.pictures[0] = response.errmsg
       }
     },
     onUploadError (error, file) {
@@ -287,22 +290,26 @@ export default {
     margin-right: 20px;
     border: 1px solid lightgray;
   }
-  el-form {
-    height: 100%;
-  }
   .content-left {
-    height: 100%;
+    height: 630px;
+    border-right: 1px solid lightgray;
   }
-  .upload-item div:first-child {
-    margin-left: 0 !important;
+  .left-form {
+    margin-left: 20px;
+    margin-right: 20px;
   }
-  .upload-item .el-form-item__content {
-    margin-left: 0 !important;
+  .upload-item {
+    height: 178px;
+    width: 178px;
+  }
+  .item-author {
+    width: 178px;
   }
   .item-tag {
     margin-bottom: 0 !important;
   }
   .item-label {
+    margin-bottom: 10px;
     font-size: 14px;
     line-height: 1;
     vertical-align: middle;
@@ -316,6 +323,8 @@ export default {
     margin-right: 4px;
   }
   .upload-picture {
+    width: 178px;
+    height: 178px;
     border: 1px dashed #d9d9d9;
     border-radius: 6px;
     cursor: pointer;
@@ -326,8 +335,7 @@ export default {
     width: 200px;
   }
   .reset-button {
-    margin-left: 50px;
-    width: 200px;
+    width: 178px;
   }
   .submit-button {
     margin-left: 300px;
