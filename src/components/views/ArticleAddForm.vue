@@ -1,12 +1,24 @@
 <template>
   <div class="articleAddForm" v-if="catlgList">
-    <el-row type="flex">
-      <el-col :span="12" :offset="2">
-        <el-form ref="form" :model="form" labelWidth="80px" :rules="formRules">
-          <el-form-item>
-            <el-button icon="d-arrow-left">返回列表</el-button>
-          </el-form-item prop="categoryId">
-          <el-form-item label="栏目">
+    <el-form ref="form" :model="form" labelWidth="80px" :rules="formRules">
+      <el-row>
+        <el-col class="content-left" :span="5">
+          <el-form-item prop="pictures" class="upload-item">
+            <el-upload
+              class="upload-picture"
+              :action="uploadUrl"
+              :before-upload="beforeAvatarUpload"
+              :file-list="imageList"
+              :on-success="onUploadSuccess"
+              :on-remove="onRemovePic"
+              :on-error="onUploadError"
+              list-type="picture">
+              <img v-if="imageUrl" :src="imageUrl" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </el-form-item>
+          <div class="item-label">栏目</div>
+          <el-form-item prop="categoryId">
             <el-cascader
               expand-trigger="hover"
               :options="catlgList"
@@ -14,16 +26,23 @@
               @change="handleCatlgChange">
             </el-cascader>
           </el-form-item>
+          <div class="item-label">作者</div>
+          <el-form-item prop="author">
+            <el-input v-model="form.author" type="text" placeholder="请输入作者"></el-input>
+          </el-form-item>
+          <el-button class="reset-button" @click="resetForm('form')">重置</el-button>
+        </el-col>
+        <el-col class="content-main" :span="18">
           <el-form-item label="标题" prop="title">
             <el-input v-model="form.title" type="text" placeholder="请输入文章标题"></el-input>
           </el-form-item>
           <el-form-item label="摘要" prop="digest">
-            <el-input v-model="form.digest" type="text" placeholder="请输入文章摘要"></el-input>
+            <el-input v-model="form.digest" type="text" placeholder="摘要,分享时或图文的摘要或简述"></el-input>
           </el-form-item>
-          <el-form-item label="作者" prop="author">
-            <el-input v-model="form.author" type="text" placeholder="请输入作者"></el-input>
+          <el-form-item label="正文" prop="content">
+            <vue-html5-editor :content="form.content" @change="updateData"></vue-html5-editor>
           </el-form-item>
-          <el-form-item label="标签" prop="tags">
+          <el-form-item class="item-tag" label="标签" prop="tags">
             <el-tag
               :key="tag"
               v-for="tag in tagsList"
@@ -49,36 +68,16 @@
               size="small"
               @click="showTagInput">
               添加
-              </el-button>
-          </el-form-item>
-          <el-form-item label="封面" prop="pictures">
-            <el-upload
-              class="upload-demo"
-              :action="uploadUrl"
-              :before-upload="beforeAvatarUpload"
-              :file-list="imageList"
-              :on-success="onUploadSuccess"
-              :on-remove="onRemovePic"
-              :on-error="onUploadError"
-              list-type="picture">
-              <el-button size="small" type="primary">点击上传</el-button>
-              <div slot="tip" class="el-upload__tip">上传图片只能是 JPG 格式，单个图像大小不大于2M</div>
-            </el-upload>
+            </el-button>
           </el-form-item>
           <el-form-item>
             <el-checkbox v-model="form.isPrime">推荐</el-checkbox>
             <el-checkbox v-model="form.isTrend">热点</el-checkbox>
           </el-form-item>
-          <el-form-item label="正文" prop="content">
-            <vue-html5-editor :content="form.content" @change="updateData"></vue-html5-editor>
-          </el-form-item>
-        </el-form>
-      </el-col>
-    </el-row>
-    <el-row type="flex" justify="center">
-      <el-button type="primary" @click="addArticle('form')">提交</el-button>
-      <el-button @click="resetForm('form')">重置</el-button>
-    </el-row>
+          <el-button class="submit-button" type="primary" @click="addArticle('form')">提交</el-button>
+        </el-col>
+      </el-row>
+    </el-form>
   </div>
 </template>
 <script>
@@ -128,6 +127,9 @@ export default {
     }
   },
   methods: {
+    backToList () {
+      this.$router.go(-1)
+    },
     handleCatlgChange (value) {
       this.form.categoryId = value.pop()
     },
@@ -152,7 +154,7 @@ export default {
                   title: '成功',
                   message: '添加文章成功'
                 })
-                setTimeout(this.$router.push('articles'), 2000)
+                setTimeout(this.$router.push('article'), 3000)
               } else {
                 this.$message.error('错误，请重新提交')
               }
@@ -281,10 +283,60 @@ export default {
 <style scoped>
   .articleAddForm {
     padding-top: 2rem;
-    margin-top: 2rem;
-    border-top: 1px solid lightgray;
+    margin-left: 20px;
+    margin-right: 20px;
+    border: 1px solid lightgray;
   }
-
+  el-form {
+    height: 100%;
+  }
+  .content-left {
+    height: 100%;
+  }
+  .upload-item div:first-child {
+    margin-left: 0 !important;
+  }
+  .upload-item .el-form-item__content {
+    margin-left: 0 !important;
+  }
+  .item-tag {
+    margin-bottom: 0 !important;
+  }
+  .item-label {
+    font-size: 14px;
+    line-height: 1;
+    vertical-align: middle;
+    padding-left: 10px;
+    color: #48576a;
+    font-weight: 700;
+  }
+  .item-label:before {
+    content: '*';
+    color: #ff4949;
+    margin-right: 4px;
+  }
+  .upload-picture {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .input-add-tag {
+    width: 200px;
+  }
+  .reset-button {
+    margin-left: 50px;
+    width: 200px;
+  }
+  .submit-button {
+    margin-left: 300px;
+    margin-bottom: 20px;
+    width: 300px;
+  }
+  .upload-picture {
+    border-color: #20a0ff;
+  }
   .btnWrapper {
     margin-top: 2rem;
     padding-top: 2rem;

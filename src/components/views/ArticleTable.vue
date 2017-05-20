@@ -62,7 +62,7 @@
         <el-table-column prop="state" label="状态" width="120px"></el-table-column>
         <el-table-column label="操作" width="180">
           <template scope="scope">
-            <el-button size="small" icon="information"></el-button>
+            <el-button size="small" icon="information" @click="toArticleDetail(scope.row.id)"></el-button>
             <el-button size="small" icon="edit"></el-button>
             <el-button size="small" icon="delete2" @click="onDeleteArticle(scope.row.id)"></el-button>
           </template>
@@ -179,6 +179,14 @@ export default {
       }
       return data
     },
+    toArticleDetail (id) {
+      this.$router.push({
+        path: 'articledetail',
+        query: {
+          id: id
+        }
+      })
+    },
     onDeleteArticle (id) {
       this.$confirm('是否确认删除该篇文章？', '提示', {
         confirmButtonText: '确定',
@@ -249,7 +257,7 @@ export default {
           }
         })
         .catch(error => {
-          this.error = error
+          this.$message.error(error)
         })
     },
     // Get Article List
@@ -268,7 +276,7 @@ export default {
           }
         })
         .catch(error => {
-          this.error = error
+          this.$message.error(error)
         })
     },
     // Get Article Category List

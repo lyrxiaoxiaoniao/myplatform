@@ -95,7 +95,7 @@ const routes = [
         name: '案件详情',
         meta: {description: '案件详情列表'}
       }, {
-        path: 'articles',
+        path: 'article',
         component: SCArticleTableView,
         name: '文章管理',
         meta: {description: '文章管理列表'}

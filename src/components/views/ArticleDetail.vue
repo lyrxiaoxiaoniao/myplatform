@@ -1,64 +1,70 @@
 <template>
-  <div class="articleDetail">
+  <div class="articleDetail" v-if="response">
     <el-row type="flex" justify="center">
       <el-col :span="15" class="articleDetailPanel">
         <el-row>
-          <h2>{{ article.title }}</h2>
+          <h2>{{ response.title }}</h2>
         </el-row>
         <el-row>
           <el-col :span="18">
-            发布时间:{{ article.time }} 作者:{{ article.author }} 浏览次数:{{ article.views }}
-          </el-col>
-          <el-col :span="6">
-            <el-checkbox>通过审查</el-checkbox>
-            <el-button icon="edit" size="mini" type="primary">编辑</el-button>
-            <el-button icon="delete" size="mini" type="danger">删除</el-button>
+            发布时间:{{ response.createdAt }} 作者:{{ response.author }} 浏览次数:{{ response.click}}
           </el-col>
         </el-row>
         <el-row>
-          {{ article.summary }}
+          {{ response.summary }}
         </el-row>
-        <el-row type="flex" justify="center">
-          {{ article.content }}
+        <el-row type="flex" justify="center" v-html="response.content">
         </el-row>
         <el-row type="flex" justify="end">
           <el-button icon="caret-top" size="mini">{{ article.star }}</el-button>
-          <el-checkbox>推荐</el-checkbox>
-          <el-checkbox>置顶</el-checkbox>
-          <el-checkbox>热点</el-checkbox>
-        </el-row>
-        <el-row type="flex" justify="space-between">
-          <span><el-button>上一篇</el-button>{{ article.pre }}</span>
-          <span>{{ article.next }}<el-button>下一篇</el-button></span>
         </el-row>
       </el-col>
     </el-row>
   </div>
 </template>
 <script>
-  export default {
-    data () {
-      return {
-        article: {
-          title: '1234',
-          time: '2016',
-          author: '江鹏',
-          views: '1234',
-          summary: '摘要',
-          content: '正文',
-          star: 20,
-          top: true,
-          pre: '123',
-          next: '345'
-        }
-      }
-    },
-    methods: {
-      updateData (data) {
-        this.form.comment = data
-      }
+import axios from 'axios'
+import config from 'src/config'
+
+export default {
+  data () {
+    return {
+      article: {
+        title: '1234',
+        time: '2016',
+        author: '江鹏',
+        views: '1234',
+        summary: '摘要',
+        content: '正文',
+        star: 20,
+        top: true,
+        pre: '123',
+        next: '345'
+      },
+      response: null
     }
+  },
+  methods: {
+    updateData (data) {
+      this.form.comment = data
+    }
+  },
+  created () {
+    const id = this.$route.query.id
+    const URL = config.serverURI + config.articleDetailAPI
+    axios.get(URL, {
+      params: {
+        id
+      }
+    })
+    .then(response => {
+      this.response = response.data.data
+    })
+    .catch(error => {
+      this.$message.error(error)
+    })
   }
+}
 </script>
 <style scoped>
   .articleDetail {
