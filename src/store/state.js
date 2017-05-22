@@ -14,5 +14,7 @@ export default {
   // Current Selected Case
   selectedCase: null,
   // Article Category
-  articleCatlg: []
+  articleCatlg: [],
+  // Notify Active Form
+  activeFormData: null
 }

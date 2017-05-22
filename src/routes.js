@@ -22,6 +22,8 @@ import SCArticleAddFormView from './components/views/ArticleAddForm.vue'
 import SCArticleDetailView from './components/views/ArticleDetail.vue'
 import SCArticleCategoryManageView from './components/views/ArticleCategoryManage.vue'
 import SCArticleCategoryAddFormView from './components/views/ArticleCategoryAddForm.vue'
+import SCNotifyTableView from './components/views/NotifyTable.vue'
+import SCNotifyAddFormView from './components/views/NotifyAddForm.vue'
 
 const base = ''
 
@@ -121,15 +123,22 @@ const routes = [
         component: SCArticleCategoryAddFormView,
         name: '文章板块添加',
         meta: {description: '编辑'}
+      }, {
+        path: 'notify',
+        component: SCNotifyTableView,
+        name: '紧急通知',
+        meta: {description: '模板管理'}
+      }, {
+        path: 'notifyadd',
+        component: SCNotifyAddFormView,
+        name: '模板添加',
+        meta: {description: '添加模板信息'}
       }
     ]
   }, {
     // not found handler
     path: '*',
     component: NotFoundView
-  }, {
-    path: base + '/index.html',
-    redirect: base + '/reports'
   }
 ]
 
