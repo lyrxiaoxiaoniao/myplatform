@@ -7,7 +7,7 @@ import routes from './routes'
 import store from './store'
 
 // Import Helpers for filters
-import {domain, count, prettyDate, pluralize} from './filters'
+import {domain, count, prettyDate, pluralize, toDate} from './filters'
 
 // Import Views - Top level
 import AppView from './components/App.vue'
@@ -22,6 +22,7 @@ Vue.filter('count', count)
 Vue.filter('domain', domain)
 Vue.filter('prettyDate', prettyDate)
 Vue.filter('pluralize', pluralize)
+Vue.filter('toDate', toDate)
 
 Vue.use(VueRouter)
 Vue.use(ElementUI)

@@ -17,6 +17,10 @@ export default {
   addArticleAPI: '/cms/article/create',
   articleDetailAPI: '/cms/article/show',
   addTagAPI: '/cms/tag/create',
+  notifyListAPI: '/notify/wx/index',
+  templateTypeAPI: '/notify/wx/template/type',
+  templateGetAPI: '/notify/wx/param/get',
+  templateSaveAPI: '/notify/wx/save',
   fixedLayout: false,
   hideLogoOnMobile: false,
   reportsStatusCatlg: [
