@@ -14,8 +14,9 @@ import AppView from './components/App.vue'
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
-import AMap from 'vue-amap'
+// import AMap from 'vue-amap'
 import VueHtml5Editor from 'vue-html5-editor'
+import BaiduMap from 'vue-baidu-map'
 
 // Import Install and register helper items
 Vue.filter('count', count)
@@ -26,7 +27,10 @@ Vue.filter('toDate', toDate)
 
 Vue.use(VueRouter)
 Vue.use(ElementUI)
-Vue.use(AMap)
+// Vue.use(AMap)
+Vue.use(BaiduMap, {
+  ak: 'cMZGi52nYsGFjmo0YagvH2ucBzXCzUou'
+})
 Vue.use(VueHtml5Editor, {
   name: 'vue-html5-editor',
   showModuleName: false,
@@ -130,11 +134,6 @@ Vue.use(VueHtml5Editor, {
     'undo',
     'info'
   ]
-})
-
-AMap.initAMapApiLoader({
-  key: 'f0642298eddc1513362e37775c466d70',
-  plugin: ['AMap.Autocomplete', 'AMap.PlaceSearch', 'AMap.Scale', 'AMap.OverView', 'AMap.ToolBar', 'AMap.MapType', 'AMap.PolyEditor', 'AMap.CircleEditor']
 })
 
 // Routing logic

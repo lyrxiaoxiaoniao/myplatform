@@ -15,9 +15,7 @@ export default {
   methods: {
   },
   components: {
-  },
-  mounted () {
-  } 
+  }
 }
 </script>
 
