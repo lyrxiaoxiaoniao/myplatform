@@ -20,6 +20,8 @@ import SCReportDeatilView from './components/views/ReportDetail'
 import SCArticleTableView from './components/views/ArticleTable'
 import SCArticleAddFormView from './components/views/ArticleAddForm.vue'
 import SCArticleDetailView from './components/views/ArticleDetail.vue'
+import SCArticleCategoryManageView from './components/views/ArticleCategoryManage.vue'
+import SCArticleCategoryAddFormView from './components/views/ArticleCategoryAddForm.vue'
 
 const base = ''
 
@@ -109,6 +111,16 @@ const routes = [
         component: SCArticleDetailView,
         name: '文章详情',
         meta: {description: '查看文章详情'}
+      }, {
+        path: 'articlecategorymanage',
+        component: SCArticleCategoryManageView,
+        name: '文章板块管理',
+        meta: {description: '板块管理'}
+      }, {
+        path: 'articlecategoryadd',
+        component: SCArticleCategoryAddFormView,
+        name: '文章板块添加',
+        meta: {description: '编辑'}
       }
     ]
   }, {

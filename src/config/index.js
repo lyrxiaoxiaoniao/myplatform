@@ -13,6 +13,8 @@ export default {
   uploadCaseImgAPI: '/cmplnt/content/upload',
   articleAPI: '/cms/article/index',
   articleCatlgAPI: '/cms/category/index',
+  addArticleCatlgAPI: '/cms/category/create',
+  removeArticleCatlgAPI: '/cms/category/delete',
   deleteArticleAPI: '/cms/article/delete',
   addArticleAPI: '/cms/article/create',
   articleDetailAPI: '/cms/article/show',
