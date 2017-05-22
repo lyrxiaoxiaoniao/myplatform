@@ -116,7 +116,6 @@ export default {
   methods: {
     onSearch () {
       if (this.advancedForm) {
-        console.log(this.searchForm)
         const data = {
           currentPage: this.response.currentPage,
           pageSize: this.response.pageSize,
@@ -264,8 +263,6 @@ export default {
     getArticleList () {
       api.request('GET', config.articleAPI)
         .then(response => {
-          console.log(response.data.data)
-
           if (response.status !== 200) {
             this.error = response.statusText
             return

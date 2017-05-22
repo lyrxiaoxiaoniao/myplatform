@@ -17,12 +17,7 @@ export default {
     return axios({ method, url, data })
   },
 
-  GET (method, uri, data = null) {
-    if (!method) {
-      console.error('API function call requires method argument')
-      return
-    }
-
+  GET (uri, data = null) {
     if (!uri) {
       console.error('API function call requires uri argument')
       return
