@@ -30,16 +30,16 @@ export default {
   data () {
     return {
       article: {
-        title: '1234',
-        time: '2016',
-        author: '江鹏',
-        views: '1234',
-        summary: '摘要',
-        content: '正文',
+        title: '',
+        time: '',
+        author: '',
+        views: '',
+        summary: '',
+        content: '',
         star: 20,
         top: true,
-        pre: '123',
-        next: '345'
+        pre: '',
+        next: ''
       },
       response: null
     }
