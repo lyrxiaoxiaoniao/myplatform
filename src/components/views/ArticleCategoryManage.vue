@@ -5,7 +5,7 @@
       :data="data"
       :props="defaultProps"
       node-key="id"
-      default-expand-all
+      accordion
       :expand-on-click-node="false"
       :render-content="renderContent">
     </el-tree>
@@ -43,6 +43,7 @@
       },
       edit (node, store, data) {
         console.log(node, store, data)
+        this.$router.push({path: 'articlecategoryadd', query: {node, data}})
       },
       remove (store, data) {
         this.dialogVisible = true

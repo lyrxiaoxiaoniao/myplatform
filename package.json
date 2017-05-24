@@ -99,8 +99,8 @@
     "webpack-hot-middleware": "^2.12.2",
     "webpack-merge": "^0.14.1"
   },
-  "engines": {
-    "node": ">= 4.0.0",
-    "npm": ">= 3.0.0"
+"engines": {
+  "node": ">= 4.0.0",
+  "npm": ">= 3.0.0"
   }
 }
