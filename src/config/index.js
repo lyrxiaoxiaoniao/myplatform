@@ -1,5 +1,5 @@
 export default {
-  serverURI: 'http://192.168.1.4:8080',
+  serverURI: 'http://192.168.1.5:8080',
   menuAPI: '/admin/menu/show_left',
   appInfoAPI: '/admin/appinfo/show?code=gmaj',
   userListAPI: '/admin/user/index',
@@ -23,6 +23,7 @@ export default {
   templateTypeAPI: '/notify/wx/template/type',
   templateGetAPI: '/notify/wx/param/get',
   templateSaveAPI: '/notify/wx/save',
+  userLabelAPI: '/user/usr/userGroup/queryTagNames',
   fixedLayout: false,
   hideLogoOnMobile: false,
   reportsStatusCatlg: [
