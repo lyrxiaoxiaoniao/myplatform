@@ -24,6 +24,7 @@ import SCArticleCategoryManageView from './components/views/ArticleCategoryManag
 import SCArticleCategoryAddFormView from './components/views/ArticleCategoryAddForm.vue'
 import SCNotifyTableView from './components/views/NotifyTable.vue'
 import SCNotifyAddFormView from './components/views/NotifyAddForm.vue'
+import SCNotifyInfoView from './components/views/NotifyInfo'
 
 const base = ''
 
@@ -133,6 +134,11 @@ const routes = [
         component: SCNotifyAddFormView,
         name: '模板添加',
         meta: {description: '添加模板信息'}
+      }, {
+        path: 'notifyinfo',
+        component: SCNotifyInfoView,
+        name: '通知明细',
+        meta: {description: '模板明细'}
       }
     ]
   }, {

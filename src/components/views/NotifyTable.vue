@@ -3,7 +3,7 @@
     <div class="notify-table-header">
       <el-row type="flex" justify="space-between">
         <el-col :span="15">
-          <el-button type="primary">添加</el-button>
+          <el-button @click="addNotify" type="primary">添加</el-button>
         </el-col>
         <el-col :span="6">
           <el-input class="search-title-input" v-model="searchTitle" placeholder="请输入标题"></el-input>
@@ -85,7 +85,7 @@ import api from 'src/api'
 import config from 'src/config'
 
 export default {
-  name: '',
+  name: 'NotifyTable',
   data () {
     return {
       notifyURL: config.notifyListAPI,
@@ -97,6 +97,9 @@ export default {
   computed: {
   },
   methods: {
+    addNotify () {
+      this.$router.push('notifyadd')
+    },
     handleSizeChange (value) {
       const data = {
         name: this.searchTitle,
@@ -159,7 +162,7 @@ export default {
   padding-top: 2rem;
   margin-left: 2rem;
   margin-top: 2rem;
-  margin-bottom: 2rem;
+  padding-bottom: 2rem;
 }
 .notify-table-header {
   margin-left: 2rem;

@@ -2,6 +2,7 @@
   <el-form 
     ref="active-form" 
     v-if="form"
+    :rules="rules"
     :model="form" 
     label-width="120px"
     >
@@ -10,13 +11,13 @@
         <el-input 
           class="notify-form-input"
           v-if="item.type === 0" 
-          v-model="form[item.key]"
+          v-model="form.model[item.key]"
           :placeholder="'请输入'+item.name"
           >
         </el-input>
         <el-date-picker
           v-else-if="item.type === 1"
-          v-model="form[item.key]"
+          v-model="form.model[item.key]"
           :placeholder="'请输入'+item.name"
           type="datetime"
           >
@@ -25,7 +26,7 @@
           type="textarea"
           class="notify-form-input"
           v-else-if="item.type === 2"
-          v-model="form[item.key]"
+          v-model="form.model[item.key]"
           :placeholder="'请输入'+item.name"
           >
         </el-input>
@@ -47,7 +48,7 @@
       v-if="hasURL">
       <el-input
         class="notify-form-input"
-        v-model="form.url"
+        v-model="form.model.url"
         placeholder="请输入链接地址"
         required
         >
@@ -63,7 +64,20 @@ export default {
   data () {
     return {
       data: null,
-      hasURL: false
+      hasURL: false,
+      rules: {
+      }
+    }
+  },
+  watch: {
+    hasURL (newVal, oldVal) {
+      if (newVal === true) {
+        this.rules.url = [{
+          required: true,
+          message: '请填写链接地址',
+          trigger: 'change'
+        }]
+      }
     }
   },
   methods: {
@@ -71,8 +85,15 @@ export default {
   mounted () {
     this.data = this.$store.state.activeFormData
     this.data.forEach(item => {
-      this.form[item.key] = ''
+      this.form.model[item.key] = ''
+      this.rules[item.key] = [{
+        required: true,
+        message: `请填写${item.name}`,
+        trigger: 'change'
+      }]
     })
+    console.log(`rules: ${this.rules}`)
+    console.log(this.rules)
   }
 }
 </script>

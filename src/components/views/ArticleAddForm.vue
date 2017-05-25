@@ -86,11 +86,11 @@
 <script>
 import config from 'src/config'
 import api from 'src/api'
-import axios from 'axios'
 
 export default {
   data () {
     return {
+      isEdit: false,
       form: {
         categoryId: null,
         pictures: [],
@@ -102,6 +102,7 @@ export default {
         isTrend: false,
         tags: []
       },
+      selectedOptions: [],
       imageURL: '',
       leftFormRules: {
         categoryId: [
@@ -225,8 +226,8 @@ export default {
       })
     },
     getCategoryList () {
-      const URL = config.serverURI + config.articleCatlgAPI
-      axios.get(URL)
+      const URL = config.articleCatlgAPI
+      api.GET(URL)
         .then(response => {
           if (response.status !== 200) {
             this.error = response.statusText
@@ -236,6 +237,10 @@ export default {
           if (response.data.errcode === '0000') {
             const data = response.data.data
             this.catlgList = this.transformData(data)
+            if (this.$route.query.id) {
+              this.getArticleDetail(this.$route.query.id)
+              this.isEdit = true
+            }
           }
         })
         .catch(error => {
@@ -243,8 +248,8 @@ export default {
         })
     },
     postTagValue (tag) {
-      const URL = config.serverURI + config.addTagAPI
-      axios.post(URL, {
+      const URL = config.addTagAPI
+      api.POST(URL, {
         name: tag
       })
       .then(response => {
@@ -276,6 +281,39 @@ export default {
       })
 
       return object
+    },
+    getArticleDetail (id) {
+      const URL = config.articleDetailAPI
+      api.GET(URL, {
+        id: id
+      })
+      .then(response => {
+        if (response.status !== 200) {
+          this.error = response.statusText
+          this.$message.error(this.error)
+        }
+        if (response.data.errcode === '0000') {
+          const data = response.data.data
+          if (data.picture) {
+            this.imageURL = data.picture
+            this.form.pictures.push(data.picture)
+          }
+          data.categories.forEach(item => {
+            this.selectedOptions.push(item.id)
+          })
+          this.form.categoryId = data.category.id
+          this.form.content = data.content
+          this.form.title = data.title
+          this.form.author = data.author
+          this.form.digest = data.digest
+          this.form.tags = data.tags
+          this.form.isPrime = data.isPrime === 1
+          this.form.isTrend = data.isTrend === 1
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     }
   },
   created () {

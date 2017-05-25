@@ -1,30 +1,29 @@
 <template>
   <div v-if="response" class="sc-article-table">
-    <transition name="fade">
-      <el-form v-show="advancedForm" class="search-form" :model="searchForm" :label-width="'80px'">
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="ID">
-              <el-input v-model="searchForm.id"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="文章标题">
-              <el-input v-model="searchForm.title"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="作者">
-              <el-input v-model="searchForm.author"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row type="flex">
-          <el-form-item label="创建时间">
-            <el-date-picker type="date" placeholder="开始日期" v-model="searchForm.startTime"></el-date-picker>
-            <el-date-picker type="date" placeholder="结束日期" v-model="searchForm.endTime"></el-date-picker>
+    <div class="sc-article-table-header">
+      <el-popover
+        ref="advancedSearch"
+        width="400"
+        trigger="hover"
+        placement="bottom-end"
+        >
+        <el-form class="search-form" :model="searchForm">
+          <el-form-item class="advance-form-item" label="ID">
+            <el-input v-model="searchForm.id"></el-input>
           </el-form-item>
-          <el-col :span="8">
+          <el-form-item class="advance-form-item" label="文章标题">
+            <el-input v-model="searchForm.title"></el-input>
+          </el-form-item>
+          <el-form-item class="advance-form-item" label="作者">
+            <el-input v-model="searchForm.author"></el-input>
+          </el-form-item>
+          <el-form-item class="advance-form-item" label="创建时间">
+            <el-row type="flex">
+              <el-date-picker type="date" placeholder="开始日期" v-model="searchForm.startTime"></el-date-picker>
+              <el-date-picker type="date" placeholder="结束日期" v-model="searchForm.endTime"></el-date-picker>
+            </el-row>
+          </el-form-item>
+          <el-form-item class="advance-form-item">
             <el-select v-model="searchForm.cateId" placeholder="文章分类" clearable>
               <el-option
                 v-for="item in articleCatlg"
@@ -33,21 +32,17 @@
                 >
               </el-option>
             </el-select>
-          </el-col>
-        </el-row>
-      </el-form>
-    </transition>
-    <div class="sc-article-table-header">
-      <el-row type="flex" justify="space-between">
-        <el-col :span="15">
-          <el-button type="primary" icon="search" @click="onSearch">搜索</el-button>
-          <el-button type="primary" @click="onAdvancedSearch">高级搜索</el-button>
-        </el-col>
-        <el-col :span="4">
-          <el-button @click="onNewest">最新</el-button>
-          <el-button @click="onMostClick">点击</el-button>
-          <el-button type="primary" icon="plus" @click="onPublish"></el-button>
-        </el-col>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="">搜索</el-button>
+          </el-form-item>
+        </el-form>
+      </el-popover>
+      <el-row type="flex" justify="end">
+        <el-input placeholder="请输入关键字"></el-input>
+        <el-button icon="search" @click="onSearch"></el-button>
+        <el-button v-popover:advancedSearch type="primary">高级</el-button>
+        <el-button class="ion-paper-airplane" type="primary" @click="onPublish">发布</el-button>
       </el-row>
     </div>
     <div class="sc-article-table-content">
@@ -105,7 +100,6 @@ export default {
         author: '',
         startTime: '',
         endTime: '',
-        feature: '',
         cateId: ''
       },
       error: null
@@ -126,29 +120,6 @@ export default {
       } else {
         // Single Search
       }
-    },
-    onNewest () {
-      this.searchForm.feature = 1
-      const data = {
-        currentPage: this.response.currentPage,
-        pageSize: this.response.pageSize,
-        ...this.searchForm
-      }
-
-      this.updateArticleList(data)
-    },
-    onMostClick () {
-      this.searchForm.feature = 2
-      const data = {
-        currentPage: this.response.currentPage,
-        pageSize: this.response.pageSize,
-        ...this.searchForm
-      }
-
-      this.updateArticleList(data)
-    },
-    onAdvancedSearch () {
-      this.advancedForm = !this.advancedForm
     },
     handleSizeChange (value) {
       this.updateArticleList({
@@ -310,7 +281,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
   .sc-article-table {
     border-top: 1px solid lightgray;
     padding-top: 2rem;
@@ -318,19 +289,25 @@ export default {
     margin-top: 2rem;
     margin-right: 2rem;
   }
-
   .sc-article-table-header {
+    margin: 0 1rem;
     margin-bottom: 20px;
   }
-
   .sc-article-table-content {
     margin: 0 1rem;
     margin-bottom: 20px;
   }
-
   .search-form {
     border: 1px solid lightgray;
-    padding: 20px;
     margin-bottom: 10px;
+  }
+  .advance-form-item {
+    font-size: 12px;
+    margin: 10px;
+    padding: 0;
+  }
+  .search-form .el-form-item label {
+    font-size: 12px;
+    padding: 0;
   }
 </style>

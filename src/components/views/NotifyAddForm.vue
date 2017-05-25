@@ -30,6 +30,12 @@
         </el-form-item>
         <el-form-item label="用户组" required>
           <el-select v-model="notifyForm.tags">
+            <el-option
+              v-for="tag in tags"
+              :label="tag.name"
+              :value="tag.id"
+              >
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="通知描述" required>
@@ -61,7 +67,7 @@ import config from 'src/config'
 import ActiveForm from 'src/components/views/ActiveForm'
 
 export default {
-  name: '',
+  name: 'NotifyAdd',
   components: {
     ActiveForm
   },
@@ -70,35 +76,50 @@ export default {
       response: null,
       error: null,
       templates: null,
+      tags: null,
       activeFormData: null,
       templateTypeURL: config.templateTypeAPI,
       templateGetURL: config.templateGetAPI,
       templateSaveURL: config.templateSaveAPI,
+      wxUserGroupURL: config.wxUserGroupAPI,
       active: 1,
       notifyForm: {
         name: '',
         templateId: '',
         tags: '',
         description: '',
-        url: ''
+        model: {
+          url: ''
+        }
       }
     }
   },
   methods: {
     saveForm () {
+      this.callSaveAPI(0)
+    },
+    sendForm () {
+      this.callSaveAPI(1)
+    },
+    cancelForm () {
+      this.active = 1
+    },
+    callSaveAPI (isSend = 0) {
+      this.notifyForm.isSend = isSend
       api.POST(this.templateSaveURL, this.notifyForm)
         .then(response => {
-          console.log('save data')
-          console.log(response.data)
+          if (response.status !== 200) {
+            this.error = response.statusText
+            this.$message.error(this.error)
+            return
+          }
+          if (response.data.errcode === '0000') {
+            this.$router.push('notify')
+          }
         })
         .catch(error => {
           this.$message.error(error)
         })
-    },
-    sendForm () {
-    },
-    cancelForm () {
-      this.active = 1
     },
     stepNext () {
       if (this.notifyForm.templateId === '') {
@@ -135,7 +156,22 @@ export default {
           }
           if (response.data.errcode === '0000') {
             this.templates = response.data.data
-            console.log(this.templates)
+          }
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
+    },
+    getUserGroup () {
+      api.GET(this.wxUserGroupURL)
+        .then(response => {
+          if (response.status !== 200) {
+            this.error = response.statusText
+            this.$message.error(this.error)
+            return
+          }
+          if (response.data.errcode === '0000') {
+            this.tags = response.data.data
           }
         })
         .catch(error => {
@@ -145,6 +181,7 @@ export default {
   },
   mounted () {
     this.getTemplateTypes()
+    this.getUserGroup()
   }
 }
 </script>
