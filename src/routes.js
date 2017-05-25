@@ -25,6 +25,7 @@ import SCArticleCategoryAddFormView from './components/views/ArticleCategoryAddF
 import SCNotifyTableView from './components/views/NotifyTable.vue'
 import SCNotifyAddFormView from './components/views/NotifyAddForm.vue'
 import SCNotifyInfoView from './components/views/NotifyInfo'
+import SCUserLabelManage from './components/views/UserLabelManage.vue'
 
 const base = ''
 
@@ -139,6 +140,11 @@ const routes = [
         component: SCNotifyInfoView,
         name: '通知明细',
         meta: {description: '模板明细'}
+      }, {
+        path: 'userlabelmanage',
+        component: SCUserLabelManage,
+        name: '用户标签组管理',
+        meta: {description: '管理信息'}
       }
     ]
   }, {

@@ -25,6 +25,7 @@ export default {
   templateGetAPI: '/notify/wx/param/get',
   templateSaveAPI: '/notify/wx/save',
   wxUserGroupAPI: '/user/usr/userGroup/queryTagNames',
+  userLabelAPI: '/user/usr/userGroup/queryTagNames',
   fixedLayout: false,
   hideLogoOnMobile: false,
   reportsStatusCatlg: [
