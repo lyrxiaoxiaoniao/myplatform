@@ -19,6 +19,7 @@ export default {
   updateArticleAPI: '/cms/article/update',
   addArticleAPI: '/cms/article/create',
   articleDetailAPI: '/cms/article/show',
+  updateArticleStatusAPI: '/cms/article/state',
   addTagAPI: '/cms/tag/create',
   notifyListAPI: '/notify/wx/index',
   notifyInfoAPI: '/notify/wx/detail/index',
