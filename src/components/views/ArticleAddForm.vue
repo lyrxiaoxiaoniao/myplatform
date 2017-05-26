@@ -331,7 +331,7 @@ export default {
             this.selectedOptions.push(item.id)
           })
           data.tags.forEach(item => {
-            this.tagsList.push(item.id)
+            this.tagsList.push(item.name)
             this.form.tags.push(item.id)
           })
           this.form.categoryId = data.category.id

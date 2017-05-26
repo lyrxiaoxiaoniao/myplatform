@@ -316,7 +316,8 @@ export default {
     padding: 0;
   }
   .search-form .el-form-item label {
-    font-size: 12px;
+    margin: 0;
     padding: 0;
+    font-size: 12px;
   }
 </style>
