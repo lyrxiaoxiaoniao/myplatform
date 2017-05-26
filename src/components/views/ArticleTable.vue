@@ -23,16 +23,13 @@
               <el-date-picker type="date" placeholder="结束日期" v-model="searchForm.endTime"></el-date-picker>
             </el-row>
           </el-form-item>
-          <el-row type="flex" justify="center">
+          <el-row type="flex">
             <el-form-item class="advance-form-item">
-              <el-select v-model="searchForm.cateId" placeholder="文章分类" clearable>
-                <el-option
-                  v-for="item in articleCatlg"
-                  :label="item.label"
-                  :value="item.value"
-                  >
-                </el-option>
-              </el-select>
+              <el-cascader
+                expand-trigger="hover"
+                :options="articleCatlg"
+                @change="handleCatlgChange">
+              </el-cascader>
             </el-form-item>
           </el-row>
           <el-row type="flex" justify="center">
@@ -122,6 +119,9 @@ export default {
         ...this.searchForm
       }
       this.updateArticleList(data)
+    },
+    handleCatlgChange (value) {
+      this.searchForm.cateid = value[value.length - 1]
     },
     handleSizeChange (value) {
       this.updateArticleList({
@@ -265,20 +265,31 @@ export default {
           }
 
           if (response.data.errcode === '0000') {
-            response.data.data.forEach(item => {
-              let object = {
-                value: item.id,
-                label: item.name
-              }
-              this.articleCatlg.push(object)
-            })
+            const data = response.data.data
+            this.articleCatlg = this.transformCatlgList(data)
           }
-          console.log(this.articleCatlg)
           this.$store.commit('SET_ARTICLE_CATLG', this.articleCatlg)
         })
         .catch(error => {
           this.$message.error(error)
         })
+    },
+    transformCatlgList (data) {
+      let object = []
+      data.forEach(item => {
+        let category = {}
+        category.value = item.id
+        category.label = item.name
+        if (item.children.length !== 0) {
+          const children = this.transformCatlgList(item.children)
+          category.children = children
+        } else {
+          category.children = null
+        }
+        object.push(category)
+      })
+
+      return object
     }
   },
   components: {

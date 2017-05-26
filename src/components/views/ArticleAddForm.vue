@@ -138,7 +138,7 @@ export default {
       this.$router.go(-1)
     },
     handleCatlgChange (value) {
-      this.form.categoryId = value.pop()
+      this.form.categoryId = value[value.length - 1]
     },
     resetForm (form) {
       this.$refs[form].resetFields()
@@ -296,10 +296,10 @@ export default {
     transformData (data) {
       let object = []
       data.forEach(item => {
-        let category = item
+        let category = {}
         category.value = item.id
         category.label = item.name
-        if (item.children.length !== 0) {
+        if (item.children && item.children.length !== 0) {
           const children = this.transformData(item.children)
           category.children = children
         } else {
