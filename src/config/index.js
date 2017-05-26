@@ -16,6 +16,7 @@ export default {
   addArticleCatlgAPI: '/cms/category/create',
   removeArticleCatlgAPI: '/cms/category/delete',
   deleteArticleAPI: '/cms/article/delete',
+  updateArticleAPI: '/cms/article/update',
   addArticleAPI: '/cms/article/create',
   articleDetailAPI: '/cms/article/show',
   addTagAPI: '/cms/tag/create',

@@ -143,12 +143,40 @@ export default {
     resetForm (form) {
       this.$refs[form].resetFields()
     },
+    updateArticle () {
+      const form = {
+        ...this.form,
+        id: this.$route.query.id
+      }
+      api.POST(config.updateArticleAPI, form)
+        .then(response => {
+          if (response.status !== 200) {
+            this.$message.error(response.statusText)
+            return
+          }
+          if (response.data.errcode === '0000') {
+            this.$notify({
+              type: 'success',
+              title: '成功',
+              message: '修改文章成功'
+            })
+            setTimeout(this.$router.push('article'), 3000)
+          }
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
+    },
     addArticle (form) {
       this.$refs[form].validate(valid => {
         if (valid) {
           let data = this.form
           data.isPrime = data.isPrime === true ? 1 : 0
           data.isTrend = data.isTrend === true ? 1 : 0
+          if (this.isEdit) {
+            this.updateArticle()
+            return
+          }
           api.POST(config.addArticleAPI, this.form)
             .then(response => {
               if (response.status !== 200) {
@@ -296,17 +324,21 @@ export default {
           const data = response.data.data
           if (data.picture) {
             this.imageURL = data.picture
-            this.form.pictures.push(data.picture)
+            let array = data.picture.split('/')
+            this.form.pictures.push(array[array.length - 1])
           }
           data.categories.forEach(item => {
             this.selectedOptions.push(item.id)
+          })
+          data.tags.forEach(item => {
+            this.tagsList.push(item.id)
+            this.form.tags.push(item.id)
           })
           this.form.categoryId = data.category.id
           this.form.content = data.content
           this.form.title = data.title
           this.form.author = data.author
           this.form.digest = data.digest
-          this.form.tags = data.tags
           this.form.isPrime = data.isPrime === 1
           this.form.isTrend = data.isTrend === 1
         }

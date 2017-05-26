@@ -125,7 +125,7 @@ export default {
             return
           }
           if (response.data.errcode === '0000') {
-            this.response = response.data.data
+            this.response = this.transformData(response.data.data)
           }
         })
         .catch(error => {
@@ -141,13 +141,24 @@ export default {
           }
 
           if (response.data.errcode === '0000') {
-            this.response = response.data.data
+            this.response = this.transformData(response.data.data)
           }
         })
         .catch(error => {
           this.error = error
           this.$message.error(this.error)
         })
+    },
+    transformData (res) {
+      res.data.forEach(item => {
+        if (item.createdAt) {
+          let date = new Date(item.createdAt)
+          const month = date.getMonth() + 1
+          item.createdAt = `${date.getFullYear()}-${month}-${date.getDate()}`
+        }
+      })
+
+      return res
     }
   },
   mounted () {
