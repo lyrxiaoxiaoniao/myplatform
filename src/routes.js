@@ -21,7 +21,6 @@ import SCArticleTableView from './components/views/ArticleTable'
 import SCArticleAddFormView from './components/views/ArticleAddForm.vue'
 import SCArticleDetailView from './components/views/ArticleDetail.vue'
 import SCArticleCategoryManageView from './components/views/ArticleCategoryManage.vue'
-import SCArticleCategoryAddFormView from './components/views/ArticleCategoryAddForm.vue'
 import SCNotifyTableView from './components/views/NotifyTable.vue'
 import SCNotifyAddFormView from './components/views/NotifyAddForm.vue'
 import SCNotifyInfoView from './components/views/NotifyInfo'
@@ -120,11 +119,6 @@ const routes = [
         component: SCArticleCategoryManageView,
         name: '文章板块管理',
         meta: {description: '板块管理'}
-      }, {
-        path: 'articlecategoryadd',
-        component: SCArticleCategoryAddFormView,
-        name: '文章板块添加',
-        meta: {description: '编辑'}
       }, {
         path: 'notify',
         component: SCNotifyTableView,
