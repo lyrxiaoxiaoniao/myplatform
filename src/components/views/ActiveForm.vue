@@ -6,19 +6,21 @@
     :model="form" 
     label-width="120px"
     >
-    <template v-for="item in data">
+    <template v-for="item in activeData">
       <el-form-item :label="item.name" required>
         <el-input 
           class="notify-form-input"
           v-if="item.type === 0" 
-          v-model="form.model[item.key]"
+          v-model="form[item.key]"
           :placeholder="'请输入'+item.name"
+          @change="handleChange"
           >
         </el-input>
         <el-date-picker
           v-else-if="item.type === 1"
-          v-model="form.model[item.key]"
+          v-model="form[item.key]"
           :placeholder="'请输入'+item.name"
+          @change="handleChange"
           type="datetime"
           >
         </el-date-picker>
@@ -26,7 +28,8 @@
           type="textarea"
           class="notify-form-input"
           v-else-if="item.type === 2"
-          v-model="form.model[item.key]"
+          v-model="form[item.key]"
+          @change="handleChange"
           :placeholder="'请输入'+item.name"
           >
         </el-input>
@@ -48,7 +51,7 @@
       v-if="hasURL">
       <el-input
         class="notify-form-input"
-        v-model="form.model.url"
+        v-model="form.url"
         placeholder="请输入链接地址"
         required
         >
@@ -60,13 +63,14 @@
 <script>
 export default {
   name: 'sc-active-form',
-  props: ['form'],
+  props: ['data', 'change'],
   data () {
     return {
-      data: null,
+      activeData: null,
       hasURL: false,
       rules: {
-      }
+      },
+      form: this.data.model
     }
   },
   watch: {
@@ -81,11 +85,14 @@ export default {
     }
   },
   methods: {
+    handleChange (event) {
+      this.change(this.form)
+    }
   },
   mounted () {
-    this.data = this.$store.state.activeFormData
-    this.data.forEach(item => {
-      this.form.model[item.key] = ''
+    this.activeData = this.$store.state.activeFormData
+    this.activeData.forEach(item => {
+      this.form[item.key] = ''
       this.rules[item.key] = [{
         required: true,
         message: `请填写${item.name}`,

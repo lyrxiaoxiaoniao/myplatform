@@ -28,3 +28,7 @@ export function toDate (timestamp) {
 
   return `${date.getFullYear()}-${month}-${date.getDate()}`
 }
+
+export function toTimestamp (date) {
+  return new Date(date).getTime()
+}

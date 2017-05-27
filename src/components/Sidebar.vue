@@ -74,19 +74,15 @@
         const _this = this
         axios.get(this.menuURL)
           .then(response => {
-            console.log('menuleft Response:', response.data)
-
             if (response.status !== 200) {
               this.error = response.statusText
               return
             }
-            console.log(response.data.data)
             _this.model = response.data.data
           })
           .catch(error => {
-            // Request failed.
-            console.log('error', error.response)
             this.error = error.response.statusText
+            this.$message.error(error)
           })
       }
     },

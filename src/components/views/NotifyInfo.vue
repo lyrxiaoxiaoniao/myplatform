@@ -3,7 +3,7 @@
     <div class="sc-notify-header">
       <el-row type="flex">
         <h4>
-        发送成功: {{ countData.sent }} | 发送失败: {{ countData.target - countData.sent - countData.unsent }} | 目标用户数: {{ countData.target }}
+        发送成功: {{ countData.sent }} | 发送失败: {{ countData.fail }} | 目标用户数: {{ countData.target }}
         </h4>
       </el-row>
       <el-row class="" type="flex" justify="space-around">
@@ -203,6 +203,7 @@ export default {
             type: 'success'
           })
           this.getInfo()
+          this.getInfoCount()
         } else {
           this.$message.error(response.errmsg)
         }

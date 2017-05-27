@@ -43,7 +43,8 @@
         </el-form-item>
       </el-form>
       <ActiveForm
-        :form="notifyForm"
+        :data="notifyForm"
+        :change="updateActiveForm"
         v-if="active === 2 && activeFormData"
         >
       </ActiveForm>
@@ -138,13 +139,15 @@ export default {
         if (response.data.errcode === '0000') {
           this.activeFormData = response.data.data
           this.$store.commit('SET_NOTIFY_ACTIVE_FORM', this.activeFormData)
-          console.log(this.activeFormData)
           this.active = 2
         }
       })
       .catch(error => {
         this.$message.error(error)
       })
+    },
+    updateActiveForm (value) {
+      this.notifyForm.model = value
     },
     getTemplateTypes () {
       api.GET(this.templateTypeURL)

@@ -225,11 +225,10 @@
               return
             }
 
-            console.log(response.data.data, 'appinfo')
             this.appInfo = response.data.data
           })
           .catch(error => {
-            console.log(error)
+            this.$message.error(error)
           })
       }
     },
