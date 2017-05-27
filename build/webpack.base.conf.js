@@ -61,7 +61,15 @@ module.exports = {
         test: /\.js$/,
         loader: 'babel',
         include: projectRoot,
-        exclude: /node_modules/
+        exclude: /node_modules/,
+        query: {
+          cacheDirectory: true,
+          presets: ['es2015'],
+          plugins: [
+            ['transform-object-rest-spread', { 'useBuiltIns': true }],
+            ['transform-runtime']
+          ]
+        }
       },
       {
         test: /\.json$/,
