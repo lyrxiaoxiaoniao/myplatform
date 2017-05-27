@@ -36,4 +36,7 @@
   .el-upload__input {
     display: none !important;
   }
+  .el-dialog--small {
+    width: 30% !important;
+  }
 </style>
