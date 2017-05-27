@@ -6,8 +6,8 @@
           <el-button @click="addNotify" type="primary">添加</el-button>
         </el-col>
         <el-col :span="6">
-          <el-input class="search-title-input" v-model="searchTitle" placeholder="请输入标题"></el-input>
-          <el-button type="primary" icon="search">搜索</el-button>
+          <el-input class="search-title-input" v-model="searchTitle" placeholder="请输入搜索关键字"></el-input>
+          <el-button @click="onKeywordSearch" type="primary" icon="search">搜索</el-button>
         </el-col>
       </el-row>
     </div>
@@ -18,10 +18,12 @@
         >
         <el-table-column
           prop="name"
+          width="280px"
           label="通知标题">
         </el-table-column>
         <el-table-column
           prop="template.name"
+          width="200px"
           label="微信模板名称"
           >
         </el-table-column>
@@ -41,11 +43,6 @@
           >
         </el-table-column>
         <el-table-column
-          prop="unsent"
-          label="状态"
-          >
-        </el-table-column>
-        <el-table-column
           prop="createdAt"
           label="发送时间"
           >
@@ -55,9 +52,9 @@
           label="操作"
           >
           <template scope="scope">
-            <el-button size="small" icon="information"></el-button>
-            <el-button size="small" icon="edit"></el-button>
-            <el-button size="small" icon="delete2"></el-button>
+            <el-button @click="onInfoClick(scope.row.id)" size="small" icon="information"></el-button>
+            <el-button @click="onSendMsg(scope.row.id)" :disabled="scope.row.target === scope.row.sent" size="small" class="ion-paper-airplane"></el-button>
+            <el-button @click="onInfoDelete(scope.row.id)" size="small" icon="delete2"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -116,6 +113,83 @@ export default {
       }
       this.updateList(data)
     },
+    onSendMsg (id) {
+      this.$confirm('是否确认发送该条通知？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+
+      }).then(() => {
+        api.POST(config.notifySendAPI, {
+          id: id
+        }).then(response => {
+          if (response.data.errcode === '0000') {
+            this.$notify({
+              title: '成功',
+              message: '发送成功',
+              type: 'success'
+            })
+            const data = {
+              name: this.searchTitle,
+              pageSize: this.response.pageSize,
+              currentPage: this.response.currentPage
+            }
+            this.updateList(data)
+          } else {
+            this.$message.error('发送失败')
+          }
+        })
+      })
+    },
+    onKeywordSearch () {
+      if (!this.searchTitle) {
+        this.$message('请输入搜索关键字')
+        return
+      }
+      const data = {
+        name: this.searchTitle,
+        pageSize: this.response.pageSize,
+        currentPage: this.response.currentPage
+      }
+      this.updateList(data)
+    },
+    onInfoClick (id) {
+      this.$router.push({
+        path: 'notifyinfo',
+        query: {
+          id: id
+        }
+      })
+    },
+    onInfoDelete (id) {
+      this.$confirm('是否确认删除该条通知？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        api.POST(config.notifyDeleteAPI, {
+          id: id
+        })
+        .then(response => {
+          if (response.data.errcode === '0000') {
+            this.$notify({
+              title: '成功',
+              message: '删除成功',
+              type: 'success'
+            })
+            const data = {
+              name: this.searchTitle,
+              pageSize: this.response.pageSize,
+              currentPage: this.response.currentPage
+            }
+            this.updateList(data)
+          }
+        })
+        .catch(error => {
+          this.$message.errror(error)
+        })
+      })
+    },
     updateList (form) {
       api.GET(this.notifyURL, form)
         .then(response => {
@@ -125,7 +199,7 @@ export default {
             return
           }
           if (response.data.errcode === '0000') {
-            this.response = response.data.data
+            this.response = this.transformData(response.data.data)
           }
         })
         .catch(error => {
@@ -141,13 +215,24 @@ export default {
           }
 
           if (response.data.errcode === '0000') {
-            this.response = response.data.data
+            this.response = this.transformData(response.data.data)
           }
         })
         .catch(error => {
           this.error = error
           this.$message.error(this.error)
         })
+    },
+    transformData (res) {
+      res.data.forEach(item => {
+        if (item.createdAt) {
+          let date = new Date(item.createdAt)
+          const month = date.getMonth() + 1
+          item.createdAt = `${date.getFullYear()}-${month}-${date.getDate()}`
+        }
+      })
+
+      return res
     }
   },
   mounted () {

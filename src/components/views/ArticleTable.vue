@@ -23,23 +23,28 @@
               <el-date-picker type="date" placeholder="结束日期" v-model="searchForm.endTime"></el-date-picker>
             </el-row>
           </el-form-item>
-          <el-form-item class="advance-form-item">
-            <el-select v-model="searchForm.cateId" placeholder="文章分类" clearable>
-              <el-option
-                v-for="item in articleCatlg"
-                :label="item.label"
-                :value="item.value"
-                >
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="">搜索</el-button>
-          </el-form-item>
+          <el-row type="flex">
+            <el-form-item class="advance-form-item">
+              <el-cascader
+                expand-trigger="hover"
+                :options="articleCatlg"
+                @change="handleCatlgChange">
+              </el-cascader>
+            </el-form-item>
+          </el-row>
+          <el-row type="flex" justify="center">
+            <el-form-item>
+              <el-col :span="10">
+                <el-button class="button-search" type="primary" @click="">搜索</el-button>
+              </el-col>
+            </el-form-item>
+          </el-row>
         </el-form>
       </el-popover>
       <el-row type="flex" justify="end">
-        <el-input placeholder="请输入关键字"></el-input>
+        <el-col :span="5">
+          <el-input class="input-keyword" v-model="searchForm.keyword" placeholder="请输入关键字"></el-input>
+        </el-col>
         <el-button icon="search" @click="onSearch"></el-button>
         <el-button v-popover:advancedSearch type="primary">高级</el-button>
         <el-button class="ion-paper-airplane" type="primary" @click="onPublish">发布</el-button>
@@ -58,7 +63,7 @@
         <el-table-column label="操作" width="180">
           <template scope="scope">
             <el-button size="small" icon="information" @click="toArticleDetail(scope.row.id)"></el-button>
-            <el-button size="small" icon="edit"></el-button>
+            <el-button size="small" icon="edit" @click="onEditArticle(scope.row.id)"></el-button>
             <el-button size="small" icon="delete2" @click="onDeleteArticle(scope.row.id)"></el-button>
           </template>
         </el-table-column>
@@ -85,7 +90,6 @@
 <script>
 import api from 'src/api'
 import config from 'src/config'
-import axios from 'axios'
 
 export default {
   name: 'sc-article-table',
@@ -93,14 +97,14 @@ export default {
     return {
       response: null,
       articleCatlg: [],
-      advancedForm: false,
       searchForm: {
         id: '',
         title: '',
         author: '',
         startTime: '',
         endTime: '',
-        cateId: ''
+        cateId: '',
+        keyword: ''
       },
       error: null
     }
@@ -109,17 +113,15 @@ export default {
   },
   methods: {
     onSearch () {
-      if (this.advancedForm) {
-        const data = {
-          currentPage: this.response.currentPage,
-          pageSize: this.response.pageSize,
-          ...this.searchForm
-        }
-
-        this.updateArticleList(data)
-      } else {
-        // Single Search
+      const data = {
+        currentPage: this.response.currentPage,
+        pageSize: this.response.pageSize,
+        ...this.searchForm
       }
+      this.updateArticleList(data)
+    },
+    handleCatlgChange (value) {
+      this.searchForm.cateid = value[value.length - 1]
     },
     handleSizeChange (value) {
       this.updateArticleList({
@@ -137,6 +139,14 @@ export default {
     },
     onPublish () {
       this.$router.push('articleadd')
+    },
+    onEditArticle (id) {
+      this.$router.push({
+        path: 'articleadd',
+        query: {
+          id: id
+        }
+      })
     },
     transformSearhForm (data) {
       if (data.startTime && data.startTime !== '') {
@@ -163,7 +173,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.request('POST', config.deleteArticleAPI, {
+        api.POST(config.deleteArticleAPI, {
           id: id
         })
         .then(response => {
@@ -211,11 +221,8 @@ export default {
       return res
     },
     updateArticleList (object) {
-      const URL = config.serverURI + config.articleAPI
       const data = this.transformSearhForm(object)
-      axios.get(URL, {
-        params: data
-      })
+      api.GET(config.articleAPI, data)
         .then(response => {
           if (response.status !== 200) {
             this.error = response.statusText
@@ -232,7 +239,7 @@ export default {
     },
     // Get Article List
     getArticleList () {
-      api.request('GET', config.articleAPI)
+      api.GET(config.articleAPI)
         .then(response => {
           if (response.status !== 200) {
             this.error = response.statusText
@@ -249,27 +256,40 @@ export default {
     },
     // Get Article Category List
     getArticleCatlg () {
-      api.request('GET', config.articleCatlgAPI)
+      api.GET(config.articleCatlgAPI)
         .then(response => {
           if (response.status !== 200) {
             this.error = response.statusText
+            this.$message.error(this.error)
             return
           }
 
           if (response.data.errcode === '0000') {
-            response.data.data.data.forEach(item => {
-              let object = {
-                value: item.id,
-                label: item.name
-              }
-              this.articleCatlg.push(object)
-            })
+            const data = response.data.data
+            this.articleCatlg = this.transformCatlgList(data)
           }
           this.$store.commit('SET_ARTICLE_CATLG', this.articleCatlg)
         })
         .catch(error => {
-          this.error = error
+          this.$message.error(error)
         })
+    },
+    transformCatlgList (data) {
+      let object = []
+      data.forEach(item => {
+        let category = {}
+        category.value = item.id
+        category.label = item.name
+        if (item.children.length !== 0) {
+          const children = this.transformCatlgList(item.children)
+          category.children = children
+        } else {
+          category.children = null
+        }
+        object.push(category)
+      })
+
+      return object
     }
   },
   components: {
@@ -307,7 +327,8 @@ export default {
     padding: 0;
   }
   .search-form .el-form-item label {
-    font-size: 12px;
+    margin: 0;
     padding: 0;
+    font-size: 12px;
   }
 </style>
