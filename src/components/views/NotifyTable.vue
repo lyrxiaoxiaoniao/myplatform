@@ -18,10 +18,12 @@
         >
         <el-table-column
           prop="name"
+          width="280px"
           label="通知标题">
         </el-table-column>
         <el-table-column
           prop="template.name"
+          width="200px"
           label="微信模板名称"
           >
         </el-table-column>
@@ -55,7 +57,7 @@
           label="操作"
           >
           <template scope="scope">
-            <el-button size="small" icon="information"></el-button>
+            <el-button @click="onInfoClick(scope.row.id)" size="small" icon="information"></el-button>
             <el-button size="small" icon="edit"></el-button>
             <el-button size="small" icon="delete2"></el-button>
           </template>
@@ -115,6 +117,14 @@ export default {
         currentPage: value
       }
       this.updateList(data)
+    },
+    onInfoClick (id) {
+      this.$router.push({
+        path: 'notifyinfo',
+        query: {
+          id: id
+        }
+      })
     },
     updateList (form) {
       api.GET(this.notifyURL, form)
