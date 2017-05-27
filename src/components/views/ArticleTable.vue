@@ -173,7 +173,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.request('POST', config.deleteArticleAPI, {
+        api.POST(config.deleteArticleAPI, {
           id: id
         })
         .then(response => {
@@ -239,7 +239,7 @@ export default {
     },
     // Get Article List
     getArticleList () {
-      api.request('GET', config.articleAPI)
+      api.GET(config.articleAPI)
         .then(response => {
           if (response.status !== 200) {
             this.error = response.statusText

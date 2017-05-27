@@ -92,8 +92,6 @@ export default {
         trigger: 'change'
       }]
     })
-    console.log(`rules: ${this.rules}`)
-    console.log(this.rules)
   }
 }
 </script>

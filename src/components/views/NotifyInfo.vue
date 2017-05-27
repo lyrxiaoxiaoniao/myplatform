@@ -187,7 +187,7 @@ export default {
       return new Date(date).getTime()
     },
     sendMsg (id) {
-      api.GET(config.notifySendAPI, {
+      api.GET(config.notifyDetailSendAPI, {
         id: id
       })
       .then(response => {
