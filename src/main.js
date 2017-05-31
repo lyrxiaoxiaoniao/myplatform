@@ -17,7 +17,6 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 // import AMap from 'vue-amap'
 import VueHtml5Editor from 'vue-html5-editor'
-import BaiduMap from 'vue-baidu-map'
 
 // Import Install and register helper items
 Vue.filter('count', count)
@@ -29,10 +28,7 @@ Vue.filter('toTimestamp', toTimestamp)
 
 Vue.use(VueRouter)
 Vue.use(ElementUI)
-// Vue.use(AMap)
-Vue.use(BaiduMap, {
-  ak: 'cMZGi52nYsGFjmo0YagvH2ucBzXCzUou'
-})
+
 Vue.use(VueHtml5Editor, {
   name: 'vue-html5-editor',
   showModuleName: false,
