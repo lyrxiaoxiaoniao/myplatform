@@ -1,5 +1,5 @@
 export default {
-  serverURI: 'http://192.168.1.4:8080',
+  serverURI: 'http://192.168.1.34:8080',
   menuAPI: '/admin/menu/show_left',
   appInfoAPI: '/admin/appinfo/show?code=gmaj',
   userListAPI: '/admin/user/index',
@@ -33,7 +33,10 @@ export default {
   templateGetAPI: '/notify/wx/param/get',
   wxUserGroupAPI: '/user/usr/userGroup/queryTagNames',
   userLabelAPI: '/user/usr/userGroup/queryTagNames',
-  firmListAPI: '',
+  firmListAPI: '/firm/companyinfo/index',
+  firmDetailAPI: '/firm/companyinfo/show',
+  firmUpdateAPI: '/firm/companyinfo/update',
+  firmDeleteAPI: '/firm/companyinfo/delete',
   fixedLayout: false,
   hideLogoOnMobile: false,
   reportsStatusCatlg: [

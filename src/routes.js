@@ -25,6 +25,8 @@ import SCNotifyTableView from './components/views/NotifyTable.vue'
 import SCNotifyAddFormView from './components/views/NotifyAddForm.vue'
 import SCNotifyInfoView from './components/views/NotifyInfo'
 import SCUserLabelManage from './components/views/UserLabelManage.vue'
+import SCFirmTableView from './components/views/FirmTable.vue'
+import SCFirmDetailView from './components/views/FirmDetail.vue'
 
 const base = ''
 
@@ -139,6 +141,16 @@ const routes = [
         component: SCUserLabelManage,
         name: '用户标签组管理',
         meta: {description: '管理信息'}
+      }, {
+        path: 'firm',
+        component: SCFirmTableView,
+        name: '企业信息上报',
+        meta: {description: '企业信息'}
+      }, {
+        path: 'firmdetail',
+        component: SCFirmDetailView,
+        name: '企业信息详情',
+        meta: {description: '企业详情'}
       }
     ]
   }, {
