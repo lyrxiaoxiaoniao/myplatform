@@ -16,5 +16,8 @@ export default {
   },
   SET_ARTICLE_CATLG (state, array) {
     state.articleCatlg = array
+  },
+  SET_NOTIFY_ACTIVE_FORM (state, form) {
+    state.activeFormData = form
   }
 }

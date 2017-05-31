@@ -20,8 +20,15 @@ import SCReportDeatilView from './components/views/ReportDetail'
 import SCArticleTableView from './components/views/ArticleTable'
 import SCArticleAddFormView from './components/views/ArticleAddForm.vue'
 import SCArticleDetailView from './components/views/ArticleDetail.vue'
+import SCArticleCategoryManageView from './components/views/ArticleCategoryManage.vue'
+import SCNotifyTableView from './components/views/NotifyTable.vue'
+import SCNotifyAddFormView from './components/views/NotifyAddForm.vue'
+import SCNotifyInfoView from './components/views/NotifyInfo'
+import SCUserLabelManage from './components/views/UserLabelManage.vue'
+import SCFirmTableView from './components/views/FirmTable.vue'
+import SCFirmDetailView from './components/views/FirmDetail.vue'
 
-const base = '/gm/admingmum'
+const base = ''
 
 // Routes
 const routes = [
@@ -95,7 +102,7 @@ const routes = [
         name: '案件详情',
         meta: {description: '案件详情列表'}
       }, {
-        path: 'articles',
+        path: 'article',
         component: SCArticleTableView,
         name: '文章管理',
         meta: {description: '文章管理列表'}
@@ -109,15 +116,47 @@ const routes = [
         component: SCArticleDetailView,
         name: '文章详情',
         meta: {description: '查看文章详情'}
+      }, {
+        path: 'articlecategorymanage',
+        component: SCArticleCategoryManageView,
+        name: '文章板块管理',
+        meta: {description: '板块管理'}
+      }, {
+        path: 'notify',
+        component: SCNotifyTableView,
+        name: '紧急通知',
+        meta: {description: '模板管理'}
+      }, {
+        path: 'notifyadd',
+        component: SCNotifyAddFormView,
+        name: '模板添加',
+        meta: {description: '添加模板信息'}
+      }, {
+        path: 'notifyinfo',
+        component: SCNotifyInfoView,
+        name: '通知明细',
+        meta: {description: '模板明细'}
+      }, {
+        path: 'userlabelmanage',
+        component: SCUserLabelManage,
+        name: '用户标签组管理',
+        meta: {description: '管理信息'}
+      }, {
+        path: 'firm',
+        component: SCFirmTableView,
+        name: '企业信息上报',
+        meta: {description: '企业信息'}
+      }, {
+        path: 'firmdetail',
+        component: SCFirmDetailView,
+        name: '企业信息详情',
+        meta: {description: '企业详情'}
       }
     ]
   }, {
     // not found handler
     path: '*',
     component: NotFoundView
-  }, {
-    path: base + '/index.html',
-    redirect: base + '/reports'
   }
 ]
 

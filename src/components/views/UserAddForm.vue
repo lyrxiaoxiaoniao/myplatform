@@ -1,6 +1,6 @@
 <template>
   <div class="userAddForm">
-    <el-row type="flex" >
+    <el-row type="flex">
       <el-col :span="10" :offset="5">
         <el-form :model="dataForm" :rules="rules" ref="dataForm"
                  labelWidth="120px" class="addUser" label-position="top">

@@ -128,7 +128,7 @@
         </el-col>
       </el-row>
     </div>
-    <el-dialog title="案件处理" v-model="dialogFormVisible">
+    <el-dialog title="案件处理" v-model="dialogFormVisible" class="deal-dialog">
       <el-form :model="form">
         <el-form-item label="处理方式" :label-width="formLabelWidth">
           <el-select v-model="detailDealForm.status" placeholder="请选择处理方案">
@@ -157,17 +157,20 @@
         <el-button type="primary" @click="postDetail">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="案件地址" v-model="dialogMapVisible">
-      <div class="mapWrapper">
-        <el-amap vid="amap" :zoom="mapData.zoom" :center="mapData.center">
-          <el-amap-marker v-for="marker in mapData.markers" :position="marker.position" :visible="marker.visible"
-                          :draggable="marker.draggable"></el-amap-marker>
-        </el-amap>
+    <div class="mapDialog" v-if="dialogMapVisible">
+      <div class="mapMask" @click="closeMap"></div>
+      <div class="mapDialogWrapper">
+        <div class="mapDialogHeader">地图显示</div>
+        <!--<div id="mapWrapper"></div>-->
+        <baidu-map class="mapWrapper" :center="mapData.center" :zoom="mapData.zoom">
+          <bm-marker :position="mapData.center" :dragging="false" animation="BMAP_ANIMATION_BOUNCE">
+          </bm-marker>
+        </baidu-map>
+        <div class="mapDialogFooter">
+          <el-button type="danger" @click="closeMap">关闭</el-button>
+        </div>
       </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogMapVisible = false" type="danger">关 闭</el-button>
-      </div>
-    </el-dialog>
+    </div>
     <el-dialog title="现场照片" v-model="dialogImgVisible">
       <el-carousel indicator-position="outside" :autoplay="false" :height="imgNaturalWidth" @change="changeImg"
                    ref="carousel">
@@ -214,14 +217,7 @@
         },
         mapData: {
           zoom: 14,
-          center: [],
-          markers: [
-            {
-              position: [],
-              visible: true,
-              draggable: false
-            }
-          ]
+          center: {}
         },
         formLabelWidth: '120px',
         uploadUrl: config.serverURI + config.uploadCaseImgAPI,
@@ -268,8 +264,6 @@
           id: this.caseID
         })
           .then(response => {
-            console.log(`Case Detail response ${response}`)
-
             if (response.status !== 200) {
               this.error = response.statusText
               return
@@ -279,7 +273,10 @@
             }
           })
           .catch(error => {
-            console.log(error)
+            this.$message({
+              type: 'info',
+              message: error
+            })
           })
       },
       detailBack () {
@@ -291,20 +288,24 @@
       openMap () {
         this.dialogMapVisible = true
       },
+      closeMap (e) {
+        e.stopPropagation()
+        this.dialogMapVisible = false
+      },
       openImg (url, i) {
         this.dialogImgVisible = true
         this.showImgUrl = url
         const imgNHeight = document.getElementsByClassName('sc-report-detail-img-wrapper')[0].getElementsByTagName('img')[i].naturalHeight
         this.imgNaturalWidth = imgNHeight + 'px'
         this.setActiveItem(i)
-        console.log('imgNHeight', imgNHeight)
-        console.log(this.showImgUrl, 'url')
       },
       uploadRemove (file, fileList) {
-        console.log(file, fileList)
+        const index = this.detailDealForm.imageName.indexOf(file.response.errmsg)
+        if (index !== -1) {
+          this.detailDealForm.imageName.split(index, 1)
+        }
       },
       uploadSuccess (response, file, fileList) {
-        console.log(response, file, fileList)
         this.detailDealForm.imageName.push(response.errmsg)
       },
       postDetail () {
@@ -369,10 +370,11 @@
     },
     created () {
       this.response = this.$store.state.selectedCase
-      this.mapData.center = this.response.position.split(',').map((item) => {
+      const posArr = this.response.position.split(',').map((item) => {
         return Number(item)
       })
-      this.mapData.markers[0].position = this.mapData.center
+      this.mapData.center.lng = posArr[0]
+      this.mapData.center.lat = posArr[1]
       this.response.isAnonymous = !!this.response.isAnonymous
     }
   }
@@ -397,11 +399,6 @@
   .el-carousel__item:nth-child(2n+1) {
     background-color: #d3dce6;
   }
-
-  .mapWrapper {
-    height: 500px;
-  }
-
   .sc-report-detail-content-basement, .sc-report-detail-content-deal {
     list-style: none;
     font-size: 1.5rem;
@@ -454,5 +451,46 @@
     width: 100%;
     height: 100%;
   }
+  .mapDialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom:0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+  }
+  .mapMask {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,.2);
+  }
+  .mapDialogWrapper {
+    position: absolute;
+    left: 25%;
+    top: 25%;
+    width: 50%;
+    height: 60%;
+    padding: 1rem;
+    z-index: 20;
 
+    background-color: white;
+  }
+  .mapDialogHeader {
+    font-size: 2rem;
+    margin-bottom: 1%;
+    padding-bottom: 1%;
+    border-bottom: 1px solid lightgray;
+  }
+  .mapWrapper {
+    width: 95%;
+    height: 83%;
+    margin: 0 auto;
+  }
+  .mapDialogFooter {
+    text-align: right;
+    padding-top: 1%;
+    margin-right: 2.5%;
+  }
 </style>

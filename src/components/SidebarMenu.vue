@@ -1,6 +1,6 @@
 <template>
   <li class="treeview">
-    <a href="#">
+    <a :href="model.url !== '' ? model.url : ''">
       <i :class="model.icon"></i>
       <span>{{ model.displayName }}</span>
       <span class="pull-right-container">
@@ -9,7 +9,9 @@
     </a>
     <ul class="treeview-menu" v-if="isFolder">
       <template v-for="item in model.children" v-if="(model.children && model.children.length)">
-        <sidebar-menu :model="item"/>
+        <router-link :to="{ path: '/' + item.url }">
+          <sidebar-menu class="siderbar-menu-item" :model="item"/>
+        </router-link>
       </template>
     </ul>
   </li>
@@ -63,6 +65,11 @@
 
   .sidebar-menu > li > a {
     padding: 12px 15px 12px 15px;
+  }
+
+  .siderbar-menu-item {
+    padding: 5px 5px 5px 15px;
+    font-size: 14px;
   }
 
   .arrow {

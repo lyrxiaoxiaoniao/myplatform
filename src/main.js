@@ -1,3 +1,4 @@
+import 'babel-polyfill'
 // Import System requirements
 import Vue from 'vue'
 import VueRouter from 'vue-router'
@@ -7,25 +8,31 @@ import routes from './routes'
 import store from './store'
 
 // Import Helpers for filters
-import {domain, count, prettyDate, pluralize} from './filters'
+import {domain, count, prettyDate, pluralize, toDate, toTimestamp} from './filters'
 
 // Import Views - Top level
 import AppView from './components/App.vue'
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
-import AMap from 'vue-amap'
+// import AMap from 'vue-amap'
 import VueHtml5Editor from 'vue-html5-editor'
+import BaiduMap from 'vue-baidu-map'
 
 // Import Install and register helper items
 Vue.filter('count', count)
 Vue.filter('domain', domain)
 Vue.filter('prettyDate', prettyDate)
 Vue.filter('pluralize', pluralize)
+Vue.filter('toDate', toDate)
+Vue.filter('toTimestamp', toTimestamp)
 
 Vue.use(VueRouter)
 Vue.use(ElementUI)
-Vue.use(AMap)
+// Vue.use(AMap)
+Vue.use(BaiduMap, {
+  ak: 'cMZGi52nYsGFjmo0YagvH2ucBzXCzUou'
+})
 Vue.use(VueHtml5Editor, {
   name: 'vue-html5-editor',
   showModuleName: false,
@@ -129,11 +136,6 @@ Vue.use(VueHtml5Editor, {
     'undo',
     'info'
   ]
-})
-
-AMap.initAMapApiLoader({
-  key: 'f0642298eddc1513362e37775c466d70',
-  plugin: ['AMap.Autocomplete', 'AMap.PlaceSearch', 'AMap.Scale', 'AMap.OverView', 'AMap.ToolBar', 'AMap.MapType', 'AMap.PolyEditor', 'AMap.CircleEditor']
 })
 
 // Routing logic

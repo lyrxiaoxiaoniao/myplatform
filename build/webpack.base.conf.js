@@ -12,7 +12,11 @@ var useCssSourceMap = cssSourceMapDev || cssSourceMapProd
 
 module.exports = {
   entry: {
-    app: './src/main.js'
+    app: [
+      'babel-polyfill',
+      'eventsource-polyfill',
+      './src/main.js'
+    ]
   },
   output: {
     path: config.build.assetsRoot,
@@ -57,7 +61,15 @@ module.exports = {
         test: /\.js$/,
         loader: 'babel',
         include: projectRoot,
-        exclude: /node_modules/
+        exclude: /node_modules/,
+        query: {
+          cacheDirectory: true,
+          presets: ['es2015'],
+          plugins: [
+            ['transform-object-rest-spread', { 'useBuiltIns': true }],
+            ['transform-runtime']
+          ]
+        }
       },
       {
         test: /\.json$/,
@@ -85,7 +97,7 @@ module.exports = {
     formatter: require('eslint-friendly-formatter')
   },
   vue: {
-    loaders: utils.cssLoaders({ sourceMap: useCssSourceMap }),
+    loaders: utils.cssLoaders({sourceMap: useCssSourceMap}),
     postcss: [
       require('autoprefixer')({
         browsers: ['last 2 versions']

@@ -272,7 +272,10 @@ export default {
           }
         })
         .catch(error => {
-          console.log(error)
+          this.$message({
+            type: 'info',
+            message: error
+          })
         })
       }).catch(() => {
         this.$message({
