@@ -161,11 +161,11 @@
       <div class="mapMask" @click="closeMap"></div>
       <div class="mapDialogWrapper">
         <div class="mapDialogHeader">地图显示</div>
-        <!--<div id="mapWrapper"></div>-->
-        <baidu-map class="mapWrapper" :center="mapData.center" :zoom="mapData.zoom">
-          <bm-marker :position="mapData.center" :dragging="false" animation="BMAP_ANIMATION_BOUNCE">
-          </bm-marker>
-        </baidu-map>
+        <div id="mapWrapper"></div>
+        <!--<baidu-map class="mapWrapper" :center="mapData.center" :zoom="mapData.zoom">-->
+          <!--<bm-marker :position="mapData.center" :dragging="false" animation="BMAP_ANIMATION_BOUNCE">-->
+          <!--</bm-marker>-->
+        <!--</baidu-map>-->
         <div class="mapDialogFooter">
           <el-button type="danger" @click="closeMap">关闭</el-button>
         </div>
@@ -287,6 +287,9 @@
       },
       openMap () {
         this.dialogMapVisible = true
+        this.$nextTick(function () {
+          this.mapInit()
+        })
       },
       closeMap (e) {
         e.stopPropagation()
@@ -304,6 +307,16 @@
         if (index !== -1) {
           this.detailDealForm.imageName.split(index, 1)
         }
+      },
+      mapInit () {
+        /* eslint-disable */
+        const map = new BMap.Map('mapWrapper')
+        console.log(map)
+        const point = new BMap.Point(this.mapData.center.lng, this.mapData.center.lat)
+        map.centerAndZoom(point, 15)
+        const marker = new BMap.Marker(point)
+        map.addOverlay(marker)
+        /* eslint-enable */
       },
       uploadSuccess (response, file, fileList) {
         this.detailDealForm.imageName.push(response.errmsg)
@@ -469,7 +482,7 @@
     padding-bottom: 1%;
     border-bottom: 1px solid lightgray;
   }
-  .mapWrapper {
+  #mapWrapper {
     width: 95%;
     height: 83%;
     margin: 0 auto;
