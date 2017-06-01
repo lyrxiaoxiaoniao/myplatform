@@ -162,20 +162,22 @@
       <div class="mapDialogWrapper">
         <div class="mapDialogHeader">地图显示</div>
         <div id="mapWrapper"></div>
-        <!--<baidu-map class="mapWrapper" :center="mapData.center" :zoom="mapData.zoom">-->
-          <!--<bm-marker :position="mapData.center" :dragging="false" animation="BMAP_ANIMATION_BOUNCE">-->
-          <!--</bm-marker>-->
-        <!--</baidu-map>-->
         <div class="mapDialogFooter">
           <el-button type="danger" @click="closeMap">关闭</el-button>
         </div>
       </div>
     </div>
-    <el-dialog title="现场照片" v-model="dialogImgVisible">
-      <el-carousel indicator-position="outside" :autoplay="false" :height="imgNaturalWidth" @change="changeImg"
+    <el-dialog title="现场照片" v-model="dialogImgVisible" size="small">
+      <!--<el-carousel indicator-position="outside" :autoplay="false" :height="imgNaturalWidth" @change="changeImg"-->
+                   <!--ref="carousel">-->
+        <!--<el-carousel-item v-for="(item, index) in response.images" :key="item" :name="item.fileName">-->
+          <!--<img :src="item.fileUrl">-->
+        <!--</el-carousel-item>-->
+      <!--</el-carousel>-->
+      <el-carousel indicator-position="outside" :autoplay="false" height="500px" @change="changeImg"
                    ref="carousel">
         <el-carousel-item v-for="(item, index) in response.images" :key="item" :name="item.fileName">
-          <img :src="item.fileUrl">
+          <img :src="item.fileUrl" height="500px">
         </el-carousel-item>
       </el-carousel>
       <div slot="footer" class="dialog-footer">
