@@ -9,7 +9,7 @@ export default {
   caseDetailAPI: '/cmplnt/content/show',
   caseCatlgAPI: '/cmplnt/category/index',
   updateCaseAPI: '/cmplnt/content/update',
-  uploadImgAPI: '/cms/image/upload',
+  uploadImgAPI: '/api/files/create',
   uploadCaseImgAPI: '/cmplnt/content/upload',
   articleAPI: '/cms/article/index',
   articleCatlgAPI: '/cms/category/index',

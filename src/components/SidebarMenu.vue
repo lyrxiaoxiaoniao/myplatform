@@ -1,12 +1,19 @@
 <template>
   <li class="treeview">
-    <a :href="model.url !== '' ? model.url : ''">
+    <a v-if="isFolder" href="#">
       <i :class="model.icon"></i>
       <span>{{ model.displayName }}</span>
       <span class="pull-right-container">
           <i class="fa fa-angle-left fa-fw pull-right" v-show="isFolder"></i>
       </span>
     </a>
+    <router-link v-if="!isFolder" :to="{ path: model.url }">
+      <i :class="model.icon"></i>
+      <span>{{ model.displayName }}</span>
+      <span class="pull-right-container">
+          <i class="fa fa-angle-left fa-fw pull-right" v-show="isFolder"></i>
+      </span>
+    </router-link>
     <ul class="treeview-menu" v-if="isFolder">
       <template v-for="item in model.children" v-if="(model.children && model.children.length)">
         <router-link :to="{ path: '/' + item.url }">

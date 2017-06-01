@@ -168,12 +168,6 @@
       </div>
     </div>
     <el-dialog title="现场照片" v-model="dialogImgVisible" size="small">
-      <!--<el-carousel indicator-position="outside" :autoplay="false" :height="imgNaturalWidth" @change="changeImg"-->
-                   <!--ref="carousel">-->
-        <!--<el-carousel-item v-for="(item, index) in response.images" :key="item" :name="item.fileName">-->
-          <!--<img :src="item.fileUrl">-->
-        <!--</el-carousel-item>-->
-      <!--</el-carousel>-->
       <el-carousel indicator-position="outside" :autoplay="false" height="500px" @change="changeImg"
                    ref="carousel">
         <el-carousel-item v-for="(item, index) in response.images" :key="item" :name="item.fileName">
@@ -222,7 +216,7 @@
           center: {}
         },
         formLabelWidth: '120px',
-        uploadUrl: config.serverURI + config.uploadCaseImgAPI,
+        uploadUrl: config.serverURI + config.uploadImgAPI,
         updateURL: config.serverURI + config.updateCaseAPI,
         fileList: [],
         imgNaturalWidth: ''
@@ -321,14 +315,28 @@
         /* eslint-enable */
       },
       uploadSuccess (response, file, fileList) {
-        this.detailDealForm.imageName.push(response.errmsg)
+        this.detailDealForm.imageName.push(response.data[0])
       },
       postDetail () {
+        if (this.detailDealForm.status === '') {
+          this.$message({
+            type: 'info',
+            message: '请选择处理方式'
+          })
+          return
+        }
+        if (this.detailDealForm.summary === '') {
+          this.$message({
+            type: 'info',
+            message: '请填写处理意见'
+          })
+          return
+        }
         this.dialogFormVisible = false
         let form = {
           status: this.detailDealForm.status,
           summary: this.detailDealForm.summary,
-          imageName: this.detailDealForm.imageName,
+          imageNames: this.detailDealForm.imageName,
           isNotify: [],
           id: this.response.id
         }
