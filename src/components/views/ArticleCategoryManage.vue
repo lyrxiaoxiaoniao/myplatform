@@ -16,7 +16,9 @@
     <el-button type="danger" @click="deleteCategory">确 定</el-button>
   </span>
     </el-dialog>
-    <el-dialog :title="isEditing? '编辑' : '新增'" v-model="addVisible">
+    <el-dialog :title="isEditing? '编辑' : '新增'"
+               v-model="addVisible"
+               size="tiny">
       <el-form labelPosition="right" label-width="90px">
         <el-form-item label="父级板块" required>
           <el-cascader
