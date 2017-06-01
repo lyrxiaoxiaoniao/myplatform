@@ -51,6 +51,10 @@
         </div>
       </el-col>
     </el-row>
+    <el-row class="sc-firm-detail-action" type="flex" justify="end">
+      <el-button type="primary">审核</el-button>
+      <el-button type="primary" @click="back">返回</el-button>
+    </el-row>
   </div>
 </template>
 
@@ -72,6 +76,9 @@ export default {
     }
   },
   methods: {
+    back () {
+      this.$router.go(-1)
+    },
     getFirmDetail (id) {
       api.GET(config.firmDetailAPI, {
         id
@@ -108,5 +115,10 @@ export default {
 .sc-firm-image-content {
   margin-left: 1rem;
   margin-top: 1rem;
+}
+.sc-firm-detail-action {
+  margin-top: 10px;
+  margin-right: 30rem;
+  padding-bottom: 10px;
 }
 </style>

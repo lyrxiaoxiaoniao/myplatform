@@ -69,7 +69,7 @@
 
   .siderbar-menu-item {
     padding: 5px 5px 5px 15px;
-    font-size: 14px;
+    font-size: 12px;
   }
 
   .arrow {
