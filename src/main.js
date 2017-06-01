@@ -140,11 +140,7 @@ Vue.use(VueHtml5Editor, {
 
 // Routing logic
 var router = new VueRouter({
-  routes: routes,
-  mode: 'history',
-  scrollBehavior: function (to, from, savedPosition) {
-    return savedPosition || {x: 0, y: 0}
-  }
+  routes: routes
 })
 
 // Some middleware to help us ensure the user is authenticated.

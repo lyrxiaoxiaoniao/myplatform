@@ -28,21 +28,19 @@ import SCUserLabelManage from './components/views/UserLabelManage.vue'
 import SCFirmTableView from './components/views/FirmTable.vue'
 import SCFirmDetailView from './components/views/FirmDetail.vue'
 
-const base = ''
-
 // Routes
 const routes = [
   {
-    path: base + '/login',
+    path: '/login',
     component: LoginView
   }, {
-    path: base + '/forgot',
+    path: '/forgot',
     component: ForgetView
   }, {
-    path: base + '/reset',
+    path: '/reset',
     component: ResetView
   }, {
-    path: base + '/',
+    path: '/',
     component: DashView,
     children: [
       {
