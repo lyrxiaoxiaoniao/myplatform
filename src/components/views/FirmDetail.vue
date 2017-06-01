@@ -1,5 +1,56 @@
 <template>
-  <div class="sc-firm-detail-component">
+  <div class="sc-firm-detail-component" v-if="response">
+    <el-row type="flex">
+      <el-col :span="12" class="sc-firm-detail-content">
+        <el-card class="sc-firm-card">
+          <div slot="header">
+            <span class="sc-firm-card-title">企业登记信息</span>
+          </div>
+          <div class="sc-firm-detail">
+            <div>企业名称: <span>{{ response.company }}</span></div>
+            <div>企业地址: <span>{{ response.address }}</span></div>
+            <div>所属行业: <span>{{ response.industryName }}</span></div>
+            <div>企业人数: <span>{{ response.pnum }}</span></div>
+            <div>所属街道: <span>{{ response.regionName }}</span></div>
+            <div>安全证书编号: <span>{{ response.safecert }}</span></div>
+            <div>提交时间: <span>{{ response.createdAt | toDate }}</span> </div>
+          </div>
+        </el-card>
+
+        <el-card class="sc-firm-card">
+          <div slot="header">
+            <span class="sc-firm-card-title">组织信息</span>
+          </div>
+          <div class="sc-firm-detail">
+            <div>组织名称: <span>{{ response.orgaName }}</span></div>
+            <div>统一信用代码: <span>{{ response.orgaCode }}</span></div>
+            <div>详细地址: <span>{{ response.orgaAddress }}</span> </div>
+          </div>
+        </el-card>
+
+        <el-card class="sc-firm-card" v-if="response.status !== 0">
+          <div slot="header">
+            <span class="sc-firm-card-title">受理信息</span>
+          </div>
+          <div class="sc-firm-detail">
+            <div>受理时间: <span>{{ response.updatedAt | toDate }}</span></div>
+            <div>受理状态: <span>{{ response.status | statusCodeToMsg }}</span></div>
+            <div>受理意见: <span>{{ response.summary }}</span></div>
+          </div>
+        </el-card>
+      </el-col>
+
+      <el-col :span="6" class="sc-firm-image-content" v-if="response.safecertUrl">
+        <div class="sc-firm-detail-safecert">
+          <img class="img-responsive" :src="response.safecertUrl">
+          企业主要负责人安全培训合格证书
+        </div>
+        <div class="sc-firm-detail-organphoto" v-if="response.orgaPhotoUrl">
+          <img class="img-responsive" :src="response.orgaPhotoUrl">
+          组织机构代码证
+        </div>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -32,7 +83,6 @@ export default {
           }
           if (response.data.errcode === '0000') {
             this.response = response.data.data
-            console.log(this.response)
           }
         })
         .catch(error => {
@@ -46,5 +96,17 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.sc-firm-card-title {
+  font-size: 18px;
+  line-height: 36px;
+}
+.sc-firm-card {
+  margin-top: 1rem;
+  margin-left: 1rem;
+}
+.sc-firm-image-content {
+  margin-left: 1rem;
+  margin-top: 1rem;
+}
 </style>

@@ -8,7 +8,7 @@ import routes from './routes'
 import store from './store'
 
 // Import Helpers for filters
-import {domain, count, prettyDate, pluralize, toDate, toTimestamp} from './filters'
+import {domain, count, prettyDate, pluralize, toDate, toTimestamp, statusCodeToMsg} from './filters'
 
 // Import Views - Top level
 import AppView from './components/App.vue'
@@ -25,6 +25,7 @@ Vue.filter('prettyDate', prettyDate)
 Vue.filter('pluralize', pluralize)
 Vue.filter('toDate', toDate)
 Vue.filter('toTimestamp', toTimestamp)
+Vue.filter('statusCodeToMsg', statusCodeToMsg)
 
 Vue.use(VueRouter)
 Vue.use(ElementUI)

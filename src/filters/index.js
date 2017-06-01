@@ -32,3 +32,14 @@ export function toDate (timestamp) {
 export function toTimestamp (date) {
   return new Date(date).getTime()
 }
+
+export function statusCodeToMsg (status) {
+  switch (status) {
+    case 0:
+      return '未审核'
+    case 1:
+      return '审核通过'
+    case 2:
+      return '审核未通过'
+  }
+}
