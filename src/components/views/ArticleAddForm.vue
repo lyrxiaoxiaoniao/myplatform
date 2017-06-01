@@ -219,8 +219,9 @@ export default {
     },
     onUploadSuccess (response, file, fileList) {
       if (response.errcode === '0000') {
+        console.log(response)
         this.imageURL = file.url
-        this.form.pictures[0] = response.errmsg
+        this.form.pictures[0] = response.data[0]
       }
     },
     onUploadError (error, file) {
