@@ -13,20 +13,24 @@ import AccessView from './components/views/Access.vue'
 import ServerView from './components/views/Server.vue'
 import ReposView from './components/views/Repos.vue'
 
-import SCUserTableView from './components/views/UserTable.vue'
-import SCReportTableView from './components/views/ReportTable'
-import SCUserAddFormView from './components/views/UserAddForm'
-import SCReportDeatilView from './components/views/ReportDetail'
-import SCArticleTableView from './components/views/ArticleTable'
-import SCArticleAddFormView from './components/views/ArticleAddForm.vue'
-import SCArticleDetailView from './components/views/ArticleDetail.vue'
-import SCArticleCategoryManageView from './components/views/ArticleCategoryManage.vue'
-import SCNotifyTableView from './components/views/NotifyTable.vue'
-import SCNotifyAddFormView from './components/views/NotifyAddForm.vue'
-import SCNotifyInfoView from './components/views/NotifyInfo'
-import SCUserLabelManage from './components/views/UserLabelManage.vue'
-import SCFirmTableView from './components/views/FirmTable.vue'
-import SCFirmDetailView from './components/views/FirmDetail.vue'
+import SCReportTableView from './components/views/reports/ReportTable'
+import SCReportDeatilView from './components/views/reports/ReportDetail'
+
+import SCUserTableView from './components/views/users/UserTable.vue'
+import SCUserAddFormView from './components/views/users/UserAddForm'
+import SCUserLabelManage from './components/views/users/UserLabelManage.vue'
+
+import SCArticleTableView from './components/views/cms/ArticleTable'
+import SCArticleAddFormView from './components/views/cms/ArticleAddForm.vue'
+import SCArticleDetailView from './components/views/cms/ArticleDetail.vue'
+import SCArticleCategoryManageView from './components/views/cms/ArticleCategoryManage.vue'
+
+import SCNotifyTableView from './components/views/notify/NotifyTable.vue'
+import SCNotifyAddFormView from './components/views/notify/NotifyAddForm.vue'
+import SCNotifyInfoView from './components/views/notify/NotifyInfo'
+
+import SCFirmTableView from './components/views/firm/FirmTable.vue'
+import SCFirmDetailView from './components/views/firm/FirmDetail.vue'
 
 const routes = [
   {

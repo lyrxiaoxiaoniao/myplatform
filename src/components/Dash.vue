@@ -134,7 +134,7 @@ import faker from 'faker'
 import api from '../api'
 import {mapState} from 'vuex'
 import config from '../config'
-import Sidebar from './Sidebar'
+import Sidebar from './views/dash/Sidebar'
 import 'hideseek'
 
 export default {

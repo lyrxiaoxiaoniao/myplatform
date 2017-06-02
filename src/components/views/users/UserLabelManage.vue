@@ -185,8 +185,6 @@
             id: id
           })
             .then(response => {
-              console.log(`Case Lists response ${response}`)
-
               if (response.status !== 200) {
                 this.error = response.statusText
                 return
@@ -230,20 +228,16 @@
           }
         })
           .then(response => {
-            console.log(`Case Lists response ${response}`)
-
             if (response.status !== 200) {
               this.error = response.statusText
               return
             }
             if (response.data.errcode === '0000') {
               this.response = this.transformData(response.data.data)
-              console.log('Case List')
-              console.log(this.response)
             }
           })
           .catch(error => {
-            console.log(error)
+            this.$message.error(error)
           })
       },
       // GET Report Catlgory Request
@@ -252,8 +246,6 @@
 
         axios.get(caseCatlgURL)
           .then(response => {
-            console.log('Case Catlogory response', response)
-
             if (response.status !== 200) {
               this.error = response.statusText
               return
@@ -270,7 +262,7 @@
             }
           })
           .catch(error => {
-            console.log(error)
+            this.$message.error(error)
           })
       },
       // Update Report List With Extra Conditions
@@ -281,20 +273,16 @@
           params: data
         })
           .then(response => {
-            console.log(`Case Lists Update response ${response}`)
-
             if (response.status !== 200) {
               this.error = response.statusText
               return
             }
             if (response.data.errcode === '0000') {
               this.response = this.transformData(response.data.data)
-              console.log('Update Case List Response Data')
-              console.log(this.response)
             }
           })
           .catch(error => {
-            console.log(error)
+            this.$message.error(error)
           })
       },
       // Transform Response Data

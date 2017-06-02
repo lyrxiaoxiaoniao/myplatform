@@ -55,7 +55,7 @@
         <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column prop="id" label="ID" sortable width="80"></el-table-column>
         <el-table-column prop="title" label="文章标题" min-width="100"></el-table-column>
-        <el-table-column prop="category.name" label="类别" width="100"></el-table-column>
+        <el-table-column prop="category.displayName" label="类别" width="100"></el-table-column>
         <el-table-column prop="author" label="发布者"></el-table-column>
         <el-table-column prop="createdAt" label="发布时间" sortable></el-table-column>
         <el-table-column prop="click" label="点击量" width="100px" sortable></el-table-column>
@@ -279,7 +279,7 @@ export default {
       data.forEach(item => {
         let category = {}
         category.value = item.id
-        category.label = item.name
+        category.label = item.displayName
         if (item.children.length !== 0) {
           const children = this.transformCatlgList(item.children)
           category.children = children

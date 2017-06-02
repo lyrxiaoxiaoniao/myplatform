@@ -299,7 +299,7 @@ export default {
       data.forEach(item => {
         let category = {}
         category.value = item.id
-        category.label = item.name
+        category.label = item.displayName
         if (item.children && item.children.length !== 0) {
           const children = this.transformData(item.children)
           category.children = children
