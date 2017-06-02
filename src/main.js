@@ -1,5 +1,4 @@
 import 'babel-polyfill'
-// Import System requirements
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
@@ -7,15 +6,14 @@ import {sync} from 'vuex-router-sync'
 import routes from './routes'
 import store from './store'
 
-// Import Helpers for filters
 import {domain, count, prettyDate, pluralize, toDate, toTimestamp, statusCodeToMsg} from './filters'
 
-// Import Views - Top level
 import AppView from './components/App.vue'
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
-// import AMap from 'vue-amap'
+import KobeUI from './kobe.js'
+
 import VueHtml5Editor from 'vue-html5-editor'
 
 // Import Install and register helper items
@@ -29,6 +27,7 @@ Vue.filter('statusCodeToMsg', statusCodeToMsg)
 
 Vue.use(VueRouter)
 Vue.use(ElementUI)
+Vue.use(KobeUI)
 
 Vue.use(VueHtml5Editor, {
   name: 'vue-html5-editor',

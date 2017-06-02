@@ -12,6 +12,7 @@ var useCssSourceMap = cssSourceMapDev || cssSourceMapProd
 
 module.exports = {
   entry: {
+    'kobe': './src/kobe.js',
     app: [
       'babel-polyfill',
       'eventsource-polyfill',

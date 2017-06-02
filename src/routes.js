@@ -28,7 +28,6 @@ import SCUserLabelManage from './components/views/UserLabelManage.vue'
 import SCFirmTableView from './components/views/FirmTable.vue'
 import SCFirmDetailView from './components/views/FirmDetail.vue'
 
-// Routes
 const routes = [
   {
     path: '/login',
