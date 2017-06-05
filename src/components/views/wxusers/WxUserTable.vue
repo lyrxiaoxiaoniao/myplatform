@@ -64,6 +64,20 @@
         <el-table-column prop="industry" label="行业"></el-table-column>
         <el-table-column prop="company" label="企业名称"></el-table-column>
         <el-table-column prop="workspace" label="街道社区"></el-table-column>
+        <el-table-column
+          label="标签"
+          prop="list"
+          >
+          <template scope="scope">
+            <el-tag
+              v-for="item in scope.row.list"
+              close-transition
+              type="success"
+              >
+              {{ item.name }}
+            </el-tag>
+          </template>
+        </el-table-column>
         <el-table-column 
           width="80"
           label="操作"

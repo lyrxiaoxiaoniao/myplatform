@@ -33,6 +33,12 @@ import SCNotifyInfoView from './components/views/notify/NotifyInfo'
 import SCFirmTableView from './components/views/firm/FirmTable.vue'
 import SCFirmDetailView from './components/views/firm/FirmDetail.vue'
 
+import SCWxUserTableView from './components/views/wxusers/WxUserTable.vue'
+import SCWxUserTagAddView from './components/views/wxusers/AddUserTag.vue'
+import SCWxUserLinkView from './components/views/wxusers/WxLinkUser.vue'
+import SCWxUserTagTableView from './components/views/wxusers/WxTagTable.vue'
+import SCWxTagUserListView from './components/views/wxusers/WxTagUserInfo.vue'
+
 const routes = [
   {
     path: '/login',
@@ -158,6 +164,31 @@ const routes = [
         component: SCFirmDetailView,
         name: '企业信息详情',
         meta: {description: '企业详情'}
+      }, {
+        path: 'wxuser',
+        component: SCWxUserTableView,
+        name: '微信用户管理',
+        meta: {description: '微信用户详情'}
+      }, {
+        path: 'wxtagadd',
+        component: SCWxUserTagAddView,
+        name: '微信用户标签',
+        meta: {description: '微信用户标签组'}
+      }, {
+        path: 'wxlink',
+        component: SCWxUserLinkView,
+        name: '微信用户标签组',
+        meta: {description: '关联微信用户标签组'}
+      }, {
+        path: 'wxtag',
+        component: SCWxUserTagTableView,
+        name: '微信用户标签组管理',
+        meta: {description: '微信用户标签组'}
+      }, {
+        path: 'wxtaguser',
+        component: SCWxTagUserListView,
+        name: '标签用户信息管理',
+        meta: {description: '微信用户标签组'}
       }
     ]
   }, {
