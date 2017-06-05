@@ -15,6 +15,7 @@ import ReposView from './components/views/Repos.vue'
 
 import SCReportTableView from './components/views/reports/ReportTable'
 import SCReportDeatilView from './components/views/reports/ReportDetail'
+import SCReportCategoryView from './components/views/reports/ReportCategory.vue'
 
 import SCUserTableView from './components/views/users/UserTable.vue'
 import SCUserAddFormView from './components/views/users/UserAddForm'
@@ -31,8 +32,6 @@ import SCNotifyInfoView from './components/views/notify/NotifyInfo'
 
 import SCFirmTableView from './components/views/firm/FirmTable.vue'
 import SCFirmDetailView from './components/views/firm/FirmDetail.vue'
-
-import SCWxUserTableView from './components/views/wxusers/WxUserTable.vue'
 
 const routes = [
   {
@@ -95,6 +94,11 @@ const routes = [
         name: '案件列表',
         meta: {description: '这是案件列表的描述'}
       }, {
+        path: 'reportcategory',
+        component: SCReportCategoryView,
+        name: '分类管理',
+        meta: {description: '安全隐患分类管理'}
+      }, {
         path: 'useradd',
         component: SCUserAddFormView,
         name: '添加用户',
@@ -154,11 +158,6 @@ const routes = [
         component: SCFirmDetailView,
         name: '企业信息详情',
         meta: {description: '企业详情'}
-      }, {
-        path: 'wxuser',
-        component: SCWxUserTableView,
-        name: '微信用户管理',
-        meta: {description: '微信用户详情'}
       }
     ]
   }, {
