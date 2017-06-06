@@ -2,6 +2,21 @@
   <kobe-table v-if="response">
     <div slot="kobe-table-header" class="kobe-table-header">
       <el-row type="flex" justify="space-around">
+        <el-col :span="6" class="wechat-user-group-info">
+          所属流量标签组：
+          {{ this.$route.query.name }}
+        </el-col>
+        <el-col :span="6" class="wechat-user-group-info">
+          用户数：
+          {{ this.count }}
+        </el-col>
+        <el-col :span="8">
+          <el-input v-model="form.param" placeholder="请输入昵称、姓名、企业名称进行搜索"></el-input>
+        </el-col>
+        <el-button @click="onSearch" icon="search"></el-button>
+        <el-button @click="addUser" icon="plus"></el-button>
+        <el-button icon="upload2" type="primary"></el-button>
+        <el-button icon="setting" type="primary"></el-button>
       </el-row>
     </div>
 
@@ -21,9 +36,9 @@
             {{ scope.row.nickname }}
           </template>
         </el-table-column>
-        <el-table-column prop="openid" label="openid"></el-table-column>
-        <el-table-column prop="realname" label="姓名"></el-table-column>
-        <el-table-column prop="industry" label="行业"></el-table-column>
+        <el-table-column prop="openid" label="openid" width="280"></el-table-column>
+        <el-table-column prop="realname" label="姓名" width="80"></el-table-column>
+        <el-table-column prop="industry" label="行业" width="120"></el-table-column>
         <el-table-column prop="company" label="企业名称"></el-table-column>
         <el-table-column prop="workspace" label="街道社区"></el-table-column>
         <el-table-column 
@@ -65,39 +80,63 @@ export default {
     return {
       response: null,
       error: null,
+      count: null,
       form: {
-        tagId: this.$route.query.id
+        tagId: this.$route.query.id,
+        param: ''
       }
     }
   },
   methods: {
+    addUser () {
+      this.$router.push({
+        path: 'wxlink',
+        query: {
+          id: this.$route.query.id
+        }
+      })
+    },
+    onSearch () {
+      const data = {
+        pageSize: this.response.pageSize,
+        currentPage: this.response.currentPage,
+        ...this.form
+      }
+      this.updateUserList(data)
+    },
     unlinkUser (id) {
-      let users = [id]
-      api.POST(config.wxUserGroupUserUnlinkAPI, {
-        userIds: users,
-        tagId: this.form.tagId
-      })
-      .then(response => {
-        if (response.status !== 200) {
-          this.$message.error(response.statusText)
-          return
-        }
-
-        if (response.data.errcode === '0000') {
-          this.$message({
-            message: '移除用户成功',
-            type: 'success'
-          })
-          const data = {
-            currentPage: this.response.currentPage,
-            pageSize: this.response.pageSize,
-            ...this.form
+      this.$confirm('是否确认要将该用户从当前标签组移除', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let users = [id]
+        api.POST(config.wxUserGroupUserUnlinkAPI, {
+          userIds: users,
+          tagId: this.form.tagId
+        })
+        .then(response => {
+          if (response.status !== 200) {
+            this.$message.error(response.statusText)
+            return
           }
-          this.updateUserList(data)
-        }
-      })
-      .catch(error => {
-        this.$message.error(error)
+
+          if (response.data.errcode === '0000') {
+            this.$message({
+              message: '移除用户成功',
+              type: 'success'
+            })
+            const data = {
+              currentPage: this.response.currentPage,
+              pageSize: this.response.pageSize,
+              ...this.form
+            }
+            this.updateUserList(data)
+          }
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
       })
     },
     handleCurrentChange (value) {
@@ -152,6 +191,7 @@ export default {
 
         if (response.data.errcode === '0000') {
           this.response = this.transformData(response.data.data)
+          this.count = this.response.count
         }
       })
       .catch(error => {
@@ -171,5 +211,10 @@ export default {
   margin-bottom: 5px;
   width: 56px;
   height: 56px;
+}
+.wechat-user-group-info {
+  padding-top: 1rem;
+  padding-left: 2rem;
+  font-size: 1rem;
 }
 </style>

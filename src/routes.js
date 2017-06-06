@@ -38,6 +38,7 @@ import SCWxUserTagAddView from './components/views/wxusers/AddUserTag.vue'
 import SCWxUserLinkView from './components/views/wxusers/WxLinkUser.vue'
 import SCWxUserTagTableView from './components/views/wxusers/WxTagTable.vue'
 import SCWxTagUserListView from './components/views/wxusers/WxTagUserInfo.vue'
+import SCWxUserProfileView from './components/views/wxusers/WxUserProfile.vue'
 
 const routes = [
   {
@@ -177,7 +178,7 @@ const routes = [
       }, {
         path: 'wxlink',
         component: SCWxUserLinkView,
-        name: '微信用户标签组',
+        name: '关联微信用户',
         meta: {description: '关联微信用户标签组'}
       }, {
         path: 'wxtag',
@@ -189,6 +190,10 @@ const routes = [
         component: SCWxTagUserListView,
         name: '标签用户信息管理',
         meta: {description: '微信用户标签组'}
+      }, {
+        path: 'wxuserprofile',
+        component: SCWxUserProfileView,
+        name: '微信用户详情'
       }
     ]
   }, {

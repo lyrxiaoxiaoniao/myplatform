@@ -42,7 +42,12 @@ export default {
       this.showDialog = false
     },
     linkUser () {
-      this.$router.push('wxlink')
+      this.$router.push({
+        path: 'wxlink',
+        query: {
+          id: this.response
+        }
+      })
     },
     cancelSubmit () {
     },
@@ -56,7 +61,7 @@ export default {
       })
       .then(response => {
         if (response.status !== 200) {
-          this.$message.error(this.response.statusText)
+          this.$message.error(response.statusText)
           return
         }
 
@@ -84,6 +89,7 @@ export default {
 
         if (response.data.errcode === '0000') {
           this.showDialog = true
+          this.response = response.data.data
         }
       })
       .catch(error => {

@@ -8,6 +8,7 @@
             :options="streetList"
             v-model="selectedStreet"
             @change="changeStreet"
+            placeholder="街道社区"
             clearable
             >
           </el-cascader>
@@ -41,7 +42,9 @@
         <el-col :span="7">
           <el-input v-model="form.param" placeholder="请输入昵称、姓名、企业名称进行搜索"></el-input>
         </el-col>
-        <el-button @click="onSearch" icon="search" type="primary">搜索</el-button>
+        <el-button @click="onSearch" icon="search"></el-button>
+        <el-button icon="upload2" type="primary"></el-button>
+        <el-button icon="setting" type="primary"></el-button>
       </el-row>
     </div>
     <div slot="kobe-table-content" class="kobe-table">

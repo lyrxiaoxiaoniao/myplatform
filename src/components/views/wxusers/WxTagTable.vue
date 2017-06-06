@@ -3,8 +3,17 @@
     <div class="kobe-table-header" slot="kobe-table-header">
       <el-row
         type="flex"
-        justify="end">
-        <el-button @click="addTag" type="primary">新增</el-button>
+        justify="space-around"
+        >
+        <el-col :span="12">
+          <el-button @click="addTag" type="primary">新增</el-button>
+        </el-col>
+        <el-col :span="8">
+          <el-input placeholder="请输入搜索关键字" v-model="form.name"></el-input>
+        </el-col>
+        <el-button @click="onSearch" icon="search"></el-button>
+        <el-button icon="upload2" type="primary"></el-button>
+        <el-button icon="setting" type="primary"></el-button>
       </el-row>
     </div>
     <div class="kobe-table" slot="kobe-table-content">
@@ -22,13 +31,24 @@
           label="操作"
           >
           <template scope="scope">
-            <el-button size="small" icon="edit"></el-button>
+            <el-button @click="editTag(scope.row.id)" size="small" icon="edit"></el-button>
             <el-button @click="deleteTag(scope.row.id)" size="small" icon="delete2"></el-button>
             <el-button @click="toTagInfo(scope.row.id, scope.row.name)" size="small" icon="information"></el-button>
-            <el-button size="small">关联用户</el-button>
+            <el-button @click="toLinkUser(scope.row.id)" size="small">关联用户</el-button>
           </template>
         </el-table-column>
       </el-table>
+      <el-dialog title="修改标签组名称" v-model="showDialog">
+        <el-form :model="updateForm">
+          <el-form-item label="标签组名称" :label-width="'120px'">
+            <el-input placeholder="请输入标签名" v-model="updateForm.name" auto-complete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="showDialog = false">取 消</el-button>
+          <el-button type="primary" @click="updateTag">确 定</el-button>
+        </div>
+      </el-dialog>
     </div>
     <div class="kobe-table-footer" slot="kobe-table-footer">
       <el-row type="flex" justify="center">
@@ -58,11 +78,45 @@ export default {
     return {
       response: null,
       error: null,
+      showDialog: false,
+      selectedTag: null,
       form: {
+        name: ''
+      },
+      updateForm: {
+        name: ''
       }
     }
   },
   methods: {
+    toLinkUser (id) {
+      this.$router.push({
+        path: 'wxlink',
+        query: {
+          id: id
+        }
+      })
+    },
+    onSearch () {
+      if (this.form.name === '') {
+        this.$message.error('请输入搜索关键字')
+        return
+      }
+      api.GET(config.wxUserGroupListAPI, this.form)
+      .then(response => {
+        if (response.status !== 200) {
+          this.$message.error(response.statusText)
+          return
+        }
+
+        if (response.data.errcode === '0000') {
+          this.response = response.data.data
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
     toTagInfo (id, name) {
       this.$router.push({
         path: 'wxtaguser',
@@ -72,8 +126,65 @@ export default {
         }
       })
     },
+    updateTag () {
+      if (this.updateForm.name === '') {
+        this.$message.error('请输入标签组名')
+        return
+      }
+      api.GET(config.wxUserGroupCheckAPI, {
+        name: this.updateForm.name
+      })
+      .then(response => {
+        if (response.status !== 200) {
+          this.$message.error(this.response.statusText)
+          return
+        }
+
+        if (response.data.errcode === '0000') {
+          if (response.data.data === true) {
+            this.changeTagName(this.updateForm.name)
+          } else {
+            this.$message.error('名字有冲突')
+          }
+        }
+      })
+    },
+    editTag (id) {
+      this.showDialog = true
+      this.selectedTag = id
+    },
     addTag () {
       this.$router.push('wxtagadd')
+    },
+    changeTagName (tag) {
+      api.POST(config.wxUserGroupUpdateAPI, {
+        name: tag,
+        id: this.selectedTag
+      })
+      .then(response => {
+        if (response.status !== 200) {
+          this.$message.error(response.statusText)
+          return
+        }
+
+        if (response.data.errcode === '0000') {
+          this.showDialog = false
+          this.$notify({
+            title: '成功',
+            message: '修改标签成功',
+            type: 'success'
+          })
+          const data = {
+            currentPage: this.response.currentPage,
+            pageSize: this.response.pageSize,
+            ...this.form
+          }
+          this.updateTagList(data)
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     },
     deleteTag (id) {
       this.$confirm('是否确认该标签组', '提示', {
