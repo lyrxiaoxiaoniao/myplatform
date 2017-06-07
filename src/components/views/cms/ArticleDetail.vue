@@ -32,7 +32,7 @@
             <el-col :span="15">
               <el-tag type="primary" class="article-tag" v-for="tag in response.tags">{{ tag.name }}</el-tag>
             </el-col>
-            <el-button icon="caret-top" size="mini">{{ response.upvote }}</el-button>
+            <el-button disabled icon="star-on" size="mini">{{ response.upvote }}</el-button>
           </el-row>
         </div>
       </el-col>
@@ -182,10 +182,14 @@ export default {
     overflow-x: hidden;
     overflow-y: scroll;
   }
+  .summary-text {
+    overflow-x: hidden;
+  }
   .summary-text h4 {
     color: gray;
     text-overflow: ellipsis;
     white-space: nowrap;
+    overflow-x: hidden;
   }
   .extra-text {
     color: gray;

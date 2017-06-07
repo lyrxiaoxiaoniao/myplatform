@@ -1,5 +1,5 @@
 export default {
-  serverURI: 'http://192.168.1.5:8080',
+  serverURI: 'http://192.168.1.7:8080',
   menuAPI: '/admin/menu/show_left',
   appInfoAPI: '/admin/appinfo/show?code=gmaj',
   userListAPI: '/admin/user/index',

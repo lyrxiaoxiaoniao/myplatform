@@ -50,6 +50,7 @@ export default {
       })
     },
     cancelSubmit () {
+      this.$router.go(-1)
     },
     submit () {
       if (this.tag === '') {

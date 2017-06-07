@@ -191,7 +191,7 @@ export default {
                 })
                 setTimeout(this.$router.push('article'), 3000)
               } else {
-                this.$message.error('错误，请重新提交')
+                this.$message.error(response.data.errmsg)
               }
             })
             .catch(error => {

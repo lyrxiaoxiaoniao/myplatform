@@ -88,13 +88,13 @@
     <div class="sc-report-table-content">
       <el-table :data="response.data" border stripe>
         <el-table-column type="selection" width="40"></el-table-column>
-        <el-table-column prop="acceptNo" label="受理号" sortable min-width="90"></el-table-column>
+        <el-table-column prop="acceptNo" label="受理号" min-width="90"></el-table-column>
         <el-table-column prop="reportName" label="举报人" width="80"></el-table-column>
         <el-table-column prop="catlgName" label="案件分类" min-width="90"></el-table-column>
         <el-table-column prop="hiddenUnit" label="隐患单位" width="100"></el-table-column>
         <el-table-column prop="address" label="事发地址" min-width="180"></el-table-column>
         <el-table-column prop="description" label="案件描述" min-width="200"></el-table-column>
-        <el-table-column prop="createdAt" label="举报时间" sortable width="100"></el-table-column>
+        <el-table-column prop="createdAt" label="举报时间" width="100"></el-table-column>
         <el-table-column prop="status" label="状态" min-width="80"></el-table-column>
         <el-table-column label="操作" min-width="120">
           <template scope="scope">

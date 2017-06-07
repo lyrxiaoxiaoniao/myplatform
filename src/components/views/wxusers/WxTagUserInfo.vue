@@ -23,6 +23,7 @@
     <div slot="kobe-table-content" class="kobe-table">
       <el-table
         :data="response.data"
+        border
         stripe
         >
         <el-table-column type="selection" width="40"></el-table-column>

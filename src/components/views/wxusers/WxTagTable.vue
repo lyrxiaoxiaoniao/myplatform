@@ -19,6 +19,7 @@
     <div class="kobe-table" slot="kobe-table-content">
       <el-table
         :data="response.data"
+        border
         stripe
         >
         <el-table-column type="selection" width="40"></el-table-column>
@@ -41,7 +42,7 @@
       <el-dialog title="修改标签组名称" v-model="showDialog">
         <el-form :model="updateForm">
           <el-form-item label="标签组名称" :label-width="'120px'">
-            <el-input placeholder="请输入标签名" v-model="updateForm.name" auto-complete="off"></el-input>
+            <el-input placeholder="请输入新的标签名" v-model="updateForm.name" auto-complete="off"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">

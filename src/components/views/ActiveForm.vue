@@ -42,7 +42,9 @@
         class="radio"
         v-model="hasURL"
         >
-        <el-checkbox>
+        <el-checkbox
+        :disabled="urlDisabled"
+          >
         链接
         </el-checkbox>
       </el-checkbox-group>
@@ -63,11 +65,27 @@
 <script>
 export default {
   name: 'sc-active-form',
-  props: ['data', 'change'],
+  props: {
+    data: {
+      type: Object
+    },
+    change: {
+      type: Function
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+    article: {
+      type: Object,
+      default: null
+    }
+  },
   data () {
     return {
       activeData: null,
       hasURL: false,
+      urlDisabled: false,
       rules: {
       },
       form: this.data.model
@@ -82,6 +100,11 @@ export default {
           trigger: 'change'
         }]
       }
+    },
+    article (newVal, oldVal) {
+      this.urlDisabled = true
+      this.form['first.DATA'] = newVal.title
+      this.form['remark.DATA'] = newVal.digest
     }
   },
   methods: {

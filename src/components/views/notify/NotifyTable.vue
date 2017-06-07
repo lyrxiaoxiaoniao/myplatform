@@ -2,12 +2,12 @@
   <div class="sc-notify-table" v-if="response">
     <div class="notify-table-header">
       <el-row type="flex" justify="space-between">
-        <el-col :span="15">
+        <el-col :span="18">
           <el-button @click="addNotify" type="primary">添加</el-button>
         </el-col>
         <el-col :span="6">
           <el-input class="search-title-input" v-model="searchTitle" placeholder="请输入搜索关键字"></el-input>
-          <el-button @click="onKeywordSearch" type="primary" icon="search">搜索</el-button>
+          <el-button @click="onKeywordSearch" icon="search"></el-button>
         </el-col>
       </el-row>
     </div>
