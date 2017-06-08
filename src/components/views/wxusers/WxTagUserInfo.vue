@@ -216,6 +216,6 @@ export default {
 .wechat-user-group-info {
   padding-top: 1rem;
   padding-left: 2rem;
-  font-size: 1rem;
+  font-size: 1.5rem;
 }
 </style>

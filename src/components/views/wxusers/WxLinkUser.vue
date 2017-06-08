@@ -26,7 +26,7 @@
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="7">
+        <el-col :span="8">
           <el-input v-model="form.param" placeholder="请输入昵称、姓名、企业名称进行搜索"></el-input>
         </el-col>
         <el-button @click="onSearch" icon="search"></el-button>

@@ -94,12 +94,12 @@ const routes = [
         path: 'users',
         component: SCUserTableView,
         name: '用户列表',
-        meta: {description: '这是用户列表的描述'}
+        meta: {description: '用户列表详情'}
       }, {
         path: 'reports',
         component: SCReportTableView,
         name: '案件列表',
-        meta: {description: '这是案件列表的描述'}
+        meta: {description: '安全隐患案件列表'}
       }, {
         path: 'reportcategory',
         component: SCReportCategoryView,
@@ -191,7 +191,7 @@ const routes = [
         name: '标签用户信息管理',
         meta: {description: '微信用户标签组'}
       }, {
-        path: 'wxuserprofile',
+        path: 'wxprofile',
         component: SCWxUserProfileView,
         name: '微信用户详情'
       }

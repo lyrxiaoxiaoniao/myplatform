@@ -87,7 +87,7 @@
           label="操作"
           >
           <template scope="scope">
-            <el-button size="small" icon="edit"></el-button>
+            <el-button @click="checkUserInfo(scope.row.id)" size="small" icon="edit"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -133,6 +133,14 @@ export default {
     }
   },
   methods: {
+    checkUserInfo (id) {
+      this.$router.push({
+        path: 'wxprofile',
+        query: {
+          id: id
+        }
+      })
+    },
     onSearch () {
       const data = {
         currentPage: this.response.currentPage,

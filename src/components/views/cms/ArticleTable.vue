@@ -4,7 +4,7 @@
       <el-popover
         ref="advancedSearch"
         width="400"
-        trigger="hover"
+        trigger="click"
         placement="bottom-end"
         >
         <el-form class="search-form" :model="searchForm">
@@ -19,8 +19,8 @@
           </el-form-item>
           <el-form-item class="advance-form-item" label="创建时间">
             <el-row type="flex">
-              <el-date-picker type="date" placeholder="开始日期" v-model="searchForm.startTime"></el-date-picker>
-              <el-date-picker type="date" placeholder="结束日期" v-model="searchForm.endTime"></el-date-picker>
+              <el-date-picker type="datetime" placeholder="开始日期" v-model="searchForm.startTime"></el-date-picker>
+              <el-date-picker type="datetime" placeholder="结束日期" v-model="searchForm.endTime"></el-date-picker>
             </el-row>
           </el-form-item>
           <el-row type="flex">
@@ -28,6 +28,7 @@
               <el-cascader
                 expand-trigger="hover"
                 :options="articleCatlg"
+                clearable
                 @change="handleCatlgChange">
               </el-cascader>
             </el-form-item>
@@ -35,7 +36,7 @@
           <el-row type="flex" justify="center">
             <el-form-item>
               <el-col :span="10">
-                <el-button class="button-search" type="primary" @click="">搜索</el-button>
+                <el-button class="button-search" type="primary" @click="onAdvancedSearch">搜索</el-button>
               </el-col>
             </el-form-item>
           </el-row>
@@ -48,6 +49,8 @@
         <el-button icon="search" @click="onSearch"></el-button>
         <el-button v-popover:advancedSearch type="primary">高级</el-button>
         <el-button class="ion-paper-airplane" type="primary" @click="onPublish">发布</el-button>
+        <el-button icon="upload2" type="primary"></el-button>
+        <el-button icon="setting" type="primary"></el-button>
       </el-row>
     </div>
     <div class="sc-article-table-content">
@@ -103,7 +106,7 @@ export default {
         author: '',
         startTime: '',
         endTime: '',
-        cateId: '',
+        categoryId: '',
         keyword: ''
       },
       error: null
@@ -112,6 +115,14 @@ export default {
   computed: {
   },
   methods: {
+    onAdvancedSearch () {
+      const data = {
+        currentPage: this.response.currentPage,
+        pageSize: this.response.pageSize,
+        ...this.searchForm
+      }
+      this.updateArticleList(data)
+    },
     onSearch () {
       const data = {
         currentPage: this.response.currentPage,
@@ -121,7 +132,7 @@ export default {
       this.updateArticleList(data)
     },
     handleCatlgChange (value) {
-      this.searchForm.cateid = value[value.length - 1]
+      this.searchForm.categoryId = value[value.length - 1]
     },
     handleSizeChange (value) {
       this.updateArticleList({

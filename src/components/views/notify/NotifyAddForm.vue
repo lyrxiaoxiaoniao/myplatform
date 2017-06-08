@@ -330,7 +330,7 @@ export default {
 .notify-form-select {
   width: 20rem;
 }
-.el-table th:first-child .el-checkbox {
+.sc-notify-form-add .el-table th:first-child .el-checkbox {
   display: none;
 }
 .dialog-table {

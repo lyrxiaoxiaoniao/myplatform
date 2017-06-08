@@ -1,6 +1,6 @@
 <template>
   <div class="sc-article-category-manage">
-    <el-button @click="addMenu" type="primaty">新增文章板块</el-button>
+    <el-button class="category-add-button" @click="addMenu" type="primaty">新增文章板块</el-button>
     <el-tree
       :data="data"
       :props="defaultProps"
@@ -12,9 +12,9 @@
     <el-dialog title="提示" v-model="deleteVisible" size="tiny">
       <span>确认要删除该板块吗？(将删除所有的子板块)</span>
       <span slot="footer" class="dialog-footer">
-    <el-button @click="deleteVisible = false">取 消</el-button>
-    <el-button type="danger" @click="deleteCategory">确 定</el-button>
-  </span>
+        <el-button @click="deleteVisible = false">取 消</el-button>
+        <el-button type="danger" @click="deleteCategory">确 定</el-button>
+      </span>
     </el-dialog>
     <el-dialog :title="isEditing? '编辑' : '新增'"
                v-model="addVisible"
@@ -259,5 +259,8 @@ export default {
     margin-top: 2rem;
     border-top: 1px solid lightgray;
     padding:2rem 4rem;
+  }
+  .category-add-button {
+    margin-bottom: 1rem;
   }
 </style>

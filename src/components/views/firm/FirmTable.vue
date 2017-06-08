@@ -1,12 +1,35 @@
 <template>
   <div class="sc-firm-component" v-if="response">
     <div class="sc-firm-header">
+      <el-popover
+        ref="advancedSearch"
+        width="400"
+        trigger="click"
+        placement="bottom-end"
+        >
+        <el-form class="search-form" :model="form">
+          <el-form-item class="advance-form-item" label="企业名称">
+            <el-input v-model="form.company"></el-input>
+          </el-form-item>
+          <el-form-item class="advance-form-item" label="所属行业">
+            <el-input v-model="form.industryName"></el-input>
+          </el-form-item>
+          <el-form-item class="advance-form-item" label="详细地址">
+            <el-input v-model="form.address"></el-input>
+          </el-form-item>
+          <el-row type="flex" justify="center">
+            <el-button type="primary" @click="onAdvancedSearch">搜索</el-button>
+          </el-row>
+        </el-form>
+      </el-popover>
       <el-row type="flex" justify="end">
         <el-col :span="5">
-          <el-input v-model="keyword" class="sc-firm-input-search" placeholder="请输入搜索关键字"></el-input>
+          <el-input v-model="form.keyword" class="sc-firm-input-search" placeholder="请输入搜索关键字"></el-input>
         </el-col>
         <el-button @click="onKeywordSearch" icon="search"></el-button>
-        <el-button type="primary">高级</el-button>
+        <el-button v-popover:advancedSearch type="primary">高级</el-button>
+        <el-button icon="upload2" type="primary"></el-button>
+        <el-button icon="setting" type="primary"></el-button>
       </el-row>
     </div>
     <div class="sc-firm-content">
@@ -59,12 +82,22 @@ export default {
       response: null,
       error: null,
       form: {
-      },
-      advancedSearch: false,
-      keyword: ''
+        company: '',
+        industryName: '',
+        address: '',
+        keyword: ''
+      }
     }
   },
   methods: {
+    onAdvancedSearch () {
+      const data = {
+        pageSize: this.response.pageSize,
+        currentPage: this.response.currentPage,
+        ...this.form
+      }
+      this.updateList(data)
+    },
     handleSizeChange (value) {
       const data = {
         currentPage: this.response.currentPage,
@@ -90,9 +123,10 @@ export default {
       })
     },
     onKeywordSearch () {
-      api.GET(config.firmListAPI, {
-        keyword: this.keyword
-      })
+      const data = {
+        ...this.form
+      }
+      api.GET(config.firmListAPI, data)
       .then(response => {
         if (response.status !== 200) {
           this.error = response.statusText

@@ -3,15 +3,13 @@
     <div class="kobe-table-header" slot="kobe-table-header">
       <el-row
         type="flex"
-        justify="space-around"
+        justify="end"
         >
-        <el-col :span="12">
-          <el-button @click="addTag" type="primary">新增</el-button>
-        </el-col>
-        <el-col :span="8">
+        <el-col :span="5">
           <el-input placeholder="请输入搜索关键字" v-model="form.name"></el-input>
         </el-col>
         <el-button @click="onSearch" icon="search"></el-button>
+        <el-button @click="addTag" type="primary">新增</el-button>
         <el-button icon="upload2" type="primary"></el-button>
         <el-button icon="setting" type="primary"></el-button>
       </el-row>

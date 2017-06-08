@@ -45,8 +45,7 @@ Vue.use(VueHtml5Editor, {
     hr: 'fa fa-minus',
     eraser: 'fa fa-eraser',
     undo: 'fa-undo fa',
-    'full-screen': 'fa fa-arrows-alt',
-    info: 'fa fa-info'
+    'full-screen': 'fa fa-arrows-alt'
   },
   image: {
     sizeLimit: 512 * 1024,
@@ -71,7 +70,6 @@ Vue.use(VueHtml5Editor, {
     }
   },
   language: 'zh-cn',
-  // 自定义语言
   i18n: {
     'zh-cn': {
       'align': '对齐方式',

@@ -7,15 +7,13 @@
         </h4>
       </el-row>
       <el-row class="" type="flex" justify="space-around">
-        <el-col :span="6">
+        <el-col :span="12">
           <el-date-picker
             type="datetime"
             placeholder="选择起始日期"
             v-model="form.startTime"
             >
           </el-date-picker>
-        </el-col>
-        <el-col :span="6">
           <el-date-picker
             type="datetime"
             placeholder="选择结束日期"
@@ -23,7 +21,7 @@
             >
           </el-date-picker>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="12" :offset="8">
           <el-select clearable @change="onSelectStatus" v-model="form.isArrive" placeholder="请选择">
             <el-option
               v-for="item in statusOptions"
@@ -32,10 +30,8 @@
               >
             </el-option>
           </el-select>
-        </el-col>
-        <el-col :span="6">
           <el-input v-model="form.keyword" placeholder="请输入搜索关键字"></el-input>
-          <el-button @click="onSearch">搜索</el-button>
+          <el-button @click="onSearch" icon="search"></el-button>
         </el-col>
       </el-row>
     </div>

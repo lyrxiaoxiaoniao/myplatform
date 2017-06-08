@@ -28,16 +28,6 @@
       }
     },
     created () {
-      console.log('-----------------------------------------------------------')
-      console.log('------------------------SHENCOM-----------------------------')
-      console.log('|在李杨大神的疯狂Carry下，才使本项目上线，临表涕临，不知所言|')
-      console.log('|Email: liyang@shencom.cn|')
-      console.log('|Github: AntiClimax|')
-      console.log('|知乎: 李杨(高级前端专家，游戏，音乐)|')
-      console.log('|爱好：男和上班划水|')
-      console.log('|牛批|')
-      console.log('------------------------SHENCOM-----------------------------')
-      console.log('------------------------------------------------------------')
     }
   }
 </script>
