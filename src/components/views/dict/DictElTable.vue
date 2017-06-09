@@ -5,11 +5,12 @@
         <el-col :span="7">
           <el-input v-model="form.keyword" placeholder="请输入搜索关键字"></el-input>
         </el-col>
-        <el-button icon="search"></el-button>
+        <el-button @click="onSearch" icon="search"></el-button>
         <el-button icon="upload2" type="primary"></el-button>
         <el-button icon="setting" type="primary"></el-button>
       </el-row>
     </div>
+
     <div slot="kobe-table-content" class="kobe-table">
       <el-table
         :data="response.data"
@@ -18,20 +19,20 @@
         >
         <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
-        <el-table-column prop="referName" label="表信息"></el-table-column>
-        <el-table-column prop="refCloName" label="列信息"></el-table-column>
-        <el-table-column prop="createdAt" label="创建时间"></el-table-column>
+        <el-table-column prop="name" label="键"></el-table-column>
+        <el-table-column prop="value" label="值"></el-table-column>
         <el-table-column 
-          width="280"
+          width="180"
           label="操作"
           >
           <template scope="scope">
-            <el-button @click="selectDictEl(scope.row.id)" size="small" icon="information"></el-button>
-            <el-button @click="deleteDict(scope.row.id)" size="small" icon="delete2"></el-button>
+            <el-button size="small" icon="edit"></el-button>
+            <el-button @click="onDelete(scope.row.id)" size="small" icon="delete2"></el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
+
     <div slot="kobe-table-footer" class="kobe-table-footer">
       <el-row type="flex" justify="center">
         <el-col :span="12">
@@ -55,9 +56,10 @@ import api from 'src/api'
 import config from 'src/config'
 
 export default {
-  name: 'sc-dict-table',
+  name: 'sc-dict-el-table',
   data () {
     return {
+      dictElID: this.$route.query.id,
       response: null,
       error: null,
       form: {
@@ -72,7 +74,7 @@ export default {
         pageSize: value,
         ...this.form
       }
-      this.updateDictList(data)
+      this.updateList(data)
     },
     handleCurrentChange (value) {
       const data = {
@@ -80,7 +82,7 @@ export default {
         pageSize: this.response.pageSize,
         ...this.form
       }
-      this.updateDictList(data)
+      this.updateList(data)
     },
     onSearch () {
       const data = {
@@ -88,39 +90,15 @@ export default {
         pageSize: 10,
         ...this.form
       }
-      this.updateDictList(data)
+      this.updateList(data)
     },
-    updateDictList (data) {
-      api.GET(config.dictListAPI, data)
-      .then(response => {
-        if (response.status !== 200) {
-          this.$message.error(response.statusText)
-          return
-        }
-
-        if (response.data.errcode === '0000') {
-          this.response = response.data.data
-        }
-      })
-      .catch(error => {
-        this.$message.error(error)
-      })
-    },
-    selectDictEl (id) {
-      this.$router.push({
-        path: 'dictel',
-        query: {
-          id: id
-        }
-      })
-    },
-    deleteDict (id) {
+    onDelete (id) {
       this.$confirm('是否删除该条信息', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(response => {
-        api.POST(config.dictDeleteAPI, {
+        api.POST(config.dictElDeleteAPI, {
           id: id
         })
         .then(response => {
@@ -135,13 +113,33 @@ export default {
               currentPage: this.response.currentPage,
               ...this.form
             }
-            this.updateRoleList(data)
+            this.updateList(data)
           }
         })
       })
     },
-    getDictList () {
-      api.GET(config.dictListAPI)
+    updateList (data) {
+      api.GET(config.dictElListAPI, {
+        pId: this.dictElID
+      })
+      .then(response => {
+        if (response.status !== 200) {
+          this.$message.error(response.statusText)
+          return
+        }
+
+        if (response.data.errcode === '0000') {
+          this.response = response.data.data
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    getList () {
+      api.GET(config.dictElListAPI, {
+        pId: this.dictElID
+      })
       .then(response => {
         if (response.status !== 200) {
           this.$message.error(response.statusText)
@@ -158,7 +156,7 @@ export default {
     }
   },
   mounted () {
-    this.getDictList()
+    this.getList()
   }
 }
 </script>

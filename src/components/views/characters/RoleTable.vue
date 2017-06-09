@@ -1,5 +1,5 @@
 <template>
-  <kobe-table v-if="response">
+  <kobe-table>
     <div slot="kobe-table-header" class="kobe-table-header">
       <el-row type="flex" justify="end">
         <el-col :span="7">
@@ -12,22 +12,25 @@
     </div>
     <div slot="kobe-table-content" class="kobe-table">
       <el-table
-        :data="response.data"
-        stripe
         border
+        stripe
+        :data="response.data"
         >
         <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
-        <el-table-column prop="referName" label="表信息"></el-table-column>
-        <el-table-column prop="refCloName" label="列信息"></el-table-column>
+        <el-table-column prop="type" label="类型" width="80"></el-table-column>
+        <el-table-column prop="displayName" label="角色名称"></el-table-column>
+        <el-table-column prop="description" label="角色描述"></el-table-column>
         <el-table-column prop="createdAt" label="创建时间"></el-table-column>
         <el-table-column 
           width="280"
           label="操作"
           >
           <template scope="scope">
-            <el-button @click="selectDictEl(scope.row.id)" size="small" icon="information"></el-button>
-            <el-button @click="deleteDict(scope.row.id)" size="small" icon="delete2"></el-button>
+            <el-button size="small" icon="edit"></el-button>
+            <el-button @click="deleteRole(scope.row.id)" size="small" icon="delete2"></el-button>
+            <el-button size="small" icon="information"></el-button>
+            <el-button size="small">关联用户</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -55,7 +58,7 @@ import api from 'src/api'
 import config from 'src/config'
 
 export default {
-  name: 'sc-dict-table',
+  name: 'sc-role-table',
   data () {
     return {
       response: null,
@@ -72,7 +75,7 @@ export default {
         pageSize: value,
         ...this.form
       }
-      this.updateDictList(data)
+      this.updateRoleList(data)
     },
     handleCurrentChange (value) {
       const data = {
@@ -80,18 +83,10 @@ export default {
         pageSize: this.response.pageSize,
         ...this.form
       }
-      this.updateDictList(data)
+      this.updateRoleList(data)
     },
-    onSearch () {
-      const data = {
-        currentPage: 1,
-        pageSize: 10,
-        ...this.form
-      }
-      this.updateDictList(data)
-    },
-    updateDictList (data) {
-      api.GET(config.dictListAPI, data)
+    updateRoleList (data) {
+      api.GET(config.roleListAPI, data)
       .then(response => {
         if (response.status !== 200) {
           this.$message.error(response.statusText)
@@ -106,21 +101,13 @@ export default {
         this.$message.error(error)
       })
     },
-    selectDictEl (id) {
-      this.$router.push({
-        path: 'dictel',
-        query: {
-          id: id
-        }
-      })
-    },
-    deleteDict (id) {
-      this.$confirm('是否删除该条信息', '提示', {
+    deleteRole (id) {
+      this.$confirm('是否删除该角色', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(response => {
-        api.POST(config.dictDeleteAPI, {
+        api.POST(config.roleDeleteAPI, {
           id: id
         })
         .then(response => {
@@ -140,8 +127,8 @@ export default {
         })
       })
     },
-    getDictList () {
-      api.GET(config.dictListAPI)
+    getRoleList () {
+      api.GET(config.roleListAPI)
       .then(response => {
         if (response.status !== 200) {
           this.$message.error(response.statusText)
@@ -158,7 +145,7 @@ export default {
     }
   },
   mounted () {
-    this.getDictList()
+    this.getRoleList()
   }
 }
 </script>

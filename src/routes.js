@@ -40,6 +40,11 @@ import SCWxUserTagTableView from './components/views/wxusers/WxTagTable.vue'
 import SCWxTagUserListView from './components/views/wxusers/WxTagUserInfo.vue'
 import SCWxUserProfileView from './components/views/wxusers/WxUserProfile.vue'
 
+import SCDictTableView from './components/views/dict/DictTable.vue'
+import SCDictElTableView from './components/views/dict/DictElTable.vue'
+
+import SCRoleTableView from './components/views/characters/RoleTable.vue'
+
 const routes = [
   {
     path: '/login',
@@ -194,6 +199,18 @@ const routes = [
         path: 'wxprofile',
         component: SCWxUserProfileView,
         name: '微信用户详情'
+      }, {
+        path: 'dict',
+        component: SCDictTableView,
+        name: '字典管理'
+      }, {
+        path: 'dictel',
+        component: SCDictElTableView,
+        name: '字典元素管理'
+      }, {
+        path: 'role',
+        component: SCRoleTableView,
+        name: '角色管理'
       }
     ]
   }, {
