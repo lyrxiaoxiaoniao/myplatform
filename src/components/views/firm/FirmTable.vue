@@ -239,16 +239,15 @@ export default {
 </script>
 
 <style>
-.sc-firm-component {
-  border-top: 1px solid lightgray;
-  padding-top: 2rem;
-  margin-left: 2rem;
-  margin-top: 2rem;
-  margin-right: 2rem;
-}
 .sc-firm-header {
-  margin: 0 1rem;
-  margin-bottom: 20px;
+  margin: 1rem 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid lightgray;
+}
+.sc-firm-content {
+  margin-left: 2rem;
+  margin-right: 2rem;
+  padding-bottom: 1rem;
 }
 .sc-firm-input-search .el-input {
   width: 8rem;
