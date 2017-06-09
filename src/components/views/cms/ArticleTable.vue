@@ -4,7 +4,7 @@
       <el-popover
         ref="advancedSearch"
         width="400"
-        trigger="hover"
+        trigger="click"
         placement="bottom-end"
         >
         <el-form class="search-form" :model="searchForm">
@@ -19,8 +19,8 @@
           </el-form-item>
           <el-form-item class="advance-form-item" label="创建时间">
             <el-row type="flex">
-              <el-date-picker type="date" placeholder="开始日期" v-model="searchForm.startTime"></el-date-picker>
-              <el-date-picker type="date" placeholder="结束日期" v-model="searchForm.endTime"></el-date-picker>
+              <el-date-picker type="datetime" placeholder="开始日期" v-model="searchForm.startTime"></el-date-picker>
+              <el-date-picker type="datetime" placeholder="结束日期" v-model="searchForm.endTime"></el-date-picker>
             </el-row>
           </el-form-item>
           <el-row type="flex">
@@ -28,6 +28,7 @@
               <el-cascader
                 expand-trigger="hover"
                 :options="articleCatlg"
+                clearable
                 @change="handleCatlgChange">
               </el-cascader>
             </el-form-item>
@@ -35,7 +36,7 @@
           <el-row type="flex" justify="center">
             <el-form-item>
               <el-col :span="10">
-                <el-button class="button-search" type="primary" @click="">搜索</el-button>
+                <el-button class="button-search" type="primary" @click="onAdvancedSearch">搜索</el-button>
               </el-col>
             </el-form-item>
           </el-row>
@@ -48,16 +49,18 @@
         <el-button icon="search" @click="onSearch"></el-button>
         <el-button v-popover:advancedSearch type="primary">高级</el-button>
         <el-button class="ion-paper-airplane" type="primary" @click="onPublish">发布</el-button>
+        <el-button icon="upload2" type="primary"></el-button>
+        <el-button icon="setting" type="primary"></el-button>
       </el-row>
     </div>
     <div class="sc-article-table-content">
       <el-table :data="response.data" border stripe>
         <el-table-column type="selection" width="40"></el-table-column>
-        <el-table-column prop="id" label="ID" sortable width="80"></el-table-column>
+        <el-table-column prop="id" label="ID" width="80"></el-table-column>
         <el-table-column prop="title" label="文章标题" min-width="100"></el-table-column>
-        <el-table-column prop="category.name" label="类别" width="100"></el-table-column>
+        <el-table-column prop="category.displayName" label="类别" width="100"></el-table-column>
         <el-table-column prop="author" label="发布者"></el-table-column>
-        <el-table-column prop="createdAt" label="发布时间" sortable></el-table-column>
+        <el-table-column prop="createdAt" label="发布时间"></el-table-column>
         <el-table-column prop="click" label="点击量" width="100px" sortable></el-table-column>
         <el-table-column prop="state" label="状态" width="120px"></el-table-column>
         <el-table-column label="操作" width="180">
@@ -103,7 +106,7 @@ export default {
         author: '',
         startTime: '',
         endTime: '',
-        cateId: '',
+        categoryId: '',
         keyword: ''
       },
       error: null
@@ -112,6 +115,14 @@ export default {
   computed: {
   },
   methods: {
+    onAdvancedSearch () {
+      const data = {
+        currentPage: this.response.currentPage,
+        pageSize: this.response.pageSize,
+        ...this.searchForm
+      }
+      this.updateArticleList(data)
+    },
     onSearch () {
       const data = {
         currentPage: this.response.currentPage,
@@ -121,7 +132,7 @@ export default {
       this.updateArticleList(data)
     },
     handleCatlgChange (value) {
-      this.searchForm.cateid = value[value.length - 1]
+      this.searchForm.categoryId = value[value.length - 1]
     },
     handleSizeChange (value) {
       this.updateArticleList({
@@ -279,7 +290,7 @@ export default {
       data.forEach(item => {
         let category = {}
         category.value = item.id
-        category.label = item.name
+        category.label = item.displayName
         if (item.children.length !== 0) {
           const children = this.transformCatlgList(item.children)
           category.children = children

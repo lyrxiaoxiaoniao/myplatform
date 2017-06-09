@@ -13,36 +13,45 @@ import AccessView from './components/views/Access.vue'
 import ServerView from './components/views/Server.vue'
 import ReposView from './components/views/Repos.vue'
 
-import SCUserTableView from './components/views/UserTable.vue'
-import SCReportTableView from './components/views/ReportTable'
-import SCUserAddFormView from './components/views/UserAddForm'
-import SCReportDeatilView from './components/views/ReportDetail'
-import SCArticleTableView from './components/views/ArticleTable'
-import SCArticleAddFormView from './components/views/ArticleAddForm.vue'
-import SCArticleDetailView from './components/views/ArticleDetail.vue'
-import SCArticleCategoryManageView from './components/views/ArticleCategoryManage.vue'
-import SCNotifyTableView from './components/views/NotifyTable.vue'
-import SCNotifyAddFormView from './components/views/NotifyAddForm.vue'
-import SCNotifyInfoView from './components/views/NotifyInfo'
-import SCUserLabelManage from './components/views/UserLabelManage.vue'
-import SCFirmTableView from './components/views/FirmTable.vue'
-import SCFirmDetailView from './components/views/FirmDetail.vue'
+import SCReportTableView from './components/views/reports/ReportTable'
+import SCReportDeatilView from './components/views/reports/ReportDetail'
+import SCReportCategoryView from './components/views/reports/ReportCategory.vue'
 
-const base = ''
+import SCUserTableView from './components/views/users/UserTable.vue'
+import SCUserAddFormView from './components/views/users/UserAddForm'
+import SCUserLabelManage from './components/views/users/UserLabelManage.vue'
 
-// Routes
+import SCArticleTableView from './components/views/cms/ArticleTable'
+import SCArticleAddFormView from './components/views/cms/ArticleAddForm.vue'
+import SCArticleDetailView from './components/views/cms/ArticleDetail.vue'
+import SCArticleCategoryManageView from './components/views/cms/ArticleCategoryManage.vue'
+
+import SCNotifyTableView from './components/views/notify/NotifyTable.vue'
+import SCNotifyAddFormView from './components/views/notify/NotifyAddForm.vue'
+import SCNotifyInfoView from './components/views/notify/NotifyInfo'
+
+import SCFirmTableView from './components/views/firm/FirmTable.vue'
+import SCFirmDetailView from './components/views/firm/FirmDetail.vue'
+
+import SCWxUserTableView from './components/views/wxusers/WxUserTable.vue'
+import SCWxUserTagAddView from './components/views/wxusers/AddUserTag.vue'
+import SCWxUserLinkView from './components/views/wxusers/WxLinkUser.vue'
+import SCWxUserTagTableView from './components/views/wxusers/WxTagTable.vue'
+import SCWxTagUserListView from './components/views/wxusers/WxTagUserInfo.vue'
+import SCWxUserProfileView from './components/views/wxusers/WxUserProfile.vue'
+
 const routes = [
   {
-    path: base + '/login',
+    path: '/login',
     component: LoginView
   }, {
-    path: base + '/forgot',
+    path: '/forgot',
     component: ForgetView
   }, {
-    path: base + '/reset',
+    path: '/reset',
     component: ResetView
   }, {
-    path: base + '/',
+    path: '/',
     component: DashView,
     children: [
       {
@@ -85,12 +94,17 @@ const routes = [
         path: 'users',
         component: SCUserTableView,
         name: '用户列表',
-        meta: {description: '这是用户列表的描述'}
+        meta: {description: '用户列表详情'}
       }, {
         path: 'reports',
         component: SCReportTableView,
         name: '案件列表',
-        meta: {description: '这是案件列表的描述'}
+        meta: {description: '安全隐患案件列表'}
+      }, {
+        path: 'reportcategory',
+        component: SCReportCategoryView,
+        name: '分类管理',
+        meta: {description: '安全隐患分类管理'}
       }, {
         path: 'useradd',
         component: SCUserAddFormView,
@@ -151,6 +165,35 @@ const routes = [
         component: SCFirmDetailView,
         name: '企业信息详情',
         meta: {description: '企业详情'}
+      }, {
+        path: 'wxuser',
+        component: SCWxUserTableView,
+        name: '微信用户管理',
+        meta: {description: '微信用户详情'}
+      }, {
+        path: 'wxtagadd',
+        component: SCWxUserTagAddView,
+        name: '微信用户标签',
+        meta: {description: '微信用户标签组'}
+      }, {
+        path: 'wxlink',
+        component: SCWxUserLinkView,
+        name: '关联微信用户',
+        meta: {description: '关联微信用户标签组'}
+      }, {
+        path: 'wxtag',
+        component: SCWxUserTagTableView,
+        name: '微信用户标签组管理',
+        meta: {description: '微信用户标签组'}
+      }, {
+        path: 'wxtaguser',
+        component: SCWxTagUserListView,
+        name: '标签用户信息管理',
+        meta: {description: '微信用户标签组'}
+      }, {
+        path: 'wxprofile',
+        component: SCWxUserProfileView,
+        name: '微信用户详情'
       }
     ]
   }, {

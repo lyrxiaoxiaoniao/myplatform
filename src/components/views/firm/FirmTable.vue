@@ -1,25 +1,50 @@
 <template>
   <div class="sc-firm-component" v-if="response">
     <div class="sc-firm-header">
+      <el-popover
+        ref="advancedSearch"
+        width="400"
+        trigger="click"
+        placement="bottom-end"
+        >
+        <el-form class="search-form" :model="form">
+          <el-form-item class="advance-form-item" label="企业名称">
+            <el-input v-model="form.company"></el-input>
+          </el-form-item>
+          <el-form-item class="advance-form-item" label="所属行业">
+            <el-input v-model="form.industryName"></el-input>
+          </el-form-item>
+          <el-form-item class="advance-form-item" label="详细地址">
+            <el-input v-model="form.address"></el-input>
+          </el-form-item>
+          <el-row type="flex" justify="center">
+            <el-button type="primary" @click="onAdvancedSearch">搜索</el-button>
+          </el-row>
+        </el-form>
+      </el-popover>
       <el-row type="flex" justify="end">
-        <el-input v-model="keyword" class="input-search" :span="6" placeholder="请输入搜索关键字"></el-input>
-        <el-button @click="onKeywordSearch" type="primary" icon="search">搜索</el-button>
-        <el-button type="primary">高级</el-button>
+        <el-col :span="5">
+          <el-input v-model="form.keyword" class="sc-firm-input-search" placeholder="请输入搜索关键字"></el-input>
+        </el-col>
+        <el-button @click="onKeywordSearch" icon="search"></el-button>
+        <el-button v-popover:advancedSearch type="primary">高级</el-button>
+        <el-button icon="upload2" type="primary"></el-button>
+        <el-button icon="setting" type="primary"></el-button>
       </el-row>
     </div>
     <div class="sc-firm-content">
       <el-table
+        class="sc-firm-table"
         border
         stripe
-        :data="response.data"
-        >
+        :data="response.data">
         <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
-        <el-table-column prop="company" label="企业名称" width="180"></el-table-column>
-        <el-table-column prop="industryName" label="所属行业"></el-table-column>
+        <el-table-column prop="company" label="企业名称"></el-table-column>
+        <el-table-column prop="industryName" label="所属行业" width="120"></el-table-column>
         <el-table-column prop="address" label="详细地址"></el-table-column>
-        <el-table-column prop="status" label="状态"></el-table-column>
-        <el-table-column prop="createdAt" label="登记时间"></el-table-column>
+        <el-table-column prop="status" label="状态" width="120"></el-table-column>
+        <el-table-column prop="createdAt" label="登记时间" width="120"></el-table-column>
         <el-table-column label="操作" width="120">
           <template scope="scope">
             <el-button size="small" icon="information" @click="onEditFirmDetail(scope.row.id)"></el-button>
@@ -57,12 +82,22 @@ export default {
       response: null,
       error: null,
       form: {
-      },
-      advancedSearch: false,
-      keyword: ''
+        company: '',
+        industryName: '',
+        address: '',
+        keyword: ''
+      }
     }
   },
   methods: {
+    onAdvancedSearch () {
+      const data = {
+        pageSize: this.response.pageSize,
+        currentPage: this.response.currentPage,
+        ...this.form
+      }
+      this.updateList(data)
+    },
     handleSizeChange (value) {
       const data = {
         currentPage: this.response.currentPage,
@@ -88,9 +123,10 @@ export default {
       })
     },
     onKeywordSearch () {
-      api.GET(config.firmListAPI, {
-        keyword: this.keyword
-      })
+      const data = {
+        ...this.form
+      }
+      api.GET(config.firmListAPI, data)
       .then(response => {
         if (response.status !== 200) {
           this.error = response.statusText
@@ -202,7 +238,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .sc-firm-component {
   border-top: 1px solid lightgray;
   padding-top: 2rem;
@@ -214,10 +250,7 @@ export default {
   margin: 0 1rem;
   margin-bottom: 20px;
 }
-.el-table-column {
-  font-size: 12px;
-}
-.input-search {
-  width: 150px;
+.sc-firm-input-search .el-input {
+  width: 8rem;
 }
 </style>

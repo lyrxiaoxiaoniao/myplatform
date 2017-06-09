@@ -183,8 +183,6 @@ export default {
   components: {},
   methods: {
     onTableClick (row, column, cell, event) {
-      console.log(row)
-      console.log(column)
       // TODO
       // call isLock API
     },
@@ -217,15 +215,12 @@ export default {
       this.advancedForm = !this.advancedForm
     },
     handleSizeChange (value) {
-      console.log(this.response.currentPage)
       this.getUserLists(value, this.response.currentPage)
     },
     handleCurrentChange (value) {
       this.getUserLists(this.response.pageSize, value)
     },
     toggleStatus (isLock) {
-      console.log('toggle')
-      console.log(isLock)
     },
     onDeleteUser (id) {
       this.$confirm('此操作将删除, 是否继续?', '提示', {
@@ -238,10 +233,9 @@ export default {
           id: id
         })
         .then(response => {
-          console.log(`delete user ${response.data}`)
         })
         .catch(error => {
-          console.log(error)
+          this.$message.error(error)
         })
       }).catch(() => {
         this.$message({
@@ -275,8 +269,6 @@ export default {
         }
       })
       .then(response => {
-        console.log(`user lists response ${response}`)
-
         if (response.status !== 200) {
           this.error = response.statusText
           return
@@ -284,22 +276,17 @@ export default {
         if (response.data.errcode === '0000') {
           this.response = response.data.data
           this.transformData(this.response)
-          console.log('user list')
-          console.log(this.response)
         }
       })
       .catch(error => {
-        console.log(error)
+        this.$message.error(error)
       })
     },
     showDialogForm () {
       this.dialogFormVisible = true
-      console.log(1, this.dialogFormVisible)
     }
   },
   mounted () {
-    console.log('User Table mounted')
-    console.log(config)
     this.getUserLists()
   }
 }

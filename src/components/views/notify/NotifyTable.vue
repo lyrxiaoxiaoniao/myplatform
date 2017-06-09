@@ -1,20 +1,22 @@
 <template>
   <div class="sc-notify-table" v-if="response">
     <div class="notify-table-header">
-      <el-row type="flex" justify="space-between">
-        <el-col :span="15">
-          <el-button @click="addNotify" type="primary">添加</el-button>
-        </el-col>
-        <el-col :span="6">
+      <el-row type="flex" justify="end">
+        <el-col :span="5">
           <el-input class="search-title-input" v-model="searchTitle" placeholder="请输入搜索关键字"></el-input>
-          <el-button @click="onKeywordSearch" type="primary" icon="search">搜索</el-button>
         </el-col>
+        <el-button @click="onKeywordSearch" icon="search"></el-button>
+        <el-button @click="addNotify" icon="plus"></el-button>
+        <el-button icon="upload2" type="primary"></el-button>
+        <el-button icon="setting" type="primary"></el-button>
       </el-row>
     </div>
 
     <div class="sc-notify-table-content">
       <el-table
         :data="response.data"
+        stripe
+        border
         >
         <el-table-column
           prop="name"
@@ -243,18 +245,13 @@ export default {
 
 <style scoped>
 .sc-notify-table {
-  border-top: 1px solid lightgray;
-  padding-top: 2rem;
   margin-left: 2rem;
-  margin-top: 2rem;
-  padding-bottom: 2rem;
+  margin-right: 2rem;
 }
 .notify-table-header {
-  margin-left: 2rem;
-  margin-bottom: 20px;
-}
-.search-title-input {
-  width: 150px;
+  margin: 1rem 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid lightgray;
 }
 .sc-notify-table-content {
   margin: 0 1rem;

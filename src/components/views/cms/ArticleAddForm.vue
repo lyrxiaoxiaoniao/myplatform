@@ -191,7 +191,7 @@ export default {
                 })
                 setTimeout(this.$router.push('article'), 3000)
               } else {
-                this.$message.error('错误，请重新提交')
+                this.$message.error(response.data.errmsg)
               }
             })
             .catch(error => {
@@ -219,8 +219,9 @@ export default {
     },
     onUploadSuccess (response, file, fileList) {
       if (response.errcode === '0000') {
+        console.log(response)
         this.imageURL = file.url
-        this.form.pictures[0] = response.errmsg
+        this.form.pictures[0] = response.data[0]
       }
     },
     onUploadError (error, file) {
@@ -298,7 +299,7 @@ export default {
       data.forEach(item => {
         let category = {}
         category.value = item.id
-        category.label = item.name
+        category.label = item.displayName
         if (item.children && item.children.length !== 0) {
           const children = this.transformData(item.children)
           category.children = children

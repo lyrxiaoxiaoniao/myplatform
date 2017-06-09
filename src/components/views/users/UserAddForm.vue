@@ -164,9 +164,7 @@
       submitForm (formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            console.log('创建成功')
           } else {
-            console.log('出现错误')
             return false
           }
         })

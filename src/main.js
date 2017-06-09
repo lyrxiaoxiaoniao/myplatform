@@ -1,5 +1,4 @@
 import 'babel-polyfill'
-// Import System requirements
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
@@ -7,15 +6,14 @@ import {sync} from 'vuex-router-sync'
 import routes from './routes'
 import store from './store'
 
-// Import Helpers for filters
-import {domain, count, prettyDate, pluralize, toDate, toTimestamp} from './filters'
+import {domain, count, prettyDate, pluralize, toDate, toTimestamp, statusCodeToMsg} from './filters'
 
-// Import Views - Top level
 import AppView from './components/App.vue'
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
-// import AMap from 'vue-amap'
+import KobeUI from './kobe.js'
+
 import VueHtml5Editor from 'vue-html5-editor'
 
 // Import Install and register helper items
@@ -25,9 +23,11 @@ Vue.filter('prettyDate', prettyDate)
 Vue.filter('pluralize', pluralize)
 Vue.filter('toDate', toDate)
 Vue.filter('toTimestamp', toTimestamp)
+Vue.filter('statusCodeToMsg', statusCodeToMsg)
 
 Vue.use(VueRouter)
 Vue.use(ElementUI)
+Vue.use(KobeUI)
 
 Vue.use(VueHtml5Editor, {
   name: 'vue-html5-editor',
@@ -45,8 +45,7 @@ Vue.use(VueHtml5Editor, {
     hr: 'fa fa-minus',
     eraser: 'fa fa-eraser',
     undo: 'fa-undo fa',
-    'full-screen': 'fa fa-arrows-alt',
-    info: 'fa fa-info'
+    'full-screen': 'fa fa-arrows-alt'
   },
   image: {
     sizeLimit: 512 * 1024,
@@ -71,7 +70,6 @@ Vue.use(VueHtml5Editor, {
     }
   },
   language: 'zh-cn',
-  // 自定义语言
   i18n: {
     'zh-cn': {
       'align': '对齐方式',
@@ -136,11 +134,7 @@ Vue.use(VueHtml5Editor, {
 
 // Routing logic
 var router = new VueRouter({
-  routes: routes,
-  mode: 'history',
-  scrollBehavior: function (to, from, savedPosition) {
-    return savedPosition || {x: 0, y: 0}
-  }
+  routes: routes
 })
 
 // Some middleware to help us ensure the user is authenticated.

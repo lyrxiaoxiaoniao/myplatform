@@ -28,11 +28,16 @@
       }
     },
     created () {
-      console.log('app mounted')
     }
   }
 </script>
 <style>
+  body {
+    font-size: 12px;
+  }
+  .el-table {
+    font-size: 12px!important;
+  }
   .el-upload__input {
     display: none !important;
   }
