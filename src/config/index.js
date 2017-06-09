@@ -52,6 +52,7 @@ export default {
   wxUserGroupUserUnlinkAPI: '/user/usr/userGroup/deleteReference',
   wxUserStreetAPI: '/user/usr/userGroup/Streets',
   wxUserIndustryAPI: '/user/usr/userGroup/Industries',
+  orgaListAPI: '/admin/organization/index',
   fixedLayout: false,
   hideLogoOnMobile: false,
   reportsStatusCatlg: [
