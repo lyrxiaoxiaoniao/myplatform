@@ -45,6 +45,8 @@ import SCDictElTableView from './components/views/dict/DictElTable.vue'
 
 import SCRoleTableView from './components/views/characters/RoleTable.vue'
 
+import SCOrgaListView from './components/views/organization/orgaTable.vue'
+
 const routes = [
   {
     path: '/login',
@@ -211,6 +213,10 @@ const routes = [
         path: 'role',
         component: SCRoleTableView,
         name: '角色管理'
+      }, {
+        path: 'orgalist',
+        component: SCOrgaListView,
+        name: '组织列表管理'
       }
     ]
   }, {

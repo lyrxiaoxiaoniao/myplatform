@@ -65,6 +65,7 @@ export default {
   roleCreateAPI: '/admin/role/create',
   roleDeleteAPI: '/admin/role/delete',
   roleUpdateAPI: '/admin/role/update',
+  orgaListAPI: '/admin/organization/index',
   fixedLayout: false,
   hideLogoOnMobile: false,
   reportsStatusCatlg: [
