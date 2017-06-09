@@ -35,9 +35,6 @@
       </slot>
 
       <router-link to="/forgot">忘记密码</router-link>
-      <br />
-      <router-link to="/register">新用户注册</router-link>
-
     </div>
   </div>
 </template>

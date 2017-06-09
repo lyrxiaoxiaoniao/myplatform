@@ -53,36 +53,23 @@
       </el-form>
     </transition>
     <div class="sc-report-table-header">
-      <el-row type="flex" justify="space-between">
-        <el-col :span="16">
-          <el-row type="flex">
-            <el-col :span="4">
-              <el-select v-model="searchSelect" placeholder="请选择">
-                <el-option
-                  v-for="item in searchOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                  :disbaled="true">
-                </el-option>
-              </el-select>
-            </el-col>
-            <el-col :span="6">
-              <el-input v-model="searchInput" placeholder="请输入内容" class="sc-table-header-select"></el-input>
-            </el-col>
-            <el-col :span="10" justify="start">
-              <el-button class="sc-table-search-btn" type="primary" @click="onSearch">搜索</el-button>
-              <el-button type="primary" icon="search" @click="onAdvancedSearch">高级搜索</el-button>
-              <el-button type="primary" @click="resetTable">重置</el-button>
-            </el-col>
-          </el-row>
+      <el-row type="flex" justify="end">
+        <el-select v-model="searchSelect" placeholder="请选择" clearable>
+          <el-option
+            v-for="item in searchOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+            :disbaled="true">
+          </el-option>
+        </el-select>
+        <el-col :span="5">
+          <el-input v-model="searchInput" placeholder="请输入内容" class="sc-table-header-select"></el-input>
         </el-col>
-        <el-col :span="6">
-          <el-row type="flex" justify="end">
-            <el-button type="primary" icon="upload2"></el-button>
-            <el-button type="primary" icon="setting"></el-button>
-          </el-row>
-        </el-col>
+        <el-button class="sc-table-search-btn" @click="onSearch" icon="search"></el-button>
+        <el-button type="primary" @click="onAdvancedSearch">高级</el-button>
+        <el-button type="primary" icon="upload2"></el-button>
+        <el-button type="primary" icon="setting"></el-button>
       </el-row>
     </div>
     <div class="sc-report-table-content">
@@ -168,14 +155,6 @@ export default {
     }
   },
   methods: {
-    resetTable () {
-      this.getCaseList()
-      this.searchSelect = ''
-      this.searchInput = ''
-      for (let key in this.searchForm) {
-        this.searchForm[key] = ''
-      }
-    },
     // Handle Page Size Change
     handleSizeChange (value) {
       if (this.searchInput !== '' || this.advancedForm) {
@@ -394,11 +373,9 @@ export default {
 
 <style scoped>
   .sc-report-table {
-    border-top: 1px solid lightgray;
-    padding-top: 2rem;
     margin-left: 2rem;
-    margin-top: 2rem;
     margin-right: 2rem;
+    padding-bottom: 1rem;
   }
 
   .search-form {
@@ -408,7 +385,9 @@ export default {
   }
 
   .sc-report-table-header {
-    margin-bottom: 20px;
+    margin: 1rem 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid lightgray;
   }
 
   .sc-table-search-btn {

@@ -1,5 +1,5 @@
 export default {
-  serverURI: 'http://192.168.1.7:8080',
+  serverURI: 'http://192.168.1.5:8080',
   menuAPI: '/admin/menu/show_left',
   appInfoAPI: '/admin/appinfo/show?code=gmaj',
   userListAPI: '/admin/user/index',
@@ -40,6 +40,7 @@ export default {
   firmUpdateAPI: '/firm/companyinfo/update',
   firmDeleteAPI: '/firm/companyinfo/delete',
   wxUserListAPI: '/user/usr/userinfo/index',
+  wxUserProfileAPI: '/user/usr/userinfo/show',
   wxUserGroupAPI: '/user/usr/userGroup/queryTagNames',
   wxUserGroupListAPI: '/user/usr/userGroup/index',
   wxUserGroupUpdateAPI: '/user/usr/userGroup/update',

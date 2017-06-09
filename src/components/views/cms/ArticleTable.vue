@@ -313,33 +313,28 @@ export default {
 </script>
 
 <style>
-  .sc-article-table {
-    border-top: 1px solid lightgray;
-    padding-top: 2rem;
-    margin-left: 2rem;
-    margin-top: 2rem;
-    margin-right: 2rem;
-  }
-  .sc-article-table-header {
-    margin: 0 1rem;
-    margin-bottom: 20px;
-  }
-  .sc-article-table-content {
-    margin: 0 1rem;
-    margin-bottom: 20px;
-  }
-  .search-form {
-    border: 1px solid lightgray;
-    margin-bottom: 10px;
-  }
-  .advance-form-item {
-    font-size: 12px;
-    margin: 10px;
-    padding: 0;
-  }
-  .search-form .el-form-item label {
-    margin: 0;
-    padding: 0;
-    font-size: 12px;
-  }
+.sc-article-table-header {
+  margin: 1rem 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid lightgray;
+}
+.sc-article-table-content {
+  margin-left: 2rem;
+  margin-right: 2rem;
+  padding-bottom: 1rem;
+}
+.search-form {
+  border: 1px solid lightgray;
+  margin-bottom: 10px;
+}
+.advance-form-item {
+  font-size: 12px;
+  margin: 10px;
+  padding: 0;
+}
+.search-form .el-form-item label {
+  margin: 0;
+  padding: 0;
+  font-size: 12px;
+}
 </style>

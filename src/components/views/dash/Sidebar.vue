@@ -45,7 +45,7 @@
 </template>
 <script>
 import SidebarMenu from './SidebarMenu'
-import axios from 'axios'
+import api from 'src/api'
 import config from 'src/config'
 
 export default {
@@ -55,24 +55,21 @@ export default {
   data () {
     return {
       model: null,
-      error: null
-    }
-  },
-  computed: {
-    menuURL () {
-      return config.serverURI + config.menuAPI
+      error: null,
+      menuURL: config.menuAPI
     }
   },
   methods: {
     callMenuLeft () {
-      const _this = this
-      axios.get(this.menuURL)
+      api.GET(this.menuURL)
         .then(response => {
           if (response.status !== 200) {
             this.error = response.statusText
             return
           }
-          _this.model = response.data.data
+          if (response.data.errcode === '0000') {
+            this.model = response.data.data
+          }
         })
         .catch(error => {
           this.error = error.response.statusText
