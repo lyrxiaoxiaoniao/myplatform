@@ -168,12 +168,6 @@
       </div>
     </div>
     <el-dialog title="现场照片" v-model="dialogImgVisible" size="small">
-      <!--<el-carousel indicator-position="outside" :autoplay="false" :height="imgNaturalWidth" @change="changeImg"-->
-                   <!--ref="carousel">-->
-        <!--<el-carousel-item v-for="(item, index) in response.images" :key="item" :name="item.fileName">-->
-          <!--<img :src="item.fileUrl">-->
-        <!--</el-carousel-item>-->
-      <!--</el-carousel>-->
       <el-carousel indicator-position="outside" :autoplay="false" height="500px" @change="changeImg"
                    ref="carousel">
         <el-carousel-item v-for="(item, index) in response.images" :key="item" :name="item.fileName">
