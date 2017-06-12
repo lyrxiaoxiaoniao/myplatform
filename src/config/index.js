@@ -1,5 +1,5 @@
 export default {
-  serverURI: 'http://192.168.1.34:8080',
+  serverURI: 'http://192.168.1.22:8080',
   menuAPI: '/admin/menu/show_left',
   appInfoAPI: '/admin/appinfo/show?code=gmaj',
   userListAPI: '/admin/user/index',
@@ -66,6 +66,9 @@ export default {
   roleDeleteAPI: '/admin/role/delete',
   roleUpdateAPI: '/admin/role/update',
   orgaListAPI: '/admin/organization/index',
+  addOrgaAPI: '/admin/organization/create',
+  editOrgaAPI: '/admin/organization/update',
+  removeOrgaAPI: '/admin/organization/delete',
   fixedLayout: false,
   hideLogoOnMobile: false,
   reportsStatusCatlg: [
