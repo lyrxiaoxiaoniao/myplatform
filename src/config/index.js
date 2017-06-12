@@ -70,6 +70,9 @@ export default {
   roleDeleteAPI: '/admin/role/delete',
   roleUpdateAPI: '/admin/role/update',
   orgaListAPI: '/admin/organization/index',
+  addOrgaAPI: '/admin/organization/create',
+  editOrgaAPI: '/admin/organization/update',
+  removeOrgaAPI: '/admin/organization/delete',
   fixedLayout: false,
   hideLogoOnMobile: false,
   reportsStatusCatlg: [

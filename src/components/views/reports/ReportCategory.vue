@@ -185,6 +185,7 @@ export default {
               type: 'success'
             })
             this.getData()
+            this.getList()
           }
         })
     },
