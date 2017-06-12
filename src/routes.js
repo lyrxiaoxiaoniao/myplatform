@@ -44,6 +44,8 @@ import SCDictTableView from './components/views/dict/DictTable.vue'
 import SCDictElTableView from './components/views/dict/DictElTable.vue'
 
 import SCRoleTableView from './components/views/characters/RoleTable.vue'
+import SCRoleUserTableView from './components/views/characters/RoleUserTable.vue'
+import SCRoleLinkUserTableView from './components/views/characters/RoleLinkUserTable.vue'
 
 import SCOrgaListView from './components/views/organization/orgaTable.vue'
 
@@ -213,6 +215,16 @@ const routes = [
         path: 'role',
         component: SCRoleTableView,
         name: '角色管理'
+      }, {
+        path: 'roleuser',
+        component: SCRoleUserTableView,
+        name: '角色用户列表',
+        meta: {description: '角色用户列表详情'}
+      }, {
+        path: 'rolelink',
+        component: SCRoleLinkUserTableView,
+        name: '关联角色用户列表',
+        meta: {description: '关联角色用户列表详情'}
       }, {
         path: 'orgalist',
         component: SCOrgaListView,

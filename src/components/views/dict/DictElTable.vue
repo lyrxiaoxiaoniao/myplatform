@@ -6,9 +6,20 @@
           <el-input v-model="form.keyword" placeholder="请输入搜索关键字"></el-input>
         </el-col>
         <el-button @click="onSearch" icon="search"></el-button>
+        <el-button @click="addDictEl" icon="plus"></el-button>
         <el-button icon="upload2" type="primary"></el-button>
         <el-button icon="setting" type="primary"></el-button>
       </el-row>
+      <el-dialog title="添加新元素" v-model="showAddDialog" label-position="left">
+        <el-form :model="addForm">
+          <el-form-item label="键">
+            <el-input v-model="addForm.name"></el-input>
+          </el-form-item>
+          <el-form-item label="值">
+            <el-input v-model="addForm.value"></el-input>
+          </el-form-item>
+        </el-form>
+      </el-dialog>
     </div>
 
     <div slot="kobe-table-content" class="kobe-table">
@@ -62,12 +73,21 @@ export default {
       dictElID: this.$route.query.id,
       response: null,
       error: null,
+      showAddDialog: false,
       form: {
         keyword: ''
+      },
+      addForm: {
+        pId: this.$route.query.id,
+        name: '',
+        value: ''
       }
     }
   },
   methods: {
+    addDictEl () {
+      this.showAddDialog = true
+    },
     handleSizeChange (value) {
       const data = {
         currentPage: this.response.currentPage,

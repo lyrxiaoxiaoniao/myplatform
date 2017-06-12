@@ -14,7 +14,8 @@
       <el-table
         border
         stripe
-        :data="response.data">
+        :data="response.data"
+        >
         <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
         <el-table-column
@@ -26,16 +27,17 @@
             {{ scope.row.nickname }}
           </template>
         </el-table-column>
-        <el-table-column prop="realname" label="用户" width="120"></el-table-column>
+        <el-table-column prop="realname" label="用户"></el-table-column>
+        <el-table-column prop="isLock" label="锁定" width="80px"></el-table-column>
+        <el-table-column prop="email" label="邮箱"></el-table-column>
+        <el-table-column prop="phone" label="手机"></el-table-column>
         <el-table-column prop="createdAt" label="创建时间"></el-table-column>
-        <el-table-column prop="phone" label="手机号码"></el-table-column>
-        <el-table-column prop="isLock" label="锁定" width="80"></el-table-column>
         <el-table-column 
-          width="180"
+          width="80"
           label="操作"
           >
           <template scope="scope">
-            <el-button @click="unRelateUser(scope.row.id)" size="small" icon="delete2"></el-button>
+            <el-button @click="linkUser(scope.row.id)" size="small">关联</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -56,6 +58,7 @@
       </el-row>
     </div>
   </kobe-table>
+
 </template>
 
 <script>
@@ -63,7 +66,7 @@ import api from 'src/api'
 import config from 'src/config'
 
 export default {
-  name: 'sc-role-user-table',
+  name: '',
   data () {
     return {
       id: this.$route.query.id,
@@ -75,44 +78,6 @@ export default {
     }
   },
   methods: {
-    onSearch () {
-      const data = {
-        currentPage: this.response.currentPage,
-        pageSize: this.response.pageSize,
-        id: this.id,
-        ...this.form
-      }
-      this.updateUserList(data)
-    },
-    unRelateUser (id) {
-      this.$confirm('是否确认删除该用户的角色', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        api.POST(config.roleUserRelatedDeleteAPI, {
-          roleId: this.id,
-          users: [id]
-        }).then(response => {
-          if (response.data.errcode === '0000') {
-            this.$notify({
-              title: '成功',
-              message: '删除成功',
-              type: 'success'
-            })
-            const data = {
-              pageSize: this.response.pageSize,
-              currentPage: this.response.currentPage,
-              id: this.id,
-              ...this.form
-            }
-            this.updateUserList(data)
-          } else {
-            this.$message.error('发生错误，请重试')
-          }
-        })
-      })
-    },
     handleCurrentChange (value) {
       const data = {
         currentPage: value,
@@ -130,6 +95,37 @@ export default {
         ...this.form
       }
       this.updateUserList(data)
+    },
+    onSearch () {
+      const data = {
+        currentPage: this.response.currentPage,
+        pageSize: this.response.pageSize,
+        id: this.id,
+        ...this.form
+      }
+      this.updateUserList(data)
+    },
+    linkUser (id) {
+      api.POST(config.roleRelateUserAPI, {
+        users: [id],
+        roleId: this.id
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.$notify({
+            title: '成功',
+            message: '关联成功',
+            type: 'success'
+          })
+          const data = {
+            currentPage: 1,
+            pageSize: this.response.pageSize,
+            id: this.id,
+            ...this.form
+          }
+          this.updateUserList(data)
+        }
+      })
     },
     transformData (res) {
       res.data.forEach(item => {
@@ -150,7 +146,7 @@ export default {
       return res
     },
     updateUserList (data) {
-      api.GET(config.roleUserRelatedAPI, data)
+      api.GET(config.roleUserUnrelatedAPI, data)
       .then(response => {
         if (response.status !== 200) {
           this.$message.error(response.statusText)
@@ -165,7 +161,7 @@ export default {
       })
     },
     getUserList () {
-      api.GET(config.roleUserRelatedAPI, {
+      api.GET(config.roleUserUnrelatedAPI, {
         id: this.id
       })
       .then(response => {
@@ -186,7 +182,7 @@ export default {
     this.getUserList()
   }
 }
-</script>  
+</script>
 
 <style>
 </style>
