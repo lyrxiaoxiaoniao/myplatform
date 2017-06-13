@@ -6,7 +6,7 @@ import {sync} from 'vuex-router-sync'
 import routes from './routes'
 import store from './store'
 
-import {domain, count, prettyDate, pluralize, toDate, toTimestamp, statusCodeToMsg} from './filters'
+import {domain, count, prettyDate, pluralize, toDate, toTimestamp, statusCodeToMsg, isUserLock} from './filters'
 
 import AppView from './components/App.vue'
 
@@ -24,6 +24,7 @@ Vue.filter('pluralize', pluralize)
 Vue.filter('toDate', toDate)
 Vue.filter('toTimestamp', toTimestamp)
 Vue.filter('statusCodeToMsg', statusCodeToMsg)
+Vue.filter('isUserLock', isUserLock)
 
 Vue.use(VueRouter)
 Vue.use(ElementUI)

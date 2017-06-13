@@ -43,3 +43,12 @@ export function statusCodeToMsg (status) {
       return '审核未通过'
   }
 }
+
+export function isUserLock (status) {
+  switch (status) {
+    case 0:
+      return '锁定'
+    case 1:
+      return '未锁定'
+  }
+}

@@ -1,14 +1,28 @@
 <template>
-  <kobe-table>
+  <kobe-table v-if="response">
     <div slot="kobe-table-header" class="kobe-table-header">
       <el-row type="flex" justify="end">
         <el-col :span="7">
           <el-input v-model="form.keyword" placeholder="请输入搜索关键字"></el-input>
         </el-col>
-        <el-button icon="search"></el-button>
+        <el-button @click="onSearch" icon="search"></el-button>
+        <el-button @click="showAddDialog" icon="plus"></el-button>
         <el-button icon="upload2" type="primary"></el-button>
         <el-button icon="setting" type="primary"></el-button>
       </el-row>
+      <el-dialog title="添加新角色" v-model="addDialog">
+        <el-form :form="addForm" label-width="80px">
+          <el-form-item label="角色名称">
+            <el-input v-model="addForm.displayName"></el-input>
+          </el-form-item>
+          <el-form-item label="角色描述">
+            <el-input v-model="addForm.description"></el-input>
+          </el-form-item>
+        </el-form>
+        <el-row type="flex" justify="end">
+          <el-button @click="addRole" type="primary">确定</el-button>
+        </el-row>
+      </el-dialog>
     </div>
     <div slot="kobe-table-content" class="kobe-table">
       <el-table
@@ -27,13 +41,26 @@
           label="操作"
           >
           <template scope="scope">
-            <el-button size="small" icon="edit"></el-button>
+            <el-button @click="showEditDialog(scope.row.id, scope.row.displayName, scope.row.description)" size="small" icon="edit"></el-button>
             <el-button @click="deleteRole(scope.row.id)" size="small" icon="delete2"></el-button>
-            <el-button size="small" icon="information"></el-button>
-            <el-button size="small">关联用户</el-button>
+            <el-button @click="getRelatedUser(scope.row.id)" size="small" icon="information"></el-button>
+            <el-button @click="relateUser(scope.row.id)" size="small">关联用户</el-button>
           </template>
         </el-table-column>
       </el-table>
+      <el-dialog title="修改角色" v-model="editDialog">
+        <el-form :form="editForm" label-width="80px">
+          <el-form-item label="角色名称">
+            <el-input v-model="editForm.displayName"></el-input>
+          </el-form-item>
+          <el-form-item label="角色描述">
+            <el-input v-model="editForm.description"></el-input>
+          </el-form-item>
+        </el-form>
+        <el-row type="flex" justify="end">
+          <el-button @click="editRole" type="primary">修改</el-button>
+        </el-row>
+      </el-dialog>
     </div>
     <div slot="kobe-table-footer" class="kobe-table-footer">
       <el-row type="flex" justify="center">
@@ -63,12 +90,117 @@ export default {
     return {
       response: null,
       error: null,
+      addDialog: false,
+      editDialog: false,
+      addForm: {
+        displayName: '',
+        description: ''
+      },
+      editForm: {
+        id: '',
+        displayName: '',
+        description: ''
+      },
       form: {
         keyword: ''
       }
     }
   },
   methods: {
+    onSearch () {
+      const data = {
+        currentPage: this.response.currentPage,
+        pageSize: this.response.pageSize,
+        ...this.form
+      }
+      this.updateRoleList(data)
+    },
+    showAddDialog () {
+      this.addDialog = true
+    },
+    showEditDialog (id, name, description) {
+      this.editForm.id = id
+      this.editForm.displayName = name
+      this.editForm.description = description
+      this.editDialog = true
+    },
+    editRole () {
+      api.POST(config.roleUpdateAPI, this.editForm)
+      .then(response => {
+        if (response.status !== 200) {
+          this.$message.error(response.statusText)
+          return
+        }
+
+        if (response.data.errcode === '0000') {
+          this.editDialog = false
+          this.$notify({
+            title: '成功',
+            message: '修改成功',
+            type: 'success'
+          })
+          const data = {
+            currentPage: 1,
+            pageSize: this.response.pageSize,
+            ...this.form
+          }
+          this.updateRoleList(data)
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    addRole () {
+      if (this.addForm.displayName === '' || this.addForm.description === '') {
+        this.$message({
+          type: 'info',
+          message: '请填写正确的信息'
+        })
+        return
+      }
+      this.addDialog = false
+      api.POST(config.roleCreateAPI, this.addForm)
+      .then(response => {
+        if (response.status !== 200) {
+          this.$message.error(response.statusText)
+          return
+        }
+
+        if (response.data.errcode === '0000') {
+          this.$notify({
+            title: '成功',
+            message: '添加成功',
+            type: 'success'
+          })
+          const data = {
+            currentPage: 1,
+            pageSize: this.response.pageSize,
+            ...this.form
+          }
+          this.updateRoleList(data)
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    getRelatedUser (id) {
+      this.$router.push({
+        path: 'roleuser',
+        query: {
+          id: id
+        }
+      })
+    },
+    relateUser(id) {
+      this.$router.push({
+        path: 'rolelink',
+        query: {
+          id: id
+        }
+      })
+    },
     handleSizeChange (value) {
       const data = {
         currentPage: this.response.currentPage,
@@ -85,6 +217,16 @@ export default {
       }
       this.updateRoleList(data)
     },
+    transformData (res) {
+      res.data.forEach(item => {
+        if (item.createdAt) {
+          let date = new Date(item.createdAt)
+          const month = date.getMonth() + 1
+          item.createdAt = `${date.getFullYear()}-${month}-${date.getDate()}`
+        }
+      })
+      return res
+    },
     updateRoleList (data) {
       api.GET(config.roleListAPI, data)
       .then(response => {
@@ -94,7 +236,7 @@ export default {
         }
 
         if (response.data.errcode === '0000') {
-          this.response = response.data.data
+          this.response = this.transformData(response.data.data)
         }
       })
       .catch(error => {
@@ -136,7 +278,7 @@ export default {
         }
 
         if (response.data.errcode === '0000') {
-          this.response = response.data.data
+          this.response = this.transformData(response.data.data)
         }
       })
       .catch(error => {
