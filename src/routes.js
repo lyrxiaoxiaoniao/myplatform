@@ -45,7 +45,11 @@ import SCDictElTableView from './components/views/dict/DictElTable.vue'
 
 import SCRoleTableView from './components/views/characters/RoleTable.vue'
 
-import SCOrgaListView from './components/views/organization/orgaTable.vue'
+import SCOrgaTableView from './components/views/organization/OrgaTable.vue'
+import SCDutyListView from './components/views/organization/DutyList.vue'
+import SCDutyUnrelatedView from './components/views/organization/DutyUnrelated.vue'
+
+import SCDutyManageView from './components/views/duty/DutyManage.vue'
 
 const routes = [
   {
@@ -214,9 +218,24 @@ const routes = [
         component: SCRoleTableView,
         name: '角色管理'
       }, {
-        path: 'orgalist',
-        component: SCOrgaListView,
+        path: 'orgatable',
+        component: SCOrgaTableView,
         name: '组织列表管理'
+      },
+      {
+        path: 'dutylist',
+        component: SCDutyListView,
+        name: '组织职位管理'
+      },
+      {
+        path: 'dutyunrelated',
+        component: SCDutyUnrelatedView,
+        name: '关联职位'
+      },
+      {
+        path: 'dutymanage',
+        component: SCDutyManageView,
+        name: '职位管理'
       }
     ]
   }, {
