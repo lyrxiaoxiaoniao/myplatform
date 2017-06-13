@@ -49,6 +49,8 @@ import SCRoleLinkUserTableView from './components/views/characters/RoleLinkUserT
 
 import SCOrgaListView from './components/views/organization/orgaTable.vue'
 
+import SCAuthTableView from './components/views/auth/AuthTable.vue'
+
 const routes = [
   {
     path: '/login',
@@ -229,6 +231,10 @@ const routes = [
         path: 'orgalist',
         component: SCOrgaListView,
         name: '组织列表管理'
+      }, {
+        path: 'auth',
+        component: SCAuthTableView,
+        name: '权限管理'
       }
     ]
   }, {

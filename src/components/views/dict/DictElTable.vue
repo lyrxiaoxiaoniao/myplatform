@@ -2,16 +2,12 @@
   <kobe-table v-if="response">
     <div slot="kobe-table-header" class="kobe-table-header">
       <el-row type="flex" justify="end">
-        <el-col :span="7">
-          <el-input v-model="form.keyword" placeholder="请输入搜索关键字"></el-input>
-        </el-col>
-        <el-button @click="onSearch" icon="search"></el-button>
-        <el-button @click="addDictEl" icon="plus"></el-button>
+        <el-button @click="showDictDialog" icon="plus"></el-button>
         <el-button icon="upload2" type="primary"></el-button>
         <el-button icon="setting" type="primary"></el-button>
       </el-row>
-      <el-dialog title="添加新元素" v-model="showAddDialog" label-position="left">
-        <el-form :model="addForm">
+      <el-dialog :title="referName + refCloName" v-model="showAddDialog">
+        <el-form :model="addForm" label-width="80px">
           <el-form-item label="键">
             <el-input v-model="addForm.name"></el-input>
           </el-form-item>
@@ -19,6 +15,9 @@
             <el-input v-model="addForm.value"></el-input>
           </el-form-item>
         </el-form>
+        <el-row type="flex" justify="end">
+          <el-button @click="addDictEl" type="primary">确定</el-button>
+        </el-row>
       </el-dialog>
     </div>
 
@@ -32,16 +31,32 @@
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
         <el-table-column prop="name" label="键"></el-table-column>
         <el-table-column prop="value" label="值"></el-table-column>
+        <el-table-column prop="createdAt" label="创建时间"></el-table-column>
+        <el-table-column prop="enabled" label="状态"></el-table-column>
         <el-table-column 
           width="180"
           label="操作"
           >
           <template scope="scope">
-            <el-button size="small" icon="edit"></el-button>
-            <el-button @click="onDelete(scope.row.id)" size="small" icon="delete2"></el-button>
+            <el-button @click="onEdit(scope.row.id, scope.row.name, scope.row.value)" size="small" icon="edit"></el-button>
+            <el-button v-if="scope.row.isLock === 0" @click="onLock(scope.row.id, 0)" size="small" icon="circle-cross"></el-button>
+            <el-button v-if="scope.row.isLock === 1" @click="onUnLock(scope.row.id, 1)" size="small" icon="circle-check"></el-button>
           </template>
         </el-table-column>
       </el-table>
+      <el-dialog title="修改" v-model="showEditDialog">
+        <el-form :model="editForm" label-width="80px">
+          <el-form-item label="键">
+            <el-input v-model="editForm.name"></el-input>
+          </el-form-item>
+          <el-form-item label="值">
+            <el-input v-model="editForm.value"></el-input>
+          </el-form-item>
+        </el-form>
+        <el-row type="flex" justify="end">
+          <el-button @click="editDictEl" type="primary">确定</el-button>
+        </el-row>
+      </el-dialog>
     </div>
 
     <div slot="kobe-table-footer" class="kobe-table-footer">
@@ -74,8 +89,15 @@ export default {
       response: null,
       error: null,
       showAddDialog: false,
-      form: {
-        keyword: ''
+      showEditDialog: false,
+      refer: '',
+      refClo: '',
+      referName: '',
+      refCloName: '',
+      editForm: {
+        id: '',
+        name: '',
+        value: ''
       },
       addForm: {
         pId: this.$route.query.id,
@@ -85,53 +107,155 @@ export default {
     }
   },
   methods: {
-    addDictEl () {
+    showDictDialog () {
       this.showAddDialog = true
+    },
+    onEdit(id, name, value) {
+      this.editForm.id = id
+      this.editForm.name = name
+      this.editForm.value = value
+      this.showEditDialog = true
+    },
+    editDictEl () {
+      this.showEditDialog = false
+      api.POST(config.dictElUpdateAPI, this.editForm)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.$notify({
+            title: '成功',
+            message: '修改成功',
+            type: 'success'
+          })
+          const data = {
+            currentPage: this.response.currentPage,
+            pageSize: this.response.pageSize
+          }
+          this.updateList(data)
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    addDictEl () {
+      if (this.addForm.name === '' || this.addForm.value === '') {
+        this.$message({
+          type: 'info',
+          message: '请填写正确字段'
+        })
+        return
+      }
+      const data = {
+        refer: this.refer,
+        refClo: this.refClo,
+        ...this.addForm
+      }
+      this.showAddDialog = false
+      api.POST(config.dictElCreateAPI, data)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.$notify({
+            title: '成功',
+            message: '添加成功',
+            type: 'success'
+          })
+
+          const data = {
+            currentPage: 1,
+            pageSize: this.response.pageSize
+          }
+
+          this.updateList(data)
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     },
     handleSizeChange (value) {
       const data = {
         currentPage: this.response.currentPage,
-        pageSize: value,
-        ...this.form
+        pageSize: value
       }
       this.updateList(data)
     },
     handleCurrentChange (value) {
       const data = {
         currentPage: value,
-        pageSize: this.response.pageSize,
-        ...this.form
+        pageSize: this.response.pageSize
       }
       this.updateList(data)
     },
-    onSearch () {
-      const data = {
-        currentPage: 1,
-        pageSize: 10,
-        ...this.form
-      }
-      this.updateList(data)
+    transformData (res) {
+      this.refer = res.data[0].refer
+      this.refClo = res.data[0].refClo
+      this.referName = res.data[0].referName
+      this.refCloName = res.data[0].refCloName
+      res.data.forEach(item => {
+        switch (item.enabled) {
+          case 0:
+            item.enabled = '锁定'
+            item.isLock = 1
+            break
+          case 1:
+            item.enabled = '未锁定'
+            item.isLock = 0
+            break
+        }
+        if (item.createdAt) {
+          let date = new Date(item.createdAt)
+          const month = date.getMonth() + 1
+          item.createdAt = `${date.getFullYear()}-${month}-${date.getDate()}`
+        }
+      })
+      return res
     },
-    onDelete (id) {
-      this.$confirm('是否删除该条信息', '提示', {
+    onUnLock (id, enabled) {
+      this.$confirm('是否解锁该条数据', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(response => {
         api.POST(config.dictElDeleteAPI, {
-          id: id
+          id: id,
+          enabled: enabled
         })
         .then(response => {
           if (response.data.errcode === '0000') {
             this.$notify({
               title: '成功',
-              message: '删除成功',
+              message: '解锁成功',
               type: 'success'
             })
             const data = {
               pageSize: this.response.pageSize,
-              currentPage: this.response.currentPage,
-              ...this.form
+              currentPage: this.response.currentPage
+            }
+            this.updateList(data)
+          }
+        })
+      })
+    },
+    onLock (id, enabled) {
+      this.$confirm('是否锁定该条数据', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(response => {
+        api.POST(config.dictElDeleteAPI, {
+          id: id,
+          enabled: enabled
+        })
+        .then(response => {
+          if (response.data.errcode === '0000') {
+            this.$notify({
+              title: '成功',
+              message: '锁定成功',
+              type: 'success'
+            })
+            const data = {
+              pageSize: this.response.pageSize,
+              currentPage: this.response.currentPage
             }
             this.updateList(data)
           }
@@ -140,7 +264,8 @@ export default {
     },
     updateList (data) {
       api.GET(config.dictElListAPI, {
-        pId: this.dictElID
+        pId: this.dictElID,
+        ...data
       })
       .then(response => {
         if (response.status !== 200) {
@@ -149,7 +274,7 @@ export default {
         }
 
         if (response.data.errcode === '0000') {
-          this.response = response.data.data
+          this.response = this.transformData(response.data.data)
         }
       })
       .catch(error => {
@@ -167,7 +292,7 @@ export default {
         }
 
         if (response.data.errcode === '0000') {
-          this.response = response.data.data
+          this.response = this.transformData(response.data.data)
         }
       })
       .catch(error => {

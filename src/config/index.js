@@ -1,5 +1,27 @@
 export default {
-  serverURI: 'http://192.168.1.22:8080',
+  serverURI: 'http://192.168.1.34:8080',
+  basic: {
+  },
+  reports: {
+  },
+  cms: {
+  },
+  firm: {
+  },
+  notify: {
+  },
+  wxusers: {
+  },
+  users: {
+  },
+  role: {
+  },
+  auth: {
+    authList: '/admin/permission/index',
+    authCreate: '/admin/permission/create',
+    authDelete: '/admin/permission/delete',
+    authUpdate: '/admin/permission/update'
+  },
   menuAPI: '/admin/menu/show_left',
   appInfoAPI: '/admin/appinfo/show?code=gmaj',
   userListAPI: '/admin/user/index',
@@ -60,6 +82,7 @@ export default {
   dictElListAPI: '/com/dictionary/property/index',
   dictElCreateAPI: '/com/dictionary/property/create',
   dictElDeleteAPI: '/com/dictionary/property/delete',
+  dictElUpdateAPI: '/com/dictionary/property/update',
   roleListAPI: '/admin/role/index',
   roleUserRelatedAPI: '/admin/userrole/user/relate',
   roleUserRelatedDeleteAPI: '/admin/userrole/relate/delete',
