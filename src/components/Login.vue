@@ -57,10 +57,8 @@ export default {
       password: '',
       mailSended: false,
       mailCountDown: 60,
-      mailURL: '/test/sys/sendMsgVerify',
       mailTimer: null,
       mailCode: '',
-      loginURL: '/test/sys/login',
       loginSended: false,
       response: ''
     }
@@ -70,7 +68,7 @@ export default {
   methods: {
     sendMail: function () {
       if (this.isStringEmpty(this.username)) {
-        window.alert('请填写用户名')
+        this.$message.error('请填写用户名')
         return
       }
 
@@ -133,7 +131,7 @@ export default {
       })
       /*
       axios({
-        url: this.loginURL,
+        url: config.basic.login,
         method: 'post',
         data: {
           username: this.username,
