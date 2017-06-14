@@ -1,123 +1,54 @@
 <template>
-  <div v-if="response" class="sc-user-table">
-    <el-form v-if="advancedForm" class="search-form" :model="searchForm" :label-position="left" :label-width="'80px'">
-      <el-row>
-        <el-col :span="8">
-          <el-form-item label="ID">
-            <el-input :model="advancedForm.id"></el-input>
-          </el-form-item>
+  <kobe-table v-if="response">
+    <div slot="kobe-table-header" class="kobe-table-header">
+      <el-row
+        type="flex"
+        justify="end"
+        >
+        <el-col :span="5">
+          <el-input placeholder="请输入搜索关键字" v-model="form.keyword"></el-input>
         </el-col>
-        <el-col :span="8">
-          <el-form-item label="用户名">
-            <el-input :model="advancedForm.username"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="手机号">
-            <el-input :model="advancedForm.phone"></el-input>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="15">
-          <el-form-item label="地址">
-            <el-input :model="advancedForm.address"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="9">
-          <el-form-item label="创建时间">
-            <el-col :span="11">
-              <el-date-picker type="date" placeholder="开始日期" v-model="searchForm.startDate" style="width: 100%;"></el-date-picker>
-            </el-col>
-            <el-col class="line" :span="2">-</el-col>
-            <el-col :span="11">
-              <el-date-picker type="date" placeholder="结束日期" v-model="searchForm.endDate" style="width: 100%;"></el-date-picker>
-            </el-col>
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </el-form>
-    <div class="sc-table-header">
-      <el-row type="flex" justify="space-around">
-        <el-col :span="16">
-          <el-row type="flex">
-            <el-col :span="4">
-              <el-select v-model="searchSelect" placeholder="请选择">
-                <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                  :disbaled="true">
-                </el-option>
-              </el-select>
-            </el-col>
-            <el-col :span="6">
-              <el-input v-model="searchInput" placeholder="请输入内容" class="sc-table-header-select"></el-input>
-            </el-col>
-            <el-col :span="8">
-              <el-button @click="onSingleSearch" class="sc-table-search-btn" type="primary">搜索</el-button>
-              <el-button @click="onAdvancedSearch" type="primary" icon="search">高级搜索</el-button>
-            </el-col>
-          </el-row>
-        </el-col>
-        <el-col :span="8">
-          <el-row type="flex" justify="end">
-            <router-link class="add-user-link" to="/useradd">
-              <el-button type="primary" icon="plus"></el-button>
-            </router-link>
-            <el-button type="primary" icon="upload2"></el-button>
-            <el-button type="primary" icon="setting"></el-button>
-          </el-row>
-        </el-col>
+        <el-button @click="onSearch" icon="search"></el-button>
+        <router-link class="add-user-link add" to="/useradd">
+            <el-button type="primary" icon="plus"></el-button>
+        </router-link>
+        <el-button icon="upload2" type="primary"></el-button>
+        <el-button icon="setting" type="primary"></el-button>
       </el-row>
     </div>
-    <div class="sc-table-content">
-      <el-table :data="response.data" @cell-click="onTableClick" border stripe :default-sort="{prop: 'date', order: 'descending'}">
-        <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="id" label="ID" width="80" sortable></el-table-column>
-        <el-table-column prop="username" label="用户名" width="100"></el-table-column>
-        <el-table-column prop="phone" label="手机号码" width="120" sortable></el-table-column>
-        <el-table-column prop="email" label="Email" width="190"></el-table-column>
-        <el-table-column prop="address" label="地址" width="200"></el-table-column>
+    <div slot="kobe-table-content" class="kobe-table">
+      <el-table
+        :data="response.data"
+        border
+        stripe
+        >
+        <el-table-column prop="id" label="ID" width="80"></el-table-column>
         <el-table-column
-          prop="tags"
-          label="标签"
-          width="180">
+          label="用户头像/昵称"
+          width="180"
+          >
           <template scope="scope">
-            <el-tag
-              :key="tag"
-              v-for="tag in scope.row.tags"
-              :closable="true"
-              :close-transition="false"
-              @close="handleClose(tag,scope.row.tags)">
-              {{tag}}
-
-            </el-tag>
-            <el-input
-              class="input-new-tag"
-              v-if="scope.row.inputVisible"
-              v-model="scope.row.inputValue"
-              ref="saveTagInput"
-              size="mini"
-              @keyup.enter.native="handleInputConfirm(scope.row.id)"
-              @blur="handleInputConfirm(scope.row.id)">
-            </el-input>
-            <el-button v-else class="button-new-tag" size="small" @click="showInput(scope.row.id)">添加标签
-            </el-button>
+            <img class="user-img-avatar" :src="scope.row.avatar" alt="头像">
+            {{ scope.row.nickname }}
           </template>
         </el-table-column>
-        <el-table-column class="user-status-column" @click.native="toggleStatus(scope.row.isLock)" prop="isLock" label="状态" width="70"></el-table-column>
-        <el-table-column label="操作">
+        <el-table-column prop="realname" label="姓名"></el-table-column>
+        <el-table-column prop="phone" label="手机号码"></el-table-column>
+        <el-table-column prop="email" label="Email"></el-table-column>
+        <el-table-column prop="address" label="地址"></el-table-column>
+        <el-table-column 
+          width="160"
+          label="操作"
+          >
           <template scope="scope">
-            <el-button size="small" icon="document"></el-button>
+          	<el-button size="small" icon="information" @click="onUserDetail(scope.row.id)"></el-button>
             <el-button size="small" icon="edit"></el-button>
-            <el-button @click="onDeleteUser(scope.row.id)" size="small" type="danger" icon="delete2"></el-button>
+            <el-button @click="onDeleteUser(scope.row.id)" size="small" icon="delete2"></el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <div class="sc-table-footer">
+    <div slot="kobe-table-footer" class="kobe-table-footer">
       <el-row type="flex" justify="center">
         <el-col :span="12">
           <el-pagination
@@ -132,197 +63,163 @@
         </el-col>
       </el-row>
     </div>
-
-  </div>
+  </kobe-table>
 </template>
 
 <script>
-import axios from 'axios'
 import config from 'src/config'
+import api from 'src/api'
 
 export default {
   name: 'sc-user-table',
   data () {
     return {
-      searchSelect: '',
-      searchInput: '',
-      advancedForm: false,
-      searchForm: {
-        id: '',
-        username: '',
-        phone: '',
-        startDate: '',
-        endDate: '',
-        address: '',
-        createdAt: ''
-      },
-      dialogFormVisible: false,
       form: {
-        name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
+        keyword: ''
       },
       response: null,
-      options: [],
       error: null
     }
   },
-  computed: {
-    userListURL () {
-      return config.serverURI + config.userListAPI
-    },
-    removeUserURL () {
-      return config.serverURI + config.removeUserAPI
-    }
-  },
-  components: {},
   methods: {
-    onTableClick (row, column, cell, event) {
-      // TODO
-      // call isLock API
-    },
-    handleClose (tag, tagList) {
-      //  Todo
-      tagList.splice(tagList.indexOf(tag), 1)
-    },
-    showInput (id) {
-      this.tableData[parseInt(id) - 1].inputVisible = true
-      this.$nextTick(_ => {
-        this.$refs.saveTagInput.$refs.input.focus()
-      })
-    },
-    handleInputConfirm (id) {
-      let inputValue = this.tableData[parseInt(id) - 1].inputValue
-      if (inputValue) {
-        this.tableData[parseInt(id) - 1].tags.push(inputValue)
+    onSearch () {
+      const data = {
+        currentPage: 1,
+        pageSize: this.response.pageSize,
+        ...this.form
       }
-    },
-    onSingleSearch () {
-      if (this.searchSelect === '') {
-        return
-      } else if (this.searchInput === '') {
-        return
-      }
-
-      // TODO search user
-    },
-    onAdvancedSearch () {
-      this.advancedForm = !this.advancedForm
+      this.updateUserList(data)
     },
     handleSizeChange (value) {
-      this.getUserLists(value, this.response.currentPage)
+      const data = {
+        currentPage: this.response.currentPage,
+        pageSize: value,
+        ...this.form
+      }
+      this.updateUserList(data)
     },
     handleCurrentChange (value) {
-      this.getUserLists(this.response.pageSize, value)
-    },
-    toggleStatus (isLock) {
+      const data = {
+        pageSize: this.response.pageSize,
+        currentPage: value,
+        ...this.form
+      }
+      this.updateUserList(data)
     },
     onDeleteUser (id) {
-      this.$confirm('此操作将删除, 是否继续?', '提示', {
+      this.$confirm('是否确认该用户', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // delete user
-        axios.post(this.removeUserURL, {
+        api.POST(config.users.deleteUser, {
           id: id
         })
         .then(response => {
+          if (response.data.errcode === '0000') {
+            this.$message({
+              title: '成功',
+              message: '删除成功',
+              type: 'success'
+            })
+            const data = {
+              pageSize: this.response.pageSize,
+              currentPage: this.response.currentPage,
+              ...this.form
+            }
+            this.updateUserList(data)
+          } else {
+            this.$message.error('发生错误，请重试')
+          }
+        })
+      })
+    },
+    onUserDetail (id) {
+      this.$router.push({
+        path: 'userdetails',
+        query: {
+          id
+        }
+      })
+    },
+    updateUserList (data) {
+      api.GET(config.userListAPI, data)
+        .then(response => {
+          if (response.status !== 200) {
+            this.error = response.statusText
+            return
+          }
+          if (response.data.errcode === '0000') {
+            this.response = response.data.data
+            this.response.data.forEach(item => {
+              if (item.community && item.subDistrictName) {
+                item.address = `${item.community}/${item.subDistrictName}`
+              }
+            })
+          } else {
+            this.$message.error('发生了错误，请重试')
+          }
         })
         .catch(error => {
           this.$message.error(error)
         })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        })
-      })
     },
-    transformData (response) {
-      if (this.options.length === 0) {
-        for (let value in response.data[0]) {
-          let object = {}
-          object.value = value
-          this.options.push(object)
+    transformData (data) {
+      let object = []
+      data.forEach(item => {
+        let category = {}
+        category.value = item.id
+        category.label = item.name
+        if (item.children && item.children.length !== 0) {
+          const children = this.transformData(item.children)
+          category.children = children
+        } else {
+          category.children = null
         }
-      }
-      response.data.forEach(item => {
-        for (let key in item) {
-          if (key === 'isLock') {
-            item[key] === '0' ? item[key] = '锁定' : item[key] = '正常'
+        object.push(category)
+      })
+
+      return object
+    },
+    getUserList () {
+      api.GET(config.userListAPI)
+        .then(response => {
+          if (response.status !== 200) {
+            this.error = response.statusText
+            return
           }
-        }
-      })
-      return response
-    },
-    getUserLists (pageSize = 10, currentPage = 1) {
-      axios.get(this.userListURL, {
-        params: {
-          pageSize,
-          currentPage
-        }
-      })
-      .then(response => {
-        if (response.status !== 200) {
-          this.error = response.statusText
-          return
-        }
-        if (response.data.errcode === '0000') {
-          this.response = response.data.data
-          this.transformData(this.response)
-        }
-      })
-      .catch(error => {
-        this.$message.error(error)
-      })
-    },
-    showDialogForm () {
-      this.dialogFormVisible = true
+          if (response.data.errcode === '0000') {
+            this.response = response.data.data
+            // console.log(this.response)
+            this.response.data.forEach(item => {
+              if (item.community && item.subDistrictName) {
+                item.address = `${item.community}/${item.subDistrictName}`
+              }
+            })
+          } else {
+            this.$message.error('发生了错误，请重试')
+          }
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
     }
   },
   mounted () {
-    this.getUserLists()
+    this.getUserList()
   }
 }
 </script>
+
 <style scoped>
-  .sc-user-table {
-    border-top: 1px solid lightgray;
-    padding-top: 2rem;
-    margin-left: 2rem;
-    margin-top: 2rem;
-    margin-right: 2rem;
-  }
-
-  .sc-table-header {
-    margin-bottom: 20px;
-  }
-
-  .sc-table-content {
-    margin-bottom: 10px;
-  }
-
-  .search-form {
-    border: 1px solid lightgray;
-    padding: 20px;
-    margin-bottom: 10px;
-  }
-
-  .sc-table-search-btn {
-    margin-left: 20px;
-  }
-
-  .add-user-link {
-    margin-right: 10px;
-  }
-
-  .user-status-column:hover {
-    cursor: pointer;
-  }
+.user-img-avatar {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  width: 56px;
+  height: 56px;
+}
+.add{
+	margin-left: 10px;
+	margin-right: 10px;
+}
 </style>

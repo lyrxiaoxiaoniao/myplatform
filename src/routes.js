@@ -6,7 +6,6 @@ import NotFoundView from './components/404.vue'
 
 // Import Views - Dash
 import DashMainView from './components/views/dash/Main.vue'
-import TablesView from './components/views/Tables.vue'
 import TasksView from './components/views/Tasks.vue'
 import SettingView from './components/views/Setting.vue'
 import AccessView from './components/views/Access.vue'
@@ -19,6 +18,7 @@ import SCReportCategoryView from './components/views/reports/ReportCategory.vue'
 
 import SCUserTableView from './components/views/users/UserTable.vue'
 import SCUserAddFormView from './components/views/users/UserAddForm'
+import SCUserDetailView from './components/views/users/UserDetails.vue'
 import SCUserLabelManage from './components/views/users/UserLabelManage.vue'
 
 import SCArticleTableView from './components/views/cms/ArticleTable'
@@ -90,11 +90,6 @@ const routes = [
         alias: '',
         component: DashMainView,
         name: '光明安监'
-      }, {
-        path: 'tables',
-        component: TablesView,
-        name: 'Tables',
-        meta: { description: 'Simple and advance table in CoPilot' }
       }, {
         path: 'tasks',
         component: TasksView,
@@ -329,6 +324,10 @@ const routes = [
         path: 'authmenu',
         component: SCAuthMenuView,
         name: '权限菜单管理'
+      }, {
+        path: 'userdetails',
+        component: SCUserDetailView,
+        name: '用户详情'
       }
     ]
   }, {
