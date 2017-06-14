@@ -73,20 +73,19 @@ export default {
         return
       }
 
-      // #TODO: send mail
       axios.get(this.mailURL, {
         params: {
           username: this.username
         }
       })
       .then(response => {
-        if (response.data.errcode === '200') {
+        if (response.data.errcode === '0000') {
           this.response = '短信已发送,请查收'
         }
       })
       .catch(error => {
         this.response = '短信发送失败'
-        console.log(error)
+        this.$message.error(error)
         return
       })
 
@@ -140,7 +139,7 @@ export default {
       })
       .then(response => {
         console.log(response)
-        if (response.data.errcode === '200') {
+        if (response.data.errcode === '0000') {
           this.$router.push('/')
         } else if (response.data.errcode === '0') {
           this.response = response.data.errmsg

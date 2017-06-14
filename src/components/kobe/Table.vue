@@ -22,13 +22,6 @@
     </slot>
 
     <slot name="kobe-table-footer" class="kobe-table-footer">
-      <el-row type="flex" justify="center">
-        <el-col :span="12">
-          <el-pagination
-            layout="total, sizes, prev, pager, next, jumper">
-          </el-pagination>
-        </el-col>
-      </el-row>
     </slot>
   </div>
 </template>

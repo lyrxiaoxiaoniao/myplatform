@@ -1,5 +1,5 @@
 export default {
-  serverURI: 'http://192.168.1.34:8080',
+  serverURI: 'http://192.168.1.22:8080',
   basic: {
   },
   reports: {
@@ -20,7 +20,15 @@ export default {
     authList: '/admin/permission/index',
     authCreate: '/admin/permission/create',
     authDelete: '/admin/permission/delete',
-    authUpdate: '/admin/permission/update'
+    authUpdate: '/admin/permission/update',
+    relatedRole: '/admin/rolepermission/show/role/related',
+    unrelatedRole: '/admin/rolepermission/show/role/relate',
+    linkRole: '/admin/rolepermission/create',
+    unLinkRole: '/admin/rolepermission/delete',
+    relatedMenu: '/admin/mp/show/menu/related',
+    unrelatedMenu: '/admin/mp/show/menu/relate',
+    linkMenu: '/admin/mp/create',
+    unLinkMenu: '/admin/mp/delete'
   },
   menuAPI: '/admin/menu/show_left',
   appInfoAPI: '/admin/appinfo/show?code=gmaj',

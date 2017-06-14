@@ -5,7 +5,7 @@ import ResetView from './components/Reset.vue'
 import NotFoundView from './components/404.vue'
 
 // Import Views - Dash
-import DashboardView from './components/views/Dashboard.vue'
+import DashMainView from './components/views/dash/Main.vue'
 import TablesView from './components/views/Tables.vue'
 import TasksView from './components/views/Tasks.vue'
 import SettingView from './components/views/Setting.vue'
@@ -50,6 +50,8 @@ import SCRoleLinkUserTableView from './components/views/characters/RoleLinkUserT
 import SCOrgaListView from './components/views/organization/orgaTable.vue'
 
 import SCAuthTableView from './components/views/auth/AuthTable.vue'
+import SCAuthRoleView from './components/views/auth/LinkRole.vue'
+import SCAuthMenuView from './components/views/auth/LinkMenu.vue'
 
 const routes = [
   {
@@ -66,11 +68,10 @@ const routes = [
     component: DashView,
     children: [
       {
-        path: 'dashboard',
+        path: 'admin',
         alias: '',
-        component: DashboardView,
-        name: 'Dashboard',
-        meta: {description: 'Overview of environment'}
+        component: DashMainView,
+        name: '光明安监'
       }, {
         path: 'tables',
         component: TablesView,
@@ -235,6 +236,14 @@ const routes = [
         path: 'auth',
         component: SCAuthTableView,
         name: '权限管理'
+      }, {
+        path: 'authrole',
+        component: SCAuthRoleView,
+        name: '权限角色管理'
+      }, {
+        path: 'authmenu',
+        component: SCAuthMenuView,
+        name: '权限菜单管理'
       }
     ]
   }, {
