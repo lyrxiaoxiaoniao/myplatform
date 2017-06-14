@@ -40,6 +40,17 @@ import SCWxUserTagTableView from './components/views/wxusers/WxTagTable.vue'
 import SCWxTagUserListView from './components/views/wxusers/WxTagUserInfo.vue'
 import SCWxUserProfileView from './components/views/wxusers/WxUserProfile.vue'
 
+import SCAdvertisementPoints from './components/views/wxadvertisement/advertisementPoints.vue'
+import SCAddPoints from './components/views/wxadvertisement/pointsPage/AddPoint.vue'
+import SCEditPoints from './components/views/wxadvertisement/pointsPage/EditPoint.vue'
+import SCPointDetail from './components/views/wxadvertisement/pointsPage/PointDetail.vue'
+import SCAdvertisementContent from './components/views/wxadvertisement/advertisementContent.vue'
+import SCAdvertisementDetail from './components/views/wxadvertisement/contentPage/AdvertisementDetail.vue'
+import SCAddAdvertisement from './components/views/wxadvertisement/contentPage/AddAdvertisement.vue'
+import SCEditAdvertisement from './components/views/wxadvertisement/contentPage/EditAdvertisement.vue'
+
+import SCMenuTree from './components/views/menulist/MenuRree.vue'
+
 const routes = [
   {
     path: '/login',
@@ -194,6 +205,51 @@ const routes = [
         path: 'wxprofile',
         component: SCWxUserProfileView,
         name: '微信用户详情'
+      }, {
+        path: 'advertisementpoint',
+        component: SCAdvertisementPoints,
+        name: '广告点位',
+        meta: {description: '管理'}
+      }, {
+        path: 'addpoint',
+        component: SCAddPoints,
+        name: '广告点位管理',
+        meta: {description: '新增'}
+      }, {
+        path: 'editpoint',
+        component: SCEditPoints,
+        name: '广告点位管理',
+        meta: {description: '修改'}
+      }, {
+        path: 'pointdetail',
+        component: SCPointDetail,
+        name: '广告点位管理',
+        meta: {description: '详情'}
+      }, {
+        path: 'advertisementcontent',
+        component: SCAdvertisementContent,
+        name: '广告列表',
+        meta: {description: '管理'}
+      }, {
+        path: 'advertisementdetail',
+        component: SCAdvertisementDetail,
+        name: '广告列表',
+        meta: {description: '详情页'}
+      }, {
+        path: 'addadvertisement',
+        component: SCAddAdvertisement,
+        name: '广告列表',
+        meta: {description: '新增'}
+      }, {
+        path: 'editadvertisement',
+        component: SCEditAdvertisement,
+        name: '广告列表',
+        meta: {description: '修改'}
+      }, {
+        path: 'menutree',
+        component: SCMenuTree,
+        name: '后台菜单管理',
+        meta: {description: '后台菜单'}
       }
     ]
   }, {
