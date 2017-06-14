@@ -1,4 +1,5 @@
 export default {
+  // serverURI: 'http://test.java.shencom.cn/gm',
   serverURI: 'http://192.168.1.22:8080',
   basic: {
     sendMail: '/test/sys/sendMsgVerify',
@@ -16,6 +17,8 @@ export default {
   wxusers: {
   },
   users: {
+    deleteUser: '/admin/user/delete',
+    userDetail: '/admin/user/show'
   },
   role: {
   },
