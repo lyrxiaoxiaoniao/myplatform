@@ -2,13 +2,15 @@
   <div class="login-box">
     <slot name="logo">
       <div class="login-logo">
-        <a @click.prevent=""><b>{{ title }}</b></a>
+        <a @click.prevent="">
+          <b>{{ title }}</b>
+        </a>
       </div>
       <div class="text-response text-center error" v-if="response">
         {{ response }}
       </div>
     </slot>
-
+  
     <div class="login-box-body">
       <slot name="login">
         <form action="" method="post">
@@ -33,8 +35,6 @@
           </div>
         </form>
       </slot>
-
-      <router-link to="/forgot">忘记密码</router-link>
     </div>
   </div>
 </template>
@@ -46,10 +46,7 @@ import config from 'src/config'
 
 export default {
   name: 'bs-login',
-  install (Vue) {
-    Vue.component(this.name, this)
-  },
-  data () {
+  data() {
     return {
       title: 'SHENCOM',
       mailButtonText: '发送验证码',
@@ -71,20 +68,19 @@ export default {
         this.$message.error('请填写用户名')
         return
       }
-
       api.GET(config.basic.sendMail, {
         username: this.username
       })
-      .then(response => {
-        if (response.data.errcode === '0000') {
-          this.response = '短信已发送,请查收'
-        }
-      })
-      .catch(error => {
-        this.response = '短信发送失败'
-        this.$message.error(error)
-        return
-      })
+        .then(response => {
+          if (response.data.errcode === '0000') {
+            this.response = '短信已发送,请查收'
+          }
+        })
+        .catch(error => {
+          this.response = '短信发送失败'
+          this.$message.error(error)
+          return
+        })
 
       this.mailSended = true
       this.mailButtonText = `重新发送(${this.mailCountDown--})`
@@ -114,9 +110,7 @@ export default {
 
       this.loginSended = true
       // password encrypt
-      console.log(this.password)
       this.encrypt()
-      console.log(this.password)
 
       // encrypt error
       if (!this.password) {
@@ -129,33 +123,33 @@ export default {
         // mail code
         code: this.mailCode
       })
-      /*
-      axios({
-        url: config.basic.login,
-        method: 'post',
-        data: {
-          username: this.username,
-          password: this.password,
-          // mail code
-          code: this.mailCode
-        },
-        withCredentials: true
-      })
-      */
-      .then(response => {
-        if (response.data.errcode === '0000') {
-          this.$router.push('/')
-        } else if (response.data.errcode === '0') {
-          this.response = response.data.errmsg
+        /*
+        axios({
+          url: config.basic.login,
+          method: 'post',
+          data: {
+            username: this.username,
+            password: this.password,
+            // mail code
+            code: this.mailCode
+          },
+          withCredentials: true
+        })
+        */
+        .then(response => {
+          if (response.data.errcode === '0000') {
+            this.$router.push('/')
+          } else if (response.data.errcode === '0') {
+            this.response = response.data.errmsg
+            this.loginSended = false
+          }
+        })
+        .catch(error => {
           this.loginSended = false
-        }
-      })
-      .catch(error => {
-        this.loginSended = false
-        this.$message.error(error)
-      })
+          this.$message.error(error)
+        })
     },
-    encrypt (string) {
+    encrypt(string) {
       const pubkey = '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArromvW2N\/rg0ADw9zpTL\ncGdO0wNazPcp+SepPrv1dicCamEVPfvPKlWMuYszt\/tE6lNjMT8pphmatPvgjAFy\nKfE1fEpcvHqRSZTUtlo\/fGJzh2nss6mxyDXlqi+sGitjwaGj6\/MXO6zLQcMQmZ\/U\nvliOhECvuLBsAqqLY8ik63Ah7ylWAap3jDD0OvgSy+glqebwfacy9WPYOy4K75n\/\nDQRw9FJBYFg1BtfbVn55Oji3AZ0E3lY96b0JhJGtFM6vjF0bhVDkmP\/XZINPcVZy\nxydRFvxjgA6we\/KmxXDD\/JdZmvGmrZ2XCAhGS3vuk3XJnkMquGYO4GAI13JIs8Z1\nrwIDAQAB\n-----END PUBLIC KEY-----'
       // const pubkey = '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArromvW2Nrg0ADw9zpTL\ncGdO0wNazPcp+SepPrv1dicCamEVPfvPKlWMuYszttE6lNjMT8pphmatPvgjAFy\nKfE1fEpcvHqRSZTUtlofGJzh2nss6mxyDXlqi+sGitjwaGj6MXO6zLQcMQmZU\nvliOhECvuLBsAqqLY8ik63Ah7ylWAap3jDD0OvgSy+glqebwfacy9WPYOy4K75n\nDQRw9FJBYFg1BtfbVn55Oji3AZ0E3lY96b0JhJGtFM6vjF0bhVDkmPXZINPcVZy\nxydRFvxjgA6weKmxXDDJdZmvGmrZ2XCAhGS3vuk3XJnkMquGYO4GAI13JIs8Z1\nrwIDAQAB\n-----END PUBLIC KEY-----'
 
@@ -169,14 +163,14 @@ export default {
         return false
       }
     },
-    isStringEmpty (string) {
+    isStringEmpty(string) {
       if (string.length === 0) {
         return true
       }
       return false
     }
   },
-  mounted () {
+  mounted() {
   },
   components: {
   }
