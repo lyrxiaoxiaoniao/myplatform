@@ -1,11 +1,11 @@
 <template>
   <kobe-table v-if="response">
     <div slot="kobe-table-header" class="kobe-table-header">
-      <el-row type="flex">
+      <el-row type="flex" justify="end">
         <el-col :span="7">
-          <el-input placeholder="请输入id、职位名进行搜索"></el-input>
+          <el-input placeholder="请输入职位名进行搜索" v-model="keyword"></el-input>
         </el-col>
-        <el-button icon="search"></el-button>
+        <el-button icon="search" @click="onSearch"></el-button>
       </el-row>
     </div>
     <div slot="kobe-table-content" class="kobe-table">
@@ -47,7 +47,8 @@ export default {
       query: {
         orgaId: ''
       },
-      btnDisabled: false
+      btnDisabled: false,
+      keyword: ''
     }
   },
   methods: {
@@ -64,8 +65,24 @@ export default {
           }
         })
     },
-    updateUserList() {
-
+    onSearch() {
+      const obj = {
+        organizationId: parseInt(this.query.orgaId),
+        currentPage: this.response.currentPage,
+        pageSize: this.response.pageSize,
+        keyword: this.keyword
+      }
+      console.log(obj)
+      this.updateUserList(obj)
+    },
+    updateUserList(obj) {
+      api.GET(config.dutyRelated, obj)
+        .then(res => {
+          if (res.status === 200 && res.data.errcode === '0000') {
+            this.response = res.data.data
+            console.log(this.response)
+          }
+        })
     },
     unrelate(id) {
       this.btnDisabled = true

@@ -51,6 +51,9 @@ import SCOrgaTableView from './components/views/organization/OrgaTable.vue'
 import SCDutyListView from './components/views/organization/DutyList.vue'
 import SCDutyUnrelatedView from './components/views/organization/DutyUnrelated.vue'
 
+import SCPersonalTable from './components/views/personal/PersonalTable.vue'
+import SCPersonalDetail from './components/views/personal/PersonalDetail.vue'
+
 import SCDutyManageView from './components/views/duty/DutyManage.vue'
 
 import SCAuthTableView from './components/views/auth/AuthTable.vue'
@@ -257,6 +260,16 @@ const routes = [
         path: 'auth',
         component: SCAuthTableView,
         name: '权限管理'
+      },
+      {
+        path: 'personaltable',
+        component: SCPersonalTable,
+        name: '个人信息上报'
+      },
+      {
+        path: 'personaldetail',
+        component: SCPersonalDetail,
+        name: '个人信息详情'
       }
     ]
   }, {
