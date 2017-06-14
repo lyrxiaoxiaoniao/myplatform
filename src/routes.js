@@ -20,6 +20,7 @@ import SCUserTableView from './components/views/users/UserTable.vue'
 import SCUserAddFormView from './components/views/users/UserAddForm'
 import SCUserDetailView from './components/views/users/UserDetails.vue'
 import SCUserLabelManage from './components/views/users/UserLabelManage.vue'
+import SCUserRoleView from './components/views/users/UserRole.vue'
 
 import SCArticleTableView from './components/views/cms/ArticleTable'
 import SCArticleAddFormView from './components/views/cms/ArticleAddForm.vue'
@@ -306,13 +307,11 @@ const routes = [
         path: 'auth',
         component: SCAuthTableView,
         name: '权限管理'
-      },
-      {
+      }, {
         path: 'personaltable',
         component: SCPersonalTable,
         name: '个人信息上报'
-      },
-      {
+      }, {
         path: 'personaldetail',
         component: SCPersonalDetail,
         name: '个人信息详情'
@@ -328,6 +327,10 @@ const routes = [
         path: 'userdetails',
         component: SCUserDetailView,
         name: '用户详情'
+      }, {
+        path: 'userrole',
+        component: SCUserRoleView,
+        name: '用户角色管理'
       }
     ]
   }, {

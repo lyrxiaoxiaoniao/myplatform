@@ -79,7 +79,7 @@ export default {
       const data = {
         currentPage: this.response.currentPage,
         pageSize: this.response.pageSize,
-        id: this.id,
+        roleId: this.id,
         ...this.form
       }
       this.updateUserList(data)
@@ -91,7 +91,7 @@ export default {
         type: 'warning'
       }).then(() => {
         api.POST(config.roleUserRelatedDeleteAPI, {
-          roleId: this.id,
+          roles: [this.id],
           users: [id]
         }).then(response => {
           if (response.data.errcode === '0000') {
@@ -103,7 +103,7 @@ export default {
             const data = {
               pageSize: this.response.pageSize,
               currentPage: this.response.currentPage,
-              id: this.id,
+              roleId: this.id,
               ...this.form
             }
             this.updateUserList(data)
@@ -117,7 +117,7 @@ export default {
       const data = {
         currentPage: value,
         pageSize: this.response.pageSize,
-        id: this.id,
+        roleId: this.id,
         ...this.form
       }
       this.updateUserList(data)
@@ -126,7 +126,7 @@ export default {
       const data = {
         currentPage: this.response.currentPage,
         pageSize: value,
-        id: this.id,
+        roleId: this.id,
         ...this.form
       }
       this.updateUserList(data)
@@ -166,7 +166,7 @@ export default {
     },
     getUserList () {
       api.GET(config.roleUserRelatedAPI, {
-        id: this.id
+        roleId: this.id
       })
       .then(response => {
         if (response.status !== 200) {

@@ -1,6 +1,8 @@
+/* eslint no-useless-escape: "off" */
 export default {
   serverURI: 'http://192.168.1.22:8080',
   basic: {
+    key: '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArromvW2N\/rg0ADw9zpTL\ncGdO0wNazPcp+SepPrv1dicCamEVPfvPKlWMuYszt\/tE6lNjMT8pphmatPvgjAFy\nKfE1fEpcvHqRSZTUtlo\/fGJzh2nss6mxyDXlqi+sGitjwaGj6\/MXO6zLQcMQmZ\/U\nvliOhECvuLBsAqqLY8ik63Ah7ylWAap3jDD0OvgSy+glqebwfacy9WPYOy4K75n\/\nDQRw9FJBYFg1BtfbVn55Oji3AZ0E3lY96b0JhJGtFM6vjF0bhVDkmP\/XZINPcVZy\nxydRFvxjgA6we\/KmxXDD\/JdZmvGmrZ2XCAhGS3vuk3XJnkMquGYO4GAI13JIs8Z1\nrwIDAQAB\n-----END PUBLIC KEY-----',
     sendMail: '/test/sys/sendMsgVerify',
     forgetMail: '/admin/password/sendEmail',
     login: '/test/sys/login'
@@ -17,7 +19,12 @@ export default {
   },
   users: {
     deleteUser: '/admin/user/delete',
-    userDetail: '/admin/user/show'
+    userDetail: '/admin/user/show',
+    userCreate: '/admin/user/create',
+    relatedRole: '/admin/userrole/show/role/related',
+    unrelatedRole: '/admin/userrole/show/role/relate',
+    linkRole: '/admin/userrole/create',
+    unlinkRole: '/admin/userrole/delete'
   },
   role: {
   },
@@ -111,10 +118,10 @@ export default {
   dictElDeleteAPI: '/com/dictionary/property/delete',
   dictElUpdateAPI: '/com/dictionary/property/update',
   roleListAPI: '/admin/role/index',
-  roleUserRelatedAPI: '/admin/userrole/user/relate',
-  roleUserRelatedDeleteAPI: '/admin/userrole/relate/delete',
-  roleUserUnrelatedAPI: '/admin/userrole/user/unrelate',
-  roleRelateUserAPI: '/admin/userrole/relate/create',
+  roleUserRelatedAPI: '/admin/userrole/show/user/related',
+  roleUserUnrelatedAPI: '/admin/userrole/show/user/relate',
+  roleUserRelatedDeleteAPI: '/admin/userrole/delete',
+  roleRelateUserAPI: '/admin/userrole/create',
   roleUserLockAPI: '/admin/user/lock',
   roleCreateAPI: '/admin/role/create',
   roleDeleteAPI: '/admin/role/delete',

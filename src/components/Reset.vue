@@ -37,8 +37,6 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 export default {
   name: 'Reset',
   data () {
@@ -53,9 +51,6 @@ export default {
   computed: {
   },
   methods: {
-    onSubmit: function () {
-      axios()
-    }
   }
 }
 </script>

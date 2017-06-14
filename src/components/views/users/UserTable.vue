@@ -37,13 +37,13 @@
         <el-table-column prop="email" label="Email"></el-table-column>
         <el-table-column prop="address" label="地址"></el-table-column>
         <el-table-column 
-          width="160"
+          width="180"
           label="操作"
           >
           <template scope="scope">
           	<el-button size="small" icon="information" @click="onUserDetail(scope.row.id)"></el-button>
-            <el-button size="small" icon="edit"></el-button>
             <el-button @click="onDeleteUser(scope.row.id)" size="small" icon="delete2"></el-button>
+            <el-button size="small" @click="onUserRole(scope.row.id)">角色</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -82,6 +82,14 @@ export default {
     }
   },
   methods: {
+    onUserRole (id) {
+      this.$router.push({
+        path: 'userrole',
+        query: {
+          id: id
+        }
+      })
+    },
     onSearch () {
       const data = {
         currentPage: 1,
