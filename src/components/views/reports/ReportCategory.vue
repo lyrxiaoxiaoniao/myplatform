@@ -169,7 +169,7 @@ export default {
     getData () {
       api.GET(config.caseCatlgAPI)
         .then(res => {
-          console.log(res.data, 'config')
+          // console.log(res.data, 'config')
           this.data = res.data.data
         })
     },
