@@ -92,7 +92,7 @@ export default {
   methods: {
     onAdvancedSearch () {
       const data = {
-        pageSize: this.response.pageSize,
+        pageSize: 1,
         currentPage: this.response.currentPage,
         ...this.form
       }

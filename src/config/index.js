@@ -1,6 +1,9 @@
 export default {
-  serverURI: 'http://192.168.1.22:8080',
+  serverURI: 'http://192.168.1.34:8080',
   basic: {
+    sendMail: '/test/sys/sendMsgVerify',
+    forgetMail: '/admin/password/sendEmail',
+    login: '/test/sys/login'
   },
   reports: {
   },
@@ -31,6 +34,9 @@ export default {
     unLinkMenu: '/admin/mp/delete'
   },
   menuAPI: '/admin/menu/show_left',
+  deleteMenuAPI: '/admin/menu/delete',
+  addMenuAPI: '/admin/menu/create',
+  updateMenuAPI: '/admin/menu/update',
   appInfoAPI: '/admin/appinfo/show?code=gmaj',
   userListAPI: '/admin/user/index',
   removeUserAPI: '/admin/user/delete',
@@ -83,6 +89,17 @@ export default {
   wxUserGroupUserUnlinkAPI: '/user/usr/userGroup/deleteReference',
   wxUserStreetAPI: '/user/usr/userGroup/Streets',
   wxUserIndustryAPI: '/user/usr/userGroup/Industries',
+  advertisementListAPI: '/adv/index',
+  addAdvertisementAPI: '/adv/create',
+  deleteAdvertisementAPI: '/adv/delete',
+  editAdvertisementAPI: '/adv/update',
+  showAdvertisementAPI: '/adv/show',
+  advPointListAPI: '/advspace/index',
+  deleteAdvPointAPI: '/advspace/delete',
+  editAdvePointAPI: '/advspace/update',
+  addAdvPointAPI: '/advspace/create',
+  showAdvPointAPI: '/advspace/show',
+  addPointAPI: '/adv/queryspace',
   dictListAPI: '/com/dictionary/option/index',
   dictCreateAPI: '/com/dictionary/option/create',
   dictShowAPI: '/com/dictionary/option/show',
