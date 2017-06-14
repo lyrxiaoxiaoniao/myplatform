@@ -183,6 +183,7 @@
 
 <script>
 import axios from 'axios'
+import api from 'src/api'
 import config from 'src/config'
 
 let map = {
@@ -217,7 +218,6 @@ export default {
       },
       formLabelWidth: '120px',
       uploadUrl: config.serverURI + config.uploadImgAPI,
-      updateURL: config.serverURI + config.updateCaseAPI,
       fileList: [],
       imgNaturalWidth: ''
     }
@@ -346,7 +346,7 @@ export default {
         form.isNotify.push('sms')
       }
       form.isNotify = form.isNotify.join()
-      axios.post(this.updateURL, form)
+      api.POST(config.updateCaseAPI, form)
         .then(response => {
           if (response.status !== 200) {
             this.error = response.statusText

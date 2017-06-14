@@ -7,13 +7,12 @@
         				<span class="sc-user-card-title">用户登记信息</span>
       				</div>
 			        <div class="sc-user-details-box">
-			          <div>用户名: <span>{{ response.company }}</span></div>
-			          <div>昵称: <span>{{ response.address }}</span></div>
-			          <div>真实姓名: <span>{{ response.industryName }}</span></div>
-			          <div>身份证号: <span>{{ response.industryName }}</span></div>
-			          <div>移动/固定电话: <span>{{ response.pnum }}</span></div>
-			          <div>邮箱: <span>{{ response.regionName }}</span></div>
-			          <div>联系地址: <span>{{ response.safecert }}</span></div>
+			          <div>用户名: <span>{{ response.username }}</span></div>
+			          <div>昵称: <span>{{ response.nickname }}</span></div>
+			          <div>真实姓名: <span>{{ response.realname }}</span></div>
+			          <div>移动/固定电话: <span>{{ response.phone }}</span></div>
+			          <div>邮箱: <span>{{ response.email }}</span></div>
+			          <div>联系地址: <span>{{ response.address }}</span></div>
 			          <div>紧急联系人信息: <span>{{ response.createdAt | toDate }}</span> </div>
 			          <div>备注: <span>{{ response.createdAt | toDate }}</span> </div>
 			        </div>
@@ -21,12 +20,8 @@
 			</el-col>
 			<el-col :span="6" class="sc-user-photo">
 				<div class="sc-user-photo-box">
-					<img src="http://192.168.1.34:8080/api/files/aa2a9bad52624328a8936d6d84b19b4e.jpg" class="img-responsive">
-				    <p class="sc-user-photo-desc">用户头像用户头像用户头像</p>
-				    <el-row class="sc-user-detail-action" type="flex" justify="center">
-      					<el-button type="primary">审核</el-button>
-      					<el-button @click="back" type="primary">返回</el-button>
-    				</el-row>
+					<img :src="response.avatar" class="img-responsive">
+				  <p class="sc-user-photo-desc">用户头像</p>
 				</div>
 			</el-col>
 		</el-row>

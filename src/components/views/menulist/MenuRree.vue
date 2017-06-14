@@ -142,7 +142,7 @@ export default {
       this.addVisible = true
     },
     edit (node, store, data) {
-      console.log(node, store, data)
+      // console.log(node, store, data)
       this.isEditing = true
       if (Array.isArray(node.parent.data)) {
         this.formData.parentName = '根级目录'
@@ -170,12 +170,12 @@ export default {
     getData () {
       api.GET(config.menuAPI)
         .then(res => {
-          console.log(res.data, 'config')
+          // console.log(res.data, 'config')
           this.data = res.data.data
         })
     },
     deleteCategory () {
-      console.log(this.deletedId)
+      // console.log(this.deletedId)
       api.POST(config.deleteMenuAPI, {id: this.deletedId})
         .then(res => {
           if (res.data.errcode === '0000') {
@@ -199,11 +199,21 @@ export default {
             <span>{node.label}</span>
           </span>
           <span style="float: right; margin-right: 20px">
-            <el-button size="mini" on-click={ () => this.edit(node, store, data) }>权限</el-button>
+            <el-button size="mini" on-click={ () => this.related(store, data) }>权限</el-button>
             <el-button size="mini" on-click={ () => this.edit(node, store, data) }>编辑</el-button>
             <el-button type="danger" size="mini" on-click={ () => this.remove(store, data) }>删除</el-button>
           </span>
         </span>)
+    },
+    related (store, data) {
+      let id = data.id
+      console.log(id)
+      this.$router.push({
+        path: 'menulink',
+        query: {
+          id: id
+        }
+      })
     },
     addSubmit () {
       let obj = {}
@@ -217,7 +227,7 @@ export default {
       if (this.isEditing) {
         obj.id = this.formData.id
       }
-      console.log(obj)
+      // console.log(obj)
       let url = this.isEditing ? config.updateMenuAPI : config.addMenuAPI
       api.POST(url, obj)
         .then(res => {

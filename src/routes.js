@@ -20,6 +20,7 @@ import SCUserTableView from './components/views/users/UserTable.vue'
 import SCUserAddFormView from './components/views/users/UserAddForm'
 import SCUserDetailView from './components/views/users/UserDetails.vue'
 import SCUserLabelManage from './components/views/users/UserLabelManage.vue'
+import SCUserRoleView from './components/views/users/UserRole.vue'
 
 import SCArticleTableView from './components/views/cms/ArticleTable'
 import SCArticleAddFormView from './components/views/cms/ArticleAddForm.vue'
@@ -50,6 +51,7 @@ import SCAddAdvertisement from './components/views/wxadvertisement/contentPage/A
 import SCEditAdvertisement from './components/views/wxadvertisement/contentPage/EditAdvertisement.vue'
 
 import SCMenuTree from './components/views/menulist/MenuRree.vue'
+import SCMenuLink from './components/views/menulist/MenuJurisdiction.vue'
 
 import SCDictTableView from './components/views/dict/DictTable.vue'
 import SCDictElTableView from './components/views/dict/DictElTable.vue'
@@ -227,17 +229,17 @@ const routes = [
       }, {
         path: 'addpoint',
         component: SCAddPoints,
-        name: '广告点位管理',
+        name: '广告点位新增',
         meta: {description: '新增'}
       }, {
         path: 'editpoint',
         component: SCEditPoints,
-        name: '广告点位管理',
+        name: '广告点位修改',
         meta: {description: '修改'}
       }, {
         path: 'pointdetail',
         component: SCPointDetail,
-        name: '广告点位管理',
+        name: '广告点位详情',
         meta: {description: '详情'}
       }, {
         path: 'advertisementcontent',
@@ -247,23 +249,28 @@ const routes = [
       }, {
         path: 'advertisementdetail',
         component: SCAdvertisementDetail,
-        name: '广告列表',
+        name: '广告列表详情页',
         meta: {description: '详情页'}
       }, {
         path: 'addadvertisement',
         component: SCAddAdvertisement,
-        name: '广告列表',
+        name: '广告列表新增',
         meta: {description: '新增'}
       }, {
         path: 'editadvertisement',
         component: SCEditAdvertisement,
-        name: '广告列表',
+        name: '广告列表修改',
         meta: {description: '修改'}
       }, {
         path: 'menutree',
         component: SCMenuTree,
         name: '后台菜单管理',
         meta: {description: '后台菜单'}
+      }, {
+        path: 'menulink',
+        component: SCMenuLink,
+        name: '后台菜单权限',
+        meta: {description: '权限管理'}
       }, {
         path: 'dict',
         component: SCDictTableView,
@@ -306,13 +313,11 @@ const routes = [
         path: 'auth',
         component: SCAuthTableView,
         name: '权限管理'
-      },
-      {
+      }, {
         path: 'personaltable',
         component: SCPersonalTable,
         name: '个人信息上报'
-      },
-      {
+      }, {
         path: 'personaldetail',
         component: SCPersonalDetail,
         name: '个人信息详情'
@@ -328,6 +333,10 @@ const routes = [
         path: 'userdetails',
         component: SCUserDetailView,
         name: '用户详情'
+      }, {
+        path: 'userrole',
+        component: SCUserRoleView,
+        name: '用户角色管理'
       }
     ]
   }, {
