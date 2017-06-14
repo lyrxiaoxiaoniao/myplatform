@@ -1,5 +1,5 @@
 export default {
-  serverURI: 'http://192.168.1.34:8080',
+  serverURI: 'http://test.java.shencom.cn/gm',
   basic: {
     sendMail: '/test/sys/sendMsgVerify',
     forgetMail: '/admin/password/sendEmail',
