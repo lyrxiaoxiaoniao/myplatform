@@ -50,6 +50,7 @@ import SCAddAdvertisement from './components/views/wxadvertisement/contentPage/A
 import SCEditAdvertisement from './components/views/wxadvertisement/contentPage/EditAdvertisement.vue'
 
 import SCMenuTree from './components/views/menulist/MenuRree.vue'
+import SCMenuLink from './components/views/menulist/MenuJurisdiction.vue'
 
 import SCDictTableView from './components/views/dict/DictTable.vue'
 import SCDictElTableView from './components/views/dict/DictElTable.vue'
@@ -232,17 +233,17 @@ const routes = [
       }, {
         path: 'addpoint',
         component: SCAddPoints,
-        name: '广告点位管理',
+        name: '广告点位新增',
         meta: {description: '新增'}
       }, {
         path: 'editpoint',
         component: SCEditPoints,
-        name: '广告点位管理',
+        name: '广告点位修改',
         meta: {description: '修改'}
       }, {
         path: 'pointdetail',
         component: SCPointDetail,
-        name: '广告点位管理',
+        name: '广告点位详情',
         meta: {description: '详情'}
       }, {
         path: 'advertisementcontent',
@@ -252,23 +253,28 @@ const routes = [
       }, {
         path: 'advertisementdetail',
         component: SCAdvertisementDetail,
-        name: '广告列表',
+        name: '广告列表详情页',
         meta: {description: '详情页'}
       }, {
         path: 'addadvertisement',
         component: SCAddAdvertisement,
-        name: '广告列表',
+        name: '广告列表新增',
         meta: {description: '新增'}
       }, {
         path: 'editadvertisement',
         component: SCEditAdvertisement,
-        name: '广告列表',
+        name: '广告列表修改',
         meta: {description: '修改'}
       }, {
         path: 'menutree',
         component: SCMenuTree,
         name: '后台菜单管理',
         meta: {description: '后台菜单'}
+      }, {
+        path: 'menulink',
+        component: SCMenuLink,
+        name: '后台菜单权限',
+        meta: {description: '权限管理'}
       }, {
         path: 'dict',
         component: SCDictTableView,

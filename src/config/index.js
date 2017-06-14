@@ -1,5 +1,5 @@
 export default {
-  serverURI: 'http://192.168.1.34:8080',
+  serverURI: 'http://192.168.1.22:8080',
   basic: {
     sendMail: '/test/sys/sendMsgVerify',
     forgetMail: '/admin/password/sendEmail',
@@ -37,6 +37,8 @@ export default {
   deleteMenuAPI: '/admin/menu/delete',
   addMenuAPI: '/admin/menu/create',
   updateMenuAPI: '/admin/menu/update',
+  reatedMenuAPI: '/admin/mp/show/permission/related',
+  unreatedMenuAPI: '/admin/mp/show/permission/relate',
   appInfoAPI: '/admin/appinfo/show?code=gmaj',
   userListAPI: '/admin/user/index',
   removeUserAPI: '/admin/user/delete',
