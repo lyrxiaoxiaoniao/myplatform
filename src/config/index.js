@@ -115,6 +115,10 @@ export default {
   dutyUpdateAPI: '/admin/position/update',
   createRelateAPI: '/admin/op/create/relate',
   deleteRelateAPI: '/admin/op/delete/relate',
+  personalListAPI: '/firm/userinfo/index',
+  personalDetailAPI: '/firm/userinfo/show',
+  personalDeleteAPI: '/firm/userinfo/delete',
+  personalUpdateAPI: '/firm/userinfo/update',
   fixedLayout: false,
   hideLogoOnMobile: false,
   reportsStatusCatlg: [
