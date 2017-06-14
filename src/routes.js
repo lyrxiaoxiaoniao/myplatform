@@ -5,7 +5,7 @@ import ResetView from './components/Reset.vue'
 import NotFoundView from './components/404.vue'
 
 // Import Views - Dash
-import DashboardView from './components/views/Dashboard.vue'
+import DashMainView from './components/views/dash/Main.vue'
 import TablesView from './components/views/Tables.vue'
 import TasksView from './components/views/Tasks.vue'
 import SettingView from './components/views/Setting.vue'
@@ -57,6 +57,8 @@ import SCPersonalDetail from './components/views/personal/PersonalDetail.vue'
 import SCDutyManageView from './components/views/duty/DutyManage.vue'
 
 import SCAuthTableView from './components/views/auth/AuthTable.vue'
+import SCAuthRoleView from './components/views/auth/LinkRole.vue'
+import SCAuthMenuView from './components/views/auth/LinkMenu.vue'
 
 const routes = [
   {
@@ -73,11 +75,10 @@ const routes = [
     component: DashView,
     children: [
       {
-        path: 'dashboard',
+        path: 'admin',
         alias: '',
-        component: DashboardView,
-        name: 'Dashboard',
-        meta: { description: 'Overview of environment' }
+        component: DashMainView,
+        name: '光明安监'
       }, {
         path: 'tables',
         component: TablesView,
@@ -228,35 +229,29 @@ const routes = [
         path: 'orgatable',
         component: SCOrgaTableView,
         name: '组织列表管理'
-      },
-      {
+      }, {
         path: 'dutylist',
         component: SCDutyListView,
         name: '组织职位管理'
-      },
-      {
+      }, {
         path: 'dutyunrelated',
         component: SCDutyUnrelatedView,
         name: '关联职位'
-      },
-      {
+      }, {
         path: 'dutymanage',
         component: SCDutyManageView,
         name: '职位管理'
-      },
-      {
+      }, {
         path: 'roleuser',
         component: SCRoleUserTableView,
         name: '角色用户列表',
         meta: { description: '角色用户列表详情' }
-      },
-      {
+      }, {
         path: 'rolelink',
         component: SCRoleLinkUserTableView,
         name: '关联角色用户列表',
         meta: { description: '关联角色用户列表详情' }
-      },
-      {
+      }, {
         path: 'auth',
         component: SCAuthTableView,
         name: '权限管理'
@@ -270,6 +265,14 @@ const routes = [
         path: 'personaldetail',
         component: SCPersonalDetail,
         name: '个人信息详情'
+      }, {
+        path: 'authrole',
+        component: SCAuthRoleView,
+        name: '权限角色管理'
+      }, {
+        path: 'authmenu',
+        component: SCAuthMenuView,
+        name: '权限菜单管理'
       }
     ]
   }, {
