@@ -109,6 +109,12 @@ export default {
       this.isEditing = false
       this.addVisible = true
     },
+    detail(node, store, data) {
+      this.$router.push({ path: 'dutylist', query: { id: data.id } })
+    },
+    relate(node, store, data) {
+      this.$router.push({ path: 'dutyunrelated', query: { id: data.id } })
+    },
     edit(node, store, data) {
       console.log(node, store, data)
       this.isEditing = true
@@ -163,6 +169,7 @@ export default {
           </span>
           <span style="float: right; margin-right: 20px">
             <el-button size="mini" on-click={() => this.detail(node, store, data)}>详情</el-button>
+            <el-button size="mini" on-click={() => this.relate(node, store, data)}>关联</el-button>
             <el-button size="mini" on-click={() => this.edit(node, store, data)}>编辑</el-button>
             <el-button size="mini" on-click={() => this.remove(store, data)}>删除</el-button>
           </span>
