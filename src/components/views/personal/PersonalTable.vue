@@ -9,13 +9,16 @@
         >
         <el-form class="search-form" :model="form">
           <el-form-item class="advance-form-item" label="企业名称">
-            <el-input v-model="form.company"></el-input>
+            <el-input v-model="form.companyName"></el-input>
           </el-form-item>
-          <el-form-item class="advance-form-item" label="所属行业">
-            <el-input v-model="form.industryName"></el-input>
+          <el-form-item class="advance-form-item" label="所属职位">
+            <el-input v-model="form.dutyName"></el-input>
           </el-form-item>
-          <el-form-item class="advance-form-item" label="详细地址">
-            <el-input v-model="form.address"></el-input>
+          <el-form-item class="advance-form-item" label="姓名">
+            <el-input v-model="form.name"></el-input>
+          </el-form-item>
+          <el-form-item class="advance-form-item" label="联系电话">
+            <el-input v-model="form.mobile"></el-input>
           </el-form-item>
           <el-row type="flex" justify="center">
             <el-button type="primary" @click="onAdvancedSearch">搜索</el-button>
@@ -40,9 +43,10 @@
         :data="response.data">
         <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
-        <el-table-column prop="company" label="企业名称"></el-table-column>
-        <el-table-column prop="industryName" label="所属行业" width="120"></el-table-column>
-        <el-table-column prop="address" label="详细地址"></el-table-column>
+        <el-table-column prop="companyName" label="企业名称"></el-table-column>
+        <el-table-column prop="name" label="姓名" width="120"></el-table-column>
+        <el-table-column prop="dutyName" label="所属职位"></el-table-column>
+        <el-table-column prop="mobile" label="联系电话"></el-table-column>
         <el-table-column prop="status" label="状态" width="120"></el-table-column>
         <el-table-column prop="createdAt" label="登记时间" width="120"></el-table-column>
         <el-table-column label="操作" width="120">
@@ -82,17 +86,18 @@ export default {
       response: null,
       error: null,
       form: {
-        company: '',
-        industryName: '',
-        address: '',
-        keyword: ''
+        companyName: '',
+        dutyName: '',
+        name: '',
+        keyword: '',
+        mobile: ''
       }
     }
   },
   methods: {
     onAdvancedSearch () {
       const data = {
-        pageSize: 1,
+        pageSize: this.response.pageSize,
         currentPage: this.response.currentPage,
         ...this.form
       }
@@ -116,7 +121,7 @@ export default {
     },
     onEditFirmDetail (id) {
       this.$router.push({
-        path: 'firmdetail',
+        path: 'personaldetail',
         query: {
           id
         }
@@ -126,7 +131,7 @@ export default {
       const data = {
         ...this.form
       }
-      api.GET(config.firmListAPI, data)
+      api.GET(config.personalListAPI, data)
       .then(response => {
         if (response.status !== 200) {
           this.error = response.statusText
@@ -142,12 +147,12 @@ export default {
       })
     },
     onDeleteFirm (id) {
-      this.$confirm('是否确认删除该篇文章？', '提示', {
+      this.$confirm('是否确认删除该上报？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.POST(config.firmDeleteAPI, {
+        api.POST(config.personalDeleteAPI, {
           id: id
         })
         .then(response => {
@@ -176,7 +181,7 @@ export default {
       if (!data) {
         return
       }
-      api.GET(config.firmListAPI, data)
+      api.GET(config.personalListAPI, data)
         .then(response => {
           if (response.status !== 200) {
             this.error = response.statusText
@@ -217,8 +222,9 @@ export default {
       return res
     },
     getFirmList () {
-      api.GET(config.firmListAPI)
+      api.GET(config.personalListAPI)
         .then(response => {
+          console.log(response)
           if (response.status !== 200) {
             this.error = response.statusText
             return

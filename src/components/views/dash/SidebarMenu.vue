@@ -24,28 +24,28 @@
   </li>
 </template>
 <script>
-  export default {
-    name: 'SidebarMenu',
-    props: ['model'],
-    components: {},
-    data () {
-      return {
-        showopen: false
-      }
-    },
-    computed: {
-      isFolder: function () {
-        return this.model.children && this.model.children.length
-      }
-    },
-    methods: {
-      toggle: function () {
-        if (this.isFolder) {
-          this.showopen = !this.showopen
-        }
+export default {
+  name: 'SidebarMenu',
+  props: ['model'],
+  components: {},
+  data () {
+    return {
+      showopen: false
+    }
+  },
+  computed: {
+    isFolder: function () {
+      return this.model.children && this.model.children.length
+    }
+  },
+  methods: {
+    toggle: function () {
+      if (this.isFolder) {
+        this.showopen = !this.showopen
       }
     }
   }
+}
 </script>
 <style>
   /* override default */

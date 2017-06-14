@@ -14,37 +14,35 @@
         <form action="" method="post">
           <div class="form-group has-feedback">
             <input v-model="username" type="text" class="form-control" placeholder="请输入用户名">
-            <span class="glyphicon glyphicon-user form-control-feedback"></span>
+            <span class="fa fa-user form-control-feedback"></span>
           </div>
           <div class="form-group has-feedback">
             <input v-model="password" type="password" class="form-control" placeholder="请输入密码">
-            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+            <span class="fa fa-lock form-control-feedback"></span>
           </div>
           <div class="form-group has-feedback row">
             <div class="col-xs-7">
               <input v-model="mailCode" type="text" class="form-control" placeholder="请输入短信验证码">
             </div>
             <div class="col-xs-5">
-              <button @click="sendMail" :disabled="mailSended" type="button" class="btn btn-primary btn-block btn-flat">{{ mailButtonText }}</button>
+              <el-button @click="sendMail" :disabled="mailSended" type="primary" class="btn btn-primary btn-block btn-flat">{{ mailButtonText }}</el-button>
             </div>
           </div>
           <div class="login-button-group">
-            <button @click.prevent="login" :disabled="loginSended" type="submit" class="btn btn-primary btn-block btn-flat">登录</button>
+            <el-button @click.prevent="login" :disabled="loginSended" type="primary" class="btn btn-primary btn-block btn-flat">登录</el-button>
           </div>
         </form>
       </slot>
 
       <router-link to="/forgot">忘记密码</router-link>
-      <br />
-      <router-link to="/register">新用户注册</router-link>
-
     </div>
   </div>
 </template>
 
 <script>
 /* eslint no-useless-escape: "off" */
-import axios from 'axios'
+import api from 'src/api'
+import config from 'src/config'
 
 export default {
   name: 'bs-login',
@@ -76,20 +74,17 @@ export default {
         return
       }
 
-      // #TODO: send mail
-      axios.get(this.mailURL, {
-        params: {
-          username: this.username
-        }
+      api.GET(config.basic.sendMail, {
+        username: this.username
       })
       .then(response => {
-        if (response.data.errcode === '200') {
+        if (response.data.errcode === '0000') {
           this.response = '短信已发送,请查收'
         }
       })
       .catch(error => {
         this.response = '短信发送失败'
-        console.log(error)
+        this.$message.error(error)
         return
       })
 
@@ -130,6 +125,13 @@ export default {
       }
 
       // login request
+      api.POST(config.basic.login, {
+        username: this.username,
+        password: this.password,
+        // mail code
+        code: this.mailCode
+      })
+      /*
       axios({
         url: this.loginURL,
         method: 'post',
@@ -141,9 +143,9 @@ export default {
         },
         withCredentials: true
       })
+      */
       .then(response => {
-        console.log(response)
-        if (response.data.errcode === '200') {
+        if (response.data.errcode === '0000') {
           this.$router.push('/')
         } else if (response.data.errcode === '0') {
           this.response = response.data.errmsg
@@ -152,10 +154,10 @@ export default {
       })
       .catch(error => {
         this.loginSended = false
-        console.log(error)
+        this.$message.error(error)
       })
     },
-    encrypt: function (string) {
+    encrypt (string) {
       const pubkey = '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArromvW2N\/rg0ADw9zpTL\ncGdO0wNazPcp+SepPrv1dicCamEVPfvPKlWMuYszt\/tE6lNjMT8pphmatPvgjAFy\nKfE1fEpcvHqRSZTUtlo\/fGJzh2nss6mxyDXlqi+sGitjwaGj6\/MXO6zLQcMQmZ\/U\nvliOhECvuLBsAqqLY8ik63Ah7ylWAap3jDD0OvgSy+glqebwfacy9WPYOy4K75n\/\nDQRw9FJBYFg1BtfbVn55Oji3AZ0E3lY96b0JhJGtFM6vjF0bhVDkmP\/XZINPcVZy\nxydRFvxjgA6we\/KmxXDD\/JdZmvGmrZ2XCAhGS3vuk3XJnkMquGYO4GAI13JIs8Z1\nrwIDAQAB\n-----END PUBLIC KEY-----'
       // const pubkey = '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArromvW2Nrg0ADw9zpTL\ncGdO0wNazPcp+SepPrv1dicCamEVPfvPKlWMuYszttE6lNjMT8pphmatPvgjAFy\nKfE1fEpcvHqRSZTUtlofGJzh2nss6mxyDXlqi+sGitjwaGj6MXO6zLQcMQmZU\nvliOhECvuLBsAqqLY8ik63Ah7ylWAap3jDD0OvgSy+glqebwfacy9WPYOy4K75n\nDQRw9FJBYFg1BtfbVn55Oji3AZ0E3lY96b0JhJGtFM6vjF0bhVDkmPXZINPcVZy\nxydRFvxjgA6weKmxXDDJdZmvGmrZ2XCAhGS3vuk3XJnkMquGYO4GAI13JIs8Z1\nrwIDAQAB\n-----END PUBLIC KEY-----'
 
@@ -169,7 +171,7 @@ export default {
         return false
       }
     },
-    isStringEmpty: function (string) {
+    isStringEmpty (string) {
       if (string.length === 0) {
         return true
       }

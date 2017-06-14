@@ -143,7 +143,7 @@ export default {
     },
     onSearch () {
       const data = {
-        currentPage: this.response.currentPage,
+        currentPage: 1,
         pageSize: this.response.pageSize,
         ...this.form
       }

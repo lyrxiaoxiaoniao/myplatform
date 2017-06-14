@@ -1,10 +1,10 @@
 <template>
-  <div class="sc-article-category-manage">
-    <el-button class="category-add-button" @click="addMenu" type="primaty">新增文章板块</el-button>
+  <div class="sc-orga-table">
+    <el-button class="orga-add-button" @click="addMenu" type="primaty">新增组织</el-button>
     <el-tree :data="data" :props="defaultProps" node-key="id" accordion :expand-on-click-node="false" :render-content="renderContent">
     </el-tree>
     <el-dialog title="提示" v-model="deleteVisible" size="tiny">
-      <span>确认要删除该板块吗？(将删除所有的子板块)</span>
+      <span>确认要删除该组织吗？(将删除所有的子组织)</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="deleteVisible = false">取 消</el-button>
         <el-button type="danger" @click="deleteCategory">确 定</el-button>
@@ -12,24 +12,12 @@
     </el-dialog>
     <el-dialog :title="isEditing? '编辑' : '新增'" v-model="addVisible" size="tiny">
       <el-form labelPosition="right" label-width="90px">
-        <el-form-item label="父级板块" required>
+        <el-form-item label="父级部门" required>
           <el-cascader :options="options" change-on-select :props="props" @change="handleChange" v-model="formData.valueList" v-if="!isEditing"></el-cascader>
           <el-input v-else v-model="formData.parentName" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="板块名称" required>
+        <el-form-item label="部门名称" required>
           <el-input v-model="formData.name"></el-input>
-        </el-form-item>
-        <el-form-item label="板块描述">
-          <el-input v-model="formData.description"></el-input>
-        </el-form-item>
-        <el-form-item label="图标选择">
-          <el-input v-model="formData.logo"></el-input>
-        </el-form-item>
-        <el-form-item label="同级排序">
-          <el-input v-model="formData.sort"></el-input>
-        </el-form-item>
-        <el-form-item label="访问路径">
-          <el-input v-model="formData.url"></el-input>
         </el-form-item>
         <el-row type="flex" justify="space-around">
           <el-button type="primary" @click="addSubmit" size="large">提交</el-button>
@@ -66,11 +54,7 @@ export default {
       formData: {
         id: 0,
         name: '',
-        description: '',
         parentId: 0,
-        sort: '',
-        url: '',
-        logo: '',
         valueList: [],
         parentName: ''
       },
@@ -112,9 +96,9 @@ export default {
       this.formData = obj
     },
     getList() {
-      api.GET(config.articleCatlgAPI)
+      api.GET(config.orgaListAPI)
         .then(res => {
-          let obj = res.data.data
+          let obj = res.data.data.data
           this.iteration(obj)
           obj.push({ id: 0, name: '根级菜单', label: '根级菜单', value: 0 })
           this.options = obj
@@ -124,6 +108,12 @@ export default {
       this.clearFormData()
       this.isEditing = false
       this.addVisible = true
+    },
+    detail(node, store, data) {
+      this.$router.push({ path: 'dutylist', query: { id: data.id } })
+    },
+    relate(node, store, data) {
+      this.$router.push({ path: 'dutyunrelated', query: { id: data.id } })
     },
     edit(node, store, data) {
       console.log(node, store, data)
@@ -136,10 +126,6 @@ export default {
       }
       this.formData.name = data.name
       this.formData.id = data.id
-      this.formData.url = data.url
-      this.formData.description = data.description
-      this.formData.logo = data.logo
-      this.formData.sort = data.sort
       this.addVisible = true
     },
     remove(store, data) {
@@ -151,14 +137,14 @@ export default {
       this.addVisible = false
     },
     getData() {
-      api.GET(config.articleCatlgAPI)
+      api.GET(config.orgaListAPI)
         .then(res => {
           console.log(res.data, 'config')
-          this.data = res.data.data
+          this.data = res.data.data.data
         })
     },
     deleteCategory() {
-      api.POST(config.removeArticleCatlgAPI, { id: this.deletedId })
+      api.POST(config.removeOrgaAPI, { id: this.deletedId })
         .then(res => {
           if (res.data.errcode === '0000') {
             this.deleteVisible = false
@@ -182,6 +168,8 @@ export default {
             <span>{node.label}</span>
           </span>
           <span style="float: right; margin-right: 20px">
+            <el-button size="mini" on-click={() => this.detail(node, store, data)}>详情</el-button>
+            <el-button size="mini" on-click={() => this.relate(node, store, data)}>关联</el-button>
             <el-button size="mini" on-click={() => this.edit(node, store, data)}>编辑</el-button>
             <el-button size="mini" on-click={() => this.remove(store, data)}>删除</el-button>
           </span>
@@ -191,14 +179,10 @@ export default {
       let obj = {}
       obj.name = this.formData.name
       obj.parentId = this.formData.parentId
-      obj.description = this.formData.description
-      obj.sort = this.formData.sort
-      obj.url = this.formData.url
-      obj.logo = this.formData.logo
       if (this.isEditing) {
         obj.id = this.formData.id
       }
-      let url = this.isEditing ? config.editArticleCatlgAPI : config.addArticleCatlgAPI
+      let url = this.isEditing ? config.editOrgaAPI : config.addOrgaAPI
       api.POST(url, obj)
         .then(res => {
           if (res.status === 200 && res.data.errcode === '0000') {
@@ -246,13 +230,13 @@ export default {
 </script>
 
 <style scoped>
-.sc-article-category-manage {
+.sc-orga-table {
   margin-top: 2rem;
   border-top: 1px solid lightgray;
   padding: 2rem 4rem;
 }
 
-.category-add-button {
+.orga-add-button {
   margin-bottom: 1rem;
 }
 </style>

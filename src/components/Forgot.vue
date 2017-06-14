@@ -14,10 +14,10 @@
         <form :action="mailURL" @submit.prevent="onSubmit">
           <div class="form-group has-feedback">
             <input class="form-control" type="text" name="username" v-model="username" placeholder="请输入用户名">
-            <span class="glyphicon glyphicon-user form-control-feedback"></span>
+            <span class="fa fa-user form-control-feedback"></span>
           </div>
           <div class="login-button-group">
-            <button type="submit" class="btn btn-primary btn-block btn-flat">发送邮件</button>
+            <el-button type="primary" class="btn btn-primary btn-block btn-flat">发送邮件</el-button>
           </div>
         </form>
       </slot>
@@ -26,7 +26,8 @@
 </template>
 
 <script>
-import axios from 'axios'
+import api from 'src/api'
+import config from 'src/config'
 
 export default {
   name: 'Forget',
@@ -41,17 +42,15 @@ export default {
   methods: {
     onSubmit: function () {
       if (this.username.length === 0) {
-        window.alert('请填写正确的用户名')
+        this.$message.error('请填写正确的用户名')
         return false
       }
 
-      axios.get(this.mailURL, {
-        params: {
-          username: this.username
-        }
+      api.GET(config.basic.forgetMail, {
+        username: this.username
       })
       .then(response => {
-        if (response.data.errcode === '200') {
+        if (response.data.errcode === '0000') {
           this.response = response.data.errmsg
         }
       })
