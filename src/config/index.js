@@ -28,6 +28,10 @@ export default {
     unlinkRole: '/admin/userrole/delete'
   },
   role: {
+    relatedAuth: '/admin/rolepermission/show/permission/related',
+    unrelatedAuth: '/admin/rolepermission/show/permission/relate',
+    linkAuth: '/admin/rolepermission/create',
+    unlinkAuth: '/admin/rolepermission/delete'
   },
   auth: {
     authList: '/admin/permission/index',

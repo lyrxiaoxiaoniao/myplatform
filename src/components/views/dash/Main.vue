@@ -1,4 +1,6 @@
 <template>
+  <div class="sc-admin-index-component">
+  </div>
 </template>
 
 <script>
@@ -14,4 +16,7 @@ export default {
 </script>
 
 <style>
+.sc-admin-index-component {
+  height: 100%;
+}
 </style>

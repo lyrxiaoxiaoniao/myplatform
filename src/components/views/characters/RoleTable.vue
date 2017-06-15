@@ -36,7 +36,7 @@
         <el-table-column prop="description" label="角色描述"></el-table-column>
         <el-table-column prop="createdAt" label="创建时间"></el-table-column>
         <el-table-column 
-          width="280"
+          width="320"
           label="操作"
           >
           <template scope="scope">
@@ -44,6 +44,7 @@
             <el-button @click="deleteRole(scope.row.id)" size="small" icon="delete2"></el-button>
             <el-button @click="getRelatedUser(scope.row.id)" size="small" icon="information"></el-button>
             <el-button @click="relateUser(scope.row.id)" size="small">关联用户</el-button>
+            <el-button @click="relateAuth(scope.row.id)" size="small">权限</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -182,6 +183,14 @@ export default {
       })
       .catch(error => {
         this.$message.error(error)
+      })
+    },
+    relateAuth (id) {
+      this.$router.push({
+        path: 'roleauth',
+        query: {
+          id: id
+        }
       })
     },
     getRelatedUser (id) {
