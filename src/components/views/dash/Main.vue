@@ -1,4 +1,7 @@
 <template>
+  <div class="sc-admin-index-component">
+    <router-view></router-view>
+  </div>
 </template>
 
 <script>
@@ -14,4 +17,7 @@ export default {
 </script>
 
 <style>
+.sc-admin-index-component {
+  height: 100%;
+}
 </style>

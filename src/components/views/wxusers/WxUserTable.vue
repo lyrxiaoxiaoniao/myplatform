@@ -2,7 +2,7 @@
   <kobe-table v-if="response && tagList && streetList && industryList">
     <div slot="kobe-table-header" class="kobe-table-header">
       <el-row type="flex" justify="space-around">
-        <el-col :span="13">
+        <el-col :span="6">
           <el-cascader
             expand-trigger="hover"
             :options="streetList"
@@ -12,6 +12,8 @@
             clearable
             >
           </el-cascader>
+        </el-col>
+        <el-col :span="6">
           <el-select
             v-model="form.industryId"
             placeholder="行业"
@@ -25,6 +27,8 @@
               >
             </el-option>
           </el-select>
+        </el-col>
+        <el-col :span="6">
           <el-select
             v-model="form.tagId"
             placeholder="标签组"
@@ -42,7 +46,7 @@
         <el-col :span="7">
           <el-input v-model="form.param" placeholder="请输入昵称、姓名、企业名称进行搜索"></el-input>
         </el-col>
-        <el-button @click="onSearch" icon="search"></el-button>
+        <el-button class="keyword-search-button" @click="onSearch" icon="search"></el-button>
         <el-button icon="upload2" type="primary"></el-button>
         <el-button icon="setting" type="primary"></el-button>
       </el-row>
@@ -53,8 +57,7 @@
         border
         stripe
         >
-        <el-table-column type="selection" width="40"></el-table-column>
-        <el-table-column prop="id" label="ID" sortable width="80"></el-table-column>
+        <el-table-column prop="id" label="ID" width="80"></el-table-column>
         <el-table-column
           label="微信头像/昵称"
           width="180"
@@ -135,7 +138,7 @@ export default {
   methods: {
     checkUserInfo (id) {
       this.$router.push({
-        path: 'wxprofile',
+        path: '/admin/wxuser/profile',
         query: {
           id: id
         }
@@ -304,11 +307,14 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .user-img-avatar {
   margin-top: 5px;
   margin-bottom: 5px;
   width: 56px;
   height: 56px;
+}
+.keyword-search-button {
+  margin-left: 0;
 }
 </style>

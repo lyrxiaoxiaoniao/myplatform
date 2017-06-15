@@ -30,14 +30,13 @@
         stripe
         :data="response.data"
         >
-        <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
         <el-table-column prop="type" label="类型" width="80"></el-table-column>
         <el-table-column prop="displayName" label="角色名称"></el-table-column>
         <el-table-column prop="description" label="角色描述"></el-table-column>
         <el-table-column prop="createdAt" label="创建时间"></el-table-column>
         <el-table-column 
-          width="280"
+          width="320"
           label="操作"
           >
           <template scope="scope">
@@ -45,6 +44,7 @@
             <el-button @click="deleteRole(scope.row.id)" size="small" icon="delete2"></el-button>
             <el-button @click="getRelatedUser(scope.row.id)" size="small" icon="information"></el-button>
             <el-button @click="relateUser(scope.row.id)" size="small">关联用户</el-button>
+            <el-button @click="relateAuth(scope.row.id)" size="small">权限</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -185,9 +185,17 @@ export default {
         this.$message.error(error)
       })
     },
+    relateAuth (id) {
+      this.$router.push({
+        path: '/admin/role/auth',
+        query: {
+          id: id
+        }
+      })
+    },
     getRelatedUser (id) {
       this.$router.push({
-        path: 'roleuser',
+        path: '/admin/role/user',
         query: {
           id: id
         }
@@ -195,7 +203,7 @@ export default {
     },
     relateUser(id) {
       this.$router.push({
-        path: 'rolelink',
+        path: '/admin/role/link',
         query: {
           id: id
         }

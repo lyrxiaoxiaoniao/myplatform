@@ -159,7 +159,9 @@ export default {
               type: 'success'
             })
 
-            setTimeout(this.$router.push('firm'), 2000)
+            setTimeout(this.$router.push({
+              path: '/admin/firm'
+            }), 2000)
           }
         })
         .catch(error => {

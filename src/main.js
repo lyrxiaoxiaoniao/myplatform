@@ -133,14 +133,11 @@ Vue.use(VueHtml5Editor, {
   ]
 })
 
-// Routing logic
 var router = new VueRouter({
   routes: routes
 })
 
-// Some middleware to help us ensure the user is authenticated.
 router.beforeEach((to, from, next) => {
-  // window.console.log('Transition', transition)
   if (to.auth && (to.router.app.$store.state.token === 'null')) {
     window.console.log('Not authenticated')
     next({
@@ -153,7 +150,6 @@ router.beforeEach((to, from, next) => {
 })
 
 sync(store, router)
-// Start out app!
 // eslint-disable-next-line no-new
 new Vue({
   el: '#root',
@@ -162,7 +158,6 @@ new Vue({
   render: h => h(AppView)
 })
 
-// Check local storage to handle refreshes
 if (window.localStorage) {
   var localUserString = window.localStorage.getItem('user') || 'null'
   var localUser = JSON.parse(localUserString)

@@ -358,7 +358,9 @@ export default {
               message: '处理成功',
               type: 'success'
             })
-            setTimeout(this.$router.push('reports'), 2000)
+            setTimeout(this.$router.push({
+              path: '/admin/report/index'
+            }), 2000)
           }
         })
         .catch(error => {

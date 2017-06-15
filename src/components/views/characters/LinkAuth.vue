@@ -18,8 +18,8 @@
               :data="linkData.data"
               >
               <el-table-column prop="id" label="ID" width="80"></el-table-column>
-              <el-table-column prop="displayName" label="角色名"></el-table-column>
-              <el-table-column prop="description" label="角色描述"></el-table-column>
+              <el-table-column prop="displayName" label="权限名"></el-table-column>
+              <el-table-column prop="description" label="权限描述"></el-table-column>
               <el-table-column 
                 width="80"
                 label="操作"
@@ -65,8 +65,8 @@
               :data="unLinkData.data"
               >
               <el-table-column prop="id" label="ID" width="80"></el-table-column>
-              <el-table-column prop="displayName" label="角色名"></el-table-column>
-              <el-table-column prop="description" label="角色描述"></el-table-column>
+              <el-table-column prop="displayName" label="权限名"></el-table-column>
+              <el-table-column prop="description" label="权限描述"></el-table-column>
               <el-table-column 
                 width="80"
                 label="操作"
@@ -136,9 +136,9 @@ export default {
       this.getUnlinkData(data)
     },
     onLink (id) {
-      api.POST(config.auth.linkRole, {
-        permissions: [this.id],
-        roles: [id]
+      api.POST(config.role.linkAuth, {
+        roles: [this.id],
+        permissions: [id]
       })
       .then(response => {
         if (response.data.errcode === '0000') {
@@ -151,9 +151,9 @@ export default {
       })
     },
     onUnLink (id) {
-      api.POST(config.auth.unLinkRole, {
-        permissions: [this.id],
-        roles: [id]
+      api.POST(config.role.unLinkAuth, {
+        roles: [this.id],
+        permissions: [id]
       })
       .then(response => {
         if (response.data.errcode === '0000') {
@@ -182,8 +182,8 @@ export default {
       this.getLinkData(data)
     },
     getLinkData (data = {}) {
-      api.GET(config.auth.relatedRole, {
-        permissionId: this.id,
+      api.GET(config.role.relatedAuth, {
+        roleId: this.id,
         ...data
       })
       .then(response => {
@@ -216,8 +216,8 @@ export default {
       this.getUnlinkData(data)
     },
     getUnlinkData (data = {}) {
-      api.GET(config.auth.unrelatedRole, {
-        permissionId: this.id,
+      api.GET(config.role.unrelatedAuth, {
+        roleId: this.id,
         ...data
       })
       .then(response => {

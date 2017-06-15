@@ -209,7 +209,7 @@ export default {
       let id = data.id
       console.log(id)
       this.$router.push({
-        path: 'menulink',
+        path: '/admin/menu/auth',
         query: {
           id: id
         }

@@ -3,8 +3,8 @@ export default {
   // serverURI: 'http://test.java.shencom.cn/gm',
   serverURI: 'http://192.168.1.5:8080',
   basic: {
-    sendMail: '/sys/sendMsgVerify',
     key: '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArromvW2N\/rg0ADw9zpTL\ncGdO0wNazPcp+SepPrv1dicCamEVPfvPKlWMuYszt\/tE6lNjMT8pphmatPvgjAFy\nKfE1fEpcvHqRSZTUtlo\/fGJzh2nss6mxyDXlqi+sGitjwaGj6\/MXO6zLQcMQmZ\/U\nvliOhECvuLBsAqqLY8ik63Ah7ylWAap3jDD0OvgSy+glqebwfacy9WPYOy4K75n\/\nDQRw9FJBYFg1BtfbVn55Oji3AZ0E3lY96b0JhJGtFM6vjF0bhVDkmP\/XZINPcVZy\nxydRFvxjgA6we\/KmxXDD\/JdZmvGmrZ2XCAhGS3vuk3XJnkMquGYO4GAI13JIs8Z1\nrwIDAQAB\n-----END PUBLIC KEY-----',
+    sendMail: '/sys/sendMsgVerify',
     forgetMail: '/admin/password/sendEmail',
     login: '/sys/login'
   },
@@ -28,6 +28,10 @@ export default {
     unlinkRole: '/admin/userrole/delete'
   },
   role: {
+    relatedAuth: '/admin/rolepermission/show/permission/related',
+    unrelatedAuth: '/admin/rolepermission/show/permission/relate',
+    linkAuth: '/admin/rolepermission/create',
+    unlinkAuth: '/admin/rolepermission/delete'
   },
   auth: {
     authList: '/admin/permission/index',

@@ -20,8 +20,7 @@
         border
         stripe
         >
-        <el-table-column type="selection" width="40"></el-table-column>
-        <el-table-column prop="id" label="ID" sortable width="80"></el-table-column>
+        <el-table-column prop="id" label="ID" width="80"></el-table-column>
         <el-table-column prop="name" label="标签组名称"></el-table-column>
         <el-table-column prop="count" label="用户数"></el-table-column>
         <el-table-column prop="username" label="创建人"></el-table-column>
@@ -90,17 +89,13 @@ export default {
   methods: {
     toLinkUser (id) {
       this.$router.push({
-        path: 'wxlink',
+        path: '/admin/wxuser/link',
         query: {
           id: id
         }
       })
     },
     onSearch () {
-      if (this.form.name === '') {
-        this.$message.error('请输入搜索关键字')
-        return
-      }
       api.GET(config.wxUserGroupListAPI, this.form)
       .then(response => {
         if (response.status !== 200) {
@@ -118,7 +113,7 @@ export default {
     },
     toTagInfo (id, name) {
       this.$router.push({
-        path: 'wxtaguser',
+        path: '/admin/wxuser/user',
         query: {
           id: id,
           name: name
@@ -153,7 +148,9 @@ export default {
       this.selectedTag = id
     },
     addTag () {
-      this.$router.push('wxtagadd')
+      this.$router.push({
+        path: '/admin/wxuser/add'
+      })
     },
     changeTagName (tag) {
       api.POST(config.wxUserGroupUpdateAPI, {

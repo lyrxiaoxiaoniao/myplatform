@@ -233,7 +233,9 @@ export default {
             return
           }
           if (response.data.errcode === '0000') {
-            this.$router.push('notify')
+            this.$router.push({
+              path: '/admin/notify'
+            })
           }
         })
         .catch(error => {

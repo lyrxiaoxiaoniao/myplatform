@@ -99,7 +99,9 @@ export default {
               message: '删除成功',
               type: 'success'
             })
-            this.$router.push('article')
+            this.$router.push({
+              path: '/admin/article'
+            })
           } else {
             this.$notify.error({
               title: '失败',
@@ -111,7 +113,7 @@ export default {
     },
     onEdit () {
       this.$router.push({
-        path: 'articleadd',
+        path: '/admin/article/add',
         query: {
           id: this.response.id
         }
