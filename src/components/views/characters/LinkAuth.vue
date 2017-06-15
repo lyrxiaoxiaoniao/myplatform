@@ -18,8 +18,8 @@
               :data="linkData.data"
               >
               <el-table-column prop="id" label="ID" width="80"></el-table-column>
-              <el-table-column prop="displayName" label="角色名"></el-table-column>
-              <el-table-column prop="description" label="角色描述"></el-table-column>
+              <el-table-column prop="displayName" label="权限名"></el-table-column>
+              <el-table-column prop="description" label="权限描述"></el-table-column>
               <el-table-column 
                 width="80"
                 label="操作"
@@ -65,8 +65,8 @@
               :data="unLinkData.data"
               >
               <el-table-column prop="id" label="ID" width="80"></el-table-column>
-              <el-table-column prop="displayName" label="角色名"></el-table-column>
-              <el-table-column prop="description" label="角色描述"></el-table-column>
+              <el-table-column prop="displayName" label="权限名"></el-table-column>
+              <el-table-column prop="description" label="权限描述"></el-table-column>
               <el-table-column 
                 width="80"
                 label="操作"

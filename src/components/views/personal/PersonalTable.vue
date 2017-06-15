@@ -120,7 +120,7 @@ export default {
     },
     onEditFirmDetail (id) {
       this.$router.push({
-        path: 'personaldetail',
+        path: '/admin/personal/detail',
         query: {
           id
         }

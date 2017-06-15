@@ -122,7 +122,7 @@ export default {
     },
     onMenuLink (id) {
       this.$router.push({
-        path: 'authmenu',
+        path: '/admin/auth/menu',
         query: {
           id: id
         }
@@ -130,7 +130,7 @@ export default {
     },
     onRoleLink (id) {
       this.$router.push({
-        path: 'authrole',
+        path: '/admin/auth/role',
         query: {
           id: id
         }

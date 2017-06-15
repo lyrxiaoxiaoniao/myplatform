@@ -9,7 +9,7 @@
           <el-input placeholder="请输入搜索关键字" v-model="form.keyword"></el-input>
         </el-col>
         <el-button @click="onSearch" icon="search"></el-button>
-        <router-link class="add-user-link add" to="/useradd">
+        <router-link class="add-user-link add" to="/admin/user/add">
             <el-button type="primary" icon="plus"></el-button>
         </router-link>
         <el-button icon="upload2" type="primary"></el-button>
@@ -84,7 +84,7 @@ export default {
   methods: {
     onUserRole (id) {
       this.$router.push({
-        path: 'userrole',
+        path: '/admin/user/role',
         query: {
           id: id
         }
@@ -144,7 +144,7 @@ export default {
     },
     onUserDetail (id) {
       this.$router.push({
-        path: 'userdetails',
+        path: '/admin/user/detail',
         query: {
           id
         }

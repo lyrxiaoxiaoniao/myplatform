@@ -115,7 +115,7 @@ export default {
     },
     onEditFirmDetail (id) {
       this.$router.push({
-        path: 'firmdetail',
+        path: '/admin/firm/detail',
         query: {
           id
         }

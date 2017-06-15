@@ -190,7 +190,7 @@ export default {
     },
     selectDictEl (id) {
       this.$router.push({
-        path: 'dictel',
+        path: '/admin/dict/element',
         query: {
           id: id
         }

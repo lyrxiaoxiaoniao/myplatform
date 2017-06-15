@@ -117,7 +117,9 @@ export default {
                 message: '修改成功',
                 type: 'success'
               })
-              this.$router.push('articlecategorymanage')
+              this.$router.push({
+                path: '/admin/article/category'
+              })
             } else {
               this.$notify({
                 title: '成功',

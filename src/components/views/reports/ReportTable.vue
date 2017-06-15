@@ -155,7 +155,9 @@ export default {
     },
     selectCase (object) {
       this.$store.commit('SET_CURRENT_CASE', object)
-      this.$router.push('reportdetail')
+      this.$router.push({
+        path: '/admin/report/detail'
+      })
     },
     onKeywordSearch () {
       const data = {

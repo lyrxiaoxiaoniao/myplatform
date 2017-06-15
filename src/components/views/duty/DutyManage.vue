@@ -78,9 +78,6 @@ export default {
     }
   },
   methods: {
-    getOrgaId() {
-      this.query.orgaId = this.$route.query.id
-    },
     getList() {
       api.GET(config.dutyListAPI)
         .then(res => {

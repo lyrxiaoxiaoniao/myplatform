@@ -97,7 +97,9 @@ export default {
   },
   methods: {
     addNotify () {
-      this.$router.push('notifyadd')
+      this.$router.push({
+        path: '/admin/notify/add'
+      })
     },
     handleSizeChange (value) {
       const data = {
@@ -157,7 +159,7 @@ export default {
     },
     onInfoClick (id) {
       this.$router.push({
-        path: 'notifyinfo',
+        path: '/admin/notify/info',
         query: {
           id: id
         }

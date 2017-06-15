@@ -110,10 +110,10 @@ export default {
       this.addVisible = true
     },
     detail(node, store, data) {
-      this.$router.push({ path: 'dutylist', query: { id: data.id } })
+      this.$router.push({ path: '/admin/organization/duty', query: { id: data.id } })
     },
     relate(node, store, data) {
-      this.$router.push({ path: 'dutyunrelated', query: { id: data.id } })
+      this.$router.push({ path: '/admin/organization/link', query: { id: data.id } })
     },
     edit(node, store, data) {
       console.log(node, store, data)

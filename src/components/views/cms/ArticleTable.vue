@@ -148,11 +148,13 @@ export default {
       })
     },
     onPublish () {
-      this.$router.push('articleadd')
+      this.$router.push({
+        path: '/admin/article/add'
+      })
     },
     onEditArticle (id) {
       this.$router.push({
-        path: 'articleadd',
+        path: '/admin/article/add',
         query: {
           id: id
         }
@@ -171,7 +173,7 @@ export default {
     },
     toArticleDetail (id) {
       this.$router.push({
-        path: 'articledetail',
+        path: '/admin/article/detail',
         query: {
           id: id
         }

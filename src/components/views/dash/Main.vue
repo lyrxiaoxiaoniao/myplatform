@@ -1,5 +1,6 @@
 <template>
   <div class="sc-admin-index-component">
+    <router-view></router-view>
   </div>
 </template>
 

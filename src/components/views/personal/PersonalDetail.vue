@@ -142,7 +142,9 @@ export default {
               type: 'success'
             })
 
-            setTimeout(this.$router.push('personaltable'), 2000)
+            setTimeout(this.$router.push({
+              path: '/admin/personal'
+            }), 2000)
           }
         })
         .catch(error => {

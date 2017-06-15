@@ -89,7 +89,7 @@ export default {
   methods: {
     toLinkUser (id) {
       this.$router.push({
-        path: 'wxlink',
+        path: '/admin/wxuser/link',
         query: {
           id: id
         }
@@ -113,7 +113,7 @@ export default {
     },
     toTagInfo (id, name) {
       this.$router.push({
-        path: 'wxtaguser',
+        path: '/admin/wxuser/user',
         query: {
           id: id,
           name: name
@@ -148,7 +148,9 @@ export default {
       this.selectedTag = id
     },
     addTag () {
-      this.$router.push('wxtagadd')
+      this.$router.push({
+        path: '/admin/wxuser/add'
+      })
     },
     changeTagName (tag) {
       api.POST(config.wxUserGroupUpdateAPI, {

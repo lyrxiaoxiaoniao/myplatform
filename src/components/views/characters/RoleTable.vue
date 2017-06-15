@@ -187,7 +187,7 @@ export default {
     },
     relateAuth (id) {
       this.$router.push({
-        path: 'roleauth',
+        path: '/admin/role/auth',
         query: {
           id: id
         }
@@ -195,7 +195,7 @@ export default {
     },
     getRelatedUser (id) {
       this.$router.push({
-        path: 'roleuser',
+        path: '/admin/role/user',
         query: {
           id: id
         }
@@ -203,7 +203,7 @@ export default {
     },
     relateUser(id) {
       this.$router.push({
-        path: 'rolelink',
+        path: '/admin/role/link',
         query: {
           id: id
         }

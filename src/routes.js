@@ -45,7 +45,7 @@ import SCAdvertisementDetail from './components/views/wxadvertisement/contentPag
 import SCAddAdvertisement from './components/views/wxadvertisement/contentPage/AddAdvertisement.vue'
 import SCEditAdvertisement from './components/views/wxadvertisement/contentPage/EditAdvertisement.vue'
 
-import SCMenuTree from './components/views/menulist/MenuRree.vue'
+import SCMenuTree from './components/views/menulist/MenuTree.vue'
 import SCMenuLink from './components/views/menulist/MenuJurisdiction.vue'
 
 import SCDictTableView from './components/views/dict/DictTable.vue'
@@ -56,7 +56,7 @@ import SCRoleUserTableView from './components/views/characters/RoleUserTable.vue
 import SCRoleLinkUserTableView from './components/views/characters/RoleLinkUserTable.vue'
 import SCRoleLinkAuthTableView from './components/views/characters/LinkAuth.vue'
 
-import SCOrgaTableView from './components/views/organization/OrgaTable.vue'
+import SCOrgaTreeView from './components/views/organization/OrgaTree.vue'
 import SCDutyListView from './components/views/organization/DutyList.vue'
 import SCDutyUnrelatedView from './components/views/organization/DutyUnrelated.vue'
 
@@ -80,118 +80,316 @@ const routes = [
     path: '/reset',
     component: ResetView
   }, {
-    path: '/',
+    path: '/admin',
     component: DashView,
+    redirect: '/admin/index',
     children: [
       {
-        path: 'admin',
-        alias: '',
+        path: 'index',
         component: DashMainView,
         name: '光明安监'
       }, {
-        path: 'users',
-        component: SCUserTableView,
-        name: '用户列表',
-        meta: { description: '用户列表详情' }
+        // User Module
+        path: 'user',
+        component: DashMainView,
+        redirect: '/admin/user/index',
+        name: '用户',
+        meta: { description: '后台用户' },
+        children: [{
+          path: 'index',
+          component: SCUserTableView,
+          name: '后台用户',
+          meta: { description: '后台用户列表' }
+        }, {
+          path: 'detail',
+          component: SCUserDetailView,
+          name: '后台用户详情',
+          meta: { description: '后台用户详情' }
+        }, {
+          path: 'role',
+          component: SCUserRoleView,
+          name: '后台用户角色管理',
+          meta: { description: '后台用户角色' }
+        }, {
+          path: 'add',
+          component: SCUserAddFormView,
+          name: '添加后台用户',
+          meta: { description: '添加后台用户' }
+        }]
       }, {
-        path: 'reports',
-        component: SCReportTableView,
-        name: '案件列表',
-        meta: { description: '安全隐患案件列表' }
+        // Report Module
+        path: 'report',
+        component: DashMainView,
+        redirect: '/admin/report/index',
+        name: '安全隐患',
+        meta: { description: '安全隐患案件' },
+        children: [{
+          path: 'index',
+          component: SCReportTableView,
+          name: '安全隐患管理',
+          meta: { description: '安全隐患案件列表' }
+        }, {
+          path: 'detail',
+          component: SCReportDeatilView,
+          name: '安全隐患详情',
+          meta: { description: '安全隐患案件详情' }
+        }, {
+          path: 'category',
+          component: SCReportCategoryView,
+          name: '安全隐患分类管理',
+          meta: { description: '安全隐患分类详情' }
+        }]
       }, {
-        path: 'reportcategory',
-        component: SCReportCategoryView,
-        name: '分类管理',
-        meta: { description: '安全隐患分类管理' }
-      }, {
-        path: 'useradd',
-        component: SCUserAddFormView,
-        name: '添加用户',
-        meta: { description: '添加用户描述' }
-      }, {
-        path: 'reportdetail',
-        component: SCReportDeatilView,
-        name: '案件详情',
-        meta: { description: '案件详情列表' }
-      }, {
+        // Article Module
         path: 'article',
-        component: SCArticleTableView,
+        component: DashMainView,
+        redirect: '/admin/article/index',
         name: '文章管理',
-        meta: { description: '文章管理列表' }
+        meta: { description: '文章管理' },
+        children: [{
+          path: 'index',
+          component: SCArticleTableView,
+          name: '文章列表',
+          meta: { description: '文章管理列表' }
+        }, {
+          path: 'add',
+          component: SCArticleAddFormView,
+          name: '文章添加',
+          meta: { description: '添加文章' }
+        }, {
+          path: 'detail',
+          component: SCArticleDetailView,
+          name: '文章详情',
+          meta: { description: '文章详情' }
+        }, {
+          path: 'category',
+          component: SCArticleCategoryManageView,
+          name: '文章板块管理',
+          meta: { description: '文章板块管理' }
+        }]
       }, {
-        path: 'articleadd',
-        component: SCArticleAddFormView,
-        name: '文章添加',
-        meta: { description: '添加文章信息' }
-      }, {
-        path: 'articledetail',
-        component: SCArticleDetailView,
-        name: '文章详情',
-        meta: { description: '查看文章详情' }
-      }, {
-        path: 'articlecategorymanage',
-        component: SCArticleCategoryManageView,
-        name: '文章板块管理',
-        meta: { description: '板块管理' }
-      }, {
+        // Notify Template Module
         path: 'notify',
-        component: SCNotifyTableView,
-        name: '紧急通知',
-        meta: { description: '模板管理' }
+        component: DashMainView,
+        redirect: '/admin/notify/index',
+        name: '消息通知管理',
+        meta: { description: '消息通知' },
+        children: [{
+          path: 'index',
+          component: SCNotifyTableView,
+          name: '消息通知管理',
+          meta: { description: '消息通知列表' }
+        }, {
+          path: 'add',
+          component: SCNotifyAddFormView,
+          name: '消息通知添加',
+          meta: { description: '消息通知添加' }
+        }, {
+          path: 'info',
+          component: SCNotifyInfoView,
+          name: '消息通知明细',
+          meta: { description: '消息通知明细' }
+        }]
       }, {
-        path: 'notifyadd',
-        component: SCNotifyAddFormView,
-        name: '模板添加',
-        meta: { description: '添加模板信息' }
+        // Firm Module
+        path: 'firm',
+        component: DashMainView,
+        redirect: '/admin/firm/index',
+        name: '企业信息管理',
+        meta: { description: '企业信息上报' },
+        children: [{
+          path: 'index',
+          component: SCFirmTableView,
+          name: '企业信息列表',
+          meta: { description: '企业信息列表' }
+        }, {
+          path: 'detail',
+          component: SCFirmDetailView,
+          name: '企业信息详情',
+          meta: { description: '企业信息详情' }
+        }]
       }, {
-        path: 'notifyinfo',
-        component: SCNotifyInfoView,
-        name: '通知明细',
-        meta: { description: '模板明细' }
+        // WxUser Module
+        path: 'wxuser',
+        component: DashMainView,
+        redirect: '/admin/wxuser/index',
+        name: '微信用户管理',
+        meta: { description: '微信用户' },
+        children: [{
+          path: 'index',
+          component: SCWxUserTableView,
+          name: '微信用户管理',
+          meta: { description: '微信用户列表' }
+        }, {
+          path: 'tag',
+          component: SCWxUserTagTableView,
+          name: '微信用户标签组管理',
+          meta: { description: '微信用户标签组' }
+        }, {
+          path: 'add',
+          component: SCWxUserTagAddView,
+          name: '微信用户标签组添加',
+          meta: { description: '微信用户标签组添加' }
+        }, {
+          path: 'link',
+          component: SCWxUserLinkView,
+          name: '标签组关联微信用户',
+          meta: { description: '关联微信用户标签组' }
+        }, {
+          path: 'user',
+          component: SCWxTagUserListView,
+          name: '标签微信用户信息管理',
+          meta: { description: '微信用户标签组' }
+        }, {
+          path: 'profile',
+          component: SCWxUserProfileView,
+          name: '微信用户详情',
+          meta: { description: '微信用户详情' }
+        }]
+      }, {
+        // Auth Module
+        path: 'auth',
+        component: DashMainView,
+        redirect: '/admin/auth/index',
+        name: '权限管理',
+        meta: { description: '权限管理' },
+        children: [{
+          path: 'index',
+          component: SCAuthTableView,
+          name: '权限列表',
+          meta: { description: '权限列表管理' }
+        }, {
+          path: 'role',
+          component: SCAuthRoleView,
+          name: '权限关联角色管理',
+          meta: { description: '权限关联角色' }
+        }, {
+          path: 'menu',
+          component: SCAuthMenuView,
+          name: '权限关联菜单管理',
+          meta: { description: '权限关联菜单' }
+        }]
+      }, {
+        // Role Module
+        path: 'role',
+        component: DashMainView,
+        redirect: '/admin/role/index',
+        name: '角色管理',
+        meta: { description: '角色管理' },
+        children: [{
+          path: 'index',
+          component: SCRoleTableView,
+          name: '角色列表管理',
+          meta: { description: '角色管理列表' }
+        }, {
+          path: 'user',
+          component: SCRoleUserTableView,
+          name: '角色用户列表管理',
+          meta: { description: '角色用户列表详情' }
+        }, {
+          path: 'link',
+          component: SCRoleLinkUserTableView,
+          name: '角色关联用户列表',
+          meta: { description: '角色关联用户列表详情' }
+        }, {
+          path: 'auth',
+          component: SCRoleLinkAuthTableView,
+          name: '角色权限管理',
+          meta: { description: '角色关联权限详情' }
+        }]
+      }, {
+        // Dict Module
+        path: 'dict',
+        component: DashMainView,
+        redirect: '/admin/dict/index',
+        name: '字典管理',
+        meta: { description: '字典管理' },
+        children: [{
+          path: 'index',
+          component: SCDictTableView,
+          name: '字典列表管理',
+          meta: { description: '字典列表' }
+        }, {
+          path: 'element',
+          component: SCDictElTableView,
+          name: '字典元素管理',
+          meta: { description: '字典元素列表' }
+        }]
+      }, {
+        // Menu Module
+        path: 'menu',
+        component: DashMainView,
+        redirect: '/admin/menu/index',
+        name: '菜单管理',
+        meta: {description: '后台菜单'},
+        children: [{
+          path: 'index',
+          component: SCMenuTree,
+          name: '后台菜单管理',
+          meta: { description: '后台菜单' }
+        }, {
+          path: 'auth',
+          component: SCMenuLink,
+          name: '菜单权限管理',
+          meta: {description: '菜单关联权限管理'}
+        }]
+      }, {
+        // Organization Module
+        path: 'organization',
+        component: DashMainView,
+        redirect: '/admin/organization/index',
+        name: '组织管理',
+        meta: {description: '组织管理'},
+        children: [{
+          path: 'index',
+          component: SCOrgaTreeView,
+          name: '组织列表管理',
+          meta: { description: '组织列表管理' }
+        }, {
+          path: 'duty',
+          component: SCDutyListView,
+          name: '组织职位管理',
+          meta: { description: '组织职位管理' }
+        }, {
+          path: 'link',
+          component: SCDutyUnrelatedView,
+          name: '组织关联职位',
+          meta: { description: '组织职位管理' }
+        }]
+      }, {
+        // Duty Module
+        path: 'duty',
+        component: DashMainView,
+        redirect: '/admin/duty/index',
+        name: '职位管理',
+        meta: { description: '职位管理' },
+        children: [{
+          path: 'index',
+          component: SCDutyManageView,
+          name: '职位管理'
+        }]
+      }, {
+        path: 'personal',
+        component: DashMainView,
+        redirect: '/admin/personal/index',
+        name: '职位管理',
+        meta: { description: '职位管理' },
+        children: [{
+          path: 'index',
+          component: SCPersonalTable,
+          name: '个人信息管理',
+          meta: { description: '个人信息上报管理' }
+        }, {
+          path: 'detail',
+          component: SCPersonalDetail,
+          name: '个人信息详情',
+          meta: { description: '个人信息上报详情' }
+        }]
       }, {
         path: 'userlabelmanage',
         component: SCUserLabelManage,
         name: '用户标签组管理',
         meta: { description: '管理信息' }
-      }, {
-        path: 'firm',
-        component: SCFirmTableView,
-        name: '企业信息上报',
-        meta: { description: '企业信息' }
-      }, {
-        path: 'firmdetail',
-        component: SCFirmDetailView,
-        name: '企业信息详情',
-        meta: { description: '企业详情' }
-      }, {
-        path: 'wxuser',
-        component: SCWxUserTableView,
-        name: '微信用户管理',
-        meta: { description: '微信用户详情' }
-      }, {
-        path: 'wxtagadd',
-        component: SCWxUserTagAddView,
-        name: '微信用户标签',
-        meta: { description: '微信用户标签组' }
-      }, {
-        path: 'wxlink',
-        component: SCWxUserLinkView,
-        name: '关联微信用户',
-        meta: { description: '关联微信用户标签组' }
-      }, {
-        path: 'wxtag',
-        component: SCWxUserTagTableView,
-        name: '微信用户标签组管理',
-        meta: { description: '微信用户标签组' }
-      }, {
-        path: 'wxtaguser',
-        component: SCWxTagUserListView,
-        name: '标签用户信息管理',
-        meta: { description: '微信用户标签组' }
-      }, {
-        path: 'wxprofile',
-        component: SCWxUserProfileView,
-        name: '微信用户详情'
       }, {
         path: 'advertisementpoint',
         component: SCAdvertisementPoints,
@@ -232,86 +430,6 @@ const routes = [
         component: SCEditAdvertisement,
         name: '广告列表修改',
         meta: {description: '修改'}
-      }, {
-        path: 'menu',
-        component: SCMenuTree,
-        name: '后台菜单管理',
-        meta: {description: '后台菜单'}
-      }, {
-        path: 'menulink',
-        component: SCMenuLink,
-        name: '后台菜单权限',
-        meta: {description: '权限管理'}
-      }, {
-        path: 'dict',
-        component: SCDictTableView,
-        name: '字典管理'
-      }, {
-        path: 'dictel',
-        component: SCDictElTableView,
-        name: '字典元素管理'
-      }, {
-        path: 'role',
-        component: SCRoleTableView,
-        name: '角色管理'
-      }, {
-        path: 'orgatable',
-        component: SCOrgaTableView,
-        name: '组织列表管理'
-      }, {
-        path: 'dutylist',
-        component: SCDutyListView,
-        name: '组织职位管理'
-      }, {
-        path: 'dutyunrelated',
-        component: SCDutyUnrelatedView,
-        name: '关联职位'
-      }, {
-        path: 'dutymanage',
-        component: SCDutyManageView,
-        name: '职位管理'
-      }, {
-        path: 'roleuser',
-        component: SCRoleUserTableView,
-        name: '角色用户列表',
-        meta: { description: '角色用户列表详情' }
-      }, {
-        path: 'rolelink',
-        component: SCRoleLinkUserTableView,
-        name: '关联角色用户列表',
-        meta: { description: '关联角色用户列表详情' }
-      }, {
-        path: 'auth',
-        component: SCAuthTableView,
-        name: '权限管理'
-      }, {
-        path: 'personaltable',
-        component: SCPersonalTable,
-        name: '个人信息上报'
-      }, {
-        path: 'personaldetail',
-        component: SCPersonalDetail,
-        name: '个人信息详情'
-      }, {
-        path: 'authrole',
-        component: SCAuthRoleView,
-        name: '权限角色管理'
-      }, {
-        path: 'authmenu',
-        component: SCAuthMenuView,
-        name: '权限菜单管理'
-      }, {
-        path: 'userdetails',
-        component: SCUserDetailView,
-        name: '用户详情'
-      }, {
-        path: 'userrole',
-        component: SCUserRoleView,
-        name: '用户角色管理'
-      }, {
-        path: 'roleauth',
-        component: SCRoleLinkAuthTableView,
-        name: '角色权限管理'
       }
     ]
   }, {
