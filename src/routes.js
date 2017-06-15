@@ -262,7 +262,7 @@ const routes = [
         name: '广告列表修改',
         meta: {description: '修改'}
       }, {
-        path: 'menutree',
+        path: 'menu',
         component: SCMenuTree,
         name: '后台菜单管理',
         meta: {description: '后台菜单'}

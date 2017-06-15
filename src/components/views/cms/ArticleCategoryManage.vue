@@ -50,7 +50,7 @@ export default {
       data: [],
       defaultProps: {
         children: 'children',
-        label: 'name'
+        label: 'displayName'
       },
       newCategory: '',
       newMenu: '',

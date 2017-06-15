@@ -1,5 +1,5 @@
-import axios from '../interceptor'
-import config from '../config'
+import axios from 'src/interceptor'
+import config from 'src/config'
 
 export default {
   request (method, uri, data = null) {

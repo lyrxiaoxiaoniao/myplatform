@@ -4,7 +4,6 @@ import { MessageBox } from 'element-ui'
 axios.defaults.timeout = 5000
 
 axios.interceptors.request.use(config => {
-  console.log(config)
   return config
 }, error => {
   return Promise.reject(error)
@@ -18,8 +17,6 @@ axios.interceptors.response.use(res => {
       type: 'error'
     })
   }
-  console.log(res)
-  console.log(window.location)
   return res
 }, error => {
   if (error.message === 'Network Error') {

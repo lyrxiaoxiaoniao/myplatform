@@ -13,7 +13,7 @@
             <p class="white">{{ displayName }}</p>
           </div>
           <a href="javascript:;">
-            <i class="fa fa-circle text-success"></i> Online
+            <i class="fa fa-circle text-success"></i>在线
           </a>
         </div>
       </div>

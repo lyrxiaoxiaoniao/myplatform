@@ -9,6 +9,7 @@
     <template v-for="item in activeData">
       <el-form-item :label="item.name" required>
         <el-input 
+          :disabled="item.name === '标题' && urlDisabled"
           class="notify-form-input"
           v-if="item.type === 0" 
           v-model="form[item.key]"
@@ -25,6 +26,7 @@
           >
         </el-date-picker>
         <el-input
+          :disabled="item.name === '内容' && urlDisabled"
           type="textarea"
           class="notify-form-input"
           v-else-if="item.type === 2"
