@@ -31,7 +31,7 @@
             </el-table>
           </div>
           <div v-if="linkMenu.count > 10" slot="kobe-table-footer" class="kobe-table-footer">
-            <el-row type="flex" justify="center">
+            <el-row type="flex">
               <el-col :span="12">
                 <el-pagination
                   @size-change="onLinkSizeChange"
@@ -78,7 +78,7 @@
             </el-table>
           </div>
           <div v-if="unLinkMenu.count > 10" slot="kobe-table-footer" class="kobe-table-footer">
-            <el-row type="flex" justify="center">
+            <el-row type="flex">
               <el-col :span="12">
                 <el-pagination
                   @size-change="onUnLinkSizeChange"

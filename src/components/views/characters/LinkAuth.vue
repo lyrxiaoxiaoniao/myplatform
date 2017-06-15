@@ -136,9 +136,9 @@ export default {
       this.getUnlinkData(data)
     },
     onLink (id) {
-      api.POST(config.auth.linkRole, {
-        permissions: [this.id],
-        roles: [id]
+      api.POST(config.role.linkAuth, {
+        roles: [this.id],
+        permissions: [id]
       })
       .then(response => {
         if (response.data.errcode === '0000') {
@@ -151,9 +151,9 @@ export default {
       })
     },
     onUnLink (id) {
-      api.POST(config.auth.unLinkRole, {
-        permissions: [this.id],
-        roles: [id]
+      api.POST(config.role.unLinkAuth, {
+        roles: [this.id],
+        permissions: [id]
       })
       .then(response => {
         if (response.data.errcode === '0000') {
@@ -182,8 +182,8 @@ export default {
       this.getLinkData(data)
     },
     getLinkData (data = {}) {
-      api.GET(config.auth.relatedRole, {
-        permissionId: this.id,
+      api.GET(config.role.relatedAuth, {
+        roleId: this.id,
         ...data
       })
       .then(response => {
@@ -216,8 +216,8 @@ export default {
       this.getUnlinkData(data)
     },
     getUnlinkData (data = {}) {
-      api.GET(config.auth.unrelatedRole, {
-        permissionId: this.id,
+      api.GET(config.role.unrelatedAuth, {
+        roleId: this.id,
         ...data
       })
       .then(response => {

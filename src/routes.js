@@ -6,11 +6,6 @@ import NotFoundView from './components/404.vue'
 
 // Import Views - Dash
 import DashMainView from './components/views/dash/Main.vue'
-import TasksView from './components/views/Tasks.vue'
-import SettingView from './components/views/Setting.vue'
-import AccessView from './components/views/Access.vue'
-import ServerView from './components/views/Server.vue'
-import ReposView from './components/views/Repos.vue'
 
 import SCReportTableView from './components/views/reports/ReportTable'
 import SCReportDeatilView from './components/views/reports/ReportDetail'
@@ -59,6 +54,7 @@ import SCDictElTableView from './components/views/dict/DictElTable.vue'
 import SCRoleTableView from './components/views/characters/RoleTable.vue'
 import SCRoleUserTableView from './components/views/characters/RoleUserTable.vue'
 import SCRoleLinkUserTableView from './components/views/characters/RoleLinkUserTable.vue'
+import SCRoleLinkAuthTableView from './components/views/characters/LinkAuth.vue'
 
 import SCOrgaTableView from './components/views/organization/OrgaTable.vue'
 import SCDutyListView from './components/views/organization/DutyList.vue'
@@ -92,31 +88,6 @@ const routes = [
         alias: '',
         component: DashMainView,
         name: '光明安监'
-      }, {
-        path: 'tasks',
-        component: TasksView,
-        name: 'Tasks',
-        meta: { description: 'Tasks page in the form of a timeline' }
-      }, {
-        path: 'setting',
-        component: SettingView,
-        name: 'Settings',
-        meta: { description: 'User settings page' }
-      }, {
-        path: 'access',
-        component: AccessView,
-        name: 'Access',
-        meta: { description: 'Example of using maps' }
-      }, {
-        path: 'server',
-        component: ServerView,
-        name: 'Servers',
-        meta: { description: 'List of our servers' }
-      }, {
-        path: 'repos',
-        component: ReposView,
-        name: 'Repository',
-        meta: { description: 'List of popular javascript repos' }
       }, {
         path: 'users',
         component: SCUserTableView,
@@ -262,7 +233,7 @@ const routes = [
         name: '广告列表修改',
         meta: {description: '修改'}
       }, {
-        path: 'menutree',
+        path: 'menu',
         component: SCMenuTree,
         name: '后台菜单管理',
         meta: {description: '后台菜单'}
@@ -337,6 +308,10 @@ const routes = [
         path: 'userrole',
         component: SCUserRoleView,
         name: '用户角色管理'
+      }, {
+        path: 'roleauth',
+        component: SCRoleLinkAuthTableView,
+        name: '角色权限管理'
       }
     ]
   }, {

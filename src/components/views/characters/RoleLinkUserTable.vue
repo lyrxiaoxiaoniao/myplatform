@@ -16,7 +16,6 @@
         stripe
         :data="response.data"
         >
-        <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
         <el-table-column
           label="微信头像/昵称"

@@ -36,7 +36,6 @@
         stripe
         border
         >
-        <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
         <el-table-column prop="refer" label="表名"></el-table-column>
         <el-table-column prop="referName" label="表描述"></el-table-column>

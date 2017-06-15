@@ -20,8 +20,7 @@
         border
         stripe
         >
-        <el-table-column type="selection" width="40"></el-table-column>
-        <el-table-column prop="id" label="ID" sortable width="80"></el-table-column>
+        <el-table-column prop="id" label="ID" width="80"></el-table-column>
         <el-table-column prop="name" label="标签组名称"></el-table-column>
         <el-table-column prop="count" label="用户数"></el-table-column>
         <el-table-column prop="username" label="创建人"></el-table-column>
@@ -97,10 +96,6 @@ export default {
       })
     },
     onSearch () {
-      if (this.form.name === '') {
-        this.$message.error('请输入搜索关键字')
-        return
-      }
       api.GET(config.wxUserGroupListAPI, this.form)
       .then(response => {
         if (response.status !== 200) {

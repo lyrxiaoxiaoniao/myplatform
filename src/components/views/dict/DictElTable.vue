@@ -27,7 +27,6 @@
         stripe
         border
         >
-        <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
         <el-table-column prop="name" label="键"></el-table-column>
         <el-table-column prop="value" label="值"></el-table-column>

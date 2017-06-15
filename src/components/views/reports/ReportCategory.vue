@@ -1,6 +1,6 @@
 <template>  
   <div class="sc-report-category-manage">
-    <el-button @click="addMenu" type="primaty">新增案件隐患分类</el-button>
+    <el-button class="category-add-button" @click="addMenu" type="primaty">新增案件隐患分类</el-button>
     <el-tree
       :data="data"
       :props="defaultProps"
@@ -200,7 +200,7 @@ export default {
           </span>
           <span style="float: right; margin-right: 20px">
             <el-button size="mini" on-click={ () => this.edit(node, store, data) }>编辑</el-button>
-            <el-button type="danger" size="mini" on-click={ () => this.remove(store, data) }>删除</el-button>
+            <el-button size="mini" on-click={ () => this.remove(store, data) }>删除</el-button>
           </span>
         </span>)
     },
@@ -267,5 +267,8 @@ export default {
     margin-top: 2rem;
     border-top: 1px solid lightgray;
     padding:2rem 4rem;
+  }
+  .category-add-button {
+    margin-bottom: 1rem;
   }
 </style>

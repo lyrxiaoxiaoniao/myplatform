@@ -52,8 +52,8 @@
         </el-row>
       </el-popover>
       <el-row type="flex" justify="end">
-        <el-col :span="5">
-          <el-input v-model="searchForm.keyword" placeholder="受理号,举报人,隐患单位关键字" class="sc-table-header-select"></el-input>
+        <el-col :span="7">
+          <el-input v-model="searchForm.keyword" placeholder="请输入受理号,举报人,隐患单位关键字" class="sc-table-header-select"></el-input>
         </el-col>
         <el-button class="sc-table-search-btn" @click="onKeywordSearch" icon="search"></el-button>
         <el-button type="primary" v-popover:advancedSearch>高级</el-button>
@@ -63,6 +63,7 @@
     </div>
     <div slot="kobe-table-content" class="kobe-table">
       <el-table :data="response.data" border stripe>
+        <el-table-column prop="id" label="ID" width="80"></el-table-column>
         <el-table-column prop="acceptNo" label="受理号" min-width="90"></el-table-column>
         <el-table-column prop="reportName" label="举报人" width="80"></el-table-column>
         <el-table-column prop="catlgName" label="案件分类" min-width="90"></el-table-column>
@@ -318,10 +319,6 @@ export default {
     margin: 1rem 2rem;
     padding-bottom: 1rem;
     border-bottom: 1px solid lightgray;
-  }
-
-  .sc-table-search-btn {
-    margin-left: 20px;
   }
 
   .sc-report-table-content {

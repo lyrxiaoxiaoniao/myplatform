@@ -41,7 +41,6 @@
         border
         stripe
         :data="response.data">
-        <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
         <el-table-column prop="companyName" label="企业名称"></el-table-column>
         <el-table-column prop="name" label="姓名" width="120"></el-table-column>
