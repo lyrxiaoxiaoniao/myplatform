@@ -1,9 +1,9 @@
 <template> 
   <div class="sc-advertisement">
-  	<el-button type="primary" class="sc-top-btn" @click="toAddPoints">新增广告点位</el-button>
-	  <div class="sc-main-content">
 		<el-row class="sc-top-header">
-		  <el-col :span="19"><div class="grid-content sc-font">分类列表</div></el-col>
+		  <el-col :span="19">
+        <el-button type="primary" class="sc-top-btn" @click="toAddPoints()">新增广告点位</el-button>
+      </el-col>
 		  <el-col :span="5">
         <div class="grid-content">
           <el-input placeholder="请输入内容" v-model="keyword">
@@ -15,16 +15,30 @@
 	  	<div class="sc-article-table-content">
 	      <el-table :data="response.data" border stripe>
 	        <el-table-column type="index" label="ID" width="50"></el-table-column>
-	        <el-table-column prop="slug" label="点位标识" min-width="100"></el-table-column>
-	        <el-table-column prop="spacename" label="点位名称" width="150"></el-table-column>
-	        <el-table-column prop="typename" label="点位类型" width="120"></el-table-column>
-	        <el-table-column prop="description" label="具体描述"></el-table-column>
+	        <el-table-column prop="spacename" label="点位名称" min-width="100"></el-table-column>
+	        <el-table-column prop="slug" label="点位标识" width="150"></el-table-column>
+	        <el-table-column prop="typename" label="分类" width="120"></el-table-column>
+	        <el-table-column prop="count" label="点击量"></el-table-column>
 	        <el-table-column prop="createdAt" label="创建时间" width="180px"></el-table-column>
-	        <el-table-column label="操作" width="180">
+	        <el-table-column prop="upCount" label="当前上画" width="100px"></el-table-column>
+	        <el-table-column label="状态" width="100px">
+            <template scope="scope">
+              <el-switch
+                v-model="scope.row.state"
+                on-text="开"
+                off-text="关"
+                on-color="#13ce66"
+                off-color="#ff4949"
+                @change="toswitch(scope.row.state)">
+              </el-switch>
+            </template> 
+          </el-table-column>
+	        <el-table-column label="操作" width="210">
 	          <template scope="scope">
 	            <el-button size="small" icon="edit" @click="onEditAdvertisement(scope.row.id)" title="修改"></el-button>
 	            <el-button size="small" icon="information" @click="toAdvertisementDetail(scope.row.id)" title="查看"></el-button>
 	            <el-button size="small" icon="delete2" @click="onDeleteAdvertisement(scope.row.id)" title="删除"></el-button>
+	            <el-button size="small" icon="date" @click="onDeleteAdvertisement(scope.row.id)" title="上画"></el-button>
 	          </template>
 	        </el-table-column>
 	      </el-table>
@@ -44,7 +58,6 @@
 	        </el-col>
 	      </el-row>
 	    </div>
-	  </div>
   </div>
 </template>
 
@@ -60,7 +73,10 @@
       }
     },
     methods: {
-      // 将数据中所有的时间转换成 yyyy-mm-dd hh:mm:ss
+      toswitch (id) {
+        console.log(id)
+      },
+      // 将数据中所有的时间转换成 yyyy-mm-dd hh:mm:ss  state 状态值
       transformDate (res) {
         res.data.forEach(v => {
           if (v.createdAt) {
@@ -71,6 +87,12 @@
           }
           if (v.endTime) {
             v.endTime = this.formatDate(v.endTime)
+          }
+          if (v.state === 1) {
+            v.state = true
+          }
+          if (v.state === 0) {
+            v.state = false
           }
         })
         return res
@@ -98,8 +120,9 @@
             return
           }
           if (response.data.errcode === '0000') {
-            console.log(response.data.data)
+            // console.log(response.data.data)
             this.response = this.transformDate(response.data.data)
+            console.log(this.response)
           }
         })
       },
@@ -200,23 +223,16 @@
 </script>
 <style scoped>
   .sc-advertisement {
-    margin-top: 1rem;
+    margin-top: 2rem;
     padding:2rem 1rem;
-  }
-  .sc-main-content {
-	  border-top: 1px solid lightgray;
-    padding: 1rem 1rem 2rem;
+    border-top: 1px solid lightgray;
   }
   .sc-top-btn {
   	margin-bottom: 1rem;
   }
-  .sc-font {
-	font-size: 2.5rem;
-	font-weight: 500;	
-  }
   .sc-top-header {
 	margin-bottom: 1rem;
-	padding: 0 1rem;
+	padding: 0 2rem;
   }
   .hover-search:hover {
 	color: #50bfff;

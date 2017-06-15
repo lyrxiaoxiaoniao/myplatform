@@ -50,7 +50,7 @@ import SCAdvertisementDetail from './components/views/wxadvertisement/contentPag
 import SCAddAdvertisement from './components/views/wxadvertisement/contentPage/AddAdvertisement.vue'
 import SCEditAdvertisement from './components/views/wxadvertisement/contentPage/EditAdvertisement.vue'
 
-import SCMenuTree from './components/views/menulist/MenuRree.vue'
+import SCMenuTree from './components/views/menulist/MenuTree.vue'
 import SCMenuLink from './components/views/menulist/MenuJurisdiction.vue'
 
 import SCDictTableView from './components/views/dict/DictTable.vue'
@@ -222,14 +222,14 @@ const routes = [
         component: SCWxUserProfileView,
         name: '微信用户详情'
       }, {
-        path: 'advertisementpoint',
+        path: 'advpoint',
         component: SCAdvertisementPoints,
-        name: '广告点位',
-        meta: {description: '管理'}
+        name: '广告点位管理',
+        meta: {description: '列表'}
       }, {
         path: 'addpoint',
         component: SCAddPoints,
-        name: '广告点位新增',
+        name: '新增广告点位',
         meta: {description: '新增'}
       }, {
         path: 'editpoint',
