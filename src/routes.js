@@ -397,14 +397,14 @@ const routes = [
         name: '用户标签组管理',
         meta: { description: '管理信息' }
       }, {
-        path: 'advertisementpoint',
+        path: 'advpoint',
         component: SCAdvertisementPoints,
-        name: '广告点位',
-        meta: {description: '管理'}
+        name: '广告点位管理',
+        meta: {description: '列表'}
       }, {
         path: 'addpoint',
         component: SCAddPoints,
-        name: '广告点位新增',
+        name: '新增广告点位',
         meta: {description: '新增'}
       }, {
         path: 'editpoint',
