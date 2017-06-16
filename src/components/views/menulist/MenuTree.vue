@@ -201,7 +201,7 @@ export default {
           <span style="float: right; margin-right: 20px">
             <el-button size="mini" on-click={ () => this.related(store, data) }>权限</el-button>
             <el-button size="mini" on-click={ () => this.edit(node, store, data) }>编辑</el-button>
-            <el-button type="danger" size="mini" on-click={ () => this.remove(store, data) }>删除</el-button>
+            <el-button size="mini" on-click={ () => this.remove(store, data) }>删除</el-button>
           </span>
         </span>)
     },

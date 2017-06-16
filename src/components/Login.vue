@@ -104,7 +104,7 @@ export default {
       if (this.isStringEmpty(this.username) ||
         this.isStringEmpty(this.password) ||
         this.isStringEmpty(this.mailCode)) {
-        window.alert('请输入正确的信息')
+        this.$message.error('请输入正确的信息')
         return
       }
 
@@ -123,31 +123,22 @@ export default {
         // mail code
         code: this.mailCode
       })
-        /*
-        axios({
-          url: config.basic.login,
-          method: 'post',
-          data: {
-            username: this.username,
-            password: this.password,
-            // mail code
-            code: this.mailCode
-          },
-          withCredentials: true
-        })
-        */
-        .then(response => {
-          if (response.data.errcode === '0000') {
-            this.$router.push('/admin')
-          } else if (response.data.errcode === '0') {
-            this.response = response.data.errmsg
-            this.loginSended = false
-          }
-        })
-        .catch(error => {
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.$store.commit('SET_USER_INFO', response.data.data)
+          this.$store.commit('SET_TOKEN', response.data.data.token)
+          this.$router.push('/admin')
+        } else if (response.data.errcode === '0') {
+          this.response = response.data.errmsg
           this.loginSended = false
-          this.$message.error(error)
-        })
+        } else {
+          this.$message.error(response.errmsg)
+        }
+      })
+      .catch(error => {
+        this.loginSended = false
+        this.$message.error(error)
+      })
     },
     encrypt(string) {
       const pubkey = config.basic.key

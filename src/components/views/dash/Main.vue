@@ -18,6 +18,5 @@ export default {
 
 <style>
 .sc-admin-index-component {
-  height: 100%;
 }
 </style>

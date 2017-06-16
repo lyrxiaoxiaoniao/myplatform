@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { MessageBox } from 'element-ui'
+import router from './router'
 
 axios.defaults.timeout = 5000
 
@@ -15,6 +16,10 @@ axios.interceptors.response.use(res => {
     MessageBox.alert('您没有相应的权限', '提示', {
       confirmButtonText: '确定',
       type: 'error'
+    })
+  } else if (res.data.errcode === '3000') {
+    router.push({
+      path: '/login'
     })
   }
   return res

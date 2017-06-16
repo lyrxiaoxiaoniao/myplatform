@@ -80,6 +80,10 @@ const routes = [
     path: '/reset',
     component: ResetView
   }, {
+    path: '/',
+    component: DashMainView,
+    redirect: '/admin/index'
+  }, {
     path: '/admin',
     component: DashView,
     redirect: '/admin/index',
@@ -172,7 +176,7 @@ const routes = [
         path: 'notify',
         component: DashMainView,
         redirect: '/admin/notify/index',
-        name: '消息通知管理',
+        name: '消息通知',
         meta: { description: '消息通知' },
         children: [{
           path: 'index',
@@ -213,7 +217,7 @@ const routes = [
         path: 'wxuser',
         component: DashMainView,
         redirect: '/admin/wxuser/index',
-        name: '微信用户管理',
+        name: '微信用户',
         meta: { description: '微信用户' },
         children: [{
           path: 'index',
@@ -361,18 +365,20 @@ const routes = [
         path: 'duty',
         component: DashMainView,
         redirect: '/admin/duty/index',
-        name: '职位管理',
+        name: '职位',
         meta: { description: '职位管理' },
         children: [{
           path: 'index',
           component: SCDutyManageView,
-          name: '职位管理'
+          name: '职位管理',
+          meta: { description: '职位管理详情' }
         }]
       }, {
+        // Personal Module
         path: 'personal',
         component: DashMainView,
         redirect: '/admin/personal/index',
-        name: '职位管理',
+        name: '个人信息上报',
         meta: { description: '职位管理' },
         children: [{
           path: 'index',

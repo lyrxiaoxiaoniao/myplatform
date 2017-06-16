@@ -182,7 +182,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import api from 'src/api'
 import config from 'src/config'
 
@@ -255,26 +254,6 @@ export default {
     }
   },
   methods: {
-    getCaseDetail (id) {
-      axios.get(this.reportdetail, {
-        id: this.caseID
-      })
-        .then(response => {
-          if (response.status !== 200) {
-            this.error = response.statusText
-            return
-          }
-          if (response.data.errcode === '0000') {
-            this.response = response.data.data
-          }
-        })
-        .catch(error => {
-          this.$message({
-            type: 'info',
-            message: error
-          })
-        })
-    },
     detailBack () {
       window.history.back()
     },
@@ -375,7 +354,9 @@ export default {
       this.imgNaturalWidth = imgNHeight + 'px'
     },
     setActiveItem (i) {
-      this.$refs.carousel.setActiveItem(i)
+      if (this.$refs.carousel) {
+        this.$refs.carousel.setActiveItem(i)
+      }
     }
   },
   created () {
@@ -408,6 +389,9 @@ export default {
 
   .el-carousel__item:nth-child(2n+1) {
     background-color: #d3dce6;
+  }
+  .sc-report-detail-content {
+    margin-right: 2rem;
   }
   .sc-report-detail-content-basement, .sc-report-detail-content-deal {
     list-style: none;

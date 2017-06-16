@@ -10,13 +10,13 @@
             <h4>{{ response.digest }}</h4>
           </el-row>
           <el-row class="extra-text" type="flex" justify="space-between">
-            <el-col :span="6">
+            <el-col :span="8">
               发布时间:{{ response.createdAt | toDate }}
             </el-col>
-            <el-col :span="6">
+            <el-col :span="8">
               作者:{{ response.author }}
             </el-col>
-            <el-col :span="6">
+            <el-col :span="8">
               浏览次数:{{ response.click }}
             </el-col>
           </el-row>
@@ -181,8 +181,6 @@ export default {
     border-top: 1px solid lightgray;
     background-color: white;
     box-shadow: 1px 1px 1px 1px lightgrey;
-    overflow-x: hidden;
-    overflow-y: scroll;
   }
   .summary-text {
     overflow-x: hidden;
@@ -195,6 +193,7 @@ export default {
   }
   .extra-text {
     color: gray;
+    text-align: center;
   }
   .article-header {
     border-bottom: 1px solid gray;

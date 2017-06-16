@@ -1,12 +1,11 @@
 import 'babel-polyfill'
 import Vue from 'vue'
-import VueRouter from 'vue-router'
+import router from './router'
 
 import {sync} from 'vuex-router-sync'
-import routes from './routes'
 import store from './store'
 
-import {domain, count, prettyDate, pluralize, toDate, toTimestamp, statusCodeToMsg, isUserLock} from './filters'
+import * as filters from './filters'
 
 import AppView from './components/App.vue'
 
@@ -16,17 +15,10 @@ import KobeUI from './kobe.js'
 
 import VueHtml5Editor from 'vue-html5-editor'
 
-// Import Install and register helper items
-Vue.filter('count', count)
-Vue.filter('domain', domain)
-Vue.filter('prettyDate', prettyDate)
-Vue.filter('pluralize', pluralize)
-Vue.filter('toDate', toDate)
-Vue.filter('toTimestamp', toTimestamp)
-Vue.filter('statusCodeToMsg', statusCodeToMsg)
-Vue.filter('isUserLock', isUserLock)
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key])
+})
 
-Vue.use(VueRouter)
 Vue.use(ElementUI)
 Vue.use(KobeUI)
 
@@ -133,17 +125,14 @@ Vue.use(VueHtml5Editor, {
   ]
 })
 
-var router = new VueRouter({
-  routes: routes
-})
-
 router.beforeEach((to, from, next) => {
-  if (to.auth && (to.router.app.$store.state.token === 'null')) {
-    window.console.log('Not authenticated')
-    next({
-      path: '/login',
-      query: {redirect: to.fullPath}
-    })
+  if (store.state.token === null) {
+    if (to.path === '/login') {
+      next()
+    } else {
+      // TODO Request Token
+      next({ path: '/login' })
+    }
   } else {
     next()
   }

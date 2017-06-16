@@ -4,12 +4,9 @@ export default {
   serverURI: 'http://10.110.1.136:8080',
   user: null,
   token: null,
-  appInfo: {
-  },
   userInfo: {
-    messages: [{1: 'test', 2: 'test'}],
-    notifications: [],
-    tasks: []
+  },
+  appInfo: {
   },
   // Current Selected Case
   selectedCase: null,

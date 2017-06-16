@@ -16,7 +16,7 @@
     </router-link>
     <ul class="treeview-menu" v-if="isFolder">
       <template v-for="item in model.children" v-if="(model.children && model.children.length)">
-        <router-link :to="{ path: '/' + item.url }">
+        <router-link :to="{ path: item.url }">
           <sidebar-menu class="siderbar-menu-item" :model="item"/>
         </router-link>
       </template>
