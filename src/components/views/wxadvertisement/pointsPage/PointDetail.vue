@@ -75,7 +75,6 @@
 <script>
   import config from 'src/config'
   import api from 'src/api'
-  import echarts from '../../../../../static/js/plugins/chartjs/Chart.min.js'
   export default {
     data () {
       return {
