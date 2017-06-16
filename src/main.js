@@ -130,8 +130,13 @@ router.beforeEach((to, from, next) => {
     if (to.path === '/login') {
       next()
     } else {
-      // TODO Request Token
-      next({ path: '/login' })
+      store.dispatch('GET_USERINFO').then(response => {
+        if (response.data.errcode !== '0000') {
+          next({path: '/login'})
+        } else {
+          next()
+        }
+      })
     }
   } else {
     next()

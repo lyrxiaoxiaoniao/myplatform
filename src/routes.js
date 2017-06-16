@@ -81,8 +81,13 @@ const routes = [
     component: ResetView
   }, {
     path: '/',
-    component: DashMainView,
-    redirect: '/admin/index'
+    component: DashView,
+    redirect: '/admin/index',
+    children: [{
+      path: 'index',
+      component: DashMainView,
+      name: '光明安监首页'
+    }]
   }, {
     path: '/admin',
     component: DashView,

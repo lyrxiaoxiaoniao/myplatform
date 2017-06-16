@@ -3,121 +3,67 @@
     <div class="sc-report-detail-content">
       <el-row class="detailBtnWrap" type="flex" justify="end">
         <el-button @click="detailDeal" type="primary">案件处理</el-button>
-        <el-button @click="detailBack">返回上一页</el-button>
       </el-row>
       <el-row type="flex">
         <el-col :span="10" :offset="1" style="padding: 1rem">
           <ul class="sc-report-detail-content-basement">
-            <li><h3>基本信息</h3></li>
+            <li><h4>基本信息</h4></li>
             <li>
-              <el-row :span="10">
-                <el-col :span="5">举报人： </el-col>
-                <el-col :span="19">{{ response.reportName }}</el-col>
+              <div>举报人: <span>{{ response.reportName }}</span></div>
+            </li>
+            <li>
+              <div>联系方式：<span>{{ response.mobile }}</span></div>
+            </li>
+            <li>
+              <div>分类名称：<span>{{ response.catlgName }}</span></div>
+            </li>
+            <li>
+              <el-row type="flex">
+                <div>案件地址： <span>{{ response.address }}</span></div>
+                <el-button size="small" icon="picture" @click="openMap"></el-button>
               </el-row>
             </li>
             <li>
-              <el-row :span="10">
-                <el-col :span="5">联系方式： </el-col>
-                <el-col :span="19">{{ response.mobile }}</el-col>
-              </el-row>
+              <div>案件描述：<span>{{ response.description }}</span></div>
             </li>
             <li>
-              <el-row :span="10">
-                <el-col :span="5">分类名称： </el-col>
-                <el-col :span="19">{{ response.catlgName }}</el-col>
-              </el-row>
+              <div>隐患单位：<span>{{ response.hiddenUnit }}</span></div>
             </li>
             <li>
-              <el-row :span="10">
-                <el-col :span="5">案件地址：</el-col>
-                <el-col :span="15">{{ response.address }}</el-col>
-                <el-col :span="4">
-                  <el-button icon="picture" @click="openMap"></el-button>
-                </el-col>
-              </el-row>
+              <div>提交时间：<span>{{ response.createdAt }}</span></div>
             </li>
             <li>
-              <el-row :span="10">
-                <el-col :span="5">案件描述：</el-col>
-                <el-col :span="19">{{ response.description }}</el-col>
-              </el-row>
+              <div>提交IP：<span>{{ response.createOn }}</span></div>
             </li>
             <li>
-              <el-row :span="10">
-                <el-col :span="5">隐患单位：</el-col>
-                <el-col :span="19">{{ response.hiddenUnit }}</el-col>
-              </el-row>
-            </li>
-            <li>
-              <el-row :span="10">
-                <el-col :span="5">提交时间：</el-col>
-                <el-col :span="19">{{ response.createdAt }}</el-col>
-              </el-row>
-            </li>
-            <li>
-              <el-row :span="10">
-                <el-col :span="5">提交IP：</el-col>
-                <el-col :span="19">{{ response.createOn }}</el-col>
-              </el-row>
-            </li>
-            <li>
-              <el-row :span="10">
-                <el-col :span="5">是否匿名：</el-col>
-                <el-col :span="19">
-                  <el-checkbox v-model="isAnonymous" :disabled="true">
-                  </el-checkbox>
-                </el-col>
+              <el-row type="flex">
+                <div>是否匿名：<span>{{ response.createOn }}</span></div>
+                <el-checkbox v-model="isAnonymous" :disabled="true">
+                </el-checkbox>
               </el-row>
             </li>
           </ul>
           <ul class="sc-report-detail-content-deal">
-            <li><h3>受理信息</h3></li>
+            <li><h4>受理信息</h4></li>
             <li>
-              <el-row :span="10">
-                <el-col :span="5">受理编号： </el-col>
-                <el-col :span="19">{{ response.acceptNo }}</el-col>
-              </el-row>
+              <div>受理编号：<span>{{ response.acceptNo }}</span></div>
             </li>
             <li>
-              <el-row :span="10">
-                <el-col :span="5">上报时间： </el-col>
-                <el-col :span="19">{{ response.createdAt }}</el-col>
-              </el-row>
+              <div>上报时间： <span>{{ response.createdAt }}</span></div>
             </li>
             <li>
-              <el-row :span="10">
-                <el-col :span="5">受理时间： </el-col>
-                <el-col :span="19">{{ response.acceptDate }}</el-col>
-              </el-row>
+              <div>受理时间： <span>{{ response.acceptDate }}</span></div>
             </li>
             <li>
-              <el-row :span="10">
-                <el-col :span="5">受理状态：</el-col>
-                <el-col :span="15">{{ status }}</el-col>
-              </el-row>
+              <div>受理状态：<span>{{ status }}</span></div>
             </li>
             <li>
-              <el-row :span="10">
-                <el-col :span="5">处理部门：</el-col>
-                <el-col :span="19">{{ }}</el-col>
-              </el-row>
-            </li>
-            <li>
-              <el-row :span="10">
-                <el-col :span="5">受理意见：</el-col>
-                <el-col :span="19">{{ response.statusRemark }}</el-col>
-              </el-row>
-            </li>
-            <li>
-              <el-row :span="10">
-                <el-col :span="5">备注信息：</el-col>
-                <el-col :span="19">{{ }}</el-col>
-              </el-row>
+              <div>受理意见：<span>{{ response.statusRemark }}</span></div>
             </li>
           </ul>
         </el-col>
         <el-col :span="11" :offset="1" class="imgListWrapper">
-          <h3>图片列表</h3>
+          <h4>图片列表</h4>
           <ul class="sc-report-detail-img-wrapper">
             <li v-for="(item,index) in response.images" :key="item">
               <a href="javascript:;" class="thumbnail" @click="openImg(item.fileUrl,index)">
@@ -372,10 +318,12 @@ export default {
 </script>
 
 <style>
-
+  .detailBtnWrap {
+    margin-right: 2rem;
+  }
   .sc-report-detail {
     border-top: 1px solid lightgray;
-    padding-top: 4rem;
+    padding-top: 1rem;
     margin-top: 2rem;
   }
 
@@ -395,7 +343,7 @@ export default {
   }
   .sc-report-detail-content-basement, .sc-report-detail-content-deal {
     list-style: none;
-    font-size: 1.5rem;
+    font-size: 1rem;
     color: #666;
     border: 1px solid lightgray;
     background-color: white;
