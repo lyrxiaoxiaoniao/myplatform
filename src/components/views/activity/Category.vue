@@ -21,7 +21,7 @@
         >
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
         <el-table-column prop="title" label="类型名称" width="120"></el-table-column>
-        <el-table-column prop="key" label="类型键名" width="130"></el-table-column>
+        <el-table-column prop="type_key" label="类型键名" width="130"></el-table-column>
         <el-table-column prop="brief" label="描述"></el-table-column>
         <el-table-column prop="content" label="内容"></el-table-column>
         <el-table-column prop="url" label="链接"></el-table-column>
@@ -32,9 +32,9 @@
           label="操作"
           >
           <template scope="scope">
-            <el-button size="small" icon="edit"></el-button>
+            <el-button @click="openDialog(e, scope.row)" size="small" icon="edit"></el-button>
             <el-button size="small" icon="information"></el-button>
-            <el-button size="small" icon="delete2"></el-button>
+            <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -55,8 +55,8 @@
           </el-row>
           <el-row type="flex">
             <el-col :span="12">
-              <el-form-item label="链接">
-                <el-input v-model="selected.url"></el-input>
+              <el-form-item label="键值" required>
+                <el-input v-model="selected.type_key"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -68,6 +68,9 @@
               </el-form-item>
             </el-col>
           </el-row>
+          <el-form-item label="链接">
+            <el-input v-model="selected.url"></el-input>
+          </el-form-item>
           <el-form-item label="描述">
             <el-input type="textarea" v-model="selected.brief"></el-input>
           </el-form-item>
@@ -116,6 +119,7 @@ export default {
       selected: {
         id: '',
         title: '',
+        type_key: '',
         content: '',
         active: '',
         brief: '',
@@ -125,9 +129,74 @@ export default {
     }
   },
   methods: {
-    openDialog () {
+    createType () {
+      api.POST(config.activity.typeCreate, this.selected)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.onSuccess()
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    editType () {
+      api.POST(config.activity.typeUpdate, this.selected)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.onSuccess()
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    deleteType (id) {
+      this.$confirm('是否确认删除该活动类型', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        api.POST(config.activity.typeDelete, {
+          id: id
+        })
+        .then(response => {
+          if (response.data.errcode === '0000') {
+            this.onSuccess()
+          } else {
+            this.$message.error('发生错误，请重试')
+          }
+        })
+      })
+    },
+    onSuccess () {
+      this.$notify({
+        title: '成功',
+        message: '删除成功',
+        type: 'success'
+      })
+      const data = {
+        pageSize: this.response.pageSize,
+        currentPage: this.response.currentPage,
+        ...this.form
+      }
+      this.getList(data)
+    },
+    openDialog (e, data = null) {
+      if (data !== null) {
+        this.dialogType = 'edit'
+        this.selected = {
+          ...this.selected,
+          ...data
+        }
+      } else {
+        this.dialogType = 'add'
+        Object.keys(this.selected).forEach(key => {
+          this.selected[key] = ''
+        })
+        console.log(this.selected)
+      }
       this.showDialog = true
-      this.dialogType = 'add'
     },
     closeDialog () {
       this.showDialog = false
@@ -161,7 +230,6 @@ export default {
     getList (data = {}) {
       api.GET(config.activity.typeList, data)
       .then(response => {
-        console.log('2222')
         this.response = response.data.data
       })
       .catch(error => {
