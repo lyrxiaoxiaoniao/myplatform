@@ -74,7 +74,7 @@
     </el-dialog>
     <el-dialog :title="picDialogTitle" v-model="showPicDialog">
       <el-row type="flex" justify="center">
-        <img :src="showImage" alt="detail-image" class="img-responsive">
+        <img :src="showImage" alt="detail-image" class="img-responsive img-preview">
       </el-row>
     </el-dialog>
   </div>
@@ -203,5 +203,8 @@ export default {
   cursor: pointer;
   margin-top: 2rem;
   text-align: center;
+}
+.img-preview {
+  max-height: 50rem;
 }
 </style>

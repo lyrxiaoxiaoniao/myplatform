@@ -69,6 +69,8 @@ import SCAuthTableView from './components/views/auth/AuthTable.vue'
 import SCAuthRoleView from './components/views/auth/LinkRole.vue'
 import SCAuthMenuView from './components/views/auth/LinkMenu.vue'
 
+import SCActivityCategory from 'components/views/activity/Category'
+
 const routes = [
   {
     path: '/login',
@@ -395,6 +397,25 @@ const routes = [
           component: SCPersonalDetail,
           name: '个人信息详情',
           meta: { description: '个人信息上报详情' }
+        }]
+      }, {
+        path: 'activity',
+        component: DashMainView,
+        redirect: '/admin/activity/index',
+        name: '活动管理',
+        meta: { description: '活动管理' },
+        children: [{
+          path: 'category',
+          component: DashMainView,
+          redirect: '/admin/activity/category/index',
+          name: '活动类型管理',
+          meta: { description: '活动类型管理' },
+          children: [{
+            path: 'index',
+            component: SCActivityCategory,
+            name: '活动类型列表',
+            meta: { description: '活动类型管理' }
+          }]
         }]
       }, {
         path: 'userlabelmanage',

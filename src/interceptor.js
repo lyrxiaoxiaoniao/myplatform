@@ -12,6 +12,14 @@ axios.interceptors.request.use(config => {
 
 // http响应拦截器
 axios.interceptors.response.use(res => {
+  if (res.status !== 200) {
+    MessageBox({
+      type: 'error',
+      message: res.statusText
+    })
+    return
+  }
+
   if (res.data.errcode === '4000') {
     MessageBox.alert('您没有相应的权限', '提示', {
       confirmButtonText: '确定',

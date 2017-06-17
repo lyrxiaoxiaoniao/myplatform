@@ -223,7 +223,6 @@ export default {
     getFirmList () {
       api.GET(config.personalListAPI)
         .then(response => {
-          console.log(response)
           if (response.status !== 200) {
             this.error = response.statusText
             return

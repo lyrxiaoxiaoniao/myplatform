@@ -4,7 +4,7 @@
         <div class="container">
           <div class="text-center col-sm-6 col-sm-offset-3">
             <h3>页面丢失了</h3>
-            <router-link to="/admin">回到首页</router-link>
+            <router-link class="sc-page-404" to="/admin">回到首页</router-link>
           </div>
         </div>
       </div>
@@ -17,4 +17,7 @@
 </script>
 
 <style>
+.sc-page-404 {
+  font-size: 2rem;
+}
 </style>
