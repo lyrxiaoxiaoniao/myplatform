@@ -40,7 +40,7 @@
       </el-table>
 
       <el-dialog :title="selected.title ? selected.title : '活动详情'" v-model="showDialog">
-        <el-form :model="selected">
+        <el-form :model="selected" label-width="120px">
           <el-row type="flex">
             <el-col :span="12">
               <el-form-item label="分类名称" required>
@@ -53,10 +53,24 @@
               </el-form-item>
             </el-col>
           </el-row>
+          <el-row type="flex">
+            <el-col :span="12">
+              <el-form-item label="链接">
+                <el-input v-model="selected.url"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="状态" required>
+                <el-select v-model="selected.active">
+                  <el-option label="开启" value="1"></el-option>
+                  <el-option label="关闭" value="2"></el-option>
+                </el-select>  
+              </el-form-item>
+            </el-col>
+          </el-row>
           <el-form-item label="描述">
             <el-input type="textarea" v-model="selected.brief"></el-input>
           </el-form-item>
-          <el-form-item></el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="closeDialog">取消</el-button>

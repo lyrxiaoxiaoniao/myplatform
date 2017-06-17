@@ -70,6 +70,7 @@ import SCAuthRoleView from './components/views/auth/LinkRole.vue'
 import SCAuthMenuView from './components/views/auth/LinkMenu.vue'
 
 import SCActivityCategory from 'components/views/activity/Category'
+import SCActivitySteps from 'components/views/activity/Steps'
 
 const routes = [
   {
@@ -415,6 +416,18 @@ const routes = [
             component: SCActivityCategory,
             name: '活动类型列表',
             meta: { description: '活动类型管理' }
+          }]
+        }, {
+          path: 'steps',
+          component: DashMainView,
+          redirect: '/admin/activity/steps/index',
+          name: '活动步骤管理',
+          meta: { description: '活动步骤管理' },
+          children: [{
+            path: 'index',
+            component: SCActivitySteps,
+            name: '活动步骤列表',
+            meta: { description: '活动步骤管理' }
           }]
         }]
       }, {
