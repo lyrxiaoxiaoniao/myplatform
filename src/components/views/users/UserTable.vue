@@ -5,10 +5,11 @@
         type="flex"
         justify="end"
         >
-        <el-col :span="5">
-          <el-input placeholder="请输入搜索关键字" v-model="form.keyword"></el-input>
+        <el-col :span="7">
+          <el-input placeholder="请输入搜索关键字" v-model="form.keyword">
+            <el-button slot="append" @click="onSearch" icon="search"></el-button>
+          </el-input>
         </el-col>
-        <el-button @click="onSearch" icon="search"></el-button>
         <router-link class="add-user-link add" to="/admin/user/add">
             <el-button type="primary" icon="plus"></el-button>
         </router-link>

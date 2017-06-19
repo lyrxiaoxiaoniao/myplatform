@@ -2,10 +2,11 @@
   <div class="sc-notify-table" v-if="response">
     <div class="notify-table-header">
       <el-row type="flex" justify="end">
-        <el-col :span="5">
-          <el-input class="search-title-input" v-model="searchTitle" placeholder="请输入搜索关键字"></el-input>
+        <el-col :span="7">
+          <el-input class="search-title-input" v-model="searchTitle" placeholder="请输入搜索关键字">
+            <el-button slot="append" @click="onKeywordSearch" icon="search"></el-button>
+          </el-input>
         </el-col>
-        <el-button @click="onKeywordSearch" icon="search"></el-button>
         <el-button @click="addNotify" icon="plus"></el-button>
         <el-button icon="upload2" type="primary"></el-button>
         <el-button icon="setting" type="primary"></el-button>
