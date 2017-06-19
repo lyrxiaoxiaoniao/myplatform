@@ -45,7 +45,7 @@
               </el-row>
             </li>
           </ul>
-          <ul class="sc-report-detail-content-deal">
+          <ul class="sc-report-detail-content-deal" v-if="response.status !== 1">
             <li><h4>受理信息</h4></li>
             <li>
               <div>受理编号：<span>{{ response.acceptNo }}</span></div>
@@ -54,13 +54,13 @@
               <div>上报时间： <span>{{ response.createdAt | toDate }}</span></div>
             </li>
             <li>
-              <div>受理时间： <span>{{ response.acceptDate }}</span></div>
+              <div>受理时间： <span>{{ response.acceptDate | toDate }}</span></div>
             </li>
             <li>
               <div>受理状态：<span>{{ status }}</span></div>
             </li>
             <li>
-              <div>受理意见：<span>{{ response.statusRemark }}</span></div>
+              <div>受理意见：<span>{{ response.summary }}</span></div>
             </li>
           </ul>
         </el-col>
@@ -134,12 +134,9 @@ import api from 'src/api'
 import config from 'src/config'
 
 let map = {
-  0: '新案件',
-  1: '待立案',
-  2: '立案通过',
-  3: '专业部门处理',
-  4: '结案，作废',
-  5: '结案'
+  1: '进行中',
+  2: '已结案',
+  3: '已驳回'
 }
 
 export default {
