@@ -4,7 +4,7 @@
       <el-row type="flex" justify="end">
         <el-col :span="8">
           <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
-          <el-button slot="append" @click="onSearch" icon="search"></el-button>
+            <el-button slot="append" @click="onSearch" icon="search"></el-button>
           </el-input>
         </el-col>
         <el-button @click="openDialog" icon="plus" type="primary"></el-button>
@@ -19,14 +19,14 @@
         stripe
         :data="response.data"
         >
-        <el-table-column prop="id" label="ID" width="80"></el-table-column>
+        <el-table-column prop="id" label="ID" width="50"></el-table-column>
         <el-table-column prop="title" label="类型名称" width="120"></el-table-column>
         <el-table-column prop="type_key" label="类型键名" width="130"></el-table-column>
         <el-table-column prop="brief" label="描述"></el-table-column>
         <el-table-column prop="content" label="内容"></el-table-column>
         <el-table-column prop="url" label="链接"></el-table-column>
         <el-table-column prop="sort" label="排序" width="80"></el-table-column>
-        <el-table-column prop="active" label="状态"></el-table-column>
+        <el-table-column prop="active" label="状态" width="80"></el-table-column>
         <el-table-column 
           width="180"
           label="操作"
@@ -39,7 +39,7 @@
         </el-table-column>
       </el-table>
 
-      <el-dialog :title="selected.title ? selected.title : '活动详情'" v-model="showDialog">
+      <el-dialog :title="selected.title ? selected.title : '活动类型'" v-model="showDialog">
         <el-form :model="selected" label-width="120px">
           <el-row type="flex">
             <el-col :span="12">
@@ -73,6 +73,9 @@
           </el-form-item>
           <el-form-item label="描述">
             <el-input type="textarea" v-model="selected.brief"></el-input>
+          </el-form-item>
+          <el-form-item label="内容">
+            <el-input type="textarea" v-model="selected.content"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -130,10 +133,11 @@ export default {
   },
   methods: {
     createType () {
+      this.showDialog = false
       api.POST(config.activity.typeCreate, this.selected)
       .then(response => {
         if (response.data.errcode === '0000') {
-          this.onSuccess()
+          this.onSuccess('添加成功')
         }
       })
       .catch(error => {
@@ -141,10 +145,11 @@ export default {
       })
     },
     editType () {
+      this.showDialog = false
       api.POST(config.activity.typeUpdate, this.selected)
       .then(response => {
         if (response.data.errcode === '0000') {
-          this.onSuccess()
+          this.onSuccess('修改成功')
         }
       })
       .catch(error => {
@@ -162,17 +167,17 @@ export default {
         })
         .then(response => {
           if (response.data.errcode === '0000') {
-            this.onSuccess()
+            this.onSuccess('删除成功')
           } else {
             this.$message.error('发生错误，请重试')
           }
         })
       })
     },
-    onSuccess () {
+    onSuccess (string) {
       this.$notify({
         title: '成功',
-        message: '删除成功',
+        message: string,
         type: 'success'
       })
       const data = {

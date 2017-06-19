@@ -37,7 +37,9 @@
             </li>
             <li>
               <el-row type="flex">
-                <div>是否匿名：<span>{{ response.createOn }}</span></div>
+                <el-col :span="4">
+                  <div>是否匿名: </div>
+                </el-col>
                 <el-checkbox v-model="isAnonymous" :disabled="true">
                 </el-checkbox>
               </el-row>
@@ -49,7 +51,7 @@
               <div>受理编号：<span>{{ response.acceptNo }}</span></div>
             </li>
             <li>
-              <div>上报时间： <span>{{ response.createdAt }}</span></div>
+              <div>上报时间： <span>{{ response.createdAt | toDate }}</span></div>
             </li>
             <li>
               <div>受理时间： <span>{{ response.acceptDate }}</span></div>
@@ -146,6 +148,7 @@ export default {
     return {
       response: {},
       error: null,
+      id: this.$route.query.id,
       dialogFormVisible: false,
       dialogMapVisible: false,
       dialogImgVisible: false,
@@ -168,12 +171,6 @@ export default {
     }
   },
   computed: {
-    reportDetailURL () {
-      return config.serverURI + config.caseDetailAPI
-    },
-    caseID () {
-      return this.$route.params.id
-    },
     isAnonymous () {
       return this.response.isAnonymous
     },
@@ -181,7 +178,7 @@ export default {
       return map[this.response.status]
     },
     isSMSNotify () {
-      if (this.response.isNotify.indexOf('sms') !== -1) {
+      if (this.response && this.response.isNotify.indexOf('sms') !== -1) {
         this.detailDealForm.mail = true
         return true
       }
@@ -190,7 +187,7 @@ export default {
       return false
     },
     isWXNotify () {
-      if (this.response.isNotify.indexOf('wx') !== -1) {
+      if (this.response && this.response.isNotify.indexOf('wx') !== -1) {
         this.detailDealForm.wx = true
         return true
       }
@@ -200,9 +197,6 @@ export default {
     }
   },
   methods: {
-    detailBack () {
-      window.history.back()
-    },
     detailDeal () {
       this.dialogFormVisible = true
     },
@@ -303,16 +297,29 @@ export default {
       if (this.$refs.carousel) {
         this.$refs.carousel.setActiveItem(i)
       }
+    },
+    getDetail () {
+      api.GET(config.report.detail, {
+        id: this.id
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.response = response.data.data
+          const posArr = this.response.position.split(',').map((item) => {
+            return Number(item)
+          })
+          this.mapData.center.lng = posArr[0]
+          this.mapData.center.lat = posArr[1]
+          this.response.isAnonymous = !!this.response.isAnonymous
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     }
   },
   created () {
-    this.response = this.$store.state.selectedCase
-    const posArr = this.response.position.split(',').map((item) => {
-      return Number(item)
-    })
-    this.mapData.center.lng = posArr[0]
-    this.mapData.center.lat = posArr[1]
-    this.response.isAnonymous = !!this.response.isAnonymous
+    this.getDetail()
   }
 }
 </script>

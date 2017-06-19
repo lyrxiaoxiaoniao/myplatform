@@ -9,6 +9,8 @@ export default {
   name: 'sc-dash-main',
   data () {
     return {
+      data: {
+      }
     }
   },
   mounted () {

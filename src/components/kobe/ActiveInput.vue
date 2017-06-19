@@ -1,6 +1,6 @@
 <template>
-  <el-form-item label="data.key">
-    <el-input v-model="data.value"></el-input>
+  <el-form-item :label="data.key">
+    <el-input v-model="data.value" @change="onChange"></el-input>
   </el-form-item>
 </template>
 
@@ -21,6 +21,9 @@ export default {
     }
   },
   methods: {
+    onChange () {
+      this.$emit('input', this.data.value)
+    }
   },
   mounted () {
   }
