@@ -1,5 +1,6 @@
 import axios from 'src/interceptor'
 import config from 'src/config'
+import store from 'src/store'
 
 export default {
   request (method, uri, data = null) {
@@ -14,7 +15,8 @@ export default {
     }
 
     const url = config.serverURI + uri
-    return axios({ method, url, data })
+    const headers = {'X-Requested-With': 'XMLHttpRequest'}
+    return axios({ method, url, data, headers })
   },
 
   GET (uri, data = null) {
@@ -24,8 +26,14 @@ export default {
     }
 
     const url = config.serverURI + uri
-    return axios.get(url, {
-      params: data
+    const headers = {'X-Requested-With': 'XMLHttpRequest'}
+    return axios({
+      url: url,
+      method: 'get',
+      params: {
+        ...data
+      },
+      headers: headers
     })
   },
 
@@ -35,7 +43,13 @@ export default {
       return
     }
 
+    const headers = {'X-Requested-With': 'XMLHttpRequest'}
     const URL = config.serverURI + uri
-    return axios.post(URL, data)
+    const token = store.state.token ? store.state.token : ''
+    const payload = {
+      token: token,
+      ...data
+    }
+    return axios.post(URL, payload, headers)
   }
 }

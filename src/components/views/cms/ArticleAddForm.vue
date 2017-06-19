@@ -160,7 +160,9 @@ export default {
               title: '成功',
               message: '修改文章成功'
             })
-            setTimeout(this.$router.push('article'), 3000)
+            setTimeout(this.$router.push({
+              path: '/admin/article'
+            }), 3000)
           }
         })
         .catch(error => {
@@ -189,7 +191,9 @@ export default {
                   title: '成功',
                   message: '添加文章成功'
                 })
-                setTimeout(this.$router.push('article'), 3000)
+                setTimeout(this.$router.push({
+                  path: '/admin/article'
+                }), 3000)
               } else {
                 this.$message.error(response.data.errmsg)
               }

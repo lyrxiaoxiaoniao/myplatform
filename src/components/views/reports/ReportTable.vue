@@ -53,9 +53,10 @@
       </el-popover>
       <el-row type="flex" justify="end">
         <el-col :span="7">
-          <el-input v-model="searchForm.keyword" placeholder="请输入受理号,举报人,隐患单位关键字" class="sc-table-header-select"></el-input>
+          <el-input v-model="searchForm.keyword" placeholder="请输入受理号,举报人,隐患单位关键字" class="sc-table-header-select">
+            <el-button slot="append" class="sc-table-search-btn" @click="onKeywordSearch" icon="search"></el-button>
+          </el-input>
         </el-col>
-        <el-button class="sc-table-search-btn" @click="onKeywordSearch" icon="search"></el-button>
         <el-button type="primary" v-popover:advancedSearch>高级</el-button>
         <el-button type="primary" icon="upload2"></el-button>
         <el-button type="primary" icon="setting"></el-button>
@@ -64,17 +65,17 @@
     <div slot="kobe-table-content" class="kobe-table">
       <el-table :data="response.data" border stripe>
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
-        <el-table-column prop="acceptNo" label="受理号" min-width="90"></el-table-column>
+        <el-table-column prop="acceptNo" label="受理号" width="80"></el-table-column>
         <el-table-column prop="reportName" label="举报人" width="80"></el-table-column>
         <el-table-column prop="catlgName" label="案件分类" min-width="90"></el-table-column>
-        <el-table-column prop="hiddenUnit" label="隐患单位" width="100"></el-table-column>
+        <el-table-column prop="hiddenUnit" label="隐患单位"></el-table-column>
         <el-table-column prop="address" label="事发地址" min-width="180"></el-table-column>
-        <el-table-column prop="description" label="案件描述" min-width="200"></el-table-column>
+        <el-table-column prop="description" label="案件描述" max-width="200"></el-table-column>
         <el-table-column prop="createdAt" label="举报时间" width="100"></el-table-column>
         <el-table-column prop="status" label="状态" min-width="80"></el-table-column>
         <el-table-column label="操作" min-width="120">
           <template scope="scope">
-            <el-button size="small" icon="information" @click="selectCase(scope.row)"></el-button>
+            <el-button size="small" icon="information" @click="selectCase(scope.row.id)"></el-button>
             <el-button size="small" icon="circle-cross" @click="shieldReport(scope.row.id)"></el-button>
           </template>
         </el-table-column>
@@ -153,9 +154,13 @@ export default {
       }
       this.updateCase(data)
     },
-    selectCase (object) {
-      this.$store.commit('SET_CURRENT_CASE', object)
-      this.$router.push('reportdetail')
+    selectCase (id) {
+      this.$router.push({
+        path: '/admin/report/detail',
+        query: {
+          id: id
+        }
+      })
     },
     onKeywordSearch () {
       const data = {

@@ -1,5 +1,6 @@
 <template>
   <div class="sc-admin-index-component">
+    <router-view></router-view>
   </div>
 </template>
 
@@ -8,6 +9,8 @@ export default {
   name: 'sc-dash-main',
   data () {
     return {
+      data: {
+      }
     }
   },
   mounted () {
@@ -17,6 +20,5 @@ export default {
 
 <style>
 .sc-admin-index-component {
-  height: 100%;
 }
 </style>

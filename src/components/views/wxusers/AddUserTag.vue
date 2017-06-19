@@ -43,7 +43,7 @@ export default {
     },
     linkUser () {
       this.$router.push({
-        path: 'wxlink',
+        path: '/admin/wxuser/link',
         query: {
           id: this.response
         }

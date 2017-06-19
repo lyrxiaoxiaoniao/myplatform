@@ -120,7 +120,7 @@ export default {
     },
     onEditFirmDetail (id) {
       this.$router.push({
-        path: 'personaldetail',
+        path: '/admin/personal/detail',
         query: {
           id
         }
@@ -223,7 +223,6 @@ export default {
     getFirmList () {
       api.GET(config.personalListAPI)
         .then(response => {
-          console.log(response)
           if (response.status !== 200) {
             this.error = response.statusText
             return

@@ -91,7 +91,7 @@ export default {
   methods: {
     addUser () {
       this.$router.push({
-        path: 'wxlink',
+        path: '/admin/wxuser/link',
         query: {
           id: this.$route.query.id
         }

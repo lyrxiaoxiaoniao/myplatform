@@ -138,7 +138,7 @@ export default {
   methods: {
     checkUserInfo (id) {
       this.$router.push({
-        path: 'wxprofile',
+        path: '/admin/wxuser/profile',
         query: {
           id: id
         }

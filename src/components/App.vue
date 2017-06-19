@@ -32,8 +32,13 @@
   }
 </script>
 <style>
-  body {
+  html, body {
+    height: 100%;
+    width: 100%;
     font-size: 12px;
+  }
+  #app {
+    height: 100%;
   }
   .el-table {
     font-size: 12px!important;

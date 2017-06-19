@@ -56,7 +56,7 @@
       </div>
     </el-dialog>
     <el-dialog :title="picDialogTitle" v-model="showPicDialog">
-      <img :src="showImage" alt="detail-image" class="img-responsive">
+      <img :src="showImage" alt="detail-image" class="img-responsive img-preview">
     </el-dialog>
   </div>
 </template>
@@ -142,7 +142,9 @@ export default {
               type: 'success'
             })
 
-            setTimeout(this.$router.push('personaltable'), 2000)
+            setTimeout(this.$router.push({
+              path: '/admin/personal'
+            }), 2000)
           }
         })
         .catch(error => {
@@ -184,5 +186,8 @@ export default {
   margin-top: 2rem;
   max-width: 20rem;
   text-align: center;
+}
+.img-preview {
+  max-height: 50rem;
 }
 </style>

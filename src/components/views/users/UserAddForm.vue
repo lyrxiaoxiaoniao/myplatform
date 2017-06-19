@@ -183,7 +183,7 @@ export default {
                 message: '添加成功',
                 type: 'success'
               })
-              setTimeout(this.$router.push('users'), 2000)
+              setTimeout(this.$router.push('/admin/user'), 2000)
             } else {
               this.$message.error(response.statusText)
             }
