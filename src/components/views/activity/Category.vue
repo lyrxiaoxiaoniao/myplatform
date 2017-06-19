@@ -26,14 +26,18 @@
         <el-table-column prop="content" label="内容"></el-table-column>
         <el-table-column prop="url" label="链接"></el-table-column>
         <el-table-column prop="sort" label="排序" width="80"></el-table-column>
-        <el-table-column prop="active" label="状态" width="80"></el-table-column>
+        <el-table-column label="状态" width="80">
+          <template scope="scope">
+            {{ scope.row.active | isOpen }}
+          </template>
+        </el-table-column>
         <el-table-column 
           width="180"
           label="操作"
           >
           <template scope="scope">
-            <el-button @click="openDialog(e, scope.row)" size="small" icon="edit"></el-button>
-            <el-button size="small" icon="information"></el-button>
+            <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button>
+            <el-button @click="openDialog(e, scope.row, 'view')" size="small" icon="information"></el-button>
             <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
           </template>
         </el-table-column>
@@ -44,38 +48,38 @@
           <el-row type="flex">
             <el-col :span="12">
               <el-form-item label="分类名称" required>
-                <el-input v-model="selected.title"></el-input>
+                <el-input v-model="selected.title" :disabled="isDialogDisabled"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="排序" required>
-                <el-input v-model="selected.sort"></el-input>
+                <el-input v-model="selected.sort" :disabled="isDialogDisabled"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row type="flex">
             <el-col :span="12">
               <el-form-item label="键值" required>
-                <el-input v-model="selected.type_key"></el-input>
+                <el-input placeholder="示例: check_attendance" v-model="selected.type_key" :disabled="isDialogDisabled"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="状态" required>
-                <el-select v-model="selected.active">
+                <el-select v-model="selected.active" :disabled="isDialogDisabled">
                   <el-option label="开启" value="1"></el-option>
-                  <el-option label="关闭" value="2"></el-option>
+                  <el-option label="关闭" value="0"></el-option>
                 </el-select>  
               </el-form-item>
             </el-col>
           </el-row>
           <el-form-item label="链接">
-            <el-input v-model="selected.url"></el-input>
+            <el-input placeholder="示例:https://www.example.com" v-model="selected.url" :disabled="isDialogDisabled"></el-input>
           </el-form-item>
           <el-form-item label="描述">
-            <el-input type="textarea" v-model="selected.brief"></el-input>
+            <el-input type="textarea" v-model="selected.brief" :disabled="isDialogDisabled"></el-input>
           </el-form-item>
           <el-form-item label="内容">
-            <el-input type="textarea" v-model="selected.content"></el-input>
+            <el-input type="textarea" v-model="selected.content" :disabled="isDialogDisabled"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -119,6 +123,7 @@ export default {
       form: {
         keyword: ''
       },
+      isDialogDisabled: false,
       selected: {
         id: '',
         title: '',
@@ -187,19 +192,27 @@ export default {
       }
       this.getList(data)
     },
-    openDialog (e, data = null) {
-      if (data !== null) {
+    openDialog (e, data = null, type = null) {
+      if (data !== null && type === 'edit') {
         this.dialogType = 'edit'
+        this.isDialogDisabled = false
+        this.selected = {
+          ...this.selected,
+          ...data
+        }
+      } else if (data !== null && type === 'view') {
+        this.dialogType = 'view'
+        this.isDialogDisabled = true
         this.selected = {
           ...this.selected,
           ...data
         }
       } else {
+        this.isDialogDisabled = false
         this.dialogType = 'add'
         Object.keys(this.selected).forEach(key => {
           this.selected[key] = ''
         })
-        console.log(this.selected)
       }
       this.showDialog = true
     },
