@@ -73,7 +73,9 @@
       </div>
     </el-dialog>
     <el-dialog :title="picDialogTitle" v-model="showPicDialog">
-      <img :src="showImage" alt="detail-image" class="img-responsive">
+      <el-row type="flex" justify="center">
+        <img :src="showImage" alt="detail-image" class="img-responsive img-preview">
+      </el-row>
     </el-dialog>
   </div>
 </template>
@@ -195,13 +197,22 @@ export default {
 }
 .sc-firm-detail-safecert {
   cursor: pointer;
-  max-width: 20rem;
   text-align: center;
 }
 .sc-firm-detail-organphoto {
   cursor: pointer;
   margin-top: 2rem;
-  max-width: 20rem;
   text-align: center;
+}
+.sc-firm-detail-organphoto img {
+  max-height: 25rem;
+  margin: auto;
+}
+.sc-firm-detail-safecert img {
+  max-height: 25rem;
+  margin: auto;
+}
+.img-preview {
+  max-height: 50rem;
 }
 </style>

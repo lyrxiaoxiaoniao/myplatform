@@ -6,14 +6,14 @@
                                      class="img-responsive center-block"></span>
         <div class="logo-lg">
           <img src="static/img/copilot-logo-white.svg" alt="Logo" class="img-responsive">
-          <span>{{ appInfo.appName }}</span>
+          <span>{{ appInfo ? appInfo.appName : '深传互动' }}</span>
         </div>
       </a>
 
       <nav class="navbar navbar-static-top" role="navigation">
-        <a href="javascript:;" class="sidebar-toggle" data-toggle="offcanvas" role="button">
-          <span class="sr-only">Toggle navigation</span>
-        </a>
+        <!-- <a href="javascript:;" class="sidebar-toggle" data-toggle="offcanvas" role="button"> -->
+        <!--   <span class="sr-only">Toggle navigation</span> -->
+        <!-- </a> -->
         <div class="navbar-custom-menu">
           <ul class="nav navbar-nav">
             <!-- <li class="dropdown messages-menu"> -->
@@ -111,11 +111,11 @@
     <div class="content-wrapper">
       <section class="content-header">
         <h1>
-          {{$route.name.toUpperCase() }}
+          {{ $route.name.toUpperCase() }}
           <small>{{ $route.meta.description }}</small>
         </h1>
         <ol class="breadcrumb">
-          <li><a href="javascript:;"><i class="fa fa-home"></i>主页</a></li>
+          <li><router-link to="/admin"><i class="fa fa-home"></i>主页</router-link></li>
           <li class="active">{{$route.name.toUpperCase()}}</li>
         </ol>
       </section>
@@ -124,14 +124,13 @@
     </div>
 
     <footer class="main-footer">
-      <strong>Copyright &copy; {{year}} <a href="http://www.shencom.cn/">{{ appInfo.systemAuthor }}</a>.</strong> All rights reserved.
+      <strong>Copyright &copy; {{year}} <a href="http://www.shencom.cn/">{{ appInfo ? appInfo.systemAuthor : '深传互动' }}</a>.</strong> All rights reserved.
     </footer>
   </div>
 </template>
 
 <script>
-import faker from 'faker'
-import api from '../api'
+import api from 'src/api'
 import {mapState} from 'vuex'
 import config from '../config'
 import Sidebar from './views/dash/Sidebar'
@@ -160,10 +159,8 @@ export default {
     ]),
     demo () {
       return {
-        displayName: faker.name.findName(),
-        avatar: faker.image.avatar(),
-        email: faker.internet.email(),
-        randomCard: faker.helpers.createCard()
+        displayName: this.userInfo.username,
+        avatar: this.userInfo.avatar
       }
     }
   },
@@ -176,7 +173,7 @@ export default {
     },
     setAppInfo () {
       const URI = config.appInfoAPI
-      api.request('GET', URI, {params: {id: 1}})
+      api.GET(URI, {id: 1})
         .then(response => {
           if (response.status !== 200) {
             this.error = response.statusText
@@ -245,5 +242,12 @@ hr.visible-xs-block {
   background-color: rgba(0, 0, 0, 0.17);
   height: 1px;
   border-color: transparent;
+}
+.wrapper {
+  min-height: 100%;
+  overflow-y: scroll;
+}
+.content-wrapper {
+  min-height: 90vh;
 }
 </style>

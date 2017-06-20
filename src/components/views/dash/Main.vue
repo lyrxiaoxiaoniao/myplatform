@@ -9,6 +9,8 @@ export default {
   name: 'sc-dash-main',
   data () {
     return {
+      data: {
+      }
     }
   },
   mounted () {
@@ -18,6 +20,5 @@ export default {
 
 <style>
 .sc-admin-index-component {
-  height: 100%;
 }
 </style>

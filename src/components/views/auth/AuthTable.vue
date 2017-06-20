@@ -3,9 +3,10 @@
     <div slot="kobe-table-header" class="kobe-table-header">
       <el-row type="flex" justify="end">
         <el-col :span="7">
-          <el-input v-model="form.keyword" placeholder="请输入搜索关键字"></el-input>
+          <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
+            <el-button slot="append" @click="onSearch" icon="search"></el-button>
+          </el-input>
         </el-col>
-        <el-button @click="onSearch" icon="search"></el-button>
         <el-button @click="showAddDialog" icon="plus"></el-button>
         <el-button icon="upload2" type="primary"></el-button>
         <el-button icon="setting" type="primary"></el-button>
@@ -37,12 +38,11 @@
         <el-table-column prop="displayName" label="权限名称"></el-table-column>
         <el-table-column prop="description" label="权限描述"></el-table-column>
         <el-table-column 
-          width="250"
+          width="220"
           label="操作"
           >
           <template scope="scope">
             <el-button @click="onEdit(scope.row.id, scope.row.displayName, scope.row.description, scope.row.name)" type="small" icon="edit"></el-button>
-            <el-button @click="onDelete(scope.row.id)" type="small" icon="delete2"></el-button>
             <el-button @click="onMenuLink(scope.row.id)" type="small">菜单</el-button>
             <el-button @click="onRoleLink(scope.row.id)" type="small">角色</el-button>
           </template>
@@ -158,36 +158,6 @@ export default {
       this.editForm.displayName = displayName
       this.editForm.description = description
       this.editDialog = true
-    },
-    onDelete (id) {
-      this.$confirm('是否确定删除该条权限', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        api.POST(config.auth.authDelete, {
-          id: id
-        })
-        .then(response => {
-          if (response.status !== 200) {
-            this.$message.error(response.statusText)
-            return
-          }
-          if (response.data.errcode === '0000') {
-            this.$notify({
-              title: '成功',
-              message: '删除成功',
-              type: 'success'
-            })
-            const data = {
-              pageSize: this.response.pageSize,
-              currentPage: this.response.currentPage,
-              ...this.form
-            }
-            this.getList(data)
-          }
-        })
-      })
     },
     editAuth () {
       this.editDialog = false

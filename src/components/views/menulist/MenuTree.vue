@@ -31,20 +31,23 @@
           ></el-cascader>
           <el-input v-else v-model="formData.parentName" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="菜单名称" required>
+        <el-form-item label="显示名称" required>
           <el-input v-model="formData.displayName"></el-input>
         </el-form-item>
-        <el-form-item label="name">
+        <el-form-item label="名称">
           <el-input v-model="formData.name"></el-input>
         </el-form-item>
-        <el-form-item label="status">
+        <el-form-item label="状态">
           <el-input v-model="formData.status"></el-input>
+        </el-form-item>
+        <el-form-item label="图标">
+          <el-input v-model="formData.icon" placeholder="示例: fa fa-book"></el-input>
         </el-form-item>
         <el-form-item label="同级排序">
           <el-input v-model="formData.sort"></el-input>
         </el-form-item>
         <el-form-item label="访问路由">
-          <el-input v-model="formData.url"></el-input>
+          <el-input v-model="formData.url" placeholder="示例: /admin/module/page"></el-input>
         </el-form-item>
         <el-row type="flex" justify="space-around">
           <el-button type="primary" @click="addSubmit" size="large">提交</el-button>
@@ -83,6 +86,7 @@ export default {
         name: '',
         displayName: '',
         parentId: 0,
+        icon: '',
         sort: '',
         url: '',
         status: 1,
@@ -155,6 +159,7 @@ export default {
       this.formData.id = data.id
       this.formData.url = data.url
       // this.formData.status = data.status
+      this.formData.icon = data.icon
       this.formData.status = 1
       this.formData.sort = data.sort
       this.addVisible = true
@@ -201,7 +206,7 @@ export default {
           <span style="float: right; margin-right: 20px">
             <el-button size="mini" on-click={ () => this.related(store, data) }>权限</el-button>
             <el-button size="mini" on-click={ () => this.edit(node, store, data) }>编辑</el-button>
-            <el-button type="danger" size="mini" on-click={ () => this.remove(store, data) }>删除</el-button>
+            <el-button size="mini" on-click={ () => this.remove(store, data) }>删除</el-button>
           </span>
         </span>)
     },
@@ -222,6 +227,7 @@ export default {
       obj.displayName = this.formData.displayName
       obj.sort = this.formData.sort
       obj.url = this.formData.url
+      obj.icon = this.formData.icon
       // obj.status = this.formData.status
       obj.status = 1
       if (this.isEditing) {

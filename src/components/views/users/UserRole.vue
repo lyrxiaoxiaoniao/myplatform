@@ -6,9 +6,10 @@
           <div slot="kobe-table-header" class="kobe-table-header">
             <el-row type="flex" justify="end">
               <el-col :span="7">
-                <el-input v-model="linkDataForm.keyword" placeholder="请输入搜索关键字"></el-input>
+                <el-input v-model="linkDataForm.keyword" placeholder="请输入关键字">
+                  <el-button slot="append" @click="onLinkDataSearch" icon="search"></el-button>
+                </el-input>
               </el-col>
-              <el-button @click="onLinkDataSearch" icon="search"></el-button>
             </el-row>
           </div>
           <div slot="kobe-table-content" class="kobe-table">
@@ -53,9 +54,10 @@
           <div slot="kobe-table-header" class="kobe-table-header">
             <el-row type="flex" justify="end">
               <el-col :span="7">
-                <el-input v-model="unLinkDataForm.keyword" placeholder="请输入搜索关键字"></el-input>
+                <el-input v-model="unLinkDataForm.keyword" placeholder="请输入关键字">
+                  <el-button slot="append" @click="onUnLinkDataSearch" icon="search"></el-button>
+                </el-input>
               </el-col>
-              <el-button @click="onUnLinkDataSearch" icon="search"></el-button>
             </el-row>
           </div>
           <div slot="kobe-table-content" class="kobe-table">

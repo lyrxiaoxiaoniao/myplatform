@@ -71,6 +71,11 @@ import SCAuthTableView from './components/views/auth/AuthTable.vue'
 import SCAuthRoleView from './components/views/auth/LinkRole.vue'
 import SCAuthMenuView from './components/views/auth/LinkMenu.vue'
 
+import SCActivityCategory from 'components/views/activity/Category'
+import SCActivitySteps from 'components/views/activity/Steps'
+import SCActivityProperty from 'components/views/activity/Property'
+import SCActivityOption from 'components/views/activity/Options'
+
 const routes = [
   {
     path: '/login',
@@ -81,6 +86,15 @@ const routes = [
   }, {
     path: '/reset',
     component: ResetView
+  }, {
+    path: '/',
+    component: DashView,
+    redirect: '/admin/index',
+    children: [{
+      path: 'index',
+      component: DashMainView,
+      name: '光明安监首页'
+    }]
   }, {
     path: '/admin',
     component: DashView,
@@ -174,7 +188,7 @@ const routes = [
         path: 'notify',
         component: DashMainView,
         redirect: '/admin/notify/index',
-        name: '消息通知管理',
+        name: '消息通知',
         meta: { description: '消息通知' },
         children: [{
           path: 'index',
@@ -215,7 +229,7 @@ const routes = [
         path: 'wxuser',
         component: DashMainView,
         redirect: '/admin/wxuser/index',
-        name: '微信用户管理',
+        name: '微信用户',
         meta: { description: '微信用户' },
         children: [{
           path: 'index',
@@ -363,18 +377,20 @@ const routes = [
         path: 'duty',
         component: DashMainView,
         redirect: '/admin/duty/index',
-        name: '职位管理',
+        name: '职位',
         meta: { description: '职位管理' },
         children: [{
           path: 'index',
           component: SCDutyManageView,
-          name: '职位管理'
+          name: '职位管理',
+          meta: { description: '职位管理详情' }
         }]
       }, {
+        // Personal Module
         path: 'personal',
         component: DashMainView,
         redirect: '/admin/personal/index',
-        name: '职位管理',
+        name: '个人信息上报',
         meta: { description: '职位管理' },
         children: [{
           path: 'index',
@@ -388,49 +404,65 @@ const routes = [
           meta: { description: '个人信息上报详情' }
         }]
       }, {
+        path: 'activity',
+        component: DashMainView,
+        redirect: '/admin/activity/index',
+        name: '活动管理',
+        meta: { description: '活动管理' },
+        children: [{
+          path: 'category',
+          component: DashMainView,
+          redirect: '/admin/activity/category/index',
+          name: '活动类型管理',
+          meta: { description: '活动类型管理' },
+          children: [{
+            path: 'index',
+            component: SCActivityCategory,
+            name: '活动类型列表',
+            meta: { description: '活动类型管理' }
+          }]
+        }, {
+          path: 'steps',
+          component: DashMainView,
+          redirect: '/admin/activity/steps/index',
+          name: '活动步骤管理',
+          meta: { description: '活动步骤管理' },
+          children: [{
+            path: 'index',
+            component: SCActivitySteps,
+            name: '活动步骤列表',
+            meta: { description: '活动步骤管理' }
+          }]
+        }, {
+          path: 'property',
+          component: DashMainView,
+          redirect: '/admin/activity/property/index',
+          name: '活动属性管理',
+          meta: { description: '活动属性管理' },
+          children: [{
+            path: 'index',
+            component: SCActivityProperty,
+            name: '活动属性列表',
+            meta: { description: '活动属性管理' }
+          }]
+        }, {
+          path: 'option',
+          component: DashMainView,
+          redirect: '/admin/activity/option/index',
+          name: '活动属性值管理',
+          meta: { description: '活动属性值管理' },
+          children: [{
+            path: 'index',
+            component: SCActivityOption,
+            name: '活动属性值列表',
+            meta: { description: '活动属性值管理' }
+          }]
+        }]
+      }, {
         path: 'userlabelmanage',
         component: SCUserLabelManage,
         name: '用户标签组管理',
         meta: { description: '管理信息' }
-      }, {
-        path: 'firm',
-        component: SCFirmTableView,
-        name: '企业信息上报',
-        meta: { description: '企业信息' }
-      }, {
-        path: 'firmdetail',
-        component: SCFirmDetailView,
-        name: '企业信息详情',
-        meta: { description: '企业详情' }
-      }, {
-        path: 'wxuser',
-        component: SCWxUserTableView,
-        name: '微信用户管理',
-        meta: { description: '微信用户详情' }
-      }, {
-        path: 'wxtagadd',
-        component: SCWxUserTagAddView,
-        name: '微信用户标签',
-        meta: { description: '微信用户标签组' }
-      }, {
-        path: 'wxlink',
-        component: SCWxUserLinkView,
-        name: '关联微信用户',
-        meta: { description: '关联微信用户标签组' }
-      }, {
-        path: 'wxtag',
-        component: SCWxUserTagTableView,
-        name: '微信用户标签组管理',
-        meta: { description: '微信用户标签组' }
-      }, {
-        path: 'wxtaguser',
-        component: SCWxTagUserListView,
-        name: '标签用户信息管理',
-        meta: { description: '微信用户标签组' }
-      }, {
-        path: 'wxprofile',
-        component: SCWxUserProfileView,
-        name: '微信用户详情'
       }, {
         path: 'advpoint',
         component: SCAdvertisementPoints,

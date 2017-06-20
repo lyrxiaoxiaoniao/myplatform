@@ -95,6 +95,7 @@
   import config from 'src/config'
   import api from 'src/api'
   import echarts from 'echarts'
+
   export default {
     data () {
       return {
@@ -406,6 +407,7 @@
     float: right;
     margin-top: 10px;
   }
+<<<<<<< HEAD
   .sc-header {
     float: right;
     margin-bottom: 10px;
@@ -419,3 +421,6 @@
     margin: 0 5px;
   }
 </style>
+=======
+</style>
+>>>>>>> 157917f98ca3a17d5b1068b84e02a009cf5a8acd
