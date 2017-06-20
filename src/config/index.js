@@ -52,7 +52,11 @@ export default {
     typeList: '/activity/category/index',
     typeCreate: '/activity/category/create',
     typeDelete: '/activity/category/delete',
-    typeUpdate: '/activity/category/update'
+    typeUpdate: '/activity/category/update',
+    stepList: '/activity/stage/index',
+    stepCreate: '/activity/stage/create',
+    stepDelete: '/activity/stage/delete',
+    stepUpdate: '/activity/stage/update'
   },
   menuAPI: '/admin/menu/show_left',
   deleteMenuAPI: '/admin/menu/delete',
