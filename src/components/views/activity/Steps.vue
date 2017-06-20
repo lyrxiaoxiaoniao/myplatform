@@ -14,8 +14,8 @@
     <div slot="kobe-table-content" class="kobe-table">
         <el-table :data="response.data" border stripe>
             <el-table-column prop="id" label="步骤编号"  width="180"></el-table-column>
-            <el-table-column prop="type_key" label="活动步骤类型"></el-table-column>
             <el-table-column prop="title" label="活动步骤名称"></el-table-column>
+            <el-table-column prop="type_key" label="活动步骤类型"></el-table-column>
             <el-table-column prop="description" label="活动步骤描述"></el-table-column>
             <el-table-column label="操作">
                 <template scope="scope">
@@ -28,7 +28,7 @@
 
         <!-- 新增dialog -->
         <div class="sc-activity-steps-create">
-            <el-dialog title="新增活动步骤" :visible.sync="addFormVisible">
+            <el-dialog title="新增活动步骤" v-model="addFormVisible">
                 <el-row type="flex">
                   <el-col>
                     <el-form :inline="true" label-width="100px" :model="addForm">
@@ -56,8 +56,6 @@
                           </el-form-item>
                         </el-col>
                       </el-row>
-                      
-                      
                     </el-form>
                   </el-col>
                 </el-row>  
@@ -69,7 +67,7 @@
         </div>
         <!-- 修改dialog -->
         <div class="sc-activity-steps-edit">
-            <el-dialog title="修改活动步骤" :visible.sync="editStepsVisible">
+            <el-dialog title="修改活动步骤" v-model="editStepsVisible">
                 <el-row type="flex">
                   <el-col>
                     <el-form :inline="true" label-width="100px" :model="editInfo">
@@ -96,8 +94,7 @@
                             <el-input v-model="editInfo.description"></el-input>
                           </el-form-item>
                         </el-col>
-                      </el-row>
-                      
+                      </el-row> 
                   </el-form>
                   </el-col>
                 </el-row>  
@@ -109,7 +106,7 @@
         </div>
         <!-- 查看dialog -->
         <div class="sc-activity-steps-check">
-           <el-dialog title="查看活动步骤" :visible.sync="checkInfodialog">
+           <el-dialog title="查看活动步骤" v-model="checkInfodialog">
               <el-row type="flex">
                 <el-col class="sc-activity-steps-check-content">
                   <el-card>
@@ -129,7 +126,7 @@
         </div>
     </div>
     <div slot="kobe-table-footer" class="kobe-table-footer">
-        <el-row type="flex" justify="center">
+      <el-row type="flex" justify="center">
         <el-col :span="12">
           <el-pagination
             @size-change="handleSizeChange"
@@ -204,7 +201,7 @@ export default{
           }
         })
     },
-    updateStepList (data) {
+    updateStepList (data = {}) {
       api.GET(config.activity.stepList, data)
         .then(response => {
           if (response.status !== 200) {
@@ -219,18 +216,12 @@ export default{
         })
     },
     onSearch () {
-      api.GET(config.activity.stepList, this.form)
-        .then(response => {
-          if (response.status !== 200) {
-            this.error = response.statusText
-            return
-          }
-          if (response.data.errcode === '0000') {
-            this.response = response.data.data
-          } else {
-            this.$message.error('发生了错误，请重试！！')
-          }
-        })
+      const data = {
+        currentPage: 1,
+        pageSize: this.response.pageSize,
+        ...this.form
+      }
+      this.updateStepList(data)
     },
     addSteps () {
       if (this.addForm.title === '' || this.addForm.type_key === '') {
