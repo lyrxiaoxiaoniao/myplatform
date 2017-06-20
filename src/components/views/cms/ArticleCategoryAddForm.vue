@@ -13,7 +13,10 @@
         <el-input v-else v-model="formData.parentName" :disabled="true"></el-input>
       </el-form-item>
       <el-form-item label="板块名称">
-        <el-input v-model="formData.name"></el-input>
+        <el-input v-model="formData.name" placeholder="示例:category_name"></el-input>
+      </el-form-item>
+      <el-form-item label="板块名称">
+        <el-input v-model="formData.displayName"></el-input>
       </el-form-item>
       <el-form-item label="板块描述">
         <el-input v-model="formData.description"></el-input>
@@ -56,6 +59,7 @@ export default {
         url: '',
         icon: '',
         valueList: [],
+        displayName: '',
         parentName: ''
       },
       isEditing: false
@@ -66,6 +70,7 @@ export default {
       this.isEditing = true
       let {node, data} = this.$route.query
       this.formData.name = data.name
+      this.formData.displayName = data.displayName
       this.formData.description = data.description
       this.formData.id = data.id
       this.formData.sort = data.sort
@@ -100,6 +105,7 @@ export default {
     submit () {
       let obj = {}
       obj.name = this.formData.name
+      obj.displayName = this.formData.displayName
       obj.parentId = this.formData.parentId
       obj.description = this.formData.description
       obj.sort = this.formData.sort
@@ -146,7 +152,6 @@ export default {
     handleChange (value) {
       console.log(value)
       this.formData.parentId = value[value.length - 1]
-      console.log(this.formData.parentId)
     },
     back () {
       this.$router.go(-1)
