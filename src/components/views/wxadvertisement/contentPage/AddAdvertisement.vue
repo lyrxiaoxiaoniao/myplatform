@@ -1,10 +1,21 @@
 <template>
-  <div style="width: 50%;">
+  <div class="sc-top-line">
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm" style="padding:3rem 3rem 0 0;">
-      <el-form-item label="广告标题" prop="title" required>
+      <el-form-item label="内容名称" prop="title" required>
         <el-input v-model="ruleForm.title" placeholder="请输入标题"></el-input>
       </el-form-item>
-      <el-form-item label="广告内容" prop="link" required>
+      <el-form-item label="内容分类" prop="typeId" required>
+        <template>
+          <el-select v-model="ruleForm.typeId" placeholder="请选择">
+            <el-option
+              v-for="item in options"
+              :label="item.type"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </template>
+      </el-form-item>
+      <el-form-item label="广告素材" prop="poster" required>
         <el-upload
           class="avatar-uploader"
           :action="uploadUrl"
@@ -20,108 +31,50 @@
           <div slot="tip" class="el-upload__tip">只能上传jpg图片文件，且不超过2M</div>
         </el-upload>
       </el-form-item>
-      <el-form-item label="点位类型" prop="linkType" required>
+      <el-form-item label="链接方式" prop="linkType" required>
         <el-radio-group v-model="ruleForm.linkType">
-          <el-radio label="1">外部链接</el-radio>
-          <el-radio label="2">内部链接</el-radio>
+          <el-radio label="1">不跳转链接</el-radio>
+          <el-radio label="2">完整地址链接</el-radio>
+          <el-radio label="3">系统内部链接</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="开始时间" prop="beginTime" required style="display:inline-block">
-        <el-date-picker
-          v-model="ruleForm.beginTime"
-          type="datetime"
-          placeholder="选择开始日期时间"
-          style="width:322px;">
-        </el-date-picker>
+      <el-form-item label="链接地址" prop="link" required>
+        <el-input v-model="ruleForm.link" placeholder="链接地址，外链请使用完整http://或者https://开始"></el-input>
       </el-form-item>
-      <el-form-item label="结束时间" prop="endTime" required style="display:inline-block">
-        <el-date-picker
-          v-model="ruleForm.endTime"
-          type="datetime"
-          placeholder="选择结束日期时间"
-          style="width:322px;">
-        </el-date-picker>
+      <el-form-item label="文字链接" prop="content" required>
+        <el-input v-model="ruleForm.content" placeholder="文字链内容，替换alt"></el-input>
+      </el-form-item>
+      <el-form-item label="内容备注" prop="memo" required>
+        <el-input v-model="ruleForm.memo" placeholder="内容备注"></el-input>
+      </el-form-item>
+      <el-form-item label="内容标签" prop="tagList">
+        <el-tag
+          :key="tag"
+          v-for="tag in dynamicTags"
+          :closable="true"
+          :close-transition="false"
+          @close="handleClose(tag)"
+          type="danger"
+          style="margin:0 5px"
+        >
+        {{tag}}
+        </el-tag>
+        <el-input
+            class="input-new-tag"
+            v-if="inputVisible"
+            v-model="inputValue"
+            ref="saveTagInput"
+            @keyup.enter.native="handleInputConfirm"
+            @blur="handleInputConfirm"
+          >
+        </el-input>
+        <el-button v-else class="button-new-tag" size="small" @click="showInput">新增标签</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
-        <el-button @click="resetForm('ruleForm')">重置</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">提交保存</el-button>
+        <el-button type="primary" @click="resetForm()">返回管理首页</el-button>
       </el-form-item>
     </el-form>
-    <!--弹出框-->
-    <el-dialog title="广告点位" :visible.sync="dialogTableVisible">
-      <!--<div style="margin: -15px 0 15px">
-        <el-button @click="toggleSelection([gridData[1], gridData[2]])">选择</el-button>
-        <el-button @click="toggleSelection()">取消选择</el-button>
-      </div>-->
-      <el-table
-        lock-scroll="true"
-        ref="multipleTable"
-        :data="gridData"
-        border
-        tooltip-effect="dark"
-        style="width: 100%; overflow: auto;height: 400px;"
-        @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column label="创建时间" width="150">
-          <template scope="scope">{{ scope.row.createdAt }}</template>
-        </el-table-column>
-        <el-table-column prop="spacename" label="标题" width="120"></el-table-column>
-        <el-table-column prop="typename" label="点位类型" width="120"></el-table-column>
-        <el-table-column prop="slug" label="点位" show-overflow-tooltip></el-table-column>
-      </el-table>
-    </el-dialog>
-    <!--点位表格-->
-    <div class="sc-main-content">
-      <el-row class="sc-top-header">
-        <el-col :span="19">
-          <div class="grid-content"><el-button type="primary" class="sc-top-btn" @click="getGridData()">点位选择</el-button></div>
-        </el-col>
-        <el-col :span="5">
-          <div class="grid-content">
-            <el-input placeholder="请输入内容" v-model="keyword">
-              <el-button slot="append" icon="search" class="hover-search" @click="searchKeyword()"></el-button>
-            </el-input>
-          </div>
-        </el-col>
-      </el-row>
-      <el-table
-        :data="tableData"
-        border
-        style="width: 100%">
-        <el-table-column label="操作" width="70">
-          <template scope="scope">
-            <el-button
-              size="small"
-              icon="delete2"
-              @click="handleDelete(scope.$index, scope.row)"></el-button>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="日期">
-          <template scope="scope">
-            <span>{{ scope.row.createdAt }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="标题">
-          <template scope="scope">
-            <span>{{ scope.row.spacename }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="点位类型">
-          <template scope="scope">
-            <span>{{ scope.row.typename }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="点位">
-          <template scope="scope">
-            <span>{{ scope.row.slug }}</span>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
   </div>
 </template>
 
@@ -132,18 +85,22 @@ import api from 'src/api'
 export default {
   data () {
     return {
+      dynamicTags: [],
+      inputVisible: false,
+      inputValue: '',
+      options: [],
       imageList: [],
       imageURL: '',
       uploadUrl: config.serverURI + config.uploadImgAPI,
-      // dialogVisible: false,
       ruleForm: {
         title: '',
         poster: '',
         link: '',
         linkType: '',
-        beginTime: null,
-        endTime: null,
-        list: []
+        memo: '',
+        content: '',
+        typeId: '',
+        tagList: ''
       },
       rules: {
         title: [
@@ -152,26 +109,30 @@ export default {
         poster: [
           { required: true, message: '请输入广告点位', trigger: 'blur' }
         ],
-        // imgContentURL: [
-        //   { required: true, message: '请输入广告内容', trigger: 'change' }
-        // ],
-        beginTime: [
-          { type: 'date', required: true, message: '请输入开始时间', trigger: 'change' }
-        ],
-        endTime: [
-          { type: 'date', required: true, message: '请输入结束时间', trigger: 'change' }
-        ],
         linkType: [
             { required: true, message: '请选择一个点位类型', trigger: 'change' }
         ]
-      },
-      gridData: null,
-      multipleSelection: [],
-      tableData: [],
-      dialogTableVisible: false
+      }
     }
   },
   methods: {
+    handleClose (tag) {
+      this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1)
+    },
+    showInput () {
+      this.inputVisible = true
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus()
+      })
+    },
+    handleInputConfirm () {
+      let inputValue = this.inputValue
+      if (inputValue) {
+        this.dynamicTags.push(inputValue)
+      }
+      this.inputVisible = false
+      this.inputValue = ''
+    },
     // 将数据中所有的时间转换成 yyyy-mm-dd hh:mm:ss
     transformDate (res) {
       res.forEach(v => {
@@ -202,43 +163,6 @@ export default {
       value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
       return value
     },
-    // 弹出框
-    toggleSelection (rows) {
-      if (rows) {
-        rows.forEach(row => {
-          this.$refs.multipleTable.toggleRowSelection(row)
-          console.log(row)
-        })
-      } else {
-        this.$refs.multipleTable.clearSelection()
-        console.log(1)
-      }
-    },
-    handleSelectionChange (val) {
-      this.multipleSelection = val
-      this.tableData = this.multipleSelection
-    },
-    getGridData () {
-      this.dialogTableVisible = true
-      if (!this.gridData) {
-        api.GET(config.addPointAPI)
-        .then(response => {
-          if (response.status !== 200) {
-            this.error = response.statusText
-            return
-          }
-          if (response.data.errcode === '0000') {
-            this.gridData = this.transformDate(response.data.data)
-            console.log(response.data.data)
-          }
-        })
-      }
-    },
-    // 点击 删除
-    handleDelete (index, row) {
-      console.log(index, row)
-      this.tableData.splice(index, 1)
-    },
     // 上传
     beforeAvatarUpload (file) {
       const isJPG = file.type === 'image/jpeg'
@@ -254,42 +178,29 @@ export default {
     },
     onUploadSuccess (response, file, fileList) {
       if (response.errcode === '0000') {
-        console.log(response)
         this.imageURL = file.url
-        this.ruleForm.link = response.data[0]
-        console.log(this.ruleForm.link)
+        this.ruleForm.poster = response.data[0]
       }
     },
     onUploadError (error, file) {
       this.$message.error(error)
     },
     onRemovePic (file, fileList) {
-      this.ruleForm.link = ''
+      this.ruleForm.poster = ''
     },
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          // console.log(this.ruleForm)
           var obj = {
-            title: '',
-            typeId: 2,
-            content: '',
-            link: '',
-            poster: '',
-            linkType: null,
-            beginTime: null,
-            endTime: null,
-            createdAt: null,
-            list: []
+            title: this.ruleForm.title,
+            typeId: Number(this.ruleForm.typeId),
+            content: this.ruleForm.content,
+            link: this.ruleForm.link,
+            poster: this.ruleForm.poster,
+            linkType: Number(this.ruleForm.linkType),
+            memo: this.ruleForm.memo,
+            tagList: this.dynamicTags.join(',')
           }
-          obj.title = this.ruleForm.title
-          obj.poster = this.ruleForm.poster
-          obj.link = this.ruleForm.link
-          obj.linkType = Number(this.ruleForm.linkType)
-          obj.beginTime = new Date(this.ruleForm.beginTime).getTime()
-          obj.endTime = new Date(this.ruleForm.endTime).getTime()
-          obj.createdAt = new Date().getTime()
-          console.log(obj)
           api.POST(config.addAdvertisementAPI, obj)
             .then(response => {
               if (response.status !== 200) {
@@ -297,7 +208,7 @@ export default {
                 return
               }
               if (response.data.errcode === '0000') {
-                console.log(response)
+                this.$message('创建成功！！！')
               }
             })
         } else {
@@ -306,9 +217,32 @@ export default {
         }
       })
     },
-    resetForm (formName) {
-      this.$refs[formName].resetFields()
+    resetForm () {
+      this.$router.push({
+        path: 'advcontent'
+      })
+    },
+    getTypeId () {
+      api.GET(config.getTypeAdvPointAPI)
+      .then(response => {
+        if (response.status !== 200) {
+          this.error = response.statusText
+          return
+        }
+        if (response.data.errcode === '0000') {
+          this.options = this.transformNumber(response.data.data)
+        }
+      })
+    },
+    transformNumber (res) {
+      res.forEach(v => {
+        v.id = String(v.id)
+      })
+      return res
     }
+  },
+  mounted () {
+    this.getTypeId()
   }
 }
 </script>
@@ -320,5 +254,9 @@ export default {
   .sc-top-header {
     margin-bottom: 1rem;
     padding: 0 1rem;
+  }
+  .sc-top-line {
+    margin-top: 2rem; 
+     border-top: 1px solid lightgray;
   }
 </style>

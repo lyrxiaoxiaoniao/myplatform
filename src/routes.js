@@ -44,6 +44,8 @@ import SCAdvertisementContent from './components/views/wxadvertisement/advertise
 import SCAdvertisementDetail from './components/views/wxadvertisement/contentPage/AdvertisementDetail.vue'
 import SCAddAdvertisement from './components/views/wxadvertisement/contentPage/AddAdvertisement.vue'
 import SCEditAdvertisement from './components/views/wxadvertisement/contentPage/EditAdvertisement.vue'
+import SCUpAdvContent from './components/views/wxadvertisement/upPage/adContent.vue'
+import SCUpAdvPoint from './components/views/wxadvertisement/upPage/adLocation.vue'
 
 import SCMenuTree from './components/views/menulist/MenuTree.vue'
 import SCMenuLink from './components/views/menulist/MenuJurisdiction.vue'
@@ -450,25 +452,35 @@ const routes = [
         name: '广告点位详情',
         meta: {description: '详情'}
       }, {
-        path: 'advertisementcontent',
-        component: SCAdvertisementContent,
+        path: 'advcontent',
         name: '广告列表',
+        component: SCAdvertisementContent,
         meta: {description: '管理'}
       }, {
-        path: 'advertisementdetail',
+        path: 'advdetail',
         component: SCAdvertisementDetail,
         name: '广告列表详情页',
         meta: {description: '详情页'}
       }, {
-        path: 'addadvertisement',
+        path: 'addadvcontent',
         component: SCAddAdvertisement,
         name: '广告列表新增',
         meta: {description: '新增'}
       }, {
-        path: 'editadvertisement',
+        path: 'editadvcontent',
         component: SCEditAdvertisement,
         name: '广告列表修改',
         meta: {description: '修改'}
+      }, {
+        path: 'upad',
+        component: SCUpAdvContent,
+        name: '广告内容上画管理',
+        meta: {description: '按照广告内容上画到广告点位'}
+      }, {
+        path: 'uppoint',
+        component: SCUpAdvPoint,
+        name: '广告点位上画管理',
+        meta: {description: '按照广告点位上画到广告内容'}
       }
     ]
   }, {

@@ -1,13 +1,13 @@
 <template>
   <div class="sc-top-line">
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm" style="padding:3rem 3rem 0 0;width:50%;">
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm" style="padding:3rem 3rem 0 0;">
       <el-form-item label="点位名称" prop="spacename" required>
         <el-input v-model="ruleForm.spacename" placeholder="简单为宜"></el-input>
       </el-form-item>
       <el-form-item label="点位标识" prop="slug" required>
         <el-input v-model="ruleForm.slug" placeholder="缩写，全英文，64字以内，如：app.weicome.first，用于引用的"></el-input>
       </el-form-item>
-      <el-form-item label="点位标签" prop="slug" required>
+      <el-form-item label="点位标签" prop="tagList" required>
         <el-tag
           :key="tag"
           v-for="tag in dynamicTags"
@@ -28,26 +28,24 @@
           @blur="handleInputConfirm"
         >
         </el-input>
-        <el-button v-else class="button-new-tag" size="small" @click="showInput">新增</el-button>
+        <el-button v-else class="button-new-tag" size="small" @click="showInput">新增标签</el-button>
       </el-form-item>
       <el-form-item label="点位分类" prop="typeId" required>
-        <template>
-          <el-select v-model="value" placeholder="请选择">
-            <el-option
-              v-for="item in options"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-        </template>
+      <template>
+        <el-select v-model="ruleForm.typeId" placeholder="请选择">
+          <el-option
+            v-for="item in options"
+            :label="item.type"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </template>
       </el-form-item>
-      <el-form-item label="有效控制">
+      <el-form-item label="有效控制" required>
         <el-switch
           v-model="ruleForm.state"
           on-text="开"
-          off-text="关"
-          on-color="#13ce66"
-          off-color="#ff4949">
+          off-text="关">
         </el-switch>
       </el-form-item>
       <el-form-item label="点位说明" prop="description">
@@ -66,34 +64,91 @@
   import api from 'src/api'
   export default {
     data () {
+      var checkTitle = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入广告点位名称'))
+        } else {
+          if (this.ruleForm.spacename !== '') {
+            api.GET(config.checkAdvPointAPI, {spacename: this.ruleForm.spacename})
+            .then(response => {
+              if (response.status !== 200) {
+                this.error = response.statusText
+                return
+              }
+              if (response.data.errcode === '5000') {
+                callback(new Error('存在相同的点位名称，请重新输入！'))
+              }
+              if (response.data.errcode === '0000') {
+                callback()
+              }
+            })
+          }
+        }
+      }
+      var checkSlug = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入广告点位标识'))
+        } else {
+          if (this.ruleForm.slug !== '') {
+            api.GET(config.checkAdvPointAPI, {slug: this.ruleForm.slug})
+            .then(response => {
+              if (response.status !== 200) {
+                this.error = response.statusText
+                return
+              }
+              if (response.data.errcode === '5000') {
+                callback(new Error('存在相同的点位标识，请重新输入！'))
+              }
+              if (response.data.errcode === '0000') {
+                callback()
+              }
+            })
+          }
+        }
+      }
       return {
-        dynamicTags: ['标签一', '标签二', '标签三'],
+        dynamicTags: [],
         inputVisible: false,
         inputValue: '',
+        options: [],
         ruleForm: {
           description: '',
           slug: '',
           spacename: '',
-          typeId: null
+          typeId: '',
+          state: ''
         },
         rules: {
-          // spacename: [
-          //   { required: true, message: '请输入点位名称', trigger: 'blur' }
-          // ],
-          // slug: [
-          //   { required: true, message: '请输入点位标识', trigger: 'change' }
-          // ],
-          // typeId: [
-          //   { required: true, message: '请选择一个点位类型', trigger: 'change' }
-          // ],
-          // description: [
-          //   { required: false, message: '分类描述50字以内', trigger: 'blur' },
-          //   { min: 0, max: 50, message: '分类描述长度在50字以内', trigger: 'blur' }
-          // ]
+          spacename: [
+            { validator: checkTitle, trigger: 'blur' }
+          ],
+          slug: [
+            { validator: checkSlug, trigger: 'blur' }
+          ],
+          typeId: [
+            { required: true, message: '请选择一个点位类型', trigger: 'change' }
+          ],
+          description: [
+            { required: false, message: '分类描述50字以内', trigger: 'blur' },
+            { min: 0, max: 50, message: '分类描述长度在50字以内', trigger: 'blur' }
+          ]
         }
       }
     },
     methods: {
+      transformNumber (res) {
+        res.forEach(v => {
+          v.id = String(v.id)
+        })
+        return res
+      },
+      changeState (state) {
+        if (state) {
+          return 1
+        } else {
+          return 0
+        }
+      },
       handleClose (tag) {
         this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1)
       },
@@ -108,20 +163,19 @@
         if (inputValue) {
           this.dynamicTags.push(inputValue)
         }
-        // console.log(this.dynamicTags)
         this.inputVisible = false
         this.inputValue = ''
       },
       submitForm (formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            // console.log(this.ruleForm)
             var obj = {}
             obj.description = this.ruleForm.description
             obj.slug = this.ruleForm.slug
             obj.spacename = this.ruleForm.spacename
-            obj.type_id = Number(this.ruleForm.typeId)
-            console.log(obj)
+            obj.state = this.changeState(this.ruleForm.state)
+            obj.tagList = this.dynamicTags.join(',')
+            obj.typeId = Number(this.ruleForm.typeId)
             api.POST(config.addAdvPointAPI, obj)
             .then(response => {
               if (response.status !== 200) {
@@ -129,7 +183,15 @@
                 return
               }
               if (response.data.errcode === '0000') {
-                console.log(response)
+                this.$message('创建成功！！！')
+                this.dynamicTags = []
+                this.ruleForm = {
+                  description: '',
+                  slug: '',
+                  spacename: '',
+                  state: '',
+                  typeId: '1'
+                }
               }
             })
           } else {
@@ -142,13 +204,28 @@
         this.$router.push({
           path: 'advpoint'
         })
+      },
+      getTypeId () {
+        api.GET(config.getTypeAdvPointAPI)
+        .then(response => {
+          if (response.status !== 200) {
+            this.error = response.statusText
+            return
+          }
+          if (response.data.errcode === '0000') {
+            this.options = this.transformNumber(response.data.data)
+          }
+        })
       }
+    },
+    mounted () {
+      this.getTypeId()
     }
   }
 </script>
 <style scoped>
 	.sc-top-line {
     margin-top: 2rem; 
-     border-top: 1px solid lightgray;
+    border-top: 1px solid lightgray;
   }
 </style>

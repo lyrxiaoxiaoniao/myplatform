@@ -6,41 +6,53 @@
     <el-form-item label="点位标识" prop="slug">
       <el-input v-model="ruleForm.slug" placeholder="缩写，全英文，64字以内，如：app.weicome.first，用于引用的"></el-input>
     </el-form-item>
-    <el-form-item label="点位分类" prop="value" required>
+    <el-form-item label="点位分类" required>
       <template>
         <el-select v-model="value" placeholder="请选择">
           <el-option
             v-for="item in options"
-            :label="item.label"
-            :value="item.value">
+            :label="item.type"
+            :value="item.id">
           </el-option>
         </el-select>
       </template>
     </el-form-item>
-    <el-form-item label="具体描述" prop="description">
+    <el-form-item label="点位标签" prop="tagList" required>
       <el-tag
-        v-for="tag in tags"
+        :key="tag"
+        v-for="tag in dynamicTags"
+        :closable="true"
+        :close-transition="false"
+        @close="handleClose(tag)"
         type="danger"
-        style="margin: 0 5px;"
+        style="margin:0 5px"
       >
       {{tag}}
       </el-tag>
+      <el-input
+          class="input-new-tag"
+          v-if="inputVisible"
+          v-model="inputValue"
+          ref="saveTagInput"
+          @keyup.enter.native="handleInputConfirm"
+          @blur="handleInputConfirm"
+        >
+      </el-input>
+      <el-button v-else class="button-new-tag" size="small" @click="showInput">新增</el-button>
     </el-form-item>
-    <el-form-item label="有效控制">
+    <el-form-item label="有效控制" required>
       <el-switch
         v-model="ruleForm.state"
         on-text="开"
-        off-text="关"
-        on-color="#13ce66"
-        off-color="#ff4949">
+        off-text="关">
       </el-switch>
     </el-form-item>
-    <el-form-item label="具体描述" prop="description">
+    <el-form-item label="点位说明" prop="description">
       <el-input type="textarea" v-model="ruleForm.description" placeholder="分类描述50字以内"></el-input>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="submitForm('ruleForm')">确定</el-button>
-      <el-button @click="resetForm('ruleForm')">取消</el-button>
+      <el-button type="primary" @click="submitForm('ruleForm')">保存修改内容</el-button>
+      <el-button type="primary" @click="resetForm()">返回管理首页</el-button>
     </el-form-item>
     </el-form>
 </template>
@@ -51,35 +63,27 @@
   export default {
     data () {
       return {
+        id: this.$route.query.id,
         activeName2: 'first',
-        options: [{
-          value: '选项1',
-          label: '图片广告'
-        }, {
-          value: '选项2',
-          label: '视频广告'
-        }, {
-          value: '选项3',
-          label: '文字链'
-        }, {
-          value: '选项4',
-          label: '其他'
-        }],
+        options: [],
         value: '',
-        tags: ['标签一', '标签二', '标签三', '标签四', '标签五'],
+        dynamicTags: [],
+        inputVisible: false,
+        inputValue: '',
         ruleForm: {
           description: '',
           slug: '',
           spacename: '',
           typename: null,
-          value: ''
+          value: '',
+          tagList: []
         },
         rules: {
           spacename: [
             { required: true, message: '请输入点位名称', trigger: 'blur' }
           ],
           slug: [
-            { required: true, message: '请输入点位标识', trigger: 'change' }
+            { required: true, message: '请输入点位标识', trigger: 'blur' }
           ],
           typename: [
             { required: true, message: '请选择一个点位类型', trigger: 'change' }
@@ -92,10 +96,41 @@
       }
     },
     methods: {
+      changeBoolean (state) {
+        if (state) {
+          return true
+        } else {
+          return false
+        }
+      },
+      changeState (state) {
+        if (state) {
+          return 1
+        } else {
+          return 0
+        }
+      },
+      handleClose (tag) {
+        this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1)
+      },
+      showInput () {
+        this.inputVisible = true
+        this.$nextTick(_ => {
+          this.$refs.saveTagInput.$refs.input.focus()
+        })
+      },
+      handleInputConfirm () {
+        let inputValue = this.inputValue
+        if (inputValue) {
+          this.dynamicTags.push(inputValue)
+        }
+        this.inputVisible = false
+        this.inputValue = ''
+      },
       getData () {
         const id = this.$route.query.id
-        // api.GET(config.showAdvertisementAPI, {id: id})
-        api.GET(config.showAdvPointAPI, {id: id})
+        if (this.options) {
+          api.GET(config.showAdvPointAPI, {id: id})
           .then(response => {
             if (response.status !== 200) {
               this.error = response.statusText
@@ -104,28 +139,24 @@
             if (response.data.errcode === '0000' && response.data.data) {
               const res = response.data.data
               this.ruleForm = res
-              console.log(res)
+              this.ruleForm.state = this.changeBoolean(res.state)
+              this.value = this.transformTypeid(this.ruleForm.typename)
+              this.dynamicTags = res.tagList.split(',')
             }
           })
-      },
-      changeType (type) {
-        if (type === '图文链接') {
-          return 1
-        } else if (type === '视频链接') {
-          return 3
-        } else if (type === '文字链接') {
-          return 2
         }
       },
       submitForm (formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
             var obj = {}
-            obj.typeId = this.changeType(this.ruleForm.typename)
+            obj.typeId = Number(this.value)
             obj.description = this.ruleForm.description
             obj.slug = this.ruleForm.slug
             obj.spacename = this.ruleForm.spacename
-            console.log(obj)
+            obj.tagList = this.dynamicTags.join(',')
+            obj.state = this.changeState(this.ruleForm.state)
+            obj.id = this.id
             api.POST(config.editAdvePointAPI, obj)
               .then(response => {
                 if (response.status !== 200) {
@@ -133,7 +164,7 @@
                   return
                 }
                 if (response.data.errcode === '0000') {
-                  console.log(response)
+                  this.$message('修改内容保存成功！！！')
                 }
               })
           } else {
@@ -142,15 +173,43 @@
           }
         })
       },
-      resetForm (formName) {
-        this.$refs[formName].resetFields()
+      resetForm () {
+        this.$router.push({
+          path: 'advpoint'
+        })
       },
-      handleClick (tab, event) {
-        console.log(tab, event)
+      getTypeId () {
+        api.GET(config.getTypeAdvPointAPI)
+        .then(response => {
+          if (response.status !== 200) {
+            this.error = response.statusText
+            return
+          }
+          if (response.data.errcode === '0000') {
+            this.options = this.transformNumber(response.data.data)
+            this.getData()
+          }
+        })
+      },
+      transformNumber (res) {
+        res.forEach(v => {
+          v.id = String(v.id)
+        })
+        return res
+      },
+      transformTypeid (res) {
+        if (this.options) {
+          this.options.forEach(v => {
+            if (v.type === res) {
+              res = v.id
+            }
+          })
+          return res
+        }
       }
     },
     mounted () {
-      this.getData()
+      this.getTypeId()
     }
   }
 </script>

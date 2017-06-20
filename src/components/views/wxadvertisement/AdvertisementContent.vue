@@ -2,36 +2,57 @@
   <div class="sc-advertisement">
 	  <div class="sc-main-content">
 		<el-row class="sc-top-header">
-		  <el-col :span="19">
-        <div class="grid-content"><el-button type="primary" class="sc-top-btn" @click="toAddPoints">新增</el-button></div>
+		  <el-col :span="12">
+        <el-button type="primary" class="sc-top-btn" @click="toAddPoints">新增</el-button>
       </el-col>
-		  <el-col :span="5">
+		  <el-col :span="3">
+         <template>
+          <el-select v-model="value" placeholder="请选择" style="float:right;margin-right:10px">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </template>
+      </el-col>
+		  <el-col :span="6">
         <div class="grid-content">
           <el-input placeholder="请输入内容" v-model="keyword">
             <el-button slot="append" icon="search" class="hover-search" @click="searchKeyword()"></el-button>
           </el-input>
         </div>
       </el-col>
+		  <el-col :span="3">
+        <el-button icon="upload2" type="primary" style="margin-left:20px;"></el-button>
+        <el-button icon="setting" type="primary"></el-button>
+      </el-col>
 		</el-row>
 	  	<div class="sc-article-table-content">
 	      <el-table :data="data.data" border stripe>
 	        <el-table-column type="index" label="ID" width="50"></el-table-column>
-	        <el-table-column prop="poster" label="广告点位"></el-table-column>
 	        <el-table-column prop="title" label="广告标题" ></el-table-column>
-	        <el-table-column label="广告内容" width="120">
-	        <template scope="scope">
-            <img class="SC-imgContent" :src="scope.row.link" alt="头像">
-          </template>
-	        </el-table-column>
-	        <el-table-column prop="count" label="点击" width="80"></el-table-column>
-	        <el-table-column prop="beginTime" label="开始时间" width="180px"></el-table-column>
-	        <el-table-column prop="endTime" label="结束时间" width="180px"></el-table-column>
-	        <el-table-column prop="createdAt" label="发布时间" width="180px"></el-table-column>
-	        <el-table-column label="操作" width="180">
+	        <el-table-column prop="type" label="广告分类" width="120"></el-table-column>
+	        <el-table-column prop="clickcount" label="点击量" width="80"></el-table-column>
+	        <el-table-column prop="watchcount" label="展示量" width="80"></el-table-column>
+	        <el-table-column prop="createdAt" label="上线时间" width="180px"></el-table-column>
+          <el-table-column label="状态" width="100px">
+            <template scope="scope">
+              <el-switch
+                v-model="scope.row.state"
+                on-text="开"
+                off-text="关"
+                @change="toswitch(scope.row.state, scope.row.id)">
+              </el-switch>
+            </template> 
+          </el-table-column>
+	        <el-table-column label="操作" width="210">
 	          <template scope="scope">
 	            <el-button size="small" icon="edit" @click="onEditAdvertisement(scope.row.id)" title="修改"></el-button>
 	            <el-button size="small" icon="information" @click="toAdvertisementDetail(scope.row.id)" title="查看"></el-button>
 	            <el-button size="small" icon="delete2" @click="onDeleteAdvertisement(scope.row.id)" title="删除"></el-button>
+              <el-button size="small" icon="date" @click="onUpAdv(scope.row.id)" title="上画"></el-button>
 	          </template>
 	        </el-table-column>
 	      </el-table>
@@ -62,6 +83,14 @@ import api from 'src/api'
 export default {
   data () {
     return {
+      options: [{
+        value: '1',
+        label: '广告标题'
+      }, {
+        value: '2',
+        label: '广告分类'
+      }],
+      value: '',
       data: {},
       deleteId: null,
       keyword: null
@@ -70,17 +99,43 @@ export default {
   computed: {
   },
   methods: {
+    changeNum (val) {
+      if (val) {
+        val = 1
+      } else {
+        val = 0
+      }
+      return val
+    },
+    toswitch (state, id) {
+      console.log(state)
+      // updateStateAdvPointAPI
+      var obj = {
+        id: id,
+        state: this.changeNum(state)
+      }
+      api.POST(config.updatestateAdvAPI, obj)
+      .then(response => {
+        if (response.status !== 200) {
+          this.error = response.statusText
+          return
+        }
+        if (response.data.errcode === '0000') {
+          this.$message('修改状态成功！！！')
+        }
+      })
+    },
     // 将数据中所有的时间转换成 yyyy-mm-dd hh:mm:ss
     transformDate (res) {
       res.data.forEach(v => {
         if (v.createdAt) {
           v.createdAt = this.formatDate(v.createdAt)
         }
-        if (v.beginTime) {
-          v.beginTime = this.formatDate(v.beginTime)
+        if (v.state === 1) {
+          v.state = true
         }
-        if (v.endTime) {
-          v.endTime = this.formatDate(v.endTime)
+        if (v.state === 0) {
+          v.state = false
         }
       })
       return res
@@ -116,9 +171,8 @@ export default {
     },
     // 跳转新增广告页面
     toAddPoints () {
-      console.log('新增')
       this.$router.push({
-        path: 'addadvertisement'
+        path: 'addadvcontent'
       })
     },
     /**
@@ -126,9 +180,8 @@ export default {
      * id ： 当前所在行id
      * */
     onEditAdvertisement (id) {
-      console.log('edit')
       this.$router.push({
-        path: 'editadvertisement',
+        path: 'editadvcontent',
         query: {
           id: id
         }
@@ -139,9 +192,16 @@ export default {
      * id ： 当前所在行id
      * */
     toAdvertisementDetail (id) {
-      console.log('查看')
       this.$router.push({
-        path: 'advertisementdetail',
+        path: 'advdetail',
+        query: {
+          id: id
+        }
+      })
+    },
+    onUpAdv (id) {
+      this.$router.push({
+        path: 'upad',
         query: {
           id: id
         }
@@ -154,10 +214,10 @@ export default {
     onDeleteAdvertisement (id) {
       this.deleteId = id
       // console.log(this.deleteId)
-      this.$confirm('你确定要删除本广告管理吗?', '提示', {
+      this.$confirm('此操作将删除该广告点位，删除后，数据无法恢复。是否继续删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
+        type: 'error'
       }).then(() => {
         api.POST(config.deleteAdvertisementAPI, {id: this.deleteId})
           .then(response => {
@@ -188,9 +248,17 @@ export default {
      * 根据搜索关键字来搜索匹配的字段
     */
     searchKeyword () {
-      this.updateList({
-        keyword: this.keyword
-      })
+      console.log(this.keyword)
+      if (this.value === '1') {
+        this.updateList({
+          title: this.keyword
+        })
+      }
+      if (this.value === '2') {
+        this.updateList({
+          type: this.keyword
+        })
+      }
     },
     handleSizeChange (value) {
       this.updateList({
