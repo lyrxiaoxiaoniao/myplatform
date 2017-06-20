@@ -26,10 +26,11 @@
         </el-form>
       </el-popover>
       <el-row type="flex" justify="end">
-        <el-col :span="5">
-          <el-input v-model="form.keyword" class="sc-firm-input-search" placeholder="请输入搜索关键字"></el-input>
+        <el-col :span="7">
+          <el-input v-model="form.keyword" class="sc-firm-input-search" placeholder="请输入搜索关键字">
+            <el-button slot="append" @click="onKeywordSearch" icon="search"></el-button>
+          </el-input>
         </el-col>
-        <el-button @click="onKeywordSearch" icon="search"></el-button>
         <el-button v-popover:advancedSearch type="primary">高级</el-button>
         <el-button icon="upload2" type="primary"></el-button>
         <el-button icon="setting" type="primary"></el-button>

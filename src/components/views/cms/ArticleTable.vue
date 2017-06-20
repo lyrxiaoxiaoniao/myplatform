@@ -43,10 +43,11 @@
         </el-form>
       </el-popover>
       <el-row type="flex" justify="end">
-        <el-col :span="5">
-          <el-input class="input-keyword" v-model="searchForm.keyword" placeholder="请输入关键字"></el-input>
+        <el-col :span="7">
+          <el-input class="input-keyword" v-model="searchForm.keyword" placeholder="请输入关键字">
+            <el-button slot="append" icon="search" @click="onSearch"></el-button>
+          </el-input>
         </el-col>
-        <el-button icon="search" @click="onSearch"></el-button>
         <el-button v-popover:advancedSearch type="primary">高级</el-button>
         <el-button class="ion-paper-airplane" type="primary" @click="onPublish">发布</el-button>
         <el-button icon="upload2" type="primary"></el-button>

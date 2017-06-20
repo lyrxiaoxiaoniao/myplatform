@@ -204,6 +204,14 @@ export default {
   margin-top: 2rem;
   text-align: center;
 }
+.sc-firm-detail-organphoto img {
+  max-height: 25rem;
+  margin: auto;
+}
+.sc-firm-detail-safecert img {
+  max-height: 25rem;
+  margin: auto;
+}
 .img-preview {
   max-height: 50rem;
 }
