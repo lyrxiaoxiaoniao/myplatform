@@ -330,12 +330,12 @@
       },
       goback () {
         this.$router.push({
-          path: 'advcontent'
+          path: '/admin/ad/content/index'
         })
       },
       toEdit () {
         this.$router.push({
-          path: 'editadvcontent',
+          path: '/admin/ad/content/edit',
           query: {
             id: this.id
           }
@@ -343,7 +343,7 @@
       },
       toUpContent () {
         this.$router.push({
-          path: 'upad',
+          path: '/admin/ad/upload/index',
           query: {
             id: this.id
           }

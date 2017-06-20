@@ -164,18 +164,21 @@
                   return
                 }
                 if (response.data.errcode === '0000') {
-                  this.$message('修改内容保存成功！！！')
+                  this.$notify({
+                    title: '成功',
+                    message: '修改内容保存成功！！！',
+                    type: 'success'
+                  })
                 }
               })
           } else {
-            console.log('error submit!!')
             return false
           }
         })
       },
       resetForm () {
         this.$router.push({
-          path: 'advpoint'
+          path: '/admin/ad/point/index'
         })
       },
       getTypeId () {

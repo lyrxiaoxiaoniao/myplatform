@@ -183,7 +183,11 @@
                 return
               }
               if (response.data.errcode === '0000') {
-                this.$message('创建成功！！！')
+                this.$notify({
+                  title: '成功',
+                  message: '创建成功！！',
+                  type: 'success'
+                })
                 this.dynamicTags = []
                 this.ruleForm = {
                   description: '',
@@ -195,14 +199,13 @@
               }
             })
           } else {
-            console.log('error submit!!')
             return false
           }
         })
       },
       goBack () {
         this.$router.push({
-          path: 'advpoint'
+          path: '/admin/ad/point/index'
         })
       },
       getTypeId () {

@@ -298,7 +298,6 @@ export default {
         }
         if (response.data.errcode === '0000') {
           this.response = this.transformDate(response.data.data)
-          console.log(this.response)
         }
       })
     },
@@ -368,15 +367,13 @@ export default {
     },
     toDetail () {
       this.$router.push({
-        path: 'pointdetail',
+        path: '/admin/ad/point/detail',
         query: {
           id: this.id
         }
       })
     },
     getPoint () {
-      console.log(this.ruleForm.typeId)
-      // getAdvertisementAPI
       api.GET(config.getAdvPointAPI, {id: this.id, isvalid: 1, typeId: this.ruleForm.typeId})
       .then(response => {
         if (response.status !== 200) {
@@ -409,7 +406,6 @@ export default {
       obj.endTime = this.value3[1].getTime()
       obj.ids = this.ids
       obj.id = Number(this.id)
-      console.log(obj)
       api.POST(config.pointToAdvAPI, obj)
       .then(response => {
         if (response.status !== 200) {
@@ -417,8 +413,11 @@ export default {
           return
         }
         if (response.data.errcode === '0000') {
-          console.log('config')
-          this.$message('添加成功！！！')
+          this.$notify({
+            title: '成功',
+            message: '添加成功！！！',
+            type: 'success'
+          })
           this.dialogTableVisible = false
           this.getPoint()
         }
@@ -431,7 +430,6 @@ export default {
         cancelButtonText: '取消',
         type: 'error'
       }).then(() => {
-        console.log('确定')
         api.POST(config.removepointToAdvAPI, {id: deleteid})
         .then(response => {
           if (response.status !== 200) {
@@ -439,19 +437,19 @@ export default {
             return
           }
           if (response.data.errcode === '0000') {
-            this.$message({
-              type: 'success',
-              message: '删除成功!'
+            this.$notify({
+              title: '成功',
+              message: '删除成功！',
+              type: 'success'
             })
             this.getPoint()
             this.getHistory()
           }
         })
       }).catch(() => {
-        console.log('取消')
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
+        this.$notify.info({
+          title: '消息',
+          message: '已取消删除！'
         })
       })
     },
@@ -468,7 +466,6 @@ export default {
           return
         }
         if (response.data.errcode === '0000') {
-          console.log('config')
           this.getPoint()
         }
       })

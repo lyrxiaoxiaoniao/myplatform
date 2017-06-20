@@ -208,18 +208,21 @@ export default {
                 return
               }
               if (response.data.errcode === '0000') {
-                this.$message('创建成功！！！')
+                this.$notify({
+                  title: '成功',
+                  message: '创建成功',
+                  type: 'success'
+                })
               }
             })
         } else {
-          console.log('error submit!!')
           return false
         }
       })
     },
     resetForm () {
       this.$router.push({
-        path: 'advcontent'
+        path: '/admin/ad/content/index'
       })
     },
     getTypeId () {

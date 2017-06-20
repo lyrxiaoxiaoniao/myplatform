@@ -1,9 +1,8 @@
 <template> 
   <div class="sc-advertisement">
-	  <div class="sc-main-content">
 		<el-row class="sc-top-header">
 		  <el-col :span="12">
-        <el-button type="primary" class="sc-top-btn" @click="toAddPoints">新增</el-button>
+        <el-button type="primary" class="sc-top-btn" @click="toAddPoints()">新增</el-button>
       </el-col>
 		  <el-col :span="3">
          <template>
@@ -72,7 +71,6 @@
 	        </el-col>
 	      </el-row>
 	    </div>
-	  </div>
   </div>
 </template>
 
@@ -108,8 +106,6 @@ export default {
       return val
     },
     toswitch (state, id) {
-      console.log(state)
-      // updateStateAdvPointAPI
       var obj = {
         id: id,
         state: this.changeNum(state)
@@ -121,7 +117,11 @@ export default {
           return
         }
         if (response.data.errcode === '0000') {
-          this.$message('修改状态成功！！！')
+          this.$notify({
+            title: '成功',
+            message: '修改状态成功！',
+            type: 'success'
+          })
         }
       })
     },
@@ -157,7 +157,6 @@ export default {
     },
     // 页面表格列表展示
     showList () {
-      console.log(config.advertisementListAPI)
       api.GET(config.advertisementListAPI)
         .then(response => {
           if (response.status !== 200) {
@@ -172,7 +171,7 @@ export default {
     // 跳转新增广告页面
     toAddPoints () {
       this.$router.push({
-        path: 'addadvcontent'
+        path: '/admin/ad/content/add'
       })
     },
     /**
@@ -181,7 +180,7 @@ export default {
      * */
     onEditAdvertisement (id) {
       this.$router.push({
-        path: 'editadvcontent',
+        path: '/admin/ad/content/edit',
         query: {
           id: id
         }
@@ -193,7 +192,7 @@ export default {
      * */
     toAdvertisementDetail (id) {
       this.$router.push({
-        path: 'advdetail',
+        path: '/admin/ad/content/detail',
         query: {
           id: id
         }
@@ -201,7 +200,7 @@ export default {
     },
     onUpAdv (id) {
       this.$router.push({
-        path: 'upad',
+        path: '/admin/ad/upload/index',
         query: {
           id: id
         }
@@ -213,7 +212,6 @@ export default {
      * */
     onDeleteAdvertisement (id) {
       this.deleteId = id
-      // console.log(this.deleteId)
       this.$confirm('此操作将删除该广告点位，删除后，数据无法恢复。是否继续删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -226,9 +224,10 @@ export default {
               return
             }
             if (response.data.errcode === '0000') {
-              this.$message({
-                type: 'success',
-                message: '删除成功!'
+              this.$notify({
+                title: '成功',
+                message: '删除成功!',
+                type: 'success'
               })
               this.showList()
             }
@@ -237,9 +236,8 @@ export default {
             this.$message.error(error)
           })
       }).catch(() => {
-        console.log('取消')
-        this.$message({
-          type: 'info',
+        this.$notify.info({
+          title: '消息',
           message: '已取消删除'
         })
       })
@@ -248,7 +246,6 @@ export default {
      * 根据搜索关键字来搜索匹配的字段
     */
     searchKeyword () {
-      console.log(this.keyword)
       if (this.value === '1') {
         this.updateList({
           title: this.keyword
@@ -281,7 +278,6 @@ export default {
             return
           }
           if (response.data.errcode === '0000') {
-            // console.log(response.data.data)
             this.data = this.transformDate(response.data.data)
           }
         })
@@ -294,20 +290,19 @@ export default {
 </script>
 <style scoped>
   .sc-advertisement {
-    margin-top: 1rem;
+    margin-top: 2rem;
     padding:2rem 1rem;
-  }
-  .sc-main-content {
-	  border-top: 1px solid lightgray;
-    padding: 1rem 1rem 2rem;
-    /*background-color: #fff;*/
+    border-top: 1px solid lightgray;
   }
   .sc-top-header {
 	margin-bottom: 1rem;
-	padding: 0 1rem;
+	padding: 0 2rem;
   }
   .hover-search:hover {
 	color: #108ce8;
+  }
+  .sc-top-btn {
+  	margin-bottom: 1rem;
   }
   .SC-imgContent {
   	margin-top: 5px;

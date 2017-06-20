@@ -104,8 +104,6 @@
         return val
       },
       toswitch (state, id) {
-        console.log(state)
-        // updateStateAdvPointAPI
         var obj = {
           id: id,
           state: this.changeNum(state)
@@ -117,7 +115,11 @@
             return
           }
           if (response.data.errcode === '0000') {
-            this.$message('修改状态成功！！！')
+            this.$notify({
+              title: '成功',
+              message: '修改状态成功！！！',
+              type: 'success'
+            })
           }
         })
       },
@@ -166,18 +168,17 @@
           }
           if (response.data.errcode === '0000') {
             this.response = this.transformDate(response.data.data)
-            console.log(this.response)
           }
         })
       },
       toAddPoints () {
         this.$router.push({
-          path: 'addpoint'
+          path: '/admin/ad/point/add'
         })
       },
       onEditAdvertisement (id) {
         this.$router.push({
-          path: 'editpoint',
+          path: '/admin/ad/point/edit',
           query: {
             id: id
           }
@@ -185,7 +186,7 @@
       },
       toAdvertisementDetail (id) {
         this.$router.push({
-          path: 'pointdetail',
+          path: '/admin/ad/point/detail',
           query: {
             id: id
           }
@@ -193,7 +194,7 @@
       },
       onUpadv (id) {
         this.$router.push({
-          path: 'uppoint',
+          path: '/admin/ad/upload/point',
           query: {
             id: id
           }
@@ -206,7 +207,6 @@
           cancelButtonText: '取消',
           type: 'error'
         }).then(() => {
-          console.log('确定')
           api.POST(config.deleteAdvPointAPI, {id: this.deleteId})
           .then(response => {
             if (response.status !== 200) {
@@ -214,9 +214,10 @@
               return
             }
             if (response.data.errcode === '0000') {
-              this.$message({
-                type: 'success',
-                message: '删除成功!'
+              this.$notify({
+                title: '成功',
+                message: '删除成功',
+                type: 'success'
               })
               this.showList()
             }
@@ -225,16 +226,14 @@
             this.$message.error(error)
           })
         }).catch(() => {
-          console.log('取消')
-          this.$message({
-            type: 'info',
+          this.$notify.info({
+            title: '消息',
             message: '已取消删除'
           })
         })
       },
       // 关键字搜索
       searchKeyword () {
-        console.log(this.keyword)
         if (this.value === '1') {
           this.updateList({
             slug: this.keyword

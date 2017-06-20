@@ -131,7 +131,6 @@
         if (inputValue) {
           this.dynamicTags.push(inputValue)
         }
-        // console.log(this.dynamicTags)
         this.inputVisible = false
         this.inputValue = ''
       },
@@ -179,7 +178,6 @@
       },
       onUploadSuccess (response, file, fileList) {
         if (response.errcode === '0000') {
-          console.log(response)
           this.imageURL = file.url
           this.ruleForm.poster = response.data[0]
         }
@@ -207,7 +205,6 @@
               this.value = String(res.typeId)
               this.imageURL = res.poster
               this.dynamicTags = res.tagList.split(',')
-              console.log(this.ruleForm)
             }
           })
         }
@@ -225,7 +222,6 @@
             obj.memo = this.ruleForm.memo
             obj.tagList = this.dynamicTags.join(',')
             obj.id = this.id
-            console.log(obj)
             api.POST(config.editAdvertisementAPI, obj)
               .then(response => {
                 if (response.status !== 200) {
@@ -233,18 +229,21 @@
                   return
                 }
                 if (response.data.errcode === '0000') {
-                  this.$message('修改内容保存成功！！！')
+                  this.$notify({
+                    title: '成功',
+                    message: '修改内容保存成功！！',
+                    type: 'success'
+                  })
                 }
               })
           } else {
-            console.log('error submit!!')
             return false
           }
         })
       },
       resetForm () {
         this.$router.push({
-          path: 'advcontent'
+          path: '/admin/ad/content/index'
         })
       },
       getTypeId () {
@@ -255,7 +254,6 @@
             return
           }
           if (response.data.errcode === '0000') {
-            console.log(response.data.data)
             this.options = this.transformNumber(response.data.data)
           }
         })

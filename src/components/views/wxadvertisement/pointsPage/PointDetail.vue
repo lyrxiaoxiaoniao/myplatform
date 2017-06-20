@@ -333,7 +333,7 @@
       },
       toEdit () {
         this.$router.push({
-          path: 'editpoint',
+          path: '/admin/ad/point/edit',
           query: {
             id: this.id
           }
@@ -341,12 +341,12 @@
       },
       goback () {
         this.$router.push({
-          path: 'advpoint'
+          path: '/admin/ad/point/index'
         })
       },
       toUpPoint () {
         this.$router.push({
-          path: 'uppoint',
+          path: '/admin/ad/upload/point',
           query: {
             id: this.id
           }
@@ -407,7 +407,6 @@
     float: right;
     margin-top: 10px;
   }
-<<<<<<< HEAD
   .sc-header {
     float: right;
     margin-bottom: 10px;
@@ -421,6 +420,4 @@
     margin: 0 5px;
   }
 </style>
-=======
-</style>
->>>>>>> 157917f98ca3a17d5b1068b84e02a009cf5a8acd
+

@@ -268,7 +268,6 @@ export default {
       this.pointData()
     },
     searchKeyword () {
-      console.log(this.keyword)
       if (this.value === '1') {
         this.updateList({
           title: this.keyword
@@ -362,7 +361,7 @@ export default {
     },
     toDetail () {
       this.$router.push({
-        path: 'advdetail',
+        path: '/admin/ad/content/detail',
         query: {
           id: this.id
         }
@@ -378,7 +377,6 @@ export default {
         }
         if (response.data.errcode === '0000') {
           this.data = this.transformDate(response.data.data)
-        //   console.log(this.data)
         }
       })
     },
@@ -402,7 +400,6 @@ export default {
       obj.endTime = this.value3[1].getTime()
       obj.ids = this.ids
       obj.id = Number(this.id)
-      console.log(obj)
       api.POST(config.advToPointAPI, obj)
       .then(response => {
         if (response.status !== 200) {
@@ -410,8 +407,11 @@ export default {
           return
         }
         if (response.data.errcode === '0000') {
-          console.log('config')
-          this.$message('添加成功！！！')
+          this.$notify({
+            title: '成功',
+            message: '添加成功！',
+            type: 'success'
+          })
           this.dialogTableVisible = false
           this.getPoint()
         }
@@ -424,7 +424,6 @@ export default {
         cancelButtonText: '取消',
         type: 'error'
       }).then(() => {
-        console.log('确定')
         api.POST(config.removepointToAdvAPI, {id: deleteid})
         .then(response => {
           if (response.status !== 200) {
@@ -432,18 +431,18 @@ export default {
             return
           }
           if (response.data.errcode === '0000') {
-            this.$message({
-              type: 'success',
-              message: '删除成功!'
+            this.$notify({
+              title: '成功',
+              message: '删除成功！',
+              type: 'success'
             })
             this.getPoint()
             this.getHistory()
           }
         })
       }).catch(() => {
-        console.log('取消')
-        this.$message({
-          type: 'info',
+        this.$notify.info({
+          title: '消息',
           message: '已取消删除'
         })
       })
