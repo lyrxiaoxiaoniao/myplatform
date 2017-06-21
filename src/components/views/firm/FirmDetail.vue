@@ -40,8 +40,8 @@
         </el-card>
       </el-col>
 
-      <el-col :span="6" class="sc-firm-image-content" v-if="response.safecertUrl">
-        <div class="sc-firm-detail-safecert">
+      <el-col :span="6" class="sc-firm-image-content" v-if="response.safecertUrl || response.orgaPhotoUrl">
+        <div class="sc-firm-detail-safecert" v-if="response.safecertUrl">
           <img @click="openImage('企业主要负责人安全培训合格证书', response.safecertUrl)" class="img-responsive" :src="response.safecertUrl">
           企业主要负责人安全培训合格证书
         </div>

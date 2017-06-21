@@ -3,9 +3,10 @@
     <div slot="kobe-table-header" class="kobe-table-header">
         <el-row type="flex" justify="end">
             <el-col :span="7">
-                <el-input v-model="form.keyword" placeholder="请输入搜索关键字"></el-input>
+              <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
+                <el-button slot="append" @click="onSearch" icon="search"></el-button>
+              </el-input>
             </el-col>
-             <el-button @click="onSearch" icon="search"></el-button>
              <el-button type="primary" @click="addFormVisible = true" icon="plus"></el-button>
              <el-button icon="upload2" type="primary"></el-button>
              <el-button icon="setting" type="primary"></el-button>
@@ -13,7 +14,7 @@
     </div>
     <div slot="kobe-table-content" class="kobe-table">
         <el-table :data="response.data" border stripe>
-            <el-table-column prop="id" label="步骤编号"  width="180"></el-table-column>
+            <el-table-column prop="id" label="ID"  width="80"></el-table-column>
             <el-table-column prop="title" label="活动步骤名称"></el-table-column>
             <el-table-column prop="type_key" label="活动步骤类型"></el-table-column>
             <el-table-column label="活动步骤状态">
@@ -22,11 +23,12 @@
                </template>
             </el-table-column>
             <el-table-column prop="description" label="活动步骤描述"></el-table-column>
-            <el-table-column label="操作">
+            <el-table-column label="操作" width="220">
                 <template scope="scope">
-                    <el-button @click="editSteps(scope.row)" size="small" icon="edit"></el-button>
-                    <el-button @click="checkInfo(scope.row)" size="small" icon="information"></el-button>
-                    <el-button @click="infoDelete(scope.row.id)" size="small" icon="delete2"></el-button>
+                  <el-button @click="editSteps(scope.row)" size="small" icon="edit"></el-button>
+                  <el-button @click="checkInfo(scope.row)" size="small" icon="information"></el-button>
+                  <el-button @click="infoDelete(scope.row.id)" size="small" icon="delete2"></el-button>
+                  <el-button @click="showPros(scope.row.id)" size="small">属性</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -37,22 +39,17 @@
               <el-form label-width="100px" :model="addForm">
                 <el-row type="flex" justify="space-between">
                   <el-col :span="12">
-                    <el-form-item :required="true" label="步骤编号">
-                      <el-input v-model="addForm.id"></el-input>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="12">
                     <el-form-item :required="true" label="步骤名称">
                         <el-input v-model="addForm.title"></el-input>
                     </el-form-item>
                   </el-col>
-                </el-row>
-                <el-row type="flex" justify="space-between">
                   <el-col :span="12">
                     <el-form-item :required="true"  label="步骤类型">
                       <el-input v-model="addForm.type_key"></el-input>
                     </el-form-item>
                   </el-col>
+                </el-row>
+                <el-row type="flex" justify="space-between">
                   <el-col :span="12">
                     <el-form-item :required="true"  label="步骤状态">
                       <el-select placeholder="请选择状态" v-model="addForm.status">
@@ -80,8 +77,8 @@
                     <el-form label-width="100px" :model="editInfo">
                       <el-row type="flex" justify="space-between">
                         <el-col :span="12">
-                          <el-form-item label="步骤编号">
-                            <el-input v-model="editInfo.id"></el-input>
+                          <el-form-item label="ID">
+                            <el-input disabled=true v-model="editInfo.id"></el-input>
                           </el-form-item>
                         </el-col>
                         <el-col :span="12">
@@ -127,7 +124,7 @@
                           <span class="sc-activity-steps-check-title">活动步骤信息</span>
                         </div>
                         <div class="sc-activity-steps-check-box">
-                          <div>步骤编号: <span style="padding-left:10px;">{{ userInfo.id }}</span></div>
+                          <div>ID: <span style="padding-left:10px;">{{ userInfo.id }}</span></div>
                           <div>步骤名称: <span style="padding-left:10px;">{{ userInfo.title }}</span></div>
                           <div>步骤类型: <span style="padding-left:10px;">{{ userInfo.type_key }}</span></div>
                           <div>步骤状态:<span style="padding-left:10px;">{{ userInfo.status == 1 ? "开启" : "关闭" }}</span></div>
@@ -185,6 +182,10 @@ export default{
     }
   },
   methods: {
+    showPros (id) {
+    },
+    getPropsList (value) {
+    },
     handleSizeChange (value) {
       const data = {
         currentPage: this.response.currentPage,
@@ -210,7 +211,6 @@ export default{
           }
           if (response.data.errcode === '0000') {
             this.response = response.data.data
-            console.log(response)
           } else {
             this.$message.error('发生了错误，请重试！！')
           }
