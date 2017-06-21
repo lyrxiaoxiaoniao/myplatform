@@ -121,6 +121,7 @@ export default {
         keyword: ''
       },
       selected: {
+        id: '',
         type_key: '',
         title: '',
         status: '',
@@ -139,6 +140,7 @@ export default {
         this.isDialogDisabled = false
         this.dialogType = 'edit'
         this.selected = {
+          prop_id: this.prop_id,
           ...this.selected,
           ...data
         }
@@ -164,7 +166,8 @@ export default {
         type: 'warning'
       }).then(() => {
         api.POST(config.activity.optionDelete, {
-          id: id
+          id: id,
+          prop_id: this.prop_id
         })
         .then(response => {
           if (response.data.errcode === '0000') {
@@ -189,7 +192,11 @@ export default {
     },
     createOption () {
       this.showDialog = false
-      api.POST(config.activity.optionCreate, this.selected)
+      const data = {
+        prop_id: this.prop_id,
+        ...this.selected
+      }
+      api.POST(config.activity.optionCreate, data)
       .then(response => {
         if (response.data.errcode === '0000') {
           this.onSuccess('添加成功')
@@ -241,7 +248,8 @@ export default {
     },
     getList (data = {}) {
       let query = {
-        prop_id: this.prop_id
+        prop_id: this.prop_id,
+        ...data
       }
       api.GET(config.activity.optionList, query)
       .then(response => {

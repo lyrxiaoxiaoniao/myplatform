@@ -32,13 +32,14 @@
           </template>
         </el-table-column>
         <el-table-column 
-          width="180"
+          width="220"
           label="操作"
           >
           <template scope="scope">
             <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button>
             <el-button @click="openDialog(e, scope.row, 'view')" size="small" icon="information"></el-button>
             <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
+            <el-button @click="showSteps(scope.row.id)" size="small">步骤</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -88,6 +89,45 @@
           <el-button @click="editType" v-if="dialogType === 'edit'">确定</el-button>
         </div>
       </el-dialog>
+      <kobe-table-dialog
+        @search="onStepListSearch"
+        @close="onStepsListClose"
+        @confirm="onStepsListConfirm"
+        @sizeChange="onStepSizeChange"
+        @pageChange="onStepPageChange"
+        :tableData="tableData"
+        title="活动分类步骤"
+        :show="showStepsDialog"
+        v-if="tableData">
+        <div slot="table">
+          <el-table
+            boder
+            stripe
+            :data="tableData.data"
+            ref="stepTable"
+            @selection-change="onStepSelection">
+            <el-table-column type="selection" width="40"></el-table-column>
+            <el-table-column prop="id" label="ID" width="50"></el-table-column>
+            <el-table-column prop="title" label="步骤名称"></el-table-column>
+            <el-table-column label="状态">
+              <template scope="scope">
+                {{ scope.row.status | isOpen }}
+              </template>
+            </el-table-column>
+            <el-table-column label="步骤排序">
+              <template scope="scope">
+                <el-input
+                  clearable
+                  v-if="scope.row.categories.length !== 0"
+                  v-model="scope.row.categories[0].sort"
+                  >
+                </el-input>
+              </template>
+            </el-table-column>
+            <el-table-column prop="description" label="步骤描述"></el-table-column>
+          </el-table>
+        </div>
+      </kobe-table-dialog>
     </div>
 
     <div slot="kobe-table-footer" class="kobe-table-footer">
@@ -105,6 +145,7 @@
         </el-col>
       </el-row>
     </div>
+
   </kobe-table>
 </template>
 
@@ -119,11 +160,14 @@ export default {
       response: null,
       error: null,
       showDialog: false,
+      isDialogDisabled: false,
+      showStepsDialog: false,
+      stepsSelection: [],
+      tableData: null,
       dialogType: '',
       form: {
         keyword: ''
       },
-      isDialogDisabled: false,
       selected: {
         id: '',
         title: '',
@@ -137,6 +181,70 @@ export default {
     }
   },
   methods: {
+    showSteps (id) {
+      this.getStepList({
+        category_id: id
+      }, true)
+    },
+    onStepsListConfirm (value) {
+      this.showStepsDialog = false
+      const data = {
+        stages: this.stepsSelection,
+        ...value
+      }
+      api.POST(config.activity.typeRelateStage, data)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.$notify({
+            title: '成功',
+            message: '关联成功',
+            type: 'success'
+          })
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    onStepSizeChange (value) {
+      this.getStepList(value)
+    },
+    onStepPageChange (value) {
+      this.getStepList(value)
+    },
+    onStepsListClose () {
+      this.showStepsDialog = false
+    },
+    onStepListSearch (value) {
+      this.getStepList(value)
+    },
+    onStepSelection (value) {
+      value.forEach(item => {
+        this.stepsSelection.push(item.id)
+      })
+    },
+    getStepList (data = null, showDialog) {
+      api.GET(config.activity.typeShowStage, data)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          if (showDialog) {
+            this.showStepsDialog = !!showDialog
+          }
+          this.tableData = response.data.data
+          this.tableData.id = data.category_id
+          this.tableData.data.forEach(row => {
+            this.$nextTick(() => {
+              if (row.categories.length !== 0) {
+                this.$refs.stepTable.toggleRowSelection(row)
+              }
+            })
+          })
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
     createType () {
       this.showDialog = false
       api.POST(config.activity.typeCreate, this.selected)

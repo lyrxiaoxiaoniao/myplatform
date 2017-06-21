@@ -19,7 +19,7 @@
         <el-form-item label="板块名称" required>
           <el-input v-model="formData.name" placeholder="示例:admin-rules"></el-input>
         </el-form-item>
-        <el-form-item label="板块显示名称" required>
+        <el-form-item label="显示名称" required>
           <el-input v-model="formData.displayName"></el-input>
         </el-form-item>
         <el-form-item label="板块描述">

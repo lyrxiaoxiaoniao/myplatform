@@ -71,10 +71,13 @@ import SCAuthTableView from './components/views/auth/AuthTable.vue'
 import SCAuthRoleView from './components/views/auth/LinkRole.vue'
 import SCAuthMenuView from './components/views/auth/LinkMenu.vue'
 
+import SCActivityList from 'components/views/activity/List'
 import SCActivityCategory from 'components/views/activity/Category'
 import SCActivitySteps from 'components/views/activity/Steps'
 import SCActivityProperty from 'components/views/activity/Property'
 import SCActivityOption from 'components/views/activity/Options'
+
+import SCTrainingPublish from 'components/views/training/Publish'
 
 const routes = [
   {
@@ -410,6 +413,11 @@ const routes = [
         name: '活动管理',
         meta: { description: '活动管理' },
         children: [{
+          path: 'index',
+          component: SCActivityList,
+          name: '活动列表管理',
+          meta: { description: '活动列表' }
+        }, {
           path: 'category',
           component: DashMainView,
           redirect: '/admin/activity/category/index',
@@ -457,6 +465,18 @@ const routes = [
             name: '活动属性值列表',
             meta: { description: '活动属性值管理' }
           }]
+        }]
+      }, {
+        path: 'training',
+        component: DashMainView,
+        redirect: '/admin/training/index',
+        name: '培训管理',
+        meta: { description: '活动管理' },
+        children: [{
+          path: 'publish',
+          component: SCTrainingPublish,
+          name: '培训发布',
+          meta: { description: '发布新的活动' }
         }]
       }, {
         path: 'userlabelmanage',
