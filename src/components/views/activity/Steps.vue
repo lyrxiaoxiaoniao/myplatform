@@ -13,7 +13,7 @@
     </div>
     <div slot="kobe-table-content" class="kobe-table">
         <el-table :data="response.data" border stripe>
-            <el-table-column prop="id" label="步骤编号"  width="180"></el-table-column>
+            <el-table-column prop="id" label="ID"  width="180"></el-table-column>
             <el-table-column prop="title" label="活动步骤名称"></el-table-column>
             <el-table-column prop="type_key" label="活动步骤类型"></el-table-column>
             <el-table-column label="活动步骤状态">
@@ -37,22 +37,17 @@
               <el-form label-width="100px" :model="addForm">
                 <el-row type="flex" justify="space-between">
                   <el-col :span="12">
-                    <el-form-item :required="true" label="步骤编号">
-                      <el-input v-model="addForm.id"></el-input>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="12">
                     <el-form-item :required="true" label="步骤名称">
                         <el-input v-model="addForm.title"></el-input>
                     </el-form-item>
                   </el-col>
-                </el-row>
-                <el-row type="flex" justify="space-between">
                   <el-col :span="12">
                     <el-form-item :required="true"  label="步骤类型">
                       <el-input v-model="addForm.type_key"></el-input>
                     </el-form-item>
                   </el-col>
+                </el-row>
+                <el-row type="flex" justify="space-between">
                   <el-col :span="12">
                     <el-form-item :required="true"  label="步骤状态">
                       <el-select placeholder="请选择状态" v-model="addForm.status">
@@ -80,8 +75,8 @@
                     <el-form label-width="100px" :model="editInfo">
                       <el-row type="flex" justify="space-between">
                         <el-col :span="12">
-                          <el-form-item label="步骤编号">
-                            <el-input v-model="editInfo.id"></el-input>
+                          <el-form-item label="ID">
+                            <el-input disabled="true" v-model="editInfo.id"></el-input>
                           </el-form-item>
                         </el-col>
                         <el-col :span="12">
@@ -127,7 +122,7 @@
                           <span class="sc-activity-steps-check-title">活动步骤信息</span>
                         </div>
                         <div class="sc-activity-steps-check-box">
-                          <div>步骤编号: <span style="padding-left:10px;">{{ userInfo.id }}</span></div>
+                          <div>ID: <span style="padding-left:10px;">{{ userInfo.id }}</span></div>
                           <div>步骤名称: <span style="padding-left:10px;">{{ userInfo.title }}</span></div>
                           <div>步骤类型: <span style="padding-left:10px;">{{ userInfo.type_key }}</span></div>
                           <div>步骤状态:<span style="padding-left:10px;">{{ userInfo.status == 1 ? "开启" : "关闭" }}</span></div>
