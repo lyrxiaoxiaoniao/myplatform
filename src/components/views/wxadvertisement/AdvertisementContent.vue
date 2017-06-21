@@ -2,13 +2,13 @@
   <div class="sc-advertisement">
 		<el-row class="sc-top-header">
 		  <el-col :span="12">
-        <el-button type="primary" class="sc-top-btn" @click="toAddPoints()">新增</el-button>
+        <el-button type="primary" class="sc-top-btn" @click="addData()">新增</el-button>
       </el-col>
 		  <el-col :span="3">
          <template>
-          <el-select v-model="value" placeholder="请选择" style="float:right;margin-right:10px">
+          <el-select v-model="value1" placeholder="请选择" style="float:right;margin-right:10px;width:100px;">
             <el-option
-              v-for="item in options"
+              v-for="item in option"
               :key="item.value"
               :label="item.label"
               :value="item.value">
@@ -29,7 +29,10 @@
       </el-col>
 		</el-row>
 	  	<div class="sc-article-table-content">
-	      <el-table :data="data.data" border stripe>
+	      <el-table :data="data.data" border stripe
+          @selection-change="handleSelectionChange"
+          ref="multipleTable">
+          <el-table-column type="selection" width="55"></el-table-column>
 	        <el-table-column type="index" label="ID" width="50"></el-table-column>
 	        <el-table-column prop="title" label="广告标题" ></el-table-column>
 	        <el-table-column prop="type" label="广告分类" width="120"></el-table-column>
@@ -46,18 +49,19 @@
               </el-switch>
             </template> 
           </el-table-column>
-	        <el-table-column label="操作" width="210">
+	        <el-table-column label="操作" width="160">
 	          <template scope="scope">
-	            <el-button size="small" icon="edit" @click="onEditAdvertisement(scope.row.id)" title="修改"></el-button>
-	            <el-button size="small" icon="information" @click="toAdvertisementDetail(scope.row.id)" title="查看"></el-button>
+	            <el-button size="small" icon="edit" @click="editData(scope.row.id)" title="修改"></el-button>
+	            <el-button size="small" icon="date" @click="onUpAdv(scope.row.id)" title="上画"></el-button>
+              <!--<el-button size="small" icon="information" @click="toAdvertisementDetail(scope.row.id)" title="查看"></el-button>-->
 	            <el-button size="small" icon="delete2" @click="onDeleteAdvertisement(scope.row.id)" title="删除"></el-button>
-              <el-button size="small" icon="date" @click="onUpAdv(scope.row.id)" title="上画"></el-button>
 	          </template>
 	        </el-table-column>
 	      </el-table>
 	    </div>
 	    <div class="sc-article-table-footer">
 	      <el-row type="flex" justify="center">
+          <el-button type="text" style="color: #48576a; padding:5px 0;" @click="onDeleteAdvertisement()">删除</el-button>
 	        <el-col :span="12">
 	          <el-pagination
 	            @size-change="handleSizeChange"
@@ -71,6 +75,83 @@
 	        </el-col>
 	      </el-row>
 	    </div>
+    <el-dialog :title="isEdit ? '修改广告内容' : '新增广告内容'" :visible.sync="dialogFormVisible">
+       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+        <el-form-item label="广告标题" prop="title">
+          <el-input v-model="ruleForm.title" placeholder="请输入标题"></el-input>
+        </el-form-item>
+        <el-form-item label="点位分类" prop="typeId" required>
+          <template>
+            <el-select v-model="value" placeholder="请选择">
+              <el-option
+                v-for="item in options"
+                :label="item.type"
+                :value="item.id">
+              </el-option>
+            </el-select>
+          </template>
+        </el-form-item>
+        <el-form-item label="广告内容" prop="poster" required>
+          <el-upload
+            class="avatar-uploader"
+            :action="uploadUrl"
+            :show-file-list="false"
+            :file-list="imageList"
+            :on-success="onUploadSuccess"
+            :on-remove="onRemovePic"
+            :on-error="onUploadError"
+            :before-upload="beforeAvatarUpload"
+            list-type="picture">
+            <img v-if="imageURL !== ''" :src="imageURL" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            <div slot="tip" class="el-upload__tip">只能上传jpg图片文件，且不超过2M</div>
+          </el-upload>
+        </el-form-item>
+        <el-form-item label="点位类型" prop="linkType" required>
+          <el-radio-group v-model="ruleForm.linkType">
+            <el-radio label="1">不跳转链接</el-radio>
+            <el-radio label="2">完整地址链接</el-radio>
+            <el-radio label="3">系统内部链接</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="链接地址" prop="link">
+          <el-input v-model="ruleForm.link" placeholder="链接地址，外链请使用完整http://或者https://开始"></el-input>
+        </el-form-item>
+        <el-form-item label="文字链接" prop="content">
+          <el-input v-model="ruleForm.content" placeholder="文字链内容，替换alt"></el-input>
+        </el-form-item>
+        <el-form-item label="内容备注" prop="memo">
+          <el-input v-model="ruleForm.memo" placeholder="内容备注"></el-input>
+        </el-form-item>
+        <el-form-item label="内容标签" prop="tagList">
+          <el-tag
+            :key="tag"
+            v-for="tag in dynamicTags"
+            :closable="true"
+            :close-transition="false"
+            @close="handleClose(tag)"
+            type="danger"
+            style="margin:0 5px"
+          >
+          {{tag}}
+          </el-tag>
+          <el-input
+              class="input-new-tag"
+              v-if="inputVisible"
+              v-model="inputValue"
+              ref="saveTagInput"
+              @keyup.enter.native="handleInputConfirm"
+              @blur="handleInputConfirm"
+            >
+          </el-input>
+          <el-button v-else class="button-new-tag" size="small" @click="showInput">新增</el-button>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -81,22 +162,219 @@ import api from 'src/api'
 export default {
   data () {
     return {
-      options: [{
+      id: null,
+      isEdit: false,
+      dialogFormVisible: false,
+      multipleSelection: [],
+      ids: [],
+      option: [{
         value: '1',
         label: '广告标题'
       }, {
         value: '2',
         label: '广告分类'
       }],
-      value: '',
+      value1: '',
       data: {},
-      deleteId: null,
-      keyword: null
+      keyword: null,
+      options: [],
+      value: '',
+      dynamicTags: [],
+      inputVisible: false,
+      inputValue: '',
+      imageList: [],
+      imageURL: '',
+      uploadUrl: config.serverURI + config.uploadImgAPI,
+      dialogVisible: false,
+      ruleForm: {
+        title: '',
+        poster: '',
+        link: '',
+        linkType: '',
+        memo: '',
+        content: '',
+        typeId: '',
+        tagList: ''
+      },
+      inpValue: [],
+      rules: {
+        title: [
+          { required: true, message: '请输入标题', trigger: 'blur' }
+        ],
+        link: [
+          { required: true, message: '请输入广告地址', trigger: 'blur' }
+        ],
+        linkType: [
+          { required: true, message: '请输入广告类型', trigger: 'change' }
+        ]
+      }
     }
   },
   computed: {
   },
   methods: {
+    // 新增方法
+    addData () {
+      this.isEdit = false
+      this.dialogFormVisible = true
+      this.ruleForm = {
+        title: '',
+        poster: '',
+        link: '',
+        linkType: '1',
+        memo: '',
+        content: '',
+        typeId: '1',
+        tagList: ''
+      }
+      this.imageURL = ''
+      this.dynamicTags = []
+      this.getTypeId()
+    },
+    editData (id) {
+      this.id = id
+      this.isEdit = true
+      this.dialogFormVisible = true
+      this.getData(id)
+      this.getTypeId()
+    },
+    handleClose (tag) {
+      this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1)
+    },
+    showInput () {
+      this.inputVisible = true
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus()
+      })
+    },
+    handleInputConfirm () {
+      let inputValue = this.inputValue
+      if (inputValue) {
+        this.dynamicTags.push(inputValue)
+      }
+      this.inputVisible = false
+      this.inputValue = ''
+    },
+    // 上传
+    beforeAvatarUpload (file) {
+      const isJPG = file.type === 'image/jpeg'
+      const isLt2M = file.size / 1024 / 1024 < 2
+
+      if (!isJPG) {
+        this.$message.error('上传图片只能是 JPG 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传图片大小不能超过 2MB!')
+      }
+      return isJPG && isLt2M
+    },
+    onUploadSuccess (response, file, fileList) {
+      if (response.errcode === '0000') {
+        this.imageURL = file.url
+        this.ruleForm.poster = response.data[0]
+      }
+    },
+    onUploadError (error, file) {
+      this.$message.error(error)
+    },
+    onRemovePic (file, fileList) {
+      this.ruleForm.poster = ''
+    },
+    getData (id) {
+      if (this.options) {
+        api.GET(config.showAdvertisementAPI, {id: id})
+        .then(response => {
+          if (response.status !== 200) {
+            this.error = response.statusText
+            return
+          }
+          if (response.data.errcode === '0000' && response.data.data) {
+            const res = response.data.data
+            this.responseData = res
+            this.ruleForm = res
+            this.ruleForm.linkType = String(res.linkType)
+            this.value = String(res.typeId)
+            this.imageURL = res.poster
+            this.dynamicTags = res.tagList.split(',')
+          }
+        })
+      }
+    },
+    submitForm (formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          var sendURL
+          var obj = {}
+          obj.typeId = Number(this.value)
+          obj.link = this.ruleForm.link
+          obj.linkType = Number(this.ruleForm.linkType)
+          obj.content = this.ruleForm.content
+          obj.title = this.ruleForm.title
+          obj.poster = this.ruleForm.poster
+          obj.memo = this.ruleForm.memo
+          obj.tagList = this.dynamicTags.join(',')
+          if (this.isEdit) {
+            obj.id = this.id
+            sendURL = config.editAdvertisementAPI
+          } else {
+            sendURL = config.addAdvertisementAPI
+          }
+          api.POST(sendURL, obj)
+            .then(response => {
+              if (response.status !== 200) {
+                this.error = response.statusText
+                return
+              }
+              if (response.data.errcode === '0000') {
+                this.$notify({
+                  title: '成功',
+                  message: '操作成功！！',
+                  type: 'success'
+                })
+                this.showList()
+                this.dialogFormVisible = false
+              }
+            })
+        } else {
+          return false
+        }
+      })
+    },
+    getTypeId () {
+      api.GET(config.getTypeAdvPointAPI)
+      .then(response => {
+        if (response.status !== 200) {
+          this.error = response.statusText
+          return
+        }
+        if (response.data.errcode === '0000') {
+          this.options = this.transformNumber(response.data.data)
+        }
+      })
+    },
+    transformNumber (res) {
+      res.forEach(v => {
+        v.id = String(v.id)
+      })
+      return res
+    },
+    // 新增方法
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row)
+        })
+      } else {
+        this.$refs.multipleTable.clearSelection()
+      }
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+      this.ids = []
+      this.multipleSelection.forEach(v => {
+        this.ids.push(v.id)
+      })
+    },
     changeNum (val) {
       if (val) {
         val = 1
@@ -169,35 +447,35 @@ export default {
         })
     },
     // 跳转新增广告页面
-    toAddPoints () {
-      this.$router.push({
-        path: '/admin/ad/content/add'
-      })
-    },
+    // toAddPoints () {
+    //   this.$router.push({
+    //     path: '/admin/ad/content/add'
+    //   })
+    // },
     /**
      * 跳转编辑广告页面
      * id ： 当前所在行id
      * */
-    onEditAdvertisement (id) {
-      this.$router.push({
-        path: '/admin/ad/content/edit',
-        query: {
-          id: id
-        }
-      })
-    },
+    // onEditAdvertisement (id) {
+    //   this.$router.push({
+    //     path: '/admin/ad/content/edit',
+    //     query: {
+    //       id: id
+    //     }
+    //   })
+    // },
      /**
      * 跳转广告页面详情
      * id ： 当前所在行id
      * */
-    toAdvertisementDetail (id) {
-      this.$router.push({
-        path: '/admin/ad/content/detail',
-        query: {
-          id: id
-        }
-      })
-    },
+    // toAdvertisementDetail (id) {
+    //   this.$router.push({
+    //     path: '/admin/ad/content/detail',
+    //     query: {
+    //       id: id
+    //     }
+    //   })
+    // },
     onUpAdv (id) {
       this.$router.push({
         path: '/admin/ad/upload/index',
@@ -210,14 +488,17 @@ export default {
      * 删除该条广告信息
      * id ： 当前所在行deleteId
      * */
-    onDeleteAdvertisement (id) {
-      this.deleteId = id
+    onDeleteAdvertisement (deleteid) {
+      if (deleteid) {
+        this.ids = []
+        this.ids.push(deleteid)
+      }
       this.$confirm('此操作将删除该广告点位，删除后，数据无法恢复。是否继续删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'error'
       }).then(() => {
-        api.POST(config.deleteAdvertisementAPI, {id: this.deleteId})
+        api.POST(config.deleteAdvertisementAPI, {ids: this.ids})
           .then(response => {
             if (response.status !== 200) {
               this.error = response.statusText
@@ -246,12 +527,12 @@ export default {
      * 根据搜索关键字来搜索匹配的字段
     */
     searchKeyword () {
-      if (this.value === '1') {
+      if (this.value1 === '1') {
         this.updateList({
           title: this.keyword
         })
       }
-      if (this.value === '2') {
+      if (this.value1 === '2') {
         this.updateList({
           type: this.keyword
         })
