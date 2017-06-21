@@ -44,6 +44,8 @@ import SCAdvertisementContent from './components/views/wxadvertisement/advertise
 import SCAdvertisementDetail from './components/views/wxadvertisement/contentPage/AdvertisementDetail.vue'
 import SCAddAdvertisement from './components/views/wxadvertisement/contentPage/AddAdvertisement.vue'
 import SCEditAdvertisement from './components/views/wxadvertisement/contentPage/EditAdvertisement.vue'
+import SCUpAdvContent from './components/views/wxadvertisement/upPage/adContent.vue'
+import SCUpAdvPoint from './components/views/wxadvertisement/upPage/adLocation.vue'
 
 import SCMenuTree from './components/views/menulist/MenuTree.vue'
 import SCMenuLink from './components/views/menulist/MenuJurisdiction.vue'
@@ -462,45 +464,83 @@ const routes = [
         name: '用户标签组管理',
         meta: { description: '管理信息' }
       }, {
-        path: 'advpoint',
-        component: SCAdvertisementPoints,
-        name: '广告点位管理',
-        meta: {description: '列表'}
-      }, {
-        path: 'addpoint',
-        component: SCAddPoints,
-        name: '新增广告点位',
-        meta: {description: '新增'}
-      }, {
-        path: 'editpoint',
-        component: SCEditPoints,
-        name: '广告点位修改',
-        meta: {description: '修改'}
-      }, {
-        path: 'pointdetail',
-        component: SCPointDetail,
-        name: '广告点位详情',
-        meta: {description: '详情'}
-      }, {
-        path: 'advertisementcontent',
-        component: SCAdvertisementContent,
-        name: '广告列表',
-        meta: {description: '管理'}
-      }, {
-        path: 'advertisementdetail',
-        component: SCAdvertisementDetail,
-        name: '广告列表详情页',
-        meta: {description: '详情页'}
-      }, {
-        path: 'addadvertisement',
-        component: SCAddAdvertisement,
-        name: '广告列表新增',
-        meta: {description: '新增'}
-      }, {
-        path: 'editadvertisement',
-        component: SCEditAdvertisement,
-        name: '广告列表修改',
-        meta: {description: '修改'}
+        path: 'ad',
+        component: DashMainView,
+        redirect: '/admin/ad/index',
+        name: '广告管理',
+        meta: {description: '广告管理'},
+        children: [{
+          path: 'point',
+          component: DashMainView,
+          redirect: '/admin/ad/point/index',
+          name: '广告点位管理',
+          meta: {description: '列表'},
+          children: [{
+            path: 'index',
+            component: SCAdvertisementPoints,
+            name: '广告点位管理列表',
+            meta: {description: '列表'}
+          }, {
+            path: 'add',
+            component: SCAddPoints,
+            name: '新增广告点位',
+            meta: {description: '新增'}
+          }, {
+            path: 'edit',
+            component: SCEditPoints,
+            name: '广告点位修改',
+            meta: {description: '修改'}
+          }, {
+            path: 'detail',
+            component: SCPointDetail,
+            name: '广告点位详情',
+            meta: {description: '详情'}
+          }]
+        }, {
+          path: 'content',
+          component: DashMainView,
+          redirect: '/admin/ad/content/index',
+          name: '广告内容管理',
+          meta: {description: '列表'},
+          children: [{
+            path: 'index',
+            name: '广告列表',
+            component: SCAdvertisementContent,
+            meta: {description: '管理'}
+          }, {
+            path: 'add',
+            component: SCAddAdvertisement,
+            name: '广告列表新增',
+            meta: {description: '新增'}
+          }, {
+            path: 'edit',
+            component: SCEditAdvertisement,
+            name: '广告列表修改',
+            meta: {description: '修改'}
+          }, {
+            path: 'detail',
+            component: SCAdvertisementDetail,
+            name: '广告列表详情页',
+            meta: {description: '详情页'}
+          }]
+        }, {
+          path: 'upload',
+          component: DashMainView,
+          redirect: '/admin/ad/upload/index',
+          name: '广告上画管理',
+          meta: {description: '广告上画管理'},
+          children: [{
+            path: 'index',
+            component: SCUpAdvContent,
+            name: '广告内容上画管理',
+            meta: {description: '按照广告内容上画到广告点位'}
+          }, {
+            path: 'point',
+            component: SCUpAdvPoint,
+            name: '广告点位上画管理',
+            meta: {description: '按照广告点位上画到广告内容'}
+          }]
+        }]
       }
     ]
   }, {

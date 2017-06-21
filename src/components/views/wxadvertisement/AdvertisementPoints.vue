@@ -1,15 +1,31 @@
 <template> 
   <div class="sc-advertisement">
 		<el-row class="sc-top-header">
-		  <el-col :span="19">
+		  <el-col :span="12">
         <el-button type="primary" class="sc-top-btn" @click="toAddPoints()">新增广告点位</el-button>
       </el-col>
-		  <el-col :span="5">
+		  <el-col :span="3">
+         <template>
+          <el-select v-model="value" placeholder="请选择" style="float:right;margin-right:10px">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </template>
+      </el-col>
+		  <el-col :span="6">
         <div class="grid-content">
           <el-input placeholder="请输入内容" v-model="keyword">
             <el-button slot="append" icon="search" class="hover-search" @click="searchKeyword()"></el-button>
           </el-input>
         </div>
+      </el-col>
+		  <el-col :span="3">
+        <el-button icon="upload2" type="primary" style="margin-left:20px;"></el-button>
+        <el-button icon="setting" type="primary"></el-button>
       </el-col>
 		</el-row>
 	  	<div class="sc-article-table-content">
@@ -27,9 +43,7 @@
                 v-model="scope.row.state"
                 on-text="开"
                 off-text="关"
-                on-color="#13ce66"
-                off-color="#ff4949"
-                @change="toswitch(scope.row.state)">
+                @change="toswitch(scope.row.state,scope.row.id)">
               </el-switch>
             </template> 
           </el-table-column>
@@ -38,7 +52,7 @@
 	            <el-button size="small" icon="edit" @click="onEditAdvertisement(scope.row.id)" title="修改"></el-button>
 	            <el-button size="small" icon="information" @click="toAdvertisementDetail(scope.row.id)" title="查看"></el-button>
 	            <el-button size="small" icon="delete2" @click="onDeleteAdvertisement(scope.row.id)" title="删除"></el-button>
-	            <el-button size="small" icon="date" @click="onDeleteAdvertisement(scope.row.id)" title="上画"></el-button>
+	            <el-button size="small" icon="date" @click="onUpadv(scope.row.id)" title="上画"></el-button>
 	          </template>
 	        </el-table-column>
 	      </el-table>
@@ -67,14 +81,47 @@
   export default {
     data () {
       return {
+        options: [{
+          value: '1',
+          label: '点位标识'
+        }, {
+          value: '2',
+          label: '点位名称'
+        }],
+        value: '',
         response: {},
-        keyword: null,
-        deleteId: null
+        deleteId: null,
+        keyword: null
       }
     },
     methods: {
-      toswitch (id) {
-        console.log(id)
+      changeNum (val) {
+        if (val) {
+          val = 1
+        } else {
+          val = 0
+        }
+        return val
+      },
+      toswitch (state, id) {
+        var obj = {
+          id: id,
+          state: this.changeNum(state)
+        }
+        api.POST(config.updateStateAdvPointAPI, obj)
+        .then(response => {
+          if (response.status !== 200) {
+            this.error = response.statusText
+            return
+          }
+          if (response.data.errcode === '0000') {
+            this.$notify({
+              title: '成功',
+              message: '修改状态成功！！！',
+              type: 'success'
+            })
+          }
+        })
       },
       // 将数据中所有的时间转换成 yyyy-mm-dd hh:mm:ss  state 状态值
       transformDate (res) {
@@ -120,31 +167,34 @@
             return
           }
           if (response.data.errcode === '0000') {
-            // console.log(response.data.data)
             this.response = this.transformDate(response.data.data)
-            console.log(this.response)
           }
         })
       },
       toAddPoints () {
-        console.log(1)
         this.$router.push({
-          path: 'addpoint'
+          path: '/admin/ad/point/add'
         })
       },
       onEditAdvertisement (id) {
-        console.log('edit')
         this.$router.push({
-          path: 'editpoint',
+          path: '/admin/ad/point/edit',
           query: {
             id: id
           }
         })
       },
       toAdvertisementDetail (id) {
-        console.log('查看')
         this.$router.push({
-          path: 'pointdetail',
+          path: '/admin/ad/point/detail',
+          query: {
+            id: id
+          }
+        })
+      },
+      onUpadv (id) {
+        this.$router.push({
+          path: '/admin/ad/upload/point',
           query: {
             id: id
           }
@@ -152,12 +202,11 @@
       },
       onDeleteAdvertisement (id) {
         this.deleteId = id
-        this.$confirm('你确定要删除本广告位吗?', '提示', {
+        this.$confirm('此操作将删除该广告点位，删除后，数据无法恢复。是否继续删除？', '删除', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          type: 'warning'
+          type: 'error'
         }).then(() => {
-          console.log('确定')
           api.POST(config.deleteAdvPointAPI, {id: this.deleteId})
           .then(response => {
             if (response.status !== 200) {
@@ -165,9 +214,10 @@
               return
             }
             if (response.data.errcode === '0000') {
-              this.$message({
-                type: 'success',
-                message: '删除成功!'
+              this.$notify({
+                title: '成功',
+                message: '删除成功',
+                type: 'success'
               })
               this.showList()
             }
@@ -176,30 +226,37 @@
             this.$message.error(error)
           })
         }).catch(() => {
-          console.log('取消')
-          this.$message({
-            type: 'info',
+          this.$notify.info({
+            title: '消息',
             message: '已取消删除'
           })
         })
       },
       // 关键字搜索
       searchKeyword () {
-        console.log(this.keyword)
-        this.updateList({
-          keyword: this.keyword
-        })
+        if (this.value === '1') {
+          this.updateList({
+            slug: this.keyword
+          })
+        }
+        if (this.value === '2') {
+          this.updateList({
+            spacename: this.keyword
+          })
+        }
       },
       handleSizeChange (value) {
         this.updateList({
           currentPage: this.response.currentPage,
-          pageSize: value
+          pageSize: value,
+          ...this.response.data
         })
       },
       handleCurrentChange (value) {
         this.updateList({
           currentPage: value,
-          pageSize: this.response.pageSize
+          pageSize: this.response.pageSize,
+          ...this.response.data
         })
       },
       // 为调接口
