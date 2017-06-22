@@ -78,7 +78,7 @@
                       <el-row type="flex" justify="space-between">
                         <el-col :span="12">
                           <el-form-item label="ID">
-                            <el-input disabled=true v-model="editInfo.id"></el-input>
+                            <el-input :disabled="true" v-model="editInfo.id"></el-input>
                           </el-form-item>
                         </el-col>
                         <el-col :span="12">
@@ -128,7 +128,7 @@
                           <div>步骤名称: <span style="padding-left:10px;">{{ userInfo.title }}</span></div>
                           <div>步骤类型: <span style="padding-left:10px;">{{ userInfo.type_key }}</span></div>
                           <div>步骤状态:<span style="padding-left:10px;">{{ userInfo.status == 1 ? "开启" : "关闭" }}</span></div>
-                          <div>描述: <span style="padding-left:10px;">{{ userInfo.description }}</span></div>
+                          <div>步骤描述: <span style="padding-left:10px;">{{ userInfo.description }}</span></div>
                         </div>
                   </el-card>
                 </el-col>
@@ -169,7 +169,6 @@ export default{
         keyword: ''
       },
       addForm: {
-        id: '',
         title: '',
         status: '',
         type_key: '',
@@ -239,7 +238,7 @@ export default{
       this.updateStepList(data)
     },
     addSteps () {
-      if (this.addForm.title === '' || this.addForm.type_key === '') {
+      if (this.addForm.title === '' || this.addForm.status === '' || this.addForm.type_key === '') {
         this.$message({
           message: '请输入信息',
           type: 'info'
@@ -270,6 +269,9 @@ export default{
       })
       .catch(error => {
         this.$message.error(error)
+      })
+      Object.keys(this.addForm).forEach(index => {
+        this.addForm[index] = ''
       })
     },
     checkInfo (user) {
