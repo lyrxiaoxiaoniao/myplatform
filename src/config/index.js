@@ -63,6 +63,7 @@ export default {
     stepCreate: '/activity/stage/create',
     stepDelete: '/activity/stage/delete',
     stepUpdate: '/activity/stage/update',
+    stepSort: '/activity/cs/update',
     optionList: '/activity/option/index',
     optionCreate: '/activity/option/create',
     optionDelete: '/activity/option/delete',

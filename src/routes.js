@@ -70,6 +70,7 @@ import SCActivityCategory from 'components/views/activity/Category'
 import SCActivitySteps from 'components/views/activity/Steps'
 import SCActivityProperty from 'components/views/activity/Property'
 import SCActivityOption from 'components/views/activity/Options'
+import SCActivitiAdd from 'components/views/activity/Add'
 
 import SCTrainingPublish from 'components/views/training/Publish'
 
@@ -411,6 +412,11 @@ const routes = [
           component: SCActivityList,
           name: '活动列表管理',
           meta: { description: '活动列表' }
+        }, {
+          path: 'publish',
+          component: SCActivitiAdd,
+          name: '活动发布',
+          meta: { description: '发布信息' }
         }, {
           path: 'category',
           component: DashMainView,

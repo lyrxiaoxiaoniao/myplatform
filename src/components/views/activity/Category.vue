@@ -118,9 +118,19 @@
             <el-table-column label="步骤排序">
               <template scope="scope">
                 <el-input
-                  @blur="onStepSortChange(scope.row)"
+                  @blur="onStepSortChange(scope.row, scope.row.categories[0].sort)"
+                  @keyup.enter.native="onStepSortChange(scope.row, scope.row.categories[0].sort)"
                   :disabled="!scope.row.isSelected"
-                  v-model="scope.row.categories[0] ? scope.row.categories[0].sort : sortNum"
+                  v-if="scope.row.categories[0]"
+                  v-model="scope.row.categories[0].sort"
+                  >
+                </el-input>
+                <el-input
+                  @blur="onStepSortChange(scope.row, scope.row.sort)"
+                  @keyup.enter.native="onStepSortChange(scope.row, scope.row.sort)"
+                  :disabled="!scope.row.isSelected"
+                  v-else="scope.row.categories[0]"
+                  v-model="scope.row.sort"
                   >
                 </el-input>
               </template>
@@ -191,9 +201,21 @@ export default {
     onStepsListConfirm (value) {
       this.showStepsDialog = false
     },
-    onStepSortChange (value) {
-      // TODO
+    onStepSortChange (value, sort) {
       console.log(value)
+      const data = {
+        sort: sort,
+        category_id: value.category_id,
+        stage_id: value.id
+      }
+      api.POST(config.activity.stepSort, data)
+      .then(response => {
+        if (response.data.errcode !== '0000') {
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     },
     onStepSizeChange (value) {
       this.getStepList(value)
@@ -256,6 +278,7 @@ export default {
                 row.isSelected = true
               } else {
                 row.isSelected = false
+                row.sort = ''
               }
             })
           })
