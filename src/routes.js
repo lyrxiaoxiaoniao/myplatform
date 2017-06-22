@@ -37,13 +37,7 @@ import SCWxTagUserListView from './components/views/wxusers/WxTagUserInfo.vue'
 import SCWxUserProfileView from './components/views/wxusers/WxUserProfile.vue'
 
 import SCAdvertisementPoints from './components/views/wxadvertisement/advertisementPoints.vue'
-import SCAddPoints from './components/views/wxadvertisement/pointsPage/AddPoint.vue'
-import SCEditPoints from './components/views/wxadvertisement/pointsPage/EditPoint.vue'
-import SCPointDetail from './components/views/wxadvertisement/pointsPage/PointDetail.vue'
 import SCAdvertisementContent from './components/views/wxadvertisement/advertisementContent.vue'
-import SCAdvertisementDetail from './components/views/wxadvertisement/contentPage/AdvertisementDetail.vue'
-import SCAddAdvertisement from './components/views/wxadvertisement/contentPage/AddAdvertisement.vue'
-import SCEditAdvertisement from './components/views/wxadvertisement/contentPage/EditAdvertisement.vue'
 import SCUpAdvContent from './components/views/wxadvertisement/upPage/adContent.vue'
 import SCUpAdvPoint from './components/views/wxadvertisement/upPage/adLocation.vue'
 
@@ -500,21 +494,6 @@ const routes = [
             component: SCAdvertisementPoints,
             name: '广告点位管理列表',
             meta: {description: '列表'}
-          }, {
-            path: 'add',
-            component: SCAddPoints,
-            name: '新增广告点位',
-            meta: {description: '新增'}
-          }, {
-            path: 'edit',
-            component: SCEditPoints,
-            name: '广告点位修改',
-            meta: {description: '修改'}
-          }, {
-            path: 'detail',
-            component: SCPointDetail,
-            name: '广告点位详情',
-            meta: {description: '详情'}
           }]
         }, {
           path: 'content',
@@ -527,21 +506,6 @@ const routes = [
             name: '广告列表',
             component: SCAdvertisementContent,
             meta: {description: '管理'}
-          }, {
-            path: 'add',
-            component: SCAddAdvertisement,
-            name: '广告列表新增',
-            meta: {description: '新增'}
-          }, {
-            path: 'edit',
-            component: SCEditAdvertisement,
-            name: '广告列表修改',
-            meta: {description: '修改'}
-          }, {
-            path: 'detail',
-            component: SCAdvertisementDetail,
-            name: '广告列表详情页',
-            meta: {description: '详情页'}
           }]
         }, {
           path: 'upload',
