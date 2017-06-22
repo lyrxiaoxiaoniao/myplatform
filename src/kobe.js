@@ -15,6 +15,7 @@ import InfoDialog from 'components/kobe/InfoDialog'
 import ActiveForm from 'components/kobe/ActiveForm'
 import TableDialog from 'components/kobe/TableDialog'
 import NumInput from 'components/kobe/NumInput'
+import DateInput from 'components/kobe/DateInput'
 
 const install = (Vue) => {
   Vue.component('kobe-login', Login)
@@ -29,6 +30,7 @@ const install = (Vue) => {
   Vue.component('kobe-active-form', ActiveForm)
   Vue.component('kobe-table-dialog', TableDialog)
   Vue.component('kobe-number-input', NumInput)
+  Vue.component('kobe-date-input', DateInput)
 }
 
 export default install

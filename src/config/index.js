@@ -58,6 +58,7 @@ export default {
     typeUpdate: '/activity/category/update',
     typeShowStage: '/activity/cs/show/relate/stage',
     typeRelateStage: '/activity/cs/create',
+    typeUnRelateStage: '/activity/cs/delete',
     stepList: '/activity/stage/index',
     stepCreate: '/activity/stage/create',
     stepDelete: '/activity/stage/delete',
@@ -69,7 +70,8 @@ export default {
     propertyList: '/activity/property/index',
     propertyCreate: '/activity/property/create',
     propertyDelete: '/activity/property/delete',
-    propertyUpdate: '/activity/property/update'
+    propertyUpdate: '/activity/property/update',
+    activityAdd: '/activity/category/stage'
   },
   menuAPI: '/admin/menu/show_left',
   deleteMenuAPI: '/admin/menu/delete',

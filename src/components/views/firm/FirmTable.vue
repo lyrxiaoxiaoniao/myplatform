@@ -92,8 +92,8 @@ export default {
   methods: {
     onAdvancedSearch () {
       const data = {
-        pageSize: 1,
-        currentPage: this.response.currentPage,
+        pageSize: this.response.pageSize,
+        currentPage: 1,
         ...this.form
       }
       this.updateList(data)

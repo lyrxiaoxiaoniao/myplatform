@@ -1,6 +1,10 @@
 <template>
-  <el-form-item :label="data.key">
-    <el-input v-model="data.value" @change="onChange"></el-input>
+  <el-form-item :label="data.title">
+    <el-input
+      v-model="data.value"
+      @change="onChange"
+      :placeholder="data.description"
+      ></el-input>
   </el-form-item>
 </template>
 
@@ -11,7 +15,7 @@ export default {
     data: {
       type: Object,
       default: {
-        key: '',
+        title: '',
         value: ''
       }
     }

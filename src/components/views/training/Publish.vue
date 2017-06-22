@@ -1,9 +1,12 @@
 <template>
-  <div class="training-publish-component">
+  <div class="training-publish-component" v-if="response">
     <el-tabs v-model="selectedTab">
-      <template v-for="item in data">
-        <el-tab-pane :label="item.name" :name="item.name">
-          <kobe-active-form v-if="item.name === 'first'" :data="array"></kobe-active-form>
+      <template v-for="item in response">
+        <el-tab-pane :label="item.title" :name="item.title">
+          <kobe-active-form
+            v-if="item.properties.length !== 0"
+            :data="item.properties">
+          </kobe-active-form>
         </el-tab-pane>
       </template>
     </el-tabs>
@@ -11,39 +14,39 @@
 </template>
 
 <script>
+import api from 'src/api'
+import config from 'src/config'
+
 export default {
   name: 'sc-training-publish',
   data () {
     return {
+      error: null,
+      response: null,
       selectedTab: '',
-      array: [{
-        type: 'input',
-        data: {
-          key: '活动名称',
-          value: 'value'
-        }
-      }, {
-        type: 'number',
-        data: {
-          key: '活动人数',
-          value: 50
-        }
-      }],
-      data: [
-        { name: 'first', content: '111', type: 'input' },
-        { name: 'second', content: '222', type: 'number' },
-        { name: 'third', content: '333', type: 'input' },
-        { name: 'fourth', content: '444', type: 'input' },
-        { name: 'fifth', content: '555', type: 'input' }
-      ],
       form: {
       }
     }
   },
   methods: {
+    getActivityForm () {
+      api.GET(config.activity.activityAdd, {
+        category_id: 12
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          console.log(response.data.data)
+          this.response = response.data.data
+          this.selectedTab = this.response[0].title
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    }
   },
   mounted () {
-    this.selectedTab = this.data[0].name
+    this.getActivityForm()
   }
 }
 </script>

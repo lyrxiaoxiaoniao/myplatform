@@ -1,9 +1,10 @@
 <template>
   <div class="kobe-number-input">
-    <el-form-item :label="data.key">
+    <el-form-item :label="data.title">
       <el-input-number
         @change="onChange"
         v-model="data.value"
+        :placeholder="data.description"
         :min="min"
         :max="max"
         >
