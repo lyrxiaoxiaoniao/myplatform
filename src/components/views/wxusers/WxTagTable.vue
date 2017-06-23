@@ -5,10 +5,11 @@
         type="flex"
         justify="end"
         >
-        <el-col :span="5">
-          <el-input placeholder="请输入搜索关键字" v-model="form.name"></el-input>
+        <el-col :span="7">
+          <el-input placeholder="请输入搜索关键字" v-model="form.name">
+            <el-button slot="append" @click="onSearch" icon="search"></el-button>
+          </el-input>
         </el-col>
-        <el-button @click="onSearch" icon="search"></el-button>
         <el-button @click="addTag" type="primary">新增</el-button>
         <el-button icon="upload2" type="primary"></el-button>
         <el-button icon="setting" type="primary"></el-button>

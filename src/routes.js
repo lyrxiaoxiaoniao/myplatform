@@ -37,13 +37,9 @@ import SCWxTagUserListView from './components/views/wxusers/WxTagUserInfo.vue'
 import SCWxUserProfileView from './components/views/wxusers/WxUserProfile.vue'
 
 import SCAdvertisementPoints from './components/views/wxadvertisement/advertisementPoints.vue'
-import SCAddPoints from './components/views/wxadvertisement/pointsPage/AddPoint.vue'
-import SCEditPoints from './components/views/wxadvertisement/pointsPage/EditPoint.vue'
-import SCPointDetail from './components/views/wxadvertisement/pointsPage/PointDetail.vue'
 import SCAdvertisementContent from './components/views/wxadvertisement/advertisementContent.vue'
-import SCAdvertisementDetail from './components/views/wxadvertisement/contentPage/AdvertisementDetail.vue'
-import SCAddAdvertisement from './components/views/wxadvertisement/contentPage/AddAdvertisement.vue'
-import SCEditAdvertisement from './components/views/wxadvertisement/contentPage/EditAdvertisement.vue'
+import SCUpAdvContent from './components/views/wxadvertisement/upPage/adContent.vue'
+import SCUpAdvPoint from './components/views/wxadvertisement/upPage/adLocation.vue'
 
 import SCMenuTree from './components/views/menulist/MenuTree.vue'
 import SCMenuLink from './components/views/menulist/MenuJurisdiction.vue'
@@ -69,10 +65,14 @@ import SCAuthTableView from './components/views/auth/AuthTable.vue'
 import SCAuthRoleView from './components/views/auth/LinkRole.vue'
 import SCAuthMenuView from './components/views/auth/LinkMenu.vue'
 
+import SCActivityList from 'components/views/activity/List'
 import SCActivityCategory from 'components/views/activity/Category'
 import SCActivitySteps from 'components/views/activity/Steps'
 import SCActivityProperty from 'components/views/activity/Property'
 import SCActivityOption from 'components/views/activity/Options'
+import SCActivitiAdd from 'components/views/activity/Add'
+
+import SCTrainingPublish from 'components/views/training/Publish'
 
 const routes = [
   {
@@ -408,6 +408,16 @@ const routes = [
         name: '活动管理',
         meta: { description: '活动管理' },
         children: [{
+          path: 'index',
+          component: SCActivityList,
+          name: '活动列表管理',
+          meta: { description: '活动列表' }
+        }, {
+          path: 'publish',
+          component: SCActivitiAdd,
+          name: '活动发布',
+          meta: { description: '发布信息' }
+        }, {
           path: 'category',
           component: DashMainView,
           redirect: '/admin/activity/category/index',
@@ -457,50 +467,70 @@ const routes = [
           }]
         }]
       }, {
+        path: 'training',
+        component: DashMainView,
+        redirect: '/admin/training/index',
+        name: '培训管理',
+        meta: { description: '活动管理' },
+        children: [{
+          path: 'publish',
+          component: SCTrainingPublish,
+          name: '培训发布',
+          meta: { description: '发布新的活动' }
+        }]
+      }, {
         path: 'userlabelmanage',
         component: SCUserLabelManage,
         name: '用户标签组管理',
         meta: { description: '管理信息' }
       }, {
-        path: 'advpoint',
-        component: SCAdvertisementPoints,
-        name: '广告点位管理',
-        meta: {description: '列表'}
-      }, {
-        path: 'addpoint',
-        component: SCAddPoints,
-        name: '新增广告点位',
-        meta: {description: '新增'}
-      }, {
-        path: 'editpoint',
-        component: SCEditPoints,
-        name: '广告点位修改',
-        meta: {description: '修改'}
-      }, {
-        path: 'pointdetail',
-        component: SCPointDetail,
-        name: '广告点位详情',
-        meta: {description: '详情'}
-      }, {
-        path: 'advertisementcontent',
-        component: SCAdvertisementContent,
-        name: '广告列表',
-        meta: {description: '管理'}
-      }, {
-        path: 'advertisementdetail',
-        component: SCAdvertisementDetail,
-        name: '广告列表详情页',
-        meta: {description: '详情页'}
-      }, {
-        path: 'addadvertisement',
-        component: SCAddAdvertisement,
-        name: '广告列表新增',
-        meta: {description: '新增'}
-      }, {
-        path: 'editadvertisement',
-        component: SCEditAdvertisement,
-        name: '广告列表修改',
-        meta: {description: '修改'}
+        path: 'ad',
+        component: DashMainView,
+        redirect: '/admin/ad/index',
+        name: '广告管理',
+        meta: {description: '广告管理'},
+        children: [{
+          path: 'point',
+          component: DashMainView,
+          redirect: '/admin/ad/point/index',
+          name: '广告点位管理',
+          meta: {description: '列表'},
+          children: [{
+            path: 'index',
+            component: SCAdvertisementPoints,
+            name: '广告点位管理列表',
+            meta: {description: '列表'}
+          }]
+        }, {
+          path: 'content',
+          component: DashMainView,
+          redirect: '/admin/ad/content/index',
+          name: '广告内容管理',
+          meta: {description: '列表'},
+          children: [{
+            path: 'index',
+            name: '广告列表',
+            component: SCAdvertisementContent,
+            meta: {description: '管理'}
+          }]
+        }, {
+          path: 'upload',
+          component: DashMainView,
+          redirect: '/admin/ad/upload/index',
+          name: '广告上画管理',
+          meta: {description: '广告上画管理'},
+          children: [{
+            path: 'index',
+            component: SCUpAdvContent,
+            name: '广告内容上画管理',
+            meta: {description: '按照广告内容上画到广告点位'}
+          }, {
+            path: 'point',
+            component: SCUpAdvPoint,
+            name: '广告点位上画管理',
+            meta: {description: '按照广告点位上画到广告内容'}
+          }]
+        }]
       }
     ]
   }, {

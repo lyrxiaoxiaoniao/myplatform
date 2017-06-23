@@ -26,15 +26,20 @@
         <el-table-column prop="content" label="内容"></el-table-column>
         <el-table-column prop="url" label="链接"></el-table-column>
         <el-table-column prop="sort" label="排序" width="80"></el-table-column>
-        <el-table-column prop="active" label="状态" width="80"></el-table-column>
+        <el-table-column label="状态" width="80">
+          <template scope="scope">
+            {{ scope.row.active | isOpen }}
+          </template>
+        </el-table-column>
         <el-table-column 
-          width="180"
+          width="220"
           label="操作"
           >
           <template scope="scope">
-            <el-button @click="openDialog(e, scope.row)" size="small" icon="edit"></el-button>
-            <el-button size="small" icon="information"></el-button>
+            <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button>
+            <el-button @click="openDialog(e, scope.row, 'view')" size="small" icon="information"></el-button>
             <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
+            <el-button @click="showSteps(scope.row.id)" size="small">步骤</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -44,38 +49,38 @@
           <el-row type="flex">
             <el-col :span="12">
               <el-form-item label="分类名称" required>
-                <el-input v-model="selected.title"></el-input>
+                <el-input v-model="selected.title" :disabled="isDialogDisabled"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="排序" required>
-                <el-input v-model="selected.sort"></el-input>
+                <el-input v-model="selected.sort" :disabled="isDialogDisabled"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row type="flex">
             <el-col :span="12">
               <el-form-item label="键值" required>
-                <el-input v-model="selected.type_key"></el-input>
+                <el-input placeholder="示例: check_attendance" v-model="selected.type_key" :disabled="isDialogDisabled"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="状态" required>
-                <el-select v-model="selected.active">
+                <el-select v-model="selected.active" :disabled="isDialogDisabled">
                   <el-option label="开启" value="1"></el-option>
-                  <el-option label="关闭" value="2"></el-option>
+                  <el-option label="关闭" value="0"></el-option>
                 </el-select>  
               </el-form-item>
             </el-col>
           </el-row>
           <el-form-item label="链接">
-            <el-input v-model="selected.url"></el-input>
+            <el-input placeholder="示例:https://www.example.com" v-model="selected.url" :disabled="isDialogDisabled"></el-input>
           </el-form-item>
           <el-form-item label="描述">
-            <el-input type="textarea" v-model="selected.brief"></el-input>
+            <el-input type="textarea" v-model="selected.brief" :disabled="isDialogDisabled"></el-input>
           </el-form-item>
           <el-form-item label="内容">
-            <el-input type="textarea" v-model="selected.content"></el-input>
+            <el-input type="textarea" v-model="selected.content" :disabled="isDialogDisabled"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -84,6 +89,56 @@
           <el-button @click="editType" v-if="dialogType === 'edit'">确定</el-button>
         </div>
       </el-dialog>
+      <kobe-table-dialog
+        @search="onStepListSearch"
+        @close="onStepsListClose"
+        @confirm="onStepsListConfirm"
+        @sizeChange="onStepSizeChange"
+        @pageChange="onStepPageChange"
+        :tableData="tableData"
+        title="活动分类步骤"
+        :show="showStepsDialog"
+        v-if="tableData">
+        <div slot="table">
+          <el-table
+            boder
+            stripe
+            :data="tableData.data"
+            ref="stepTable"
+            @select="onStepsTableSelection"
+            @selection-change="onStepSelection">
+            <el-table-column type="selection" width="40"></el-table-column>
+            <el-table-column prop="id" label="ID" width="50"></el-table-column>
+            <el-table-column prop="title" label="步骤名称"></el-table-column>
+            <el-table-column label="状态">
+              <template scope="scope">
+                {{ scope.row.status | isOpen }}
+              </template>
+            </el-table-column>
+            <el-table-column label="步骤排序">
+              <template scope="scope">
+                <el-input
+                  @blur="onStepSortChange(scope.row, scope.row.categories[0].sort)"
+                  @keyup.enter.native="onStepSortChange(scope.row, scope.row.categories[0].sort)"
+                  :disabled="!scope.row.isSelected"
+                  v-if="scope.row.categories[0]"
+                  v-model="scope.row.categories[0].sort"
+                  >
+                </el-input>
+                <el-input
+                  @blur="onStepSortChange(scope.row, scope.row.sort)"
+                  @keyup.enter.native="onStepSortChange(scope.row, scope.row.sort)"
+                  :disabled="!scope.row.isSelected"
+                  v-else="scope.row.categories[0]"
+                  v-model="scope.row.sort"
+                  >
+                </el-input>
+              </template>
+            </el-table-column>
+            <el-table-column prop="description" label="步骤描述"></el-table-column>
+          </el-table>
+        </div>
+      </kobe-table-dialog>
     </div>
 
     <div slot="kobe-table-footer" class="kobe-table-footer">
@@ -101,6 +156,7 @@
         </el-col>
       </el-row>
     </div>
+
   </kobe-table>
 </template>
 
@@ -115,7 +171,12 @@ export default {
       response: null,
       error: null,
       showDialog: false,
+      isDialogDisabled: false,
+      showStepsDialog: false,
+      stepsSelection: [],
+      tableData: null,
       dialogType: '',
+      sortNum: '',
       form: {
         keyword: ''
       },
@@ -132,6 +193,101 @@ export default {
     }
   },
   methods: {
+    showSteps (id) {
+      this.getStepList({
+        category_id: id
+      }, true)
+    },
+    onStepsListConfirm (value) {
+      this.showStepsDialog = false
+    },
+    onStepSortChange (value, sort) {
+      console.log(value)
+      const data = {
+        sort: sort,
+        category_id: value.category_id,
+        stage_id: value.id
+      }
+      api.POST(config.activity.stepSort, data)
+      .then(response => {
+        if (response.data.errcode !== '0000') {
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    onStepSizeChange (value) {
+      this.getStepList(value)
+    },
+    onStepPageChange (value) {
+      this.getStepList(value)
+    },
+    onStepsListClose () {
+      this.showStepsDialog = false
+    },
+    onStepListSearch (value) {
+      this.getStepList(value)
+    },
+    onStepsTableSelection (selection, row) {
+      if (row.categories.length === 0) {
+        this.toggleRelation(config.activity.typeRelateStage, {
+          categories: [row.category_id],
+          stages: [row.id]
+        })
+      } else {
+        this.toggleRelation(config.activity.typeUnRelateStage, {
+          categories: [row.category_id],
+          stages: [row.id]
+        })
+      }
+    },
+    onStepSelection (value) {
+      this.tableData.data.forEach(item => {
+        item.isSelected = false
+      })
+      value.forEach(item => {
+        this.stepsSelection.push(item.id)
+        item.isSelected = true
+      })
+    },
+    toggleRelation(URL, data) {
+      api.POST(URL, data)
+      .then(response => {
+        if (response.data.errcode !== '0000') {
+          this.$message.error('发生了错误,请重试')
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    getStepList (data = null, showDialog) {
+      api.GET(config.activity.typeShowStage, data)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          if (showDialog) {
+            this.showStepsDialog = !!showDialog
+          }
+          this.tableData = response.data.data
+          this.tableData.id = data.category_id
+          this.tableData.data.forEach(row => {
+            this.$nextTick(() => {
+              if (row.categories.length !== 0) {
+                this.$refs.stepTable.toggleRowSelection(row)
+                row.isSelected = true
+              } else {
+                row.isSelected = false
+                row.sort = ''
+              }
+            })
+          })
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
     createType () {
       this.showDialog = false
       api.POST(config.activity.typeCreate, this.selected)
@@ -187,19 +343,27 @@ export default {
       }
       this.getList(data)
     },
-    openDialog (e, data = null) {
-      if (data !== null) {
+    openDialog (e, data = null, type = null) {
+      if (data !== null && type === 'edit') {
         this.dialogType = 'edit'
+        this.isDialogDisabled = false
+        this.selected = {
+          ...this.selected,
+          ...data
+        }
+      } else if (data !== null && type === 'view') {
+        this.dialogType = 'view'
+        this.isDialogDisabled = true
         this.selected = {
           ...this.selected,
           ...data
         }
       } else {
+        this.isDialogDisabled = false
         this.dialogType = 'add'
         Object.keys(this.selected).forEach(key => {
           this.selected[key] = ''
         })
-        console.log(this.selected)
       }
       this.showDialog = true
     },

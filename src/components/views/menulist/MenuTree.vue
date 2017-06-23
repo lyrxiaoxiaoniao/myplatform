@@ -34,6 +34,9 @@
         <el-form-item label="显示名称" required>
           <el-input v-model="formData.displayName"></el-input>
         </el-form-item>
+        <el-form-item label="同级排序" required>
+          <el-input v-model="formData.sort"></el-input>
+        </el-form-item>
         <el-form-item label="名称">
           <el-input v-model="formData.name"></el-input>
         </el-form-item>
@@ -42,9 +45,6 @@
         </el-form-item>
         <el-form-item label="图标">
           <el-input v-model="formData.icon" placeholder="示例: fa fa-book"></el-input>
-        </el-form-item>
-        <el-form-item label="同级排序">
-          <el-input v-model="formData.sort"></el-input>
         </el-form-item>
         <el-form-item label="访问路由">
           <el-input v-model="formData.url" placeholder="示例: /admin/module/page"></el-input>
@@ -99,6 +99,9 @@ export default {
         ],
         name: [
           {required: true, message: '请输入节点名', trigger: 'blur'}
+        ],
+        sort: [
+          {required: true, message: '请输入排序', trigger: 'blur'}
         ]
       }
     }

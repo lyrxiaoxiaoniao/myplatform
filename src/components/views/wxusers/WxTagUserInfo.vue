@@ -10,10 +10,11 @@
           用户数：
           {{ this.count }}
         </el-col>
-        <el-col :span="8">
-          <el-input v-model="form.param" placeholder="请输入昵称、姓名、企业名称进行搜索"></el-input>
+        <el-col :span="7">
+          <el-input v-model="form.param" placeholder="请输入昵称、姓名、企业名称">
+            <el-button slot="append" @click="onSearch" icon="search"></el-button>
+          </el-input>
         </el-col>
-        <el-button @click="onSearch" icon="search"></el-button>
         <el-button @click="addUser" icon="plus"></el-button>
         <el-button icon="upload2" type="primary"></el-button>
         <el-button icon="setting" type="primary"></el-button>

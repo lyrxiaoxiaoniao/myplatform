@@ -3,9 +3,10 @@
     <div slot="kobe-table-header" class="kobe-table-header">
       <el-row type="flex" justify="end">
         <el-col :span="7">
-          <el-input v-model="form.keyword" placeholder="请输入搜索关键字"></el-input>
+          <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
+            <el-button slot="append" @click="onSearch" icon="search"></el-button>
+          </el-input>
         </el-col>
-        <el-button @click="onSearch" icon="search"></el-button>
         <el-button @click="showDialog" icon="plus"></el-button>
         <el-button icon="upload2" type="primary"></el-button>
         <el-button icon="setting" type="primary"></el-button>

@@ -20,6 +20,7 @@
     "chart.js": "2.3.0",
     "datatables.net": "^1.10.11",
     "datatables.net-bs": "^1.10.11",
+    "echarts": "^3.6.1",
     "element-ui": "^1.2.9",
     "faker": "^3.1.0",
     "hideseek": "^0.7.0",

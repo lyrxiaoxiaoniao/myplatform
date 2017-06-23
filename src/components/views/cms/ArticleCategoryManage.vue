@@ -17,7 +17,10 @@
           <el-input v-else v-model="formData.parentName" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="板块名称" required>
-          <el-input v-model="formData.name"></el-input>
+          <el-input v-model="formData.name" placeholder="示例:admin-rules"></el-input>
+        </el-form-item>
+        <el-form-item label="显示名称" required>
+          <el-input v-model="formData.displayName"></el-input>
         </el-form-item>
         <el-form-item label="板块描述">
           <el-input v-model="formData.description"></el-input>
@@ -60,12 +63,13 @@ export default {
       options: [],
       props: {
         children: 'children',
-        label: 'name',
+        label: 'displayName',
         value: 'id'
       },
       formData: {
         id: 0,
         name: '',
+        displayName: '',
         description: '',
         parentId: 0,
         sort: '',
@@ -134,6 +138,7 @@ export default {
         this.formData.parentName = node.parent.data.name
         this.formData.parentId = node.parent.data.id
       }
+      this.formData.displayName = data.displayName
       this.formData.name = data.name
       this.formData.id = data.id
       this.formData.url = data.url
@@ -190,6 +195,7 @@ export default {
     addSubmit() {
       let obj = {}
       obj.name = this.formData.name
+      obj.displayName = this.formData.displayName
       obj.parentId = this.formData.parentId
       obj.description = this.formData.description
       obj.sort = this.formData.sort

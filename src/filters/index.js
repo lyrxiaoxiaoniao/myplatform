@@ -52,3 +52,12 @@ export function isUserLock (status) {
       return '未锁定'
   }
 }
+
+export function isOpen (status) {
+  switch (status) {
+    case 0:
+      return '关闭'
+    case 1:
+      return '开启'
+  }
+}

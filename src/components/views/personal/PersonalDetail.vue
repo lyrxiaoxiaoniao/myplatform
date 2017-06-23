@@ -56,7 +56,9 @@
       </div>
     </el-dialog>
     <el-dialog :title="picDialogTitle" v-model="showPicDialog">
-      <img :src="showImage" alt="detail-image" class="img-responsive img-preview">
+      <el-row type="flex" justify="center">
+        <img :src="showImage" alt="detail-image" class="img-responsive img-preview">
+      </el-row>
     </el-dialog>
   </div>
 </template>
