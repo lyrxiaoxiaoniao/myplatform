@@ -3,7 +3,7 @@
     <el-form-item :label="data.title">
       <el-input-number
         @change="onChange"
-        v-model="data.value"
+        v-model="number"
         :placeholder="data.description"
         :min="min"
         :max="max"
@@ -20,8 +20,10 @@ export default {
     data: {
       type: Object,
       default: {
-        key: '',
-        value: ''
+        id: '',
+        value: 1,
+        title: '',
+        type_key: ''
       }
     },
     min: {
@@ -30,19 +32,27 @@ export default {
     },
     max: {
       type: Number,
-      default: 99999
+      default: 9999999
+    },
+    index: {
+      type: Number
     }
   },
   data () {
     return {
-      number: ''
+      number: 0
     }
   },
   computed: {
   },
   methods: {
     onChange () {
-      this.$emit('number', this.data.value)
+      const data = {
+        ...this.data,
+        index: this.index,
+        value: this.number
+      }
+      this.$emit('number', data)
     }
   },
   mounted () {

@@ -5,21 +5,24 @@
       v-model="form"
       label-width="120px"
       >
-      <template v-for="item in data">
+      <template v-for="item, index in data">
         <kobe-active-input
           v-if="item.type === 'input'"
           :data="item"
+          :index="index"
           @input="onInputChange"
           >
         </kobe-active-input>
         <kobe-number-input
           v-if="item.type === 'number'"
           :data="item"
-          @number="onInputChange"
+          :index="index"
+          @number="onNumberChange"
           >
         </kobe-number-input>
         <kobe-date-input
           v-if="item.type === 'datetime'"
+          :index="index"
           :data="item"
           @date="onTimeChange"
           >
@@ -28,7 +31,6 @@
     </el-form>
     <el-row type="flex" justify="center">
       <el-button @click="onSubmit">确定</el-button>
-      <el-button @click="onReset">重置</el-button>
     </el-row>
   </div>
 </template>
@@ -38,14 +40,10 @@ export default {
   name: 'kobe-active-form',
   props: {
     data: {
-      type: Array,
-      default: [{
-        type: '',
-        data: {
-          title: 'title',
-          value: 'value'
-        }
-      }]
+      type: Array
+    },
+    index: {
+      type: Number
     }
   },
   data () {
@@ -56,14 +54,24 @@ export default {
   },
   methods: {
     onInputChange (value) {
-      // console.log(value)
+      this.data[value.index] = value
+      this.onFormChange()
+    },
+    onNumberChange (value) {
+      this.data[value.index] = value
+      this.onFormChange()
     },
     onTimeChange (value) {
     },
     onSubmit () {
       this.$emit('submit', this.form)
     },
-    onReset () {
+    onFormChange () {
+      const data = {
+        index: this.index,
+        data: this.data
+      }
+      this.$emit('form-change', data)
     }
   },
   mounted () {

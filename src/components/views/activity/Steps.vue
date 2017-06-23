@@ -7,9 +7,9 @@
             <el-button slot="append" @click="onSearch" icon="search"></el-button>
           </el-input>
         </el-col>
-          <el-button type="primary" @click="addFormVisible = true" icon="plus"></el-button>
-          <el-button icon="upload2" type="primary"></el-button>
-          <el-button icon="setting" type="primary"></el-button>
+        <el-button type="primary" @click="addFormVisible = true" icon="plus"></el-button>
+        <el-button icon="upload2" type="primary"></el-button>
+        <el-button icon="setting" type="primary"></el-button>
       </el-row>
     </div>
     <div slot="kobe-table-content" class="kobe-table">
@@ -136,7 +136,32 @@
         </el-dialog>
       </div>
       <kobe-table-dialog
+        @close="onPropsTableClose"
+        :show="showProsDialog"
+        :tableData="propsTable"
+        title="活动步骤的属性"
+        v-if="propsTable"
         >
+        <div slot="table">
+          <el-table
+            border
+            stripe
+            :data="propsTable.data"
+            ref="propsTable"
+            @select="onPropsTableSelection"
+            @selection-change="onPropsSelection">
+            <el-table-column type="selection" width="40"></el-table-column>
+            <el-table-column prop="id" label="ID" width="50"></el-table-column>
+            <el-table-column prop="title" label="属性名称"></el-table-column>
+            <el-table-column prop="type_key" label="属性键名"></el-table-column>
+            <el-table-column prop="type" label="属性类型"></el-table-column>
+            <el-table-column label="状态">
+              <template scope="scope">
+                {{ scope.row.status | isOpen }}
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
       </kobe-table-dialog>
     </div>
     <div slot="kobe-table-footer" class="kobe-table-footer">
@@ -165,6 +190,9 @@ export default{
   name: 'sc-activity-steps',
   data () {
     return {
+      showProsDialog: false,
+      propsTable: null,
+      propsSelection: [],
       addFormVisible: false,
       response: null,
       error: null,
@@ -185,8 +213,71 @@ export default{
   },
   methods: {
     showPros (id) {
+      this.getPropsList({
+        stage_id: id
+      }, true)
     },
-    getPropsList (value) {
+    onPropsTableClose () {
+      this.showProsDialog = false
+    },
+    onPropsTableSelection (selection, row) {
+      if (row.stages.length === 0) {
+        this.toggleRelation(config.activity.stepRelateProps, {
+          stages: [this.propsTable.id],
+          properties: [row.id]
+        })
+      } else {
+        this.toggleRelation(config.activity.stepUnRelateProps, {
+          stages: [this.propsTable.id],
+          properties: [row.id]
+        })
+      }
+    },
+    onPropsSelection (value) {
+      this.propsTable.data.forEach(item => {
+        item.isSelected = false
+      })
+      value.forEach(item => {
+        this.propsSelection.push(item.id)
+        item.isSelected = true
+      })
+    },
+    toggleRelation (URL, data) {
+      api.POST(URL, data)
+      .then(response => {
+        if (response.data.errcode !== '0000') {
+          this.$message.error('发生了错误,请重试')
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    getPropsList (data = null, showDialog) {
+      api.GET(config.activity.stepShowProps, data)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          if (showDialog) {
+            this.showProsDialog = !!showDialog
+          }
+          this.propsTable = response.data.data
+          this.propsTable.id = data.stage_id
+          this.propsTable.data.forEach(row => {
+            this.$nextTick(() => {
+              if (row.stages.length !== 0) {
+                this.$refs.propsTable.toggleRowSelection(row)
+                row.isSelected = true
+              } else {
+                row.isSelected = false
+                row.sort = ''
+              }
+            })
+          })
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     },
     handleSizeChange (value) {
       const data = {

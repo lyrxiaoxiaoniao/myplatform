@@ -96,6 +96,8 @@
         <kobe-active-form
           v-if="item.properties"
           :data="item.properties"
+          :index="index"
+          @form-change="onFormChange"
           >
         </kobe-active-form>
       </el-tab-pane>
@@ -132,7 +134,15 @@ export default {
   methods: {
     onAdd () {
     },
-    onEditorChange () {
+    onEditorChange (data) {
+      this.basicForm.brief = data
+    },
+    onFormChange (value) {
+      // TODO
+      let data = [
+        ...this.response
+      ]
+      data[value.index].properties = value.data
     },
     selectCategoty (value) {
       api.GET(config.activity.activityAdd, {

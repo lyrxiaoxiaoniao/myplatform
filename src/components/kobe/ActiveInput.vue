@@ -16,8 +16,12 @@ export default {
       type: Object,
       default: {
         title: '',
-        value: ''
+        value: '',
+        id: ''
       }
+    },
+    index: {
+      type: Number
     }
   },
   data () {
@@ -26,7 +30,12 @@ export default {
   },
   methods: {
     onChange () {
-      this.$emit('input', this.data.value)
+      const data = {
+        ...this.data,
+        index: this.index,
+        value: this.data.value
+      }
+      this.$emit('input', data)
     }
   },
   mounted () {

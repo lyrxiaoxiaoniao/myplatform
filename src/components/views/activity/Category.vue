@@ -251,7 +251,7 @@ export default {
         item.isSelected = true
       })
     },
-    toggleRelation(URL, data) {
+    toggleRelation (URL, data) {
       api.POST(URL, data)
       .then(response => {
         if (response.data.errcode !== '0000') {

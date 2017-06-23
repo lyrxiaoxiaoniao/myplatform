@@ -22,6 +22,9 @@ export default {
     type: {
       type: String,
       default: 'datetime'
+    },
+    index: {
+      type: Number
     }
   },
   data () {
