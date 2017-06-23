@@ -1,140 +1,143 @@
 <template>
   <kobe-table v-if="response">
     <div slot="kobe-table-header" class="kobe-table-header">
-        <el-row type="flex" justify="end">
-            <el-col :span="7">
-              <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
-                <el-button slot="append" @click="onSearch" icon="search"></el-button>
-              </el-input>
-            </el-col>
-             <el-button type="primary" @click="addFormVisible = true" icon="plus"></el-button>
-             <el-button icon="upload2" type="primary"></el-button>
-             <el-button icon="setting" type="primary"></el-button>
-        </el-row>
+      <el-row type="flex" justify="end">
+        <el-col :span="7">
+          <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
+            <el-button slot="append" @click="onSearch" icon="search"></el-button>
+          </el-input>
+        </el-col>
+          <el-button type="primary" @click="addFormVisible = true" icon="plus"></el-button>
+          <el-button icon="upload2" type="primary"></el-button>
+          <el-button icon="setting" type="primary"></el-button>
+      </el-row>
     </div>
     <div slot="kobe-table-content" class="kobe-table">
-        <el-table :data="response.data" border stripe>
-            <el-table-column prop="id" label="ID"  width="80"></el-table-column>
-            <el-table-column prop="title" label="活动步骤名称"></el-table-column>
-            <el-table-column prop="type_key" label="活动步骤类型"></el-table-column>
-            <el-table-column label="活动步骤状态">
-               <template scope="scope">
-                 {{ scope.row.status | isOpen }}
-               </template>
-            </el-table-column>
-            <el-table-column prop="description" label="活动步骤描述"></el-table-column>
-            <el-table-column label="操作" width="220">
-                <template scope="scope">
-                  <el-button @click="editSteps(scope.row)" size="small" icon="edit"></el-button>
-                  <el-button @click="checkInfo(scope.row)" size="small" icon="information"></el-button>
-                  <el-button @click="infoDelete(scope.row.id)" size="small" icon="delete2"></el-button>
-                  <el-button @click="showPros(scope.row.id)" size="small">属性</el-button>
-                </template>
-            </el-table-column>
-        </el-table>
+      <el-table :data="response.data" border stripe>
+        <el-table-column prop="id" label="ID"  width="80"></el-table-column>
+        <el-table-column prop="title" label="活动步骤名称"></el-table-column>
+        <el-table-column prop="type_key" label="活动步骤类型"></el-table-column>
+        <el-table-column label="活动步骤状态">
+          <template scope="scope">
+            {{ scope.row.status | isOpen }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="description" label="活动步骤描述"></el-table-column>
+        <el-table-column label="操作" width="220">
+          <template scope="scope">
+            <el-button @click="editSteps(scope.row)" size="small" icon="edit"></el-button>
+            <el-button @click="checkInfo(scope.row)" size="small" icon="information"></el-button>
+            <el-button @click="infoDelete(scope.row.id)" size="small" icon="delete2"></el-button>
+            <el-button @click="showPros(scope.row.id)" size="small">属性</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
 
         <!-- 新增dialog -->
-        <div class="sc-activity-steps-create">
-            <el-dialog title="新增活动步骤" v-model="addFormVisible">
-              <el-form label-width="100px" :model="addForm">
+      <div class="sc-activity-steps-create">
+        <el-dialog title="新增活动步骤" v-model="addFormVisible">
+          <el-form label-width="100px" :model="addForm">
+            <el-row type="flex" justify="space-between">
+              <el-col :span="12">
+                <el-form-item :required="true" label="步骤名称">
+                    <el-input v-model="addForm.title"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item :required="true"  label="步骤类型">
+                  <el-input v-model="addForm.type_key"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row type="flex" justify="space-between">
+              <el-col :span="12">
+                <el-form-item :required="true"  label="步骤状态">
+                  <el-select placeholder="请选择状态" v-model="addForm.status">
+                    <el-option label="开启" value="1"></el-option>
+                    <el-option label="关闭" value="0"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-form-item  label="步骤描述">
+              <el-input type="textarea" v-model="addForm.description"></el-input>
+            </el-form-item>
+          </el-form>  
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="addFormVisible = false">取 消</el-button>
+            <el-button type="primary" @click="addSteps">确 定</el-button>
+          </div>
+        </el-dialog>
+      </div>
+        <!-- 修改dialog -->
+      <div class="sc-activity-steps-edit">
+        <el-dialog title="修改活动步骤" v-model="editStepsVisible">
+          <el-row type="flex">
+            <el-col>
+              <el-form label-width="100px" :model="editInfo">
                 <el-row type="flex" justify="space-between">
                   <el-col :span="12">
-                    <el-form-item :required="true" label="步骤名称">
-                        <el-input v-model="addForm.title"></el-input>
+                    <el-form-item label="ID">
+                      <el-input :disabled="true" v-model="editInfo.id"></el-input>
                     </el-form-item>
                   </el-col>
                   <el-col :span="12">
-                    <el-form-item :required="true"  label="步骤类型">
-                      <el-input v-model="addForm.type_key"></el-input>
+                    <el-form-item label="步骤名称">
+                        <el-input v-model="editInfo.title"></el-input>
                     </el-form-item>
                   </el-col>
                 </el-row>
                 <el-row type="flex" justify="space-between">
                   <el-col :span="12">
-                    <el-form-item :required="true"  label="步骤状态">
-                      <el-select placeholder="请选择状态" v-model="addForm.status">
+                    <el-form-item label="步骤类型">
+                      <el-input v-model="editInfo.type_key"></el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="步骤状态">
+                      <el-select v-model="editInfo.status">
                         <el-option label="开启" value="1"></el-option>
                         <el-option label="关闭" value="0"></el-option>
                       </el-select>
                     </el-form-item>
                   </el-col>
-                </el-row>
-                <el-form-item  label="步骤描述">
-                      <el-input type="textarea" v-model="addForm.description"></el-input>
+                </el-row> 
+                <el-form-item label="步骤描述">
+                  <el-input type="textarea" v-model="editInfo.description"></el-input>
                 </el-form-item>
-              </el-form>  
-                <div slot="footer" class="dialog-footer">
-                    <el-button @click="addFormVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="addSteps">确 定</el-button>
+              </el-form>
+            </el-col>
+          </el-row>  
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="editStepsVisible = false">取 消</el-button>
+            <el-button type="primary" @click="editSubmit">确 定</el-button>
+          </div>
+        </el-dialog>
+      </div>
+      <!-- 查看dialog -->
+      <div class="sc-activity-steps-check">
+        <el-dialog title="查看活动步骤" v-model="checkInfodialog">
+          <el-row type="flex">
+            <el-col class="sc-activity-steps-check-content">
+              <el-card>
+                <div slot="header">
+                  <span class="sc-activity-steps-check-title">活动步骤信息</span>
                 </div>
-            </el-dialog>
-        </div>
-        <!-- 修改dialog -->
-        <div class="sc-activity-steps-edit">
-            <el-dialog title="修改活动步骤" v-model="editStepsVisible">
-                <el-row type="flex">
-                  <el-col>
-                    <el-form label-width="100px" :model="editInfo">
-                      <el-row type="flex" justify="space-between">
-                        <el-col :span="12">
-                          <el-form-item label="ID">
-                            <el-input :disabled="true" v-model="editInfo.id"></el-input>
-                          </el-form-item>
-                        </el-col>
-                        <el-col :span="12">
-                          <el-form-item label="步骤名称">
-                              <el-input v-model="editInfo.title"></el-input>
-                          </el-form-item>
-                        </el-col>
-                      </el-row>
-                      <el-row type="flex" justify="space-between">
-                        <el-col :span="12">
-                          <el-form-item label="步骤类型">
-                            <el-input v-model="editInfo.type_key"></el-input>
-                          </el-form-item>
-                        </el-col>
-                        <el-col :span="12">
-                          <el-form-item label="步骤状态">
-                            <el-select v-model="editInfo.status">
-                              <el-option label="开启" value="1"></el-option>
-                              <el-option label="关闭" value="0"></el-option>
-                            </el-select>
-                          </el-form-item>
-                        </el-col>
-                      </el-row> 
-                      <el-form-item label="步骤描述">
-                        <el-input type="textarea" v-model="editInfo.description"></el-input>
-                      </el-form-item>
-                    </el-form>
-                  </el-col>
-                </el-row>  
-                <div slot="footer" class="dialog-footer">
-                    <el-button @click="editStepsVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="editSubmit">确 定</el-button>
+                <div class="sc-activity-steps-check-box">
+                  <div>ID: <span style="padding-left:10px;">{{ userInfo.id }}</span></div>
+                  <div>步骤名称: <span style="padding-left:10px;">{{ userInfo.title }}</span></div>
+                  <div>步骤类型: <span style="padding-left:10px;">{{ userInfo.type_key }}</span></div>
+                  <div>步骤状态:<span style="padding-left:10px;">{{ userInfo.status == 1 ? "开启" : "关闭" }}</span></div>
+                  <div>步骤描述: <span style="padding-left:10px;">{{ userInfo.description }}</span></div>
                 </div>
-            </el-dialog>
-        </div>
-        <!-- 查看dialog -->
-        <div class="sc-activity-steps-check">
-           <el-dialog title="查看活动步骤" v-model="checkInfodialog">
-              <el-row type="flex">
-                <el-col class="sc-activity-steps-check-content">
-                  <el-card>
-                        <div slot="header">
-                          <span class="sc-activity-steps-check-title">活动步骤信息</span>
-                        </div>
-                        <div class="sc-activity-steps-check-box">
-                          <div>ID: <span style="padding-left:10px;">{{ userInfo.id }}</span></div>
-                          <div>步骤名称: <span style="padding-left:10px;">{{ userInfo.title }}</span></div>
-                          <div>步骤类型: <span style="padding-left:10px;">{{ userInfo.type_key }}</span></div>
-                          <div>步骤状态:<span style="padding-left:10px;">{{ userInfo.status == 1 ? "开启" : "关闭" }}</span></div>
-                          <div>步骤描述: <span style="padding-left:10px;">{{ userInfo.description }}</span></div>
-                        </div>
-                  </el-card>
-                </el-col>
-              </el-row>  
-           </el-dialog>
-        </div>
+              </el-card>
+            </el-col>
+          </el-row>  
+        </el-dialog>
+      </div>
+      <kobe-table-dialog
+        >
+      </kobe-table-dialog>
     </div>
     <div slot="kobe-table-footer" class="kobe-table-footer">
       <el-row type="flex" justify="center">

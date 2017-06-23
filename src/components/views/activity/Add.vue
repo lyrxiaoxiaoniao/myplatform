@@ -14,7 +14,7 @@
           </el-form-item>
           <el-form-item label="活动地址">
             <el-input v-model="basicForm.address">
-              <el-button slot="append" icon="search"></el-button>
+              <el-button slot="append" class="fa fa-map-marker"></el-button>
             </el-input>
           </el-form-item>
           <el-form-item label="举办时间">
@@ -22,7 +22,7 @@
               <el-date-picker
                 type="datetime"
                 placeholder="开始时间"
-                v-model="basicForm.startTime"
+                v-model="basicForm.start_date"
                 >
               </el-date-picker>
             </el-col>
@@ -33,7 +33,7 @@
               <el-date-picker
                 type="datetime"
                 placeholder="结束时间"
-                v-model="basicForm.endTime"
+                v-model="basicForm.end_date"
                 >
               </el-date-picker>
             </el-col>
@@ -77,8 +77,7 @@
             <el-input></el-input>
           </el-form-item>
           <el-form-item label="活动内容">
-            <el-input type="textarea" v-model="basicForm.content">
-            </el-input>
+            <vue-html5-editor :content="basicForm.brief" @change="onEditorChange"></vue-html5-editor>
           </el-form-item>
           <el-form-item label="标签">
             <kobe-tag-group></kobe-tag-group>
@@ -120,18 +119,20 @@ export default {
       basicForm: {
         title: '',
         address: '',
-        startTime: '',
-        endTime: '',
+        start_date: '',
+        end_date: '',
         number: '',
         category: '',
         mobile: '',
         manager: '',
-        content: ''
+        brief: ''
       }
     }
   },
   methods: {
     onAdd () {
+    },
+    onEditorChange () {
     },
     selectCategoty (value) {
       api.GET(config.activity.activityAdd, {

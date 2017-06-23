@@ -7,7 +7,7 @@
         trigger="click"
         placement="bottom-end"
         >
-        <el-form class="search-form" :model="searchForm">
+        <el-form label-position="top" class="search-form" :model="searchForm">
           <el-form-item class="advance-form-item" label="ID">
             <el-input v-model="searchForm.id"></el-input>
           </el-form-item>
@@ -26,6 +26,7 @@
           <el-row type="flex">
             <el-form-item class="advance-form-item">
               <el-cascader
+                placeholder="文章板块"
                 expand-trigger="hover"
                 :options="articleCatlg"
                 clearable

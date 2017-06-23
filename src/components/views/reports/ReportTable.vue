@@ -110,6 +110,8 @@ export default {
       selectedCatlg: '',
       caseCatlg: [],
       searchForm: {
+        orderClo: 'created_at',
+        order: 'desc',
         keyword: '',
         status: '',
         acceptNo: '',
@@ -210,7 +212,10 @@ export default {
       })
     },
     getCaseList () {
-      api.GET(config.caseListAPI)
+      api.GET(config.caseListAPI, {
+        orderClo: 'created_at',
+        order: 'desc'
+      })
       .then(response => {
         if (response.status !== 200) {
           this.error = response.statusText

@@ -2,7 +2,9 @@
   <div v-if="response" class="sc-report-detail">
     <div class="sc-report-detail-content">
       <el-row class="detailBtnWrap" type="flex" justify="end">
-        <el-button @click="detailDeal" type="primary">案件处理</el-button>
+        <el-col :span="2">
+          <el-button @click="detailDeal" type="primary">处理</el-button>
+        </el-col>
       </el-row>
       <el-row type="flex">
         <el-col :span="10" :offset="1" style="padding: 1rem">
@@ -53,7 +55,7 @@
             <li>
               <div>上报时间： <span>{{ response.createdAt | toDate }}</span></div>
             </li>
-            <li>
+            <li v-if="response.acceptDate">
               <div>受理时间： <span>{{ response.acceptDate | toDate }}</span></div>
             </li>
             <li>
@@ -88,9 +90,14 @@
           <el-input type="textarea" :rows="4" v-model="detailDealForm.summary"></el-input>
         </el-form-item>
         <el-form-item label="图片上传" :label-width="formLabelWidth">
-          <el-upload class="upload-demo" :action="uploadUrl"
-                     :on-remove="uploadRemove" :file-list="fileList"
-                     :on-success="uploadSuccess">
+          <el-upload
+            class="upload-demo"
+            :action="uploadUrl"
+            :before-upload="beforeAvatarUpload"
+            :file-list="fileList"
+            :on-remove="uploadRemove"
+            :on-error="onUploadError"
+            :on-success="uploadSuccess">
             <el-button size="small" type="primary">点击上传</el-button>
             <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
           </el-upload>
@@ -111,13 +118,19 @@
         <div class="mapDialogHeader">地图显示</div>
         <div id="mapWrapper"></div>
         <div class="mapDialogFooter">
-          <el-button type="danger" @click="closeMap">关闭</el-button>
+          <el-row type="flex" justify="end">
+            <el-button type="danger" @click="closeMap">关闭</el-button>
+          </el-row>
         </div>
       </div>
     </div>
     <el-dialog title="现场照片" v-model="dialogImgVisible" size="small">
-      <el-carousel indicator-position="outside" :autoplay="false" height="500px" @change="changeImg"
-                   ref="carousel">
+      <el-carousel
+        indicator-position="outside"
+        :autoplay="false"
+        height="500px"
+        @change="changeImg"
+        ref="carousel">
         <el-carousel-item v-for="(item, index) in response.images" :key="item" :name="item.fileName">
           <img :src="item.fileUrl" height="500px">
         </el-carousel-item>
@@ -175,7 +188,7 @@ export default {
       return map[this.response.status]
     },
     isSMSNotify () {
-      if (this.response && this.response.isNotify.indexOf('sms') !== -1) {
+      if (this.response && this.response.isNotify && this.response.isNotify.indexOf('sms') !== -1) {
         this.detailDealForm.mail = true
         return true
       }
@@ -184,7 +197,7 @@ export default {
       return false
     },
     isWXNotify () {
-      if (this.response && this.response.isNotify.indexOf('wx') !== -1) {
+      if (this.response && this.response.isNotify && this.response.isNotify.indexOf('wx') !== -1) {
         this.detailDealForm.wx = true
         return true
       }
@@ -215,9 +228,12 @@ export default {
       this.setActiveItem(i)
     },
     uploadRemove (file, fileList) {
-      const index = this.detailDealForm.imageName.indexOf(file.response.errmsg)
+      if (!file) {
+        return
+      }
+      const index = this.detailDealForm.imageName.indexOf(file.response.data[0])
       if (index !== -1) {
-        this.detailDealForm.imageName.split(index, 1)
+        this.detailDealForm.imageName.splice(index, 1)
       }
     },
     mapInit () {
@@ -229,8 +245,20 @@ export default {
       map.addOverlay(marker)
       /* eslint-enable */
     },
+    beforeAvatarUpload (file) {
+      if (this.detailDealForm.imageName.length >= 4) {
+        this.$message.error('最多只能上传四张图片')
+        return false
+      }
+      return true
+    },
     uploadSuccess (response, file, fileList) {
-      this.detailDealForm.imageName.push(response.data[0])
+      if (response && response.errcode === '0000') {
+        this.detailDealForm.imageName.push(response.data[0])
+      }
+    },
+    onUploadError (error, file) {
+      this.$message.error(error)
     },
     postDetail () {
       if (this.detailDealForm.status === '') {
@@ -424,7 +452,7 @@ export default {
     background-color: white;
   }
   .mapDialogHeader {
-    font-size: 2rem;
+    font-size: 1.5rem;
     margin-bottom: 1%;
     padding-bottom: 1%;
     border-bottom: 1px solid lightgray;
@@ -433,10 +461,5 @@ export default {
     width: 95%;
     height: 83%;
     margin: 0 auto;
-  }
-  .mapDialogFooter {
-    text-align: right;
-    padding-top: 1%;
-    margin-right: 2.5%;
   }
 </style>
