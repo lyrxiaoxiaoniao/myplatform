@@ -32,7 +32,7 @@
               <div>隐患单位：<span>{{ response.hiddenUnit }}</span></div>
             </li>
             <li>
-              <div>提交时间：<span>{{ response.createdAt }}</span></div>
+              <div>提交时间：<span>{{ response.createdAt | toDateTime }}</span></div>
             </li>
             <li>
               <div>提交IP：<span>{{ response.createOn }}</span></div>

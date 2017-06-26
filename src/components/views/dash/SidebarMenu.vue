@@ -79,6 +79,10 @@ export default {
     font-size: 12px;
   }
 
+  .siderbar-menu-item span {
+    margin-left: 5px;
+  }
+
   .arrow {
     padding-right: 1rem;
     float: right;
