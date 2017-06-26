@@ -104,7 +104,11 @@ export default {
       }
     },
     article (newVal, oldVal) {
+      if (!newVal) {
+        return
+      }
       this.urlDisabled = true
+      // trick for article selection
       this.form['first.DATA'] = newVal.title
       this.form['remark.DATA'] = newVal.digest
     }

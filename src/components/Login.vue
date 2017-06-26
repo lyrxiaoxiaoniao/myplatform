@@ -132,7 +132,7 @@ export default {
           this.response = response.data.errmsg
           this.loginSended = false
         } else {
-          this.$message.error(response.errmsg)
+          this.$message.error(response.data.errmsg)
         }
       })
       .catch(error => {
