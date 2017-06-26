@@ -6,7 +6,7 @@
         发送成功: {{ countData.sent }} | 发送失败: {{ countData.fail }} | 目标用户数: {{ countData.target }}
         </h4>
       </el-row>
-      <el-row class="" type="flex" justify="space-around">
+      <el-row class="" type="flex" justify="space-between">
         <el-col :span="12">
           <el-date-picker
             type="datetime"
@@ -21,7 +21,7 @@
             >
           </el-date-picker>
         </el-col>
-        <el-col :span="12" :offset="8">
+        <el-col :span="7">
           <el-select clearable @change="onSelectStatus" v-model="form.isArrive" placeholder="请选择">
             <el-option
               v-for="item in statusOptions"
@@ -30,8 +30,9 @@
               >
             </el-option>
           </el-select>
-          <el-input v-model="form.keyword" placeholder="请输入搜索关键字"></el-input>
-          <el-button @click="onSearch" icon="search"></el-button>
+          <el-input v-model="form.keyword" placeholder="请输入关键字">
+            <el-button slot="append" @click="onSearch" icon="search"></el-button>
+          </el-input>
         </el-col>
       </el-row>
     </div>

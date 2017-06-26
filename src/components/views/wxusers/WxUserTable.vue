@@ -91,7 +91,7 @@
           label="操作"
           >
           <template scope="scope">
-            <el-button @click="checkUserInfo(scope.row.id)" size="small" icon="edit"></el-button>
+            <el-button @click="checkUserInfo(scope.row.id)" size="small" icon="information"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -189,7 +189,7 @@ export default {
             this.response = response.data.data
             this.response.data.forEach(item => {
               if (item.community && item.subDistrictName) {
-                item.workspace = `${item.community}/${item.subDistrictName}`
+                item.workspace = `${item.subDistrictName}/${item.community}`
               }
             })
           } else {
@@ -228,7 +228,7 @@ export default {
             this.response = response.data.data
             this.response.data.forEach(item => {
               if (item.community && item.subDistrictName) {
-                item.workspace = `${item.community}/${item.subDistrictName}`
+                item.workspace = `${item.subDistrictName}/${item.community}`
               }
             })
           } else {

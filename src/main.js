@@ -126,22 +126,22 @@ Vue.use(VueHtml5Editor, {
 })
 
 router.beforeEach((to, from, next) => {
-  next()
-  // if (store.state.token === null) {
-  //   if (to.path === '/login') {
-  //     next()
-  //   } else {
-  //     store.dispatch('GET_USERINFO').then(response => {
-  //       if (response.data.errcode !== '0000') {
-  //         next({path: '/login'})
-  //       } else {
-  //         next()
-  //       }
-  //     })
-  //   }
-  // } else {
-  //   next()
-  // }
+  // next()
+  if (store.state.token === null) {
+    if (to.path === '/login') {
+      next()
+    } else {
+      store.dispatch('GET_USERINFO').then(response => {
+        if (response.data.errcode !== '0000') {
+          next({path: '/login'})
+        } else {
+          next()
+        }
+      })
+    }
+  } else {
+    next()
+  }
 })
 
 sync(store, router)
@@ -152,13 +152,3 @@ new Vue({
   store: store,
   render: h => h(AppView)
 })
-
-if (window.localStorage) {
-  var localUserString = window.localStorage.getItem('user') || 'null'
-  var localUser = JSON.parse(localUserString)
-
-  if (localUser && store.state.user !== localUser) {
-    store.commit('SET_USER', localUser)
-    store.commit('SET_TOKEN', window.localStorage.getItem('token'))
-  }
-}

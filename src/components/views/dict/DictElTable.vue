@@ -30,7 +30,11 @@
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
         <el-table-column prop="name" label="键"></el-table-column>
         <el-table-column prop="value" label="值"></el-table-column>
-        <el-table-column prop="createdAt" label="创建时间"></el-table-column>
+        <el-table-column label="创建时间">
+          <template scope="scope">
+            {{ scope.row.createdAt | toDateTime }}
+          </template>
+        </el-table-column>
         <el-table-column prop="enabled" label="状态"></el-table-column>
         <el-table-column 
           width="180"
@@ -200,11 +204,6 @@ export default {
             item.enabled = '未锁定'
             item.isLock = 0
             break
-        }
-        if (item.createdAt) {
-          let date = new Date(item.createdAt)
-          const month = date.getMonth() + 1
-          item.createdAt = `${date.getFullYear()}-${month}-${date.getDate()}`
         }
       })
       return res

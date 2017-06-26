@@ -1,5 +1,5 @@
 <template>
-  <div v-if="response">
+  <div v-if="response" class="article-detail-component">
     <el-row type="flex">
       <el-col class="article-detail" :span="16">
         <div class="article-header">
@@ -11,7 +11,7 @@
           </el-row>
           <el-row class="extra-text" type="flex" justify="space-between">
             <el-col :span="8">
-              发布时间:{{ response.createdAt | toDate }}
+              发布时间:{{ response.createdAt | toDateTime }}
             </el-col>
             <el-col :span="8">
               作者:{{ response.author }}
@@ -164,6 +164,7 @@ export default {
 
       if (response.data.errcode === '0000') {
         this.response = response.data.data
+        this.response.content = this.response.content.replace(/<img/g, '<img class="article-content-image"')
         this.status = this.response.state
       }
     })
@@ -173,51 +174,55 @@ export default {
   }
 }
 </script>
-<style scoped>
-  .article-detail {
-    margin-left: 1rem;
-    margin-top: 2rem;
-    padding: 2rem;
-    border-top: 1px solid lightgray;
-    background-color: white;
-    box-shadow: 1px 1px 1px 1px lightgrey;
-  }
-  .summary-text {
-    overflow-x: hidden;
-  }
-  .summary-text h4 {
-    color: gray;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow-x: hidden;
-  }
-  .extra-text {
-    color: gray;
-    text-align: center;
-  }
-  .article-header {
-    border-bottom: 1px solid gray;
-    margin-bottom: 1rem;
-  }
-  .article-footer {
-    margin-top: 1rem;
-    border-top: 1px solid gray;
-    padding: 1rem;
-  }
-  .article-tag {
-    margin-right: 1rem;
-  }
-  .action-pane {
-    margin-top: 2rem;
-    margin-left: 1rem;
-    padding: 2rem;
-    border-top: 1px solid lightgray;
-    box-shadow: 1px 1px 1px 1px lightgray;
-    background-color: white;
-    height: 15rem;
-  }
-  .action-pane .el-button {
-    width: 200px;
-    margin-top: 10px;
-  }
+<style>
+.article-detail-component .article-detail {
+  margin-left: 1rem;
+  margin-top: 2rem;
+  padding: 2rem;
+  border-top: 1px solid lightgray;
+  background-color: white;
+  box-shadow: 1px 1px 1px 1px lightgrey;
+}
+.article-detail-component .article-content-image {
+  width: 100% !important;
+  height: auto !important;
+}
+.article-detail-component .summary-text {
+  overflow-x: hidden;
+}
+.article-detail-component .summary-text h4 {
+  color: gray;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow-x: hidden;
+}
+.article-detail-component .extra-text {
+  color: gray;
+  text-align: center;
+}
+.article-detail-component .article-header {
+  border-bottom: 1px solid gray;
+  margin-bottom: 1rem;
+}
+.article-detail-component .article-footer {
+  margin-top: 1rem;
+  border-top: 1px solid gray;
+  padding: 1rem;
+}
+.article-detail-component .article-tag {
+  margin-right: 1rem;
+}
+.article-detail-component .action-pane {
+  margin-top: 2rem;
+  margin-left: 1rem;
+  padding: 2rem;
+  border-top: 1px solid lightgray;
+  box-shadow: 1px 1px 1px 1px lightgray;
+  background-color: white;
+  height: 15rem;
+}
+.article-detail-component .action-pane .el-button {
+  width: 200px;
+  margin-top: 10px;
+}
 </style>

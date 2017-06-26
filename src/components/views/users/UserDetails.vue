@@ -13,7 +13,7 @@
 			          <div>移动/固定电话: <span>{{ response.phone }}</span></div>
 			          <div>邮箱: <span>{{ response.email }}</span></div>
 			          <div>联系地址: <span>{{ response.address }}</span></div>
-			          <div>紧急联系人信息: <span>{{ response.createdAt | toDate }}</span> </div>
+			          <div>紧急联系人信息: <span>{{ response.createdAt | toDateTime }}</span> </div>
 			          <div>备注: <span>{{ response.createdAt | toDate }}</span> </div>
 			        </div>
 				</el-card>
@@ -74,30 +74,33 @@ export default{
 </script>
 
 <style>
-.sc-user-details{
+.sc-user-details {
 	margin-left: 10px;
 	margin-top: 10px;
 }
-.sc-user-details-content{
+.sc-user-details-content {
 	line-height: 32px;
 }
-.sc-user-card-title{
+.sc-user-card-title {
 	font-size: 16px;
 }
-.sc-user-details-box,.sc-user-photo-desc{
+.sc-user-details-box div {
+  border-bottom: 1px solid lightgray;
+}
+.sc-user-details-box,.sc-user-photo-desc {
 	font-size: 14px;
 }
-.sc-user-photo{
+.sc-user-photo {
 	margin-left: 10px;
 	text-align: center;
 }
-.sc-user-photo-box{
+.sc-user-photo-box {
 	max-width: 20rem;
 	height: 400px;
 }
-.sc-user-photo-desc{
+.sc-user-photo-desc {
 	padding-bottom: 90px;
 }
-.sc-user-detail-action{
+.sc-user-detail-action {
 }
 </style>

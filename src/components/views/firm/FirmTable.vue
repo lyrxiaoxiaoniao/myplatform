@@ -44,7 +44,11 @@
         <el-table-column prop="industryName" label="所属行业" width="120"></el-table-column>
         <el-table-column prop="address" label="详细地址"></el-table-column>
         <el-table-column prop="status" label="状态" width="120"></el-table-column>
-        <el-table-column prop="createdAt" label="登记时间" width="120"></el-table-column>
+        <el-table-column label="登记时间" width="180">
+          <template scope="scope">
+            {{ scope.row.createdAt | toDateTime }}
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="120">
           <template scope="scope">
             <el-button size="small" icon="information" @click="onEditFirmDetail(scope.row.id)"></el-button>
@@ -206,11 +210,6 @@ export default {
           case 2:
             item.status = '审核未通过'
             break
-        }
-        if (item.createdAt) {
-          let date = new Date(item.createdAt)
-          const month = date.getMonth() + 1
-          item.createdAt = `${date.getFullYear()}-${month}-${date.getDate()}`
         }
       })
 

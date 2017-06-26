@@ -13,7 +13,7 @@
             <div>企业人数: <span>{{ response.pnum }}</span></div>
             <div>所属街道: <span>{{ response.regionName }}</span></div>
             <div>安全证书编号: <span>{{ response.safecert }}</span></div>
-            <div>提交时间: <span>{{ response.createdAt | toDate }}</span> </div>
+            <div>提交时间: <span>{{ response.createdAt | toDateTime }}</span> </div>
           </div>
         </el-card>
 
@@ -33,7 +33,7 @@
             <span class="sc-firm-card-title">受理信息</span>
           </div>
           <div class="sc-firm-detail">
-            <div>受理时间: <span>{{ response.updatedAt | toDate }}</span></div>
+            <div>受理时间: <span>{{ response.updatedAt | toDateTime }}</span></div>
             <div>受理状态: <span>{{ response.status | statusCodeToMsg }}</span></div>
             <div>受理意见: <span>{{ response.remark }}</span></div>
           </div>
@@ -59,7 +59,7 @@
       <el-form :model="form">
         <el-form-item label="处理方式" :label-width="'120px'">
           <el-select v-model="form.status" placeholder="请选择处理方案">
-            <el-option label="处理" value="1"></el-option>
+            <el-option label="通过" value="1"></el-option>
             <el-option label="驳回" value="2"></el-option>
           </el-select>
         </el-form-item>
@@ -185,6 +185,10 @@ export default {
 .sc-firm-card {
   margin-top: 1rem;
   margin-left: 1rem;
+}
+.sc-firm-detail div {
+  border-bottom: 1px solid lightgray;
+  margin-bottom: 1rem;
 }
 .sc-firm-image-content {
   margin-left: 1rem;

@@ -167,6 +167,7 @@ export default {
 
           if (response.data.errcode === '0000') {
             this.response = this.transformData(response.data.data)
+            this.count = this.response.count
           }
         })
         .catch(error => {
@@ -176,7 +177,7 @@ export default {
     transformData (res) {
       res.data.forEach(item => {
         if (item.community && item.subDistrictName) {
-          item.workspace = `${item.community}/${item.subDistrictName}`
+          item.workspace = `${item.subDistrictName}/${item.community}`
         }
       })
       return res
