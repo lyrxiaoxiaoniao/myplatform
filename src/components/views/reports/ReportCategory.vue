@@ -1,7 +1,7 @@
 <template>
   <div class="sc-report-category-manage">
     <el-button class="category-add-button" @click="addMenu" type="primaty">新增案件隐患分类</el-button>
-    <el-tree :data="data" :props="defaultProps" node-key="id" accordion :expand-on-click-node="false" :render-content="renderContent">
+    <el-tree :data="data" :props="defaultProps" node-key="id" accordion :expand-on-click-node="true" :render-content="renderContent">
     </el-tree>
     <el-dialog title="提示" v-model="deleteVisible" size="tiny">
       <span>确认要删除该分类吗？(将删除所有的子类)</span>
@@ -67,7 +67,7 @@ export default {
         id: 0,
         name: '',
         description: '',
-        catlgId: 0,
+        parentId: 0,
         sort: '',
         url: '',
         smallClassId: '',
@@ -127,14 +127,15 @@ export default {
       this.isEditing = false
       this.addVisible = true
     },
-    edit(node, store, data) {
+    edit(e, node, store, data) {
+      e.stopPropagation()
       console.log(node, store, data)
       this.isEditing = true
       if (Array.isArray(node.parent.data)) {
         this.formData.parentName = '根级目录'
       } else {
         this.formData.parentName = node.parent.data.name
-        this.formData.catlgId = node.parent.data.id
+        this.formData.parentId = node.parent.data.id
       }
       this.formData.name = data.name
       this.formData.id = data.id
@@ -144,7 +145,8 @@ export default {
       this.formData.sort = data.sort
       this.addVisible = true
     },
-    remove(store, data) {
+    remove(e, store, data) {
+      e.stopPropagation()
       this.deleteVisible = true
       this.deletedId = data.id
     },
@@ -186,15 +188,15 @@ export default {
             <span>{node.label}</span>
           </span>
           <span style="float: right; margin-right: 20px">
-            <el-button size="mini" on-click={() => this.edit(node, store, data)}>编辑</el-button>
-            <el-button size="mini" on-click={() => this.remove(store, data)}>删除</el-button>
+            <el-button size="mini" on-click={(e) => this.edit(e, node, store, data)}>编辑</el-button>
+            <el-button size="mini" on-click={(e) => this.remove(e, store, data)}>删除</el-button>
           </span>
         </span>)
     },
     addSubmit() {
       this.isClicked = true
       let obj = {}
-      obj.catlgId = this.formData.catlgId
+      obj.parentId = this.formData.parentId
       obj.name = this.formData.name
       obj.description = this.formData.description
       obj.sort = this.formData.sort
@@ -235,6 +237,7 @@ export default {
               this.isEditing = false
               this.addVisible = false
               this.getData()
+              this.getList()
             } else {
               this.$notify({
                 title: '成功',
@@ -244,6 +247,7 @@ export default {
               this.isEditing = false
               this.addVisible = false
               this.getData()
+              this.getList()
             }
           } else {
             this.$notify.error({

@@ -25,14 +25,27 @@
         <el-form-item label="板块描述">
           <el-input v-model="formData.description"></el-input>
         </el-form-item>
-        <el-form-item label="图标选择">
-          <el-input v-model="formData.logo"></el-input>
-        </el-form-item>
+        <!--<el-form-item label="图标选择">
+                  <el-input v-model="formData.logo"></el-input>
+                </el-form-item>-->
         <el-form-item label="同级排序">
           <el-input v-model="formData.sort"></el-input>
         </el-form-item>
         <el-form-item label="访问路径">
           <el-input v-model="formData.url"></el-input>
+        </el-form-item>
+        <el-form-item label="图标选择">
+          <el-upload class="upload" ref="upload" 
+                     :action="uploadUrl" 
+                     :on-change="uploadChange"
+                     :on-success="uploadSuccess" 
+                     :on-remove="uploadRemove" 
+                     :file-list="fileList" 
+                     list-type="picture" 
+                     >
+            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+          </el-upload>
         </el-form-item>
         <el-row type="flex" justify="space-around">
           <el-button type="primary" @click="addSubmit" size="large">提交</el-button>
@@ -66,6 +79,7 @@ export default {
         label: 'displayName',
         value: 'id'
       },
+      fileList: [],
       formData: {
         id: 0,
         name: '',
@@ -85,10 +99,20 @@ export default {
         name: [
           { required: true, message: '请输入节点名', trigger: 'blur' }
         ]
-      }
+      },
+      uploadUrl: config.serverURI + config.uploadImgAPI
     }
   },
   methods: {
+    uploadChange(file, fileList) {
+      this.fileList = [fileList[fileList.length - 1]]
+    },
+    uploadSuccess(res) {
+      console.log(res)
+    },
+    uploadRemove() {
+
+    },
     iteration(obj) {
       for (let key in obj) {
         if (obj.hasOwnProperty(key)) {
