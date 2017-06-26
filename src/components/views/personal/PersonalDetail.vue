@@ -11,7 +11,7 @@
             <div>姓名: <span>{{ response.name }}</span></div>
             <div>所属职位: <span>{{ response.dutyName }}</span></div>
             <div>联系方式: <span>{{ response.mobile }}</span></div>
-            <div>提交时间: <span>{{ response.createdAt | toDate }}</span> </div>
+            <div>提交时间: <span>{{ response.createdAt | toDateTime }}</span> </div>
           </div>
         </el-card>
 
@@ -20,7 +20,7 @@
             <span class="sc-firm-card-title">受理信息</span>
           </div>
           <div class="sc-firm-detail">
-            <div>受理时间: <span>{{ response.updatedAt | toDate }}</span></div>
+            <div>受理时间: <span>{{ response.updatedAt | toDateTime }}</span></div>
             <div>受理状态: <span>{{ response.status | statusCodeToMsg }}</span></div>
             <div>受理意见: <span>{{ response.remark }}</span></div>
           </div>

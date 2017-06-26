@@ -112,7 +112,7 @@ export default {
           { required: true, message: '请选择文章板块', trigger: 'blur' }
         ],
         author: [
-          { required: true, message: '请输入文章作者', trigger: 'change' }
+          { required: true, message: '请输入文章作者', trigger: 'blur' }
         ]
       },
       formRules: {

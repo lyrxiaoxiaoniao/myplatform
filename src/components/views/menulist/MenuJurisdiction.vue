@@ -6,7 +6,7 @@
           <div slot="kobe-table-header" class="kobe-table-header">
             <el-row type="flex" justify="end">
               <el-col :span="7">
-                <el-input v-model="linkMenuForm.keyword" placeholder="请输入搜索关键字">
+                <el-input v-model="linkMenuForm.keyword" placeholder="请输入关键字">
                   <el-button slot="append" @click="onLinkMenuSearch" icon="search"></el-button>
                 </el-input>
               </el-col>
@@ -54,7 +54,7 @@
           <div slot="kobe-table-header" class="kobe-table-header">
             <el-row type="flex" justify="end">
               <el-col :span="7">
-                <el-input v-model="unLinkMenuForm.keyword" placeholder="请输入搜索关键字">
+                <el-input v-model="unLinkMenuForm.keyword" placeholder="请输入关键字">
                   <el-button slot="append" @click="onUnLinkMenuSearch" icon="search"></el-button>
                 </el-input>
               </el-col>

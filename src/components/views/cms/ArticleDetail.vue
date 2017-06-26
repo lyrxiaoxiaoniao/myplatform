@@ -11,7 +11,7 @@
           </el-row>
           <el-row class="extra-text" type="flex" justify="space-between">
             <el-col :span="8">
-              发布时间:{{ response.createdAt | toDate }}
+              发布时间:{{ response.createdAt | toDateTime }}
             </el-col>
             <el-col :span="8">
               作者:{{ response.author }}

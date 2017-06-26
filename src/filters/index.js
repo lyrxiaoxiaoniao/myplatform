@@ -33,6 +33,23 @@ export function toTimestamp (date) {
   return new Date(date).getTime()
 }
 
+export function toDateTime (timestamp) {
+  let date = new Date(timestamp)
+  const month = date.getMonth() + 1
+
+  function format (time) {
+    let data = time
+    if (Number(data) < 10) {
+      data = '0' + time
+    }
+    return data
+  }
+  const minute = format(date.getMinutes())
+  const seconds = format(date.getSeconds())
+
+  return `${date.getFullYear()}-${month}-${date.getDate()} ${date.getHours()}:${minute}:${seconds}`
+}
+
 export function statusCodeToMsg (status) {
   switch (status) {
     case 0:
