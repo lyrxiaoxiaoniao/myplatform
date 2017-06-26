@@ -67,7 +67,7 @@ export default {
         id: 0,
         name: '',
         description: '',
-        parentId: '',
+        catlgId: '',
         sort: '',
         url: '',
         smallClassId: '',
@@ -135,7 +135,7 @@ export default {
         this.formData.parentName = '根级目录'
       } else {
         this.formData.parentName = node.parent.data.name
-        this.formData.parentId = node.parent.data.id
+        this.formData.catlgId = node.parent.data.id
       }
       this.formData.name = data.name
       this.formData.id = data.id
@@ -179,7 +179,7 @@ export default {
     },
     handleChange(value) {
       console.log(value)
-      this.formData.parentId = value[value.length - 1]
+      this.formData.catlgId = value[value.length - 1]
     },
     renderContent(h, { node, data, store }) {
       return (
@@ -196,7 +196,7 @@ export default {
     addSubmit() {
       this.isClicked = true
       let obj = {}
-      obj.parentId = this.formData.parentId
+      obj.catlgId = this.formData.catlgId
       obj.name = this.formData.name
       obj.description = this.formData.description
       obj.sort = this.formData.sort
@@ -207,7 +207,7 @@ export default {
       }
       let url = this.isEditing ? config.updateCaseCatlgAPI : config.addCaseCatlgAPI
 
-      if (obj.parentId === '') {
+      if (obj.catlgId === '') {
         this.$notify.error({
           title: '错误',
           message: '请提交必须参数'
