@@ -179,7 +179,7 @@ export default {
     },
     handleChange(value) {
       console.log(value)
-      this.formData.catlgId = value[0]
+      this.formData.parentId = value[value.length - 1]
     },
     renderContent(h, { node, data, store }) {
       return (
@@ -207,7 +207,7 @@ export default {
       }
       let url = this.isEditing ? config.updateCaseCatlgAPI : config.addCaseCatlgAPI
 
-      if (obj.catlgId === '') {
+      if (obj.parentId === '') {
         this.$notify.error({
           title: '错误',
           message: '请提交必须参数'

@@ -26,8 +26,8 @@
           <el-input v-model="formData.description"></el-input>
         </el-form-item>
         <!--<el-form-item label="图标选择">
-                  <el-input v-model="formData.logo"></el-input>
-                </el-form-item>-->
+                    <el-input v-model="formData.logo"></el-input>
+                  </el-form-item>-->
         <el-form-item label="同级排序">
           <el-input v-model="formData.sort"></el-input>
         </el-form-item>
@@ -35,14 +35,7 @@
           <el-input v-model="formData.url"></el-input>
         </el-form-item>
         <el-form-item label="图标选择">
-          <el-upload class="upload" ref="upload" 
-                     :action="uploadUrl" 
-                     :on-change="uploadChange"
-                     :on-success="uploadSuccess" 
-                     :on-remove="uploadRemove" 
-                     :file-list="fileList" 
-                     list-type="picture" 
-                     >
+          <el-upload class="upload" ref="upload" :action="uploadUrl" :on-change="uploadChange" :on-success="uploadSuccess" :on-remove="uploadRemove" :file-list="fileList" list-type="picture">
             <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
             <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
           </el-upload>
@@ -231,6 +224,16 @@ export default {
       if (this.isEditing) {
         obj.id = this.formData.id
       }
+
+      if (obj.parentId === '') {
+        this.$notify.error({
+          title: '错误',
+          message: '请提交必须参数'
+        })
+        this.isClicked = false
+        return
+      }
+
       let url = this.isEditing ? config.editArticleCatlgAPI : config.addArticleCatlgAPI
       api.POST(url, obj)
         .then(res => {
