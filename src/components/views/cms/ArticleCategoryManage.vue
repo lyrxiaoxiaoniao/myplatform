@@ -1,7 +1,7 @@
 <template>
   <div class="sc-article-category-manage">
     <el-button class="category-add-button" @click="addMenu" type="primaty">新增文章板块</el-button>
-    <el-tree :data="data" :props="defaultProps" node-key="id" accordion :expand-on-click-node="false" :render-content="renderContent">
+    <el-tree :data="data" :props="defaultProps" node-key="id" accordion :expand-on-click-node="true" :render-content="renderContent">
     </el-tree>
     <el-dialog title="提示" v-model="deleteVisible" size="tiny">
       <span>确认要删除该板块吗？(将删除所有的子板块)</span>
@@ -13,7 +13,7 @@
     <el-dialog :title="isEditing? '编辑' : '新增'" v-model="addVisible" size="tiny">
       <el-form labelPosition="right" label-width="90px">
         <el-form-item label="父级板块" required>
-          <el-cascader :options="options" change-on-select :props="props" @change="handleChange" v-model="formData.valueList" v-if="!isEditing"></el-cascader>
+          <el-cascader :options="options" :change-on-select="true" expand-trigger="hover" :props="props" @change="handleChange" v-model="formData.valueList" v-if="!isEditing"></el-cascader>
           <el-input v-else v-model="formData.parentName" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="板块名称" required>
@@ -120,7 +120,7 @@ export default {
         .then(res => {
           let obj = res.data.data
           this.iteration(obj)
-          obj.push({ id: 0, name: '根级菜单', label: '根级菜单', value: 0 })
+          obj.push({ id: 0, displayName: '根级菜单', label: '根级菜单', value: 0 })
           this.options = obj
         })
     },
@@ -129,7 +129,8 @@ export default {
       this.isEditing = false
       this.addVisible = true
     },
-    edit(node, store, data) {
+    edit(e, node, store, data) {
+      e.stopPropagation()
       console.log(node, store, data)
       this.isEditing = true
       if (Array.isArray(node.parent.data)) {
@@ -147,7 +148,9 @@ export default {
       this.formData.sort = data.sort
       this.addVisible = true
     },
-    remove(store, data) {
+    remove(e, store, data) {
+      console.log(e)
+      e.stopPropagation()
       this.deleteVisible = true
       this.deletedId = data.id
     },
@@ -187,8 +190,8 @@ export default {
             <span>{node.label}</span>
           </span>
           <span style="float: right; margin-right: 20px">
-            <el-button size="mini" on-click={() => this.edit(node, store, data)}>编辑</el-button>
-            <el-button size="mini" on-click={() => this.remove(store, data)}>删除</el-button>
+            <el-button size="mini" on-click={(e) => this.edit(e, node, store, data)}>编辑</el-button>
+            <el-button size="mini" on-click={(e) => this.remove(e, store, data)}>删除</el-button>
           </span>
         </span>)
     },
@@ -217,6 +220,7 @@ export default {
               this.isEditing = false
               this.addVisible = false
               this.getData()
+              this.getList()
             } else {
               this.$notify({
                 title: '成功',
@@ -226,6 +230,7 @@ export default {
               this.isEditing = false
               this.addVisible = false
               this.getData()
+              this.getList()
             }
           } else {
             this.$notify.error({
