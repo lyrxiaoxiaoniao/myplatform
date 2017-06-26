@@ -13,7 +13,7 @@
     <el-dialog :title="isEditing? '编辑' : '新增'" v-model="addVisible" size="tiny">
       <el-form labelPosition="right" label-width="90px">
         <el-form-item label="父级板块" required>
-          <el-cascader :options="options" change-on-select :props="props" @change="handleChange" v-model="formData.valueList" v-if="!isEditing"></el-cascader>
+          <el-cascader :options="options" :change-on-select="true" :props="props" @change="handleChange" v-model="formData.valueList" v-if="!isEditing"></el-cascader>
           <el-input v-else v-model="formData.parentName" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="案件名称" required>
