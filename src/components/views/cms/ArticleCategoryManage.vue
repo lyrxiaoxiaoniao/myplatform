@@ -158,6 +158,7 @@ export default {
       this.formData.description = data.description
       this.formData.logo = data.logo
       this.formData.sort = data.sort
+      this.fileList[0] = {name: this.formData.displayName, url: this.formData.logo}
       this.addVisible = true
     },
     remove(e, store, data) {
