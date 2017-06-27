@@ -104,6 +104,18 @@
                 <img v-bind:src="demo.avatar" class="user-image" alt="User Image">
                 <span class="hidden-xs">{{ demo.displayName }}</span>
               </a>
+              <ul class="dropdown-menu user-setting-menu">
+                <li class="header">
+                  <el-row type="flex" justify="center">
+                    用户资料
+                  </el-row>
+                </li>
+                <li class="user-setting-menu-content">
+                  <el-row type="flex" justify="end">
+                    <el-button @click="onLogout" size="small">退出</el-button>
+                  </el-row>
+                </li>
+              </ul>
             </li>
           </ul>
         </div>
@@ -169,6 +181,19 @@ export default {
     }
   },
   methods: {
+    onLogout () {
+      api.GET(config.basic.logout)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.$store.commit('SET_USER_INFO', null)
+          this.$store.commit('SET_TOKEN', null)
+          this.$router.push('/login')
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
     changeloading () {
       this.$store.commit('TOGGLE_SEARCHING')
     },
@@ -260,4 +285,19 @@ hr.visible-xs-block {
   font-size: 14px;
   color: #777;
 }
+.user-setting-menu {
+  margin-right: 1rem;
+}
+.user-setting-menu .header {
+  border-bottom: 1px solid lightgray;
+}
+.user-setting-menu-content {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+/*
+.content-header {
+  border-bottom: 1px solid lightgray;
+}
+*/
 </style>

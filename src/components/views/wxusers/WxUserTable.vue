@@ -2,7 +2,7 @@
   <kobe-table v-if="response && tagList && streetList && industryList">
     <div slot="kobe-table-header" class="kobe-table-header">
       <el-row type="flex" justify="end">
-        <el-col :span="6">
+        <el-col>
           <el-cascader
             expand-trigger="hover"
             :options="streetList"
@@ -13,7 +13,7 @@
             >
           </el-cascader>
         </el-col>
-        <el-col :span="6">
+        <el-col>
           <el-select
             v-model="form.industryId"
             placeholder="行业"
@@ -28,7 +28,7 @@
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="6">
+        <el-col>
           <el-select
             v-model="form.tagId"
             placeholder="标签组"
@@ -43,7 +43,7 @@
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="7">
+        <el-col>
           <el-input v-model="form.param" placeholder="请输入昵称、姓名、企业名称">
             <el-button slot="append" class="keyword-search-button" @click="onSearch" icon="search"></el-button>
           </el-input>

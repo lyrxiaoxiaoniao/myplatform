@@ -76,7 +76,7 @@
             {{ scope.row.createdAt | toDateTime }}
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态" min-width="80"></el-table-column>
+        <el-table-column prop="status" label="状态" width="80"></el-table-column>
         <el-table-column label="操作" width="120px">
           <template scope="scope">
             <el-button size="small" icon="information" @click="selectCase(scope.row.id)"></el-button>
