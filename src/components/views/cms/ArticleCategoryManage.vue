@@ -35,7 +35,7 @@
           <el-input v-model="formData.url"></el-input>
         </el-form-item>
         <el-form-item label="图标选择">
-          <el-upload class="upload" ref="upload" :action="uploadUrl" :on-change="uploadChange" :on-success="uploadSuccess" :on-remove="uploadRemove" :file-list="fileList" list-type="picture">
+          <el-upload class="upload" ref="upload" :action="uploadUrl" :on-success="uploadSuccess" :on-remove="uploadRemove" :file-list="fileList" list-type="picture">
             <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
             <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
           </el-upload>
@@ -97,14 +97,9 @@ export default {
     }
   },
   methods: {
-    uploadChange(file, fileList) {
-      this.fileList = [fileList[fileList.length - 1]]
-    },
-    uploadSuccess(res) {
-      console.log(res)
-    },
-    uploadRemove() {
-
+    uploadSuccess(res, file, fileList) {
+      this.fileList = [file]
+      this.formData.logo = res.data[0]
     },
     iteration(obj) {
       for (let key in obj) {
