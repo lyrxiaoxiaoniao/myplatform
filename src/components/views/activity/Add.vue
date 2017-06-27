@@ -143,6 +143,7 @@ export default {
         ...this.response
       ]
       data[value.index].properties = value.data
+      console.log(data)
     },
     selectCategoty (value) {
       api.GET(config.activity.activityAdd, {

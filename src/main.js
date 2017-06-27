@@ -144,6 +144,8 @@ router.beforeEach((to, from, next) => {
   }
 })
 
+Vue.config.productionTip = false
+
 sync(store, router)
 // eslint-disable-next-line no-new
 new Vue({

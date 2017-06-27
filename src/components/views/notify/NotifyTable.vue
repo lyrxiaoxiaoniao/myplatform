@@ -46,9 +46,12 @@
           >
         </el-table-column>
         <el-table-column
-          prop="createdAt"
+          width="280px"
           label="发送时间"
           >
+          <template scope="scope">
+            {{ scope.row.createdAt | toDateTime }}
+          </template>
         </el-table-column>
         <el-table-column 
           width="180"
@@ -230,11 +233,6 @@ export default {
     },
     transformData (res) {
       res.data.forEach(item => {
-        if (item.createdAt) {
-          let date = new Date(item.createdAt)
-          const month = date.getMonth() + 1
-          item.createdAt = `${date.getFullYear()}-${month}-${date.getDate()}`
-        }
       })
 
       return res

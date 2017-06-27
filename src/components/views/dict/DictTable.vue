@@ -48,7 +48,7 @@
           </template>
         </el-table-column>
         <el-table-column 
-          width="280"
+          width="120"
           label="操作"
           >
           <template scope="scope">

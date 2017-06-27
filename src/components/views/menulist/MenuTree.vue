@@ -1,6 +1,6 @@
 <template>  
   <div class="sc-report-category-manage">
-    <el-button @click="addMenu" type="primaty">新增菜单分类</el-button>
+    <el-button class="sc-menu-add-button" @click="addMenu" type="primaty">新增菜单分类</el-button>
     <el-tree
       :data="data"
       :props="defaultProps"
@@ -289,5 +289,8 @@ export default {
     margin-top: 2rem;
     border-top: 1px solid lightgray;
     padding:2rem 4rem;
+  }
+  .sc-menu-add-button {
+    margin-bottom: 1rem;
   }
 </style>
