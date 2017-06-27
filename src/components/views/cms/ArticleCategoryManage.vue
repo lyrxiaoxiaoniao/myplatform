@@ -26,8 +26,8 @@
           <el-input v-model="formData.description"></el-input>
         </el-form-item>
         <!--<el-form-item label="图标选择">
-                    <el-input v-model="formData.logo"></el-input>
-                  </el-form-item>-->
+                            <el-input v-model="formData.logo"></el-input>
+                          </el-form-item>-->
         <el-form-item label="同级排序">
           <el-input v-model="formData.sort"></el-input>
         </el-form-item>
@@ -35,9 +35,9 @@
           <el-input v-model="formData.url"></el-input>
         </el-form-item>
         <el-form-item label="图标选择">
-          <el-upload class="upload" ref="upload" :action="uploadUrl" :on-success="uploadSuccess" :on-remove="uploadRemove" :file-list="fileList" list-type="picture">
-            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+          <el-upload class="avatar-uploader" :action="uploadUrl" :show-file-list="false" :on-success="uploadSuccess">
+            <img v-if="formData.logo" :src="formData.logo" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </el-form-item>
         <el-row type="flex" justify="space-around">
@@ -72,7 +72,6 @@ export default {
         label: 'displayName',
         value: 'id'
       },
-      fileList: [],
       formData: {
         id: 0,
         name: '',
@@ -98,7 +97,6 @@ export default {
   },
   methods: {
     uploadSuccess(res, file, fileList) {
-      this.fileList = [file]
       this.formData.logo = res.data[0]
     },
     iteration(obj) {
@@ -158,7 +156,6 @@ export default {
       this.formData.description = data.description
       this.formData.logo = data.logo
       this.formData.sort = data.sort
-      this.fileList[0] = {name: this.formData.displayName, url: this.formData.logo}
       this.addVisible = true
     },
     remove(e, store, data) {
@@ -288,5 +285,32 @@ export default {
 
 .category-add-button {
   margin-bottom: 1rem;
+}
+
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.avatar-uploader .el-upload:hover {
+  border-color: #20a0ff;
+}
+
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
 }
 </style>
