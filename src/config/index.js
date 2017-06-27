@@ -9,6 +9,7 @@ export default {
     sendMail: '/sys/sendMsgVerify',
     forgetMail: '/admin/password/sendEmail',
     login: '/sys/login',
+    logout: '/sys/logout',
     refresh: '/sys/user'
   },
   report: {

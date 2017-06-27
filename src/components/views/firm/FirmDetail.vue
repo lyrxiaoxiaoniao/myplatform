@@ -1,5 +1,9 @@
 <template>
   <div class="sc-firm-detail-component" v-if="response">
+    <el-row class="sc-firm-detail-action" type="flex">
+      <el-button @click="dealCase" type="primary">审核</el-button>
+      <el-button type="primary" @click="back">返回</el-button>
+    </el-row>
     <el-row type="flex">
       <el-col :span="12" class="sc-firm-detail-content">
         <el-card class="sc-firm-card">
@@ -50,10 +54,6 @@
           组织机构代码证
         </div>
       </el-col>
-    </el-row>
-    <el-row class="sc-firm-detail-action" type="flex" justify="end">
-      <el-button @click="dealCase" type="primary">审核</el-button>
-      <el-button type="primary" @click="back">返回</el-button>
     </el-row>
     <el-dialog title="企业信息上报处理" v-model="showDialog">
       <el-form :model="form">
@@ -195,6 +195,7 @@ export default {
   margin-top: 1rem;
 }
 .sc-firm-detail-action {
+  margin-left: 1rem;
   margin-top: 10px;
   margin-right: 30rem;
   padding-bottom: 10px;

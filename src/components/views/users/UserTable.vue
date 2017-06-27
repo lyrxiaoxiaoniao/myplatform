@@ -11,7 +11,7 @@
           </el-input>
         </el-col>
         <router-link class="add-user-link add" to="/admin/user/add">
-            <el-button type="primary" icon="plus"></el-button>
+            <el-button icon="plus"></el-button>
         </router-link>
         <el-button icon="upload2" type="primary"></el-button>
         <el-button icon="setting" type="primary"></el-button>
