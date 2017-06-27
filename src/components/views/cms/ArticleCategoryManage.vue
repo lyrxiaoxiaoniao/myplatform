@@ -143,7 +143,6 @@ export default {
     },
     edit(e, node, store, data) {
       e.stopPropagation()
-      console.log(node, store, data)
       this.isEditing = true
       if (Array.isArray(node.parent.data)) {
         this.formData.parentName = '根级目录'
@@ -162,7 +161,6 @@ export default {
       this.addVisible = true
     },
     remove(e, store, data) {
-      console.log(e)
       e.stopPropagation()
       this.deleteVisible = true
       this.deletedId = data.id
@@ -174,7 +172,6 @@ export default {
     getData() {
       api.GET(config.articleCatlgAPI)
         .then(res => {
-          console.log(res.data, 'config')
           this.data = res.data.data
         })
     },

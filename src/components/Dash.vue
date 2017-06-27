@@ -1,14 +1,18 @@
 <template>
   <div :class="['wrapper', classes]">
     <header class="main-header">
-      <a href="/" class="logo">
-        <span class="logo-mini"><img src="static/img/copilot-logo-white.svg" alt="Logo"
-                                     class="img-responsive center-block"></span>
+      <router-link to="/admin" class="logo">
+        <span class="logo-mini">
+          <img
+          src="static/img/LOGO2.png"
+          alt="Logo"
+          class="img-responsive center-block">
+        </span>
         <div class="logo-lg">
-          <img src="static/img/copilot-logo-white.svg" alt="Logo" class="img-responsive">
+          <img src="static/img/LOGO2.png" alt="Logo" class="img-responsive">
           <span>{{ appInfo ? appInfo.appName : '深传互动' }}</span>
         </div>
-      </a>
+      </router-link>
 
       <nav class="navbar navbar-static-top" role="navigation">
         <!-- <a href="javascript:;" class="sidebar-toggle" data-toggle="offcanvas" role="button"> -->
@@ -110,10 +114,10 @@
 
     <div class="content-wrapper">
       <section class="content-header">
-        <h1>
+        <div>
           {{ $route.name.toUpperCase() }}
-          <small>{{ $route.meta.description }}</small>
-        </h1>
+          <span class="content-header-description">{{ $route.meta.description }}</span>
+        </div>
         <ol class="breadcrumb">
           <li><router-link to="/admin"><i class="fa fa-home"></i>主页</router-link></li>
           <li class="active">{{$route.name.toUpperCase()}}</li>
@@ -209,7 +213,6 @@ export default {
     height: 100vh;
   }
 }
-
 .wrapper.hide_logo {
   @media (max-width: 767px) {
     .main-header .logo {
@@ -249,5 +252,12 @@ hr.visible-xs-block {
 }
 .content-wrapper {
   min-height: 90vh;
+}
+.content-header div {
+  font-size: 18px;
+}
+.content-header-description {
+  font-size: 14px;
+  color: #777;
 }
 </style>

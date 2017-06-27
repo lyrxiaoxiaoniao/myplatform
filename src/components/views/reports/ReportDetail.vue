@@ -21,8 +21,11 @@
             </li>
             <li>
               <el-row type="flex">
-                <div>案件地址： <span>{{ response.address }}</span></div>
-                <el-button size="small" icon="picture" @click="openMap"></el-button>
+                <div>
+                  案件地址： 
+                  <el-button size="small" class="fa fa-map-marker" @click="openMap"></el-button>
+                  <span>{{ response.address }}</span>
+                </div>
               </el-row>
             </li>
             <li>
@@ -119,7 +122,7 @@
         <div id="mapWrapper"></div>
         <div class="mapDialogFooter">
           <el-row type="flex" justify="end">
-            <el-button type="danger" @click="closeMap">关闭</el-button>
+            <el-button @click="closeMap">关闭</el-button>
           </el-row>
         </div>
       </div>
@@ -455,7 +458,9 @@ export default {
     font-size: 1.5rem;
     margin-bottom: 1%;
     padding-bottom: 1%;
-    border-bottom: 1px solid lightgray;
+  }
+  .mapDialogFooter {
+    margin-top: 1rem;
   }
   #mapWrapper {
     width: 95%;

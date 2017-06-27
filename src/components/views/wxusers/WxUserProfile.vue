@@ -127,8 +127,10 @@ export default {
 }
 .sc-wechat-company-card div {
   margin-bottom: 1rem;
+  border-bottom: 1px solid lightgray;
 }
 .sc-wechat-company-card-title {
-  font-size: 2rem;
+  font-size: 18px;
+  border-bottom: none !important;
 }
 </style>

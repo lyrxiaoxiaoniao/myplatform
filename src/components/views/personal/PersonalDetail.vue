@@ -42,7 +42,7 @@
       <el-form :model="form">
         <el-form-item label="处理方式" :label-width="'120px'">
           <el-select v-model="form.status" placeholder="请选择处理方案">
-            <el-option label="处理" value="1"></el-option>
+            <el-option label="通过" value="1"></el-option>
             <el-option label="驳回" value="2"></el-option>
           </el-select>
         </el-form-item>
@@ -168,6 +168,10 @@ export default {
 .sc-firm-card {
   margin-top: 1rem;
   margin-left: 1rem;
+}
+.sc-firm-detail div {
+  border-bottom: 1px solid lightgray;
+  margin-bottom: 1rem;
 }
 .sc-firm-image-content {
   margin-left: 1rem;
