@@ -1,7 +1,7 @@
 <template>
   <kobe-table v-if="response && tagList && streetList && industryList">
     <div slot="kobe-table-header" class="kobe-table-header">
-      <el-row type="flex" justify="space-around">
+      <el-row type="flex" justify="end">
         <el-col :span="6">
           <el-cascader
             expand-trigger="hover"

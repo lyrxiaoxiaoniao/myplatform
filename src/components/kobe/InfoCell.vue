@@ -34,6 +34,9 @@ export default {
 </script>
 
 <style>
+.kobe-info-cell {
+  border-bottom: 1px solid lightgray;
+}
 .kobe-info-cell-detail {
   text-align: right;
 }
