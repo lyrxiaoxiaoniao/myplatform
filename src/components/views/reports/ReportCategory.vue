@@ -102,7 +102,7 @@ export default {
     clearFormData() {
       let obj = this.formData
       for (let key in obj) {
-        if (key === 'id' || key === 'catlgId') {
+        if (key === 'id') {
           obj[key] = 0
         } else if (key === 'valueList') {
           obj[key] = []
