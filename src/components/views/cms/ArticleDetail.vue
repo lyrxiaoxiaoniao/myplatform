@@ -175,6 +175,9 @@ export default {
 }
 </script>
 <style>
+.article-detail-component {
+  padding-bottom: 2rem;
+}
 .article-detail-component .article-detail {
   margin-left: 1rem;
   margin-top: 2rem;

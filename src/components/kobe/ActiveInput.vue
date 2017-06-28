@@ -10,6 +10,7 @@
 
 <script>
 export default {
+  // used for activity active form
   name: 'kobe-active-input',
   props: {
     data: {
@@ -30,10 +31,15 @@ export default {
   },
   methods: {
     onChange () {
-      const data = {
-        ...this.data,
+      let data = {
         index: this.index,
-        value: this.data.value
+        data: {
+          id: this.data.id,
+          type_key: this.data.type_key,
+          options: [{
+            title: this.data.value
+          }]
+        }
       }
       this.$emit('input', data)
     }

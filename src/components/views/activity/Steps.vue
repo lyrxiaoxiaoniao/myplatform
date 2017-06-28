@@ -137,6 +137,7 @@
       </div>
       <kobe-table-dialog
         @close="onPropsTableClose"
+        @confirm="onPropsTableClose"
         :show="showProsDialog"
         :tableData="propsTable"
         title="活动步骤的属性"

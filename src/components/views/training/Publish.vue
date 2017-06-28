@@ -30,7 +30,7 @@ export default {
   },
   methods: {
     getActivityForm () {
-      api.GET(config.activity.activityAdd, {
+      api.GET(config.activity.activitySelectCatlg, {
         category_id: 12
       })
       .then(response => {

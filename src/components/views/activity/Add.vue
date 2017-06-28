@@ -9,15 +9,10 @@
           :model="basicForm"
           label-width="120px"
           label-position="left">
-          <el-form-item label="活动名称">
+          <el-form-item label="活动名称" required>
             <el-input v-model="basicForm.title"></el-input>
           </el-form-item>
-          <el-form-item label="活动地址">
-            <el-input v-model="basicForm.address">
-              <el-button slot="append" class="fa fa-map-marker"></el-button>
-            </el-input>
-          </el-form-item>
-          <el-form-item label="举办时间">
+          <el-form-item label="举办时间" required>
             <el-col :span="11">
               <el-date-picker
                 type="datetime"
@@ -38,12 +33,17 @@
               </el-date-picker>
             </el-col>
           </el-form-item>
+          <el-form-item label="活动地址">
+            <el-input v-model="basicForm.address">
+              <el-button slot="append" class="fa fa-map-marker"></el-button>
+            </el-input>
+          </el-form-item>
           <el-row type="flex" justify="space-between">
             <el-col :span="11">
-              <el-form-item label="分类">
+              <el-form-item label="分类" required>
                 <el-select
                   v-if="categories"
-                  v-model="basicForm.category"
+                  v-model="basicForm.catgr_id"
                   @change="selectCategoty"
                   placeholder="活动分类">
                   <el-option
@@ -82,6 +82,17 @@
           <el-form-item label="标签">
             <kobe-tag-group></kobe-tag-group>
           </el-form-item>
+          <el-form-item label="开启">
+            <el-switch
+              v-model="active"
+              on-text="开启"
+              off-text="关闭"
+              on-color="#13ce66"
+              off-color="#ff4949"
+              @change="onActiveSwitch"
+              >
+            </el-switch>
+          </el-form-item>
           <el-form-item label="活动附件">
             <el-button>点击上传</el-button>
           </el-form-item>
@@ -95,14 +106,25 @@
         >
         <kobe-active-form
           v-if="item.properties"
-          :data="item.properties"
+          :data="item"
           :index="index"
           @form-change="onFormChange"
           >
         </kobe-active-form>
       </el-tab-pane>
     </el-tabs>
-    <el-button @click="onAdd">add</el-button>
+    <el-row type="flex">
+      <el-button v-if="selectedTab === '-1'" @click="onAdd">添加附加属性</el-button>  
+      <el-button @click="onCreateActivity">提交表单</el-button>
+    </el-row>
+    <el-input
+      v-if="showExtraInput"
+      v-model="extraProperty"
+      placeholder="请输入属性名称"
+      @keyup.enter.native="addExtraProperty"
+      @blur="addExtraProperty"
+      >
+    </el-input>
   </div>
 </template>
 
@@ -115,44 +137,105 @@ export default {
   data () {
     return {
       selectedTab: '-1',
+      showExtraInput: false,
       error: null,
       response: null,
       categories: [],
+      active: true,
+      extraProperty: '',
+      form: {
+        stages: [
+        ],
+        exts: [
+        ]
+      },
       basicForm: {
         title: '',
         address: '',
         start_date: '',
         end_date: '',
         number: '',
-        category: '',
+        catgr_id: '',
         mobile: '',
         manager: '',
+        active: '',
         brief: ''
       }
     }
   },
   methods: {
     onAdd () {
+      if (this.basicForm.catgr_id === '') {
+        this.$message.info('请先选择活动分类')
+        return
+      }
+      this.showExtraInput = true
+    },
+    addExtraProperty () {
+      api.POST(config.activity.extraPropertyAdd, {
+        label: this.extraProperty,
+        category_id: this.basicForm.catgr_id
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    onCreateActivity () {
+      this.basicForm.start_date = this.toTimestamp(this.basicForm.start_date)
+      this.basicForm.end_date = this.toTimestamp(this.basicForm.end_date)
+
+      const data = {
+        ...this.form,
+        ...this.basicForm
+      }
+      api.POST(config.activity.add, data)
+      .then(response => {
+        console.log(response.data)
+        if (response.data.errcode === '0000') {
+          this.$notify({
+            title: '成功',
+            type: 'success',
+            message: '创建活动成功'
+          })
+          this.$router.push({
+            path: '/admin/activity'
+          })
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    onActiveSwitch () {
+      if (this.active) {
+        this.basicForm.active = 1
+      } else {
+        this.basicForm.active = 0
+      }
+    },
+    toTimestamp (date) {
+      if (!date) return ''
+      return new Date(date).getTime()
     },
     onEditorChange (data) {
       this.basicForm.brief = data
     },
     onFormChange (value) {
-      // TODO
-      let data = [
-        ...this.response
-      ]
-      data[value.index].properties = value.data
-      console.log(data)
+      console.log('on form change')
+      console.log(value)
+      this.form.stages[value.index] = value
     },
     selectCategoty (value) {
-      api.GET(config.activity.activityAdd, {
+      api.GET(config.activity.activitySelectCatlg, {
         category_id: value
       })
       .then(response => {
         if (response.data.errcode === '0000') {
           this.response = response.data.data
-          console.log(this.response)
         }
       })
       .catch(error => {
@@ -188,6 +271,7 @@ export default {
   margin-top: 2rem;
   margin-left: 2rem;
   margin-right: 2rem;
+  padding-bottom: 2rem;
 }
 .activity-add-component .el-form-item {
   margin-bottom: 1.5rem;
