@@ -241,7 +241,6 @@ export default {
 .sc-firm-header {
   margin: 1rem 2rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid lightgray;
 }
 .sc-firm-content {
   margin-left: 2rem;

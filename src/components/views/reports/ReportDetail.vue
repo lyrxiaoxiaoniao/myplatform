@@ -357,9 +357,7 @@ export default {
     margin-right: 2rem;
   }
   .sc-report-detail {
-    border-top: 1px solid lightgray;
     padding-top: 1rem;
-    margin-top: 2rem;
   }
 
   .el-carousel__item {

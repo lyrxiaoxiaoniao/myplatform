@@ -129,7 +129,6 @@ export default {
     },
     edit(e, node, store, data) {
       e.stopPropagation()
-      console.log(node, store, data)
       this.isEditing = true
       if (Array.isArray(node.parent.data)) {
         this.formData.parentName = '根级目录'
@@ -157,12 +156,10 @@ export default {
     getData() {
       api.GET(config.caseCatlgAPI)
         .then(res => {
-          // console.log(res.data, 'config')
           this.data = res.data.data
         })
     },
     deleteCategory() {
-      console.log(this.deletedId)
       api.POST(config.editCaseCatlgAPI, { id: this.deletedId })
         .then(res => {
           if (res.data.errcode === '0000') {
@@ -178,7 +175,6 @@ export default {
         })
     },
     handleChange(value) {
-      console.log(value)
       this.formData.catlgId = value[value.length - 1]
     },
     renderContent(h, { node, data, store }) {
@@ -276,8 +272,6 @@ export default {
 
 <style scoped>
 .sc-report-category-manage {
-  margin-top: 2rem;
-  border-top: 1px solid lightgray;
   padding: 2rem 4rem;
 }
 

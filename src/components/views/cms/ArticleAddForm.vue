@@ -362,6 +362,7 @@ export default {
 </script>
 <style scoped>
   .articleAddForm {
+    margin-top: 1rem;
     padding-top: 2rem;
     margin-left: 20px;
     margin-right: 20px;

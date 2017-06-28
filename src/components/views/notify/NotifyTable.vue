@@ -26,7 +26,7 @@
         </el-table-column>
         <el-table-column
           prop="template.name"
-          width="200px"
+          min-width="200px"
           label="微信模板名称"
           >
         </el-table-column>
@@ -46,7 +46,6 @@
           >
         </el-table-column>
         <el-table-column
-          width="280px"
           label="发送时间"
           >
           <template scope="scope">
@@ -252,7 +251,6 @@ export default {
 .notify-table-header {
   margin: 1rem 2rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid lightgray;
 }
 .sc-notify-table-content {
   margin: 0 1rem;

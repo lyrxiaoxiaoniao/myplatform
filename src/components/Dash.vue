@@ -295,9 +295,9 @@ hr.visible-xs-block {
   padding-top: 5px;
   padding-bottom: 5px;
 }
-/*
 .content-header {
   border-bottom: 1px solid lightgray;
+  padding-bottom: 1rem;
 }
-*/
+
 </style>
