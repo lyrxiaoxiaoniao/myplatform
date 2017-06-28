@@ -77,7 +77,7 @@ export default {
         name: '',
         displayName: '',
         description: '',
-        parentId: 0,
+        parentId: '',
         sort: '',
         url: '',
         logo: '',
