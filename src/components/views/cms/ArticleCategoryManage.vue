@@ -25,9 +25,9 @@
         <el-form-item label="板块描述">
           <el-input v-model="formData.description"></el-input>
         </el-form-item>
-        <!--<el-form-item label="图标选择">
-                            <el-input v-model="formData.logo"></el-input>
-                          </el-form-item>-->
+        <el-form-item label="启用板块" required>
+          <el-input v-model="formData.active" placeholder="填0为不启用，1为启用"></el-input>
+        </el-form-item>
         <el-form-item label="同级排序">
           <el-input v-model="formData.sort"></el-input>
         </el-form-item>
@@ -82,7 +82,8 @@ export default {
         url: '',
         logo: '',
         valueList: [],
-        parentName: ''
+        parentName: '',
+        active: ''
       },
       rules: {
         valueList: [
@@ -211,6 +212,7 @@ export default {
       obj.sort = this.formData.sort
       obj.url = this.formData.url
       obj.logo = this.formData.logo
+      obj.active = this.formData.active
       if (this.isEditing) {
         obj.id = this.formData.id
       }
@@ -219,6 +221,15 @@ export default {
         this.$notify.error({
           title: '错误',
           message: '请提交必须参数'
+        })
+        this.isClicked = false
+        return
+      }
+
+      if (!(/^[0-1]*$/.test(obj.active))) {
+        this.$notify.error({
+          title: '错误',
+          message: '请填入正确的值'
         })
         this.isClicked = false
         return
