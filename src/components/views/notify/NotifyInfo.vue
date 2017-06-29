@@ -284,7 +284,6 @@ export default {
   width: 150px;
 }
 .sc-notify-content {
-  border-top: 1px solid lightgray;
   padding-top: 2rem;
   margin-left: 2rem;
   margin-top: 1rem;

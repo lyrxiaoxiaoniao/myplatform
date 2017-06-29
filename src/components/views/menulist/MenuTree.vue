@@ -1,6 +1,6 @@
 <template>  
   <div class="sc-report-category-manage">
-    <el-button @click="addMenu" type="primaty">新增菜单分类</el-button>
+    <el-button class="sc-menu-add-button" @click="addMenu" type="primaty">新增菜单分类</el-button>
     <el-tree
       :data="data"
       :props="defaultProps"
@@ -9,7 +9,7 @@
       :expand-on-click-node="false"
       :render-content="renderContent">
     </el-tree>
-    <el-dialog title="提示" v-model="deleteVisible" size="tiny">
+    <el-dialog title="提示" v-model="deleteVisible">
       <span>确认要删除该分类吗？(将删除所有的子类)</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="deleteVisible = false">取 消</el-button>
@@ -17,8 +17,7 @@
       </span>
     </el-dialog>
     <el-dialog :title="isEditing? '编辑' : '新增'"
-               v-model="addVisible"
-               size="tiny">
+      v-model="addVisible">
       <el-form labelPosition="right" label-width="90px">
         <el-form-item label="父级菜单" required>
           <el-cascader
@@ -286,8 +285,9 @@ export default {
 
 <style scoped>
   .sc-report-category-manage {
-    margin-top: 2rem;
-    border-top: 1px solid lightgray;
     padding:2rem 4rem;
+  }
+  .sc-menu-add-button {
+    margin-bottom: 1rem;
   }
 </style>

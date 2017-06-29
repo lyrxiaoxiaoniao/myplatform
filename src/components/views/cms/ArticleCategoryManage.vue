@@ -3,14 +3,14 @@
     <el-button class="category-add-button" @click="addMenu" type="primaty">新增文章板块</el-button>
     <el-tree :data="data" :props="defaultProps" node-key="id" accordion :expand-on-click-node="true" :render-content="renderContent">
     </el-tree>
-    <el-dialog title="提示" v-model="deleteVisible" size="tiny">
+    <el-dialog title="提示" v-model="deleteVisible">
       <span>确认要删除该板块吗？(将删除所有的子板块)</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="deleteVisible = false">取 消</el-button>
         <el-button type="danger" @click="deleteCategory">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog :title="isEditing? '编辑' : '新增'" v-model="addVisible" size="tiny">
+    <el-dialog :title="isEditing? '编辑' : '新增'" v-model="addVisible">
       <el-form labelPosition="right" label-width="90px">
         <el-form-item label="父级板块" required>
           <el-cascader :options="options" :change-on-select="true" :props="props" @change="handleChange" v-model="formData.valueList" v-if="!isEditing"></el-cascader>
@@ -286,8 +286,6 @@ export default {
 
 <style scoped>
 .sc-article-category-manage {
-  margin-top: 2rem;
-  border-top: 1px solid lightgray;
   padding: 2rem 4rem;
 }
 

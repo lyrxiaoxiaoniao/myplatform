@@ -316,7 +316,6 @@ export default {
 .sc-notify-form-header {
   margin-left: 2rem;
   margin-top: 20px;
-  border-bottom: 1px solid lightgray;
 }
 .notify-form {
   width: 50rem;

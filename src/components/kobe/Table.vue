@@ -51,7 +51,6 @@ export default {
 .kobe-table-header {
   margin: 1rem 2rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid lightgray;
 }
 .kobe-table {
   margin-left: 2rem;
