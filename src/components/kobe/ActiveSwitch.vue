@@ -14,6 +14,7 @@
 
 <script>
 export default {
+  // used for activity active form
   name: 'kobe-active-switch',
   props: {
     onText: {
@@ -31,6 +32,12 @@ export default {
     offColor: {
       type: String,
       default: '#ff4949'
+    },
+    index: {
+      type: Number
+    },
+    data: {
+      type: Object
     }
   },
   data () {
@@ -40,7 +47,24 @@ export default {
   },
   methods: {
     onChange () {
-      this.$emit('switch', this.value)
+      let value
+      if (this.value) {
+        value = 1
+      } else {
+        value = 0
+      }
+
+      let data = {
+        index: this.index,
+        data: {
+          id: this.data.id,
+          type_key: this.data.type_key,
+          options: [{
+            title: value
+          }]
+        }
+      }
+      this.$emit('switch', data)
     }
   }
 }

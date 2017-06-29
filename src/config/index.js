@@ -1,6 +1,6 @@
 /* eslint no-useless-escape: "off" */
 export default {
-  serverURI: 'http://gov.shencom.cn/gm',
+  serverURI: 'https://gov.shencom.cn/gm',
   // serverURI: 'http://192.168.1.114:8080',
   // serverURI: 'http://test.java.shencom.cn/gm',
   basic: {
@@ -76,6 +76,7 @@ export default {
     propertyDelete: '/activity/property/delete',
     propertyUpdate: '/activity/property/update',
     activitySelectCatlg: '/activity/category/stage',
+    extraProperty: '/activity/extend/index',
     extraPropertyAdd: '/activity/extend/key/create',
     add: '/activity/info/create',
     list: '/activity/info/index'

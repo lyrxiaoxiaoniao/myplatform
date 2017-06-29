@@ -55,24 +55,40 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="11">
-              <el-form-item label="人数限制">
-                <el-input-number v-model="basicForm.number"></el-input-number>
-              </el-form-item>
-            </el-col>
           </el-row>
-          <el-row type="flex" justify="space-between">
-            <el-col :span="11">
-              <el-form-item label="负责人">
-                <el-input v-model="basicForm.manager"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="11">
-              <el-form-item label="联系方式">
-                <el-input v-model="basicForm.mobile"></el-input>
-              </el-form-item>
-            </el-col>
+          <el-row type="flex">
+            <el-form-item label="报名">
+              <el-switch
+                v-model="hasSign"
+                on-text="开启"
+                off-text="关闭"
+                on-color="#13ce66"
+                off-color="#ff4949"
+                >
+              </el-switch>
+            </el-form-item>
           </el-row>
+          <el-form-item v-if="hasSign" label="报名时间">
+            <el-col :span="11">
+              <el-date-picker
+                type="datetime"
+                placeholder="报名开始时间"
+                v-model="basicForm.start_sign"
+                >
+              </el-date-picker>
+            </el-col>
+            <el-col :span="2">
+              ---
+            </el-col>
+            <el-col :span="11">
+              <el-date-picker
+                type="datetime"
+                placeholder="报名结束时间"
+                v-model="basicForm.end_sign"
+                >
+              </el-date-picker>
+            </el-col>
+          </el-form-item>
           <el-form-item label="宣传海报">
             <el-input></el-input>
           </el-form-item>
@@ -113,18 +129,35 @@
         </kobe-active-form>
       </el-tab-pane>
     </el-tabs>
-    <el-row type="flex">
-      <el-button v-if="selectedTab === '-1'" @click="onAdd">添加附加属性</el-button>  
-      <el-button @click="onCreateActivity">提交表单</el-button>
-    </el-row>
-    <el-input
-      v-if="showExtraInput"
-      v-model="extraProperty"
-      placeholder="请输入属性名称"
-      @keyup.enter.native="addExtraProperty"
-      @blur="addExtraProperty"
+    <el-checkbox
+      v-if="selectedTab === '-1'"
+      :disabled="basicForm.catgr_id === ''"
+      @change="togglteExtraProperty">
+      附加属性
+    </el-checkbox>
+    <div
+      v-if="selectedTab === '-1' && showExtraInput"
+      class="activity-extra-property"
       >
-    </el-input>
+      <el-form :model="extraForm" ref="extraForm" label-width="120px">
+      </el-form>
+      <el-row type="flex"
+        >
+        <el-col :span="6">
+          <el-input
+            v-model="extraProperty"
+            placeholder="请输入属性名称"
+            @keyup.enter.native="addExtraProperty">
+            <el-button slot="append" @click="addExtraProperty">添加</el-button>
+          </el-input>
+        </el-col>
+      </el-row>
+    </div>
+    <div class="activity-action-container">
+      <el-row type="flex" justify="center">
+        <el-button @click="onCreateActivity">提交表单</el-button>
+      </el-row>
+    </div>
   </div>
 </template>
 
@@ -143,6 +176,7 @@ export default {
       categories: [],
       active: true,
       extraProperty: '',
+      hasSign: false,
       form: {
         stages: [
         ],
@@ -154,22 +188,23 @@ export default {
         address: '',
         start_date: '',
         end_date: '',
+        start_sign: '',
+        end_sign: '',
         number: '',
         catgr_id: '',
-        mobile: '',
-        manager: '',
         active: '',
         brief: ''
+      },
+      extraForm: {
       }
     }
   },
   methods: {
-    onAdd () {
-      if (this.basicForm.catgr_id === '') {
-        this.$message.info('请先选择活动分类')
-        return
+    togglteExtraProperty () {
+      this.showExtraInput = !this.showExtraInput
+      if (this.showExtraInput) {
+        this.getExtraPros()
       }
-      this.showExtraInput = true
     },
     addExtraProperty () {
       api.POST(config.activity.extraPropertyAdd, {
@@ -178,7 +213,19 @@ export default {
       })
       .then(response => {
         if (response.data.errcode === '0000') {
+          this.extraProperty = ''
         }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    getExtraPros () {
+      api.GET(config.activity.extraProperty, {
+        category_id: this.basicForm.catgr_id
+      })
+      .then(response => {
+        console.log(response)
       })
       .catch(error => {
         this.$message.error(error)
@@ -194,7 +241,6 @@ export default {
       }
       api.POST(config.activity.add, data)
       .then(response => {
-        console.log(response.data)
         if (response.data.errcode === '0000') {
           this.$notify({
             title: '成功',
@@ -278,5 +324,8 @@ export default {
 }
 .activity-add-tabs .el-tab-pane {
   max-width: 50rem;
+}
+.activity-action-container {
+  margin-top: 1rem;
 }
 </style>

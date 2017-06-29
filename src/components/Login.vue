@@ -3,7 +3,7 @@
     <slot name="logo">
       <div class="login-logo">
         <a @click.prevent="">
-          <b>{{ title }}</b>
+          <h2>{{ title }}</h2>
         </a>
       </div>
       <div class="text-response text-center error" v-if="response">
@@ -48,7 +48,7 @@ export default {
   name: 'bs-login',
   data() {
     return {
-      title: 'SHENCOM',
+      title: '光明安监',
       mailButtonText: '发送验证码',
       username: '',
       password: '',

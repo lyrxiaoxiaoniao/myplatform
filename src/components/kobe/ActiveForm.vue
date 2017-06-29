@@ -27,6 +27,13 @@
           @date="onTimeChange"
           >
         </kobe-date-input>
+        <kobe-active-switch
+          v-if="item.type === 'switch'"
+          :index="index"
+          :data="item"
+          @switch="onSwitchChange"
+          >
+        </kobe-active-switch>
       </template>
     </el-form>
     <!-- <el-row type="flex" justify="center"> -->
@@ -67,6 +74,10 @@ export default {
     },
     onSubmit () {
       this.$emit('submit', this.form)
+    },
+    onSwitchChange (value) {
+      this.form.properties[value.index] = value.data
+      this.onFormChange()
     },
     onFormChange () {
       const data = {

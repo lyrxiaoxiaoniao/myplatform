@@ -21,6 +21,7 @@
         <el-table-column prop="id" label="ID" width="60px"></el-table-column>
         <el-table-column prop="type_key" label="属性键名" width="180"></el-table-column>
         <el-table-column prop="title" label="属性名称" width="120px"></el-table-column>
+        <el-table-column prop="type" label="属性类型" width="120px"></el-table-column>
         <el-table-column prop="description" label="属性描述"></el-table-column>
         <el-table-column label="状态" width="80px">
           <template scope="scope">
