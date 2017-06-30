@@ -147,24 +147,30 @@
       v-if="selectedTab === '-1' && showExtraInput"
       class="activity-extra-property"
       >
-      <el-form :model="extraForm" ref="extraForm" label-width="120px">
+      <el-form
+        :model="extraForm"
+        ref="extraForm"
+        label-position="left"
+        label-width="120px">
         <el-row type="flex">
           <el-col :span="6">
             <el-select
               v-if="extraProperties"
               placeholder="已有的附加属性"
               multiple
+              @change="onSelectExtraProperties"
+              @remove-tag="onRemoveExtraProperty"
               v-model="chosenProperties"
               >
               <el-option
                 v-for="item in extraProperties"
                 :label="item.label"
-                :value="item.id"
+                :value="item"
                 >
               </el-option>
             </el-select>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="8" :offset="2">
             <el-input
               v-model="extraProperty"
               placeholder="请输入属性名称"
@@ -175,10 +181,13 @@
         </el-row>
 
         <template
-          v-for="item in chosenProperties"
+          v-for="item in activeProperties"
           >
           <el-form-item :label="item.label">
-            <!-- <el-input></el-input> -->
+            <el-input
+              @blur="addExtraPropertyValue(item)"
+              @keyup.enter.nativ="addExtraPropertyValue(item)"
+              v-model="item.value"></el-input>
           </el-form-item>
         </template>
       </el-form>
@@ -209,6 +218,7 @@ export default {
       extraProperty: '',
       extraProperties: null,
       chosenProperties: [],
+      activeProperties: [],
       hasSign: false,
       form: {
         stages: [
@@ -237,6 +247,45 @@ export default {
     },
     beforeCoverUpload () {
     },
+    onRemoveExtraProperty (data) {
+      let index
+      this.activeProperties.forEach(item => {
+        if (item.key_id === data.value.id) {
+          index = this.activeProperties.indexOf(item)
+        }
+      })
+      this.activeProperties.splice(index, 1)
+    },
+    addExtraPropertyValue(item) {
+      api.POST(config.activity.extraPropertyValueAdd, {
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    onSelectExtraProperties (value) {
+      if (value.length < this.activeProperties.length) return
+      if (!value || !value[value.length - 1]) return
+      if (!this.activeProperties) {
+        this.activeProperties = []
+      }
+
+      const item = value[value.length - 1]
+      let obj = {
+        activity_id: this.basicForm.catgr_id,
+        key_id: item.id,
+        label: item.label,
+        value: '',
+        values: [
+        ]
+      }
+
+      this.activeProperties.push(obj)
+    },
     togglteExtraProperty () {
       this.showExtraInput = !this.showExtraInput
       if (this.showExtraInput) {
@@ -250,6 +299,19 @@ export default {
       })
       .then(response => {
         if (response.data.errcode === '0000') {
+          let obj = {
+            activity_id: this.basicForm.catgr_id,
+            key_id: response.data.data.id,
+            label: this.extraProperty,
+            value: '',
+            values: [
+            ]
+          }
+          if (this.activeProperties) {
+            this.activeProperties.push(obj)
+          } else {
+            this.activeProperties = [obj]
+          }
           this.extraProperty = ''
         }
       })
@@ -264,7 +326,6 @@ export default {
       .then(response => {
         if (response.data.errcode === '0000') {
           this.extraProperties = response.data.data
-          console.log(this.extraProperties)
         }
       })
       .catch(error => {
@@ -275,6 +336,10 @@ export default {
       this.basicForm.start_date = this.toTimestamp(this.basicForm.start_date)
       this.basicForm.end_date = this.toTimestamp(this.basicForm.end_date)
 
+      this.activeProperties.forEach(item => {
+        item.values.push(item.value)
+      })
+      this.form.exts = this.activeProperties
       const data = {
         ...this.form,
         ...this.basicForm

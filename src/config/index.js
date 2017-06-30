@@ -76,6 +76,7 @@ export default {
     activitySelectCatlg: '/activity/category/stage',
     extraProperty: '/activity/extend/key/index',
     extraPropertyAdd: '/activity/extend/key/create',
+    extraPropertyValueAdd: '/activity/extend/value/create',
     add: '/activity/info/create',
     list: '/activity/info/index'
   },
