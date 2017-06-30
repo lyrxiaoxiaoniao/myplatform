@@ -458,11 +458,11 @@ export default {
     padding-bottom: 1%;
   }
   .mapDialogFooter {
-    margin-top: 1rem;
+    margin-top: 1%;
   }
   #mapWrapper {
     width: 95%;
-    height: 83%;
+    height: 80%;
     margin: 0 auto;
   }
 </style>
