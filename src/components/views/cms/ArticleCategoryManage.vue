@@ -98,8 +98,7 @@ export default {
   },
   methods: {
     uploadSuccess(res, file, fileList) {
-      console.log(res)
-      this.formData.logo = res.data.data[0]
+      this.formData.logo = res.data[0]
     },
     iteration(obj) {
       for (let key in obj) {
