@@ -98,7 +98,7 @@ export default {
   },
   methods: {
     uploadSuccess(res, file, fileList) {
-      this.formData.logo = res.data[0]
+      this.formData.logo = res.data.data[0]
     },
     iteration(obj) {
       for (let key in obj) {
@@ -226,10 +226,10 @@ export default {
         return
       }
 
-      if (!(/^[0-1]*$/.test(obj.active))) {
+      if ((/^[0-1]$/.test(obj.active))) {
         this.$notify.error({
           title: '错误',
-          message: '请填入正确的值'
+          message: '请确认是否启用'
         })
         this.isClicked = false
         return
