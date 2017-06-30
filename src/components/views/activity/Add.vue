@@ -90,7 +90,15 @@
             </el-col>
           </el-form-item>
           <el-form-item label="宣传海报">
-            <el-input></el-input>
+            <el-upload
+              class="cover-upload"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :show-file-list="false"
+              :on-success="handleCoverSuccess"
+              :before-upload="beforeCoverUpload">
+              <img v-if="coverURL" :src="coverURL" class="cover">
+              <i v-else class="el-icon-plus cover-uploader-icon"></i>
+            </el-upload>
           </el-form-item>
           <el-form-item label="活动内容">
             <vue-html5-editor :content="basicForm.brief" @change="onEditorChange"></vue-html5-editor>
@@ -140,18 +148,40 @@
       class="activity-extra-property"
       >
       <el-form :model="extraForm" ref="extraForm" label-width="120px">
+        <el-row type="flex">
+          <el-col :span="6">
+            <el-select
+              v-if="extraProperties"
+              placeholder="已有的附加属性"
+              multiple
+              v-model="chosenProperties"
+              >
+              <el-option
+                v-for="item in extraProperties"
+                :label="item.label"
+                :value="item.id"
+                >
+              </el-option>
+            </el-select>
+          </el-col>
+          <el-col :span="6">
+            <el-input
+              v-model="extraProperty"
+              placeholder="请输入属性名称"
+              @keyup.enter.native="addExtraProperty">
+              <el-button slot="append" @click="addExtraProperty">添加</el-button>
+            </el-input>
+          </el-col>
+        </el-row>
+
+        <template
+          v-for="item in chosenProperties"
+          >
+          <el-form-item :label="item.label">
+            <!-- <el-input></el-input> -->
+          </el-form-item>
+        </template>
       </el-form>
-      <el-row type="flex"
-        >
-        <el-col :span="6">
-          <el-input
-            v-model="extraProperty"
-            placeholder="请输入属性名称"
-            @keyup.enter.native="addExtraProperty">
-            <el-button slot="append" @click="addExtraProperty">添加</el-button>
-          </el-input>
-        </el-col>
-      </el-row>
     </div>
     <div class="activity-action-container">
       <el-row type="flex" justify="center">
@@ -169,6 +199,7 @@ export default {
   name: 'sc-activity-add',
   data () {
     return {
+      coverURL: '',
       selectedTab: '-1',
       showExtraInput: false,
       error: null,
@@ -176,6 +207,8 @@ export default {
       categories: [],
       active: true,
       extraProperty: '',
+      extraProperties: null,
+      chosenProperties: [],
       hasSign: false,
       form: {
         stages: [
@@ -200,6 +233,10 @@ export default {
     }
   },
   methods: {
+    handleCoverSuccess () {
+    },
+    beforeCoverUpload () {
+    },
     togglteExtraProperty () {
       this.showExtraInput = !this.showExtraInput
       if (this.showExtraInput) {
@@ -225,7 +262,10 @@ export default {
         category_id: this.basicForm.catgr_id
       })
       .then(response => {
-        console.log(response)
+        if (response.data.errcode === '0000') {
+          this.extraProperties = response.data.data
+          console.log(this.extraProperties)
+        }
       })
       .catch(error => {
         this.$message.error(error)
@@ -327,5 +367,28 @@ export default {
 }
 .activity-action-container {
   margin-top: 1rem;
+}
+.cover-upload .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.cover-upload .el-upload:hover {
+  border-color: #20a0ff;
+}
+.cover-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.cover {
+  width: 178px;
+  height: 178px;
+  display: block;
 }
 </style>

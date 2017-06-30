@@ -44,7 +44,7 @@
           </el-select>
         </el-col>
         <el-col>
-          <el-input v-model="form.param" placeholder="请输入昵称、姓名、企业名称">
+          <el-input v-model="form.param" placeholder="请输入搜索关键字">
             <el-button slot="append" class="keyword-search-button" @click="onSearch" icon="search"></el-button>
           </el-input>
         </el-col>

@@ -34,6 +34,13 @@
           @switch="onSwitchChange"
           >
         </kobe-active-switch>
+        <kobe-active-radio
+          v-if="item.type === 'radio'"
+          :index="index"
+          :data="item"
+          @radio="onRadioChange"
+          >
+        </kobe-active-radio>
       </template>
     </el-form>
     <!-- <el-row type="flex" justify="center"> -->
@@ -62,6 +69,8 @@ export default {
     }
   },
   methods: {
+    onRadioChange (value) {
+    },
     onInputChange (value) {
       this.form.properties[value.index] = value.data
       this.onFormChange()

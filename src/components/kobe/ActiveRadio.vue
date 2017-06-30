@@ -1,14 +1,17 @@
 <template>
   <el-form-item :label="data.title">
-    <el-radio></el-radio>
+    <el-radio-group v-model="selected" @change="onChange">
+      <el-radio v-for="item in data.options"></el-radio>
+    </el-radio-group>
   </el-form-item>
 </template>
 
 <script>
 export default {
-  name: '',
+  name: 'kobe-active-radio',
   data () {
     return {
+      selected: ''
     }
   },
   props: {
@@ -16,9 +19,17 @@ export default {
       type: Object,
       default: {
       }
+    },
+    index: {
+      type: Number
     }
   },
   methods: {
+    onChange () {
+      this.$emit('radio')
+    }
+  },
+  mounted () {
   }
 }
 </script>
