@@ -226,7 +226,7 @@ export default {
         return
       }
 
-      if ((/^[0-1]$/.test(obj.active))) {
+      if (!(/^[0-1]$/.test(obj.active))) {
         this.$notify.error({
           title: '错误',
           message: '请确认是否启用'
