@@ -47,6 +47,7 @@
         </el-table-column>
         <el-table-column
           label="发送时间"
+          width="150px"
           >
           <template scope="scope">
             {{ scope.row.createdAt | toDateTime }}

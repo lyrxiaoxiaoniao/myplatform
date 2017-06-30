@@ -70,8 +70,7 @@
         <el-table-column prop="catlgName" label="案件分类" min-width="90"></el-table-column>
         <el-table-column prop="hiddenUnit" label="隐患单位"></el-table-column>
         <el-table-column prop="address" label="事发地址" min-width="180"></el-table-column>
-        <el-table-column prop="description" label="案件描述" max-width="200"></el-table-column>
-        <el-table-column label="举报时间">
+        <el-table-column label="举报时间" width="150px">
           <template scope="scope">
             {{ scope.row.createdAt | toDateTime }}
           </template>

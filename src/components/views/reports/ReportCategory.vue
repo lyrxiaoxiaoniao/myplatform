@@ -22,14 +22,8 @@
         <el-form-item label="案件描述">
           <el-input v-model="formData.description"></el-input>
         </el-form-item>
-        <el-form-item label="smallClassId">
-          <el-input v-model="formData.smallClassId"></el-input>
-        </el-form-item>
         <el-form-item label="同级排序">
           <el-input v-model="formData.sort"></el-input>
-        </el-form-item>
-        <el-form-item label="访问路径">
-          <el-input v-model="formData.url"></el-input>
         </el-form-item>
         <el-row type="flex" justify="space-around">
           <el-button type="primary" @click="addSubmit" size="large" :disabled="isClicked">提交</el-button>
@@ -69,8 +63,6 @@ export default {
         description: '',
         catlgId: '',
         sort: '',
-        url: '',
-        smallClassId: '',
         valueList: [],
         parentName: ''
       },
@@ -138,9 +130,7 @@ export default {
       }
       this.formData.name = data.name
       this.formData.id = data.id
-      this.formData.url = data.url
       this.formData.description = data.description
-      this.formData.smallClassId = data.smallClassId
       this.formData.sort = data.sort
       this.addVisible = true
     },
@@ -196,8 +186,6 @@ export default {
       obj.name = this.formData.name
       obj.description = this.formData.description
       obj.sort = this.formData.sort
-      obj.url = this.formData.url
-      obj.smallClassId = this.formData.smallClassId
       if (this.isEditing) {
         obj.id = this.formData.id
       }

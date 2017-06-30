@@ -43,14 +43,17 @@ export default {
       number: 0
     }
   },
-  computed: {
-  },
   methods: {
     onChange () {
       const data = {
-        ...this.data,
         index: this.index,
-        value: this.number
+        data: {
+          id: this.data.id,
+          type_key: this.data.type_key,
+          options: [{
+            title: this.number
+          }]
+        }
       }
       this.$emit('number', data)
     }

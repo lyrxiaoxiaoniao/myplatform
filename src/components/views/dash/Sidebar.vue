@@ -72,7 +72,6 @@ export default {
           }
         })
         .catch(error => {
-          this.error = error.response.statusText
           this.$message.error(error)
         })
     }
