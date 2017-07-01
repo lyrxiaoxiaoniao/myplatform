@@ -48,7 +48,11 @@
         <el-table-column prop="dutyName" label="所属职位"></el-table-column>
         <el-table-column prop="mobile" label="联系电话"></el-table-column>
         <el-table-column prop="status" label="状态" width="120"></el-table-column>
-        <el-table-column prop="createdAt" label="登记时间" width="120"></el-table-column>
+        <el-table-column label="登记时间" width="180">
+          <template scope="scope">
+            {{ scope.row.createdAt | toDateTime }}
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="120">
           <template scope="scope">
             <el-button size="small" icon="information" @click="onEditFirmDetail(scope.row.id)"></el-button>
@@ -212,11 +216,6 @@ export default {
             item.status = '审核未通过'
             break
         }
-        if (item.createdAt) {
-          let date = new Date(item.createdAt)
-          const month = date.getMonth() + 1
-          item.createdAt = `${date.getFullYear()}-${month}-${date.getDate()}`
-        }
       })
 
       return res
@@ -247,7 +246,6 @@ export default {
 .sc-firm-header {
   margin: 1rem 2rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid lightgray;
 }
 .sc-firm-content {
   margin-left: 2rem;

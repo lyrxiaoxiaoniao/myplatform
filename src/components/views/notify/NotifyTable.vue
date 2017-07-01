@@ -26,7 +26,7 @@
         </el-table-column>
         <el-table-column
           prop="template.name"
-          width="200px"
+          min-width="200px"
           label="微信模板名称"
           >
         </el-table-column>
@@ -46,9 +46,12 @@
           >
         </el-table-column>
         <el-table-column
-          prop="createdAt"
           label="发送时间"
+          width="150px"
           >
+          <template scope="scope">
+            {{ scope.row.createdAt | toDateTime }}
+          </template>
         </el-table-column>
         <el-table-column 
           width="180"
@@ -230,11 +233,6 @@ export default {
     },
     transformData (res) {
       res.data.forEach(item => {
-        if (item.createdAt) {
-          let date = new Date(item.createdAt)
-          const month = date.getMonth() + 1
-          item.createdAt = `${date.getFullYear()}-${month}-${date.getDate()}`
-        }
       })
 
       return res
@@ -254,7 +252,6 @@ export default {
 .notify-table-header {
   margin: 1rem 2rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid lightgray;
 }
 .sc-notify-table-content {
   margin: 0 1rem;

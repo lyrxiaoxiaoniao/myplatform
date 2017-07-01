@@ -1,8 +1,8 @@
 <template>
   <kobe-table v-if="response && tagList && streetList && industryList">
     <div slot="kobe-table-header" class="kobe-table-header">
-      <el-row type="flex" justify="space-around">
-        <el-col :span="6">
+      <el-row type="flex" justify="end">
+        <el-col>
           <el-cascader
             expand-trigger="hover"
             :options="streetList"
@@ -13,7 +13,7 @@
             >
           </el-cascader>
         </el-col>
-        <el-col :span="6">
+        <el-col>
           <el-select
             v-model="form.industryId"
             placeholder="行业"
@@ -28,7 +28,7 @@
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="6">
+        <el-col>
           <el-select
             v-model="form.tagId"
             placeholder="标签组"
@@ -43,7 +43,7 @@
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="7">
+        <el-col>
           <el-input v-model="form.param" placeholder="请输入昵称、姓名、企业名称">
             <el-button slot="append" class="keyword-search-button" @click="onSearch" icon="search"></el-button>
           </el-input>
@@ -91,7 +91,7 @@
           label="操作"
           >
           <template scope="scope">
-            <el-button @click="checkUserInfo(scope.row.id)" size="small" icon="edit"></el-button>
+            <el-button @click="checkUserInfo(scope.row.id)" size="small" icon="information"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -189,7 +189,7 @@ export default {
             this.response = response.data.data
             this.response.data.forEach(item => {
               if (item.community && item.subDistrictName) {
-                item.workspace = `${item.community}/${item.subDistrictName}`
+                item.workspace = `${item.subDistrictName}/${item.community}`
               }
             })
           } else {
@@ -228,7 +228,7 @@ export default {
             this.response = response.data.data
             this.response.data.forEach(item => {
               if (item.community && item.subDistrictName) {
-                item.workspace = `${item.community}/${item.subDistrictName}`
+                item.workspace = `${item.subDistrictName}/${item.community}`
               }
             })
           } else {

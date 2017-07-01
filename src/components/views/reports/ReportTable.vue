@@ -65,15 +65,18 @@
     <div slot="kobe-table-content" class="kobe-table">
       <el-table :data="response.data" border stripe>
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
-        <el-table-column prop="acceptNo" label="受理号" width="80"></el-table-column>
+        <el-table-column prop="acceptNo" label="受理号"></el-table-column>
         <el-table-column prop="reportName" label="举报人" width="80"></el-table-column>
         <el-table-column prop="catlgName" label="案件分类" min-width="90"></el-table-column>
         <el-table-column prop="hiddenUnit" label="隐患单位"></el-table-column>
         <el-table-column prop="address" label="事发地址" min-width="180"></el-table-column>
-        <el-table-column prop="description" label="案件描述" max-width="200"></el-table-column>
-        <el-table-column prop="createdAt" label="举报时间" width="100"></el-table-column>
-        <el-table-column prop="status" label="状态" min-width="80"></el-table-column>
-        <el-table-column label="操作" min-width="120">
+        <el-table-column label="举报时间" width="150px">
+          <template scope="scope">
+            {{ scope.row.createdAt | toDateTime }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="status" label="状态" width="80"></el-table-column>
+        <el-table-column label="操作" width="120px">
           <template scope="scope">
             <el-button size="small" icon="information" @click="selectCase(scope.row.id)"></el-button>
             <el-button size="small" icon="circle-cross" @click="shieldReport(scope.row.id)"></el-button>
@@ -110,6 +113,8 @@ export default {
       selectedCatlg: '',
       caseCatlg: [],
       searchForm: {
+        orderClo: 'created_at',
+        order: 'desc',
         keyword: '',
         status: '',
         acceptNo: '',
@@ -210,7 +215,10 @@ export default {
       })
     },
     getCaseList () {
-      api.GET(config.caseListAPI)
+      api.GET(config.caseListAPI, {
+        orderClo: 'created_at',
+        order: 'desc'
+      })
       .then(response => {
         if (response.status !== 200) {
           this.error = response.statusText
@@ -278,14 +286,7 @@ export default {
             item.status = '已驳回'
             break
         }
-
-        if (item.createdAt) {
-          let date = new Date(item.createdAt)
-          const month = date.getMonth() + 1
-          item.createdAt = `${date.getFullYear()}-${month}-${date.getDate()}`
-        }
       })
-
       return res
     },
     transformSearchForm (data) {
@@ -323,7 +324,6 @@ export default {
   .sc-report-table-header {
     margin: 1rem 2rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid lightgray;
   }
 
   .sc-report-table-content {

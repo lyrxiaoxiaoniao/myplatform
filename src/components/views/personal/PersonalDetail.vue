@@ -1,5 +1,9 @@
 <template>
   <div class="sc-firm-detail-component" v-if="response">
+    <el-row class="sc-firm-detail-action" type="flex">
+      <el-button @click="dealCase" type="primary">审核</el-button>
+      <el-button type="primary" @click="back">返回</el-button>
+    </el-row>
     <el-row type="flex">
       <el-col :span="12" class="sc-firm-detail-content">
         <el-card class="sc-firm-card">
@@ -11,7 +15,7 @@
             <div>姓名: <span>{{ response.name }}</span></div>
             <div>所属职位: <span>{{ response.dutyName }}</span></div>
             <div>联系方式: <span>{{ response.mobile }}</span></div>
-            <div>提交时间: <span>{{ response.createdAt | toDate }}</span> </div>
+            <div>提交时间: <span>{{ response.createdAt | toDateTime }}</span> </div>
           </div>
         </el-card>
 
@@ -20,7 +24,7 @@
             <span class="sc-firm-card-title">受理信息</span>
           </div>
           <div class="sc-firm-detail">
-            <div>受理时间: <span>{{ response.updatedAt | toDate }}</span></div>
+            <div>受理时间: <span>{{ response.updatedAt | toDateTime }}</span></div>
             <div>受理状态: <span>{{ response.status | statusCodeToMsg }}</span></div>
             <div>受理意见: <span>{{ response.remark }}</span></div>
           </div>
@@ -34,15 +38,11 @@
         </div>
       </el-col>
     </el-row>
-    <el-row class="sc-firm-detail-action" type="flex" justify="end">
-      <el-button @click="dealCase" type="primary">审核</el-button>
-      <el-button type="primary" @click="back">返回</el-button>
-    </el-row>
     <el-dialog title="个人信息上报处理" v-model="showDialog">
       <el-form :model="form">
         <el-form-item label="处理方式" :label-width="'120px'">
           <el-select v-model="form.status" placeholder="请选择处理方案">
-            <el-option label="处理" value="1"></el-option>
+            <el-option label="通过" value="1"></el-option>
             <el-option label="驳回" value="2"></el-option>
           </el-select>
         </el-form-item>
@@ -169,11 +169,16 @@ export default {
   margin-top: 1rem;
   margin-left: 1rem;
 }
+.sc-firm-detail div {
+  border-bottom: 1px solid lightgray;
+  margin-bottom: 1rem;
+}
 .sc-firm-image-content {
   margin-left: 1rem;
   margin-top: 1rem;
 }
 .sc-firm-detail-action {
+  margin-left: 1rem;
   margin-top: 10px;
   margin-right: 30rem;
   padding-bottom: 10px;

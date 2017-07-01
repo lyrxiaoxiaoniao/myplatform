@@ -150,7 +150,6 @@ export default {
         })
     },
     handleChange (value) {
-      console.log(value)
       this.formData.parentId = value[value.length - 1]
     },
     back () {

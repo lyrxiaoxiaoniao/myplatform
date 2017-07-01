@@ -42,9 +42,13 @@
         <el-table-column prop="referName" label="表描述"></el-table-column>
         <el-table-column prop="refClo" label="列名"></el-table-column>
         <el-table-column prop="refCloName" label="列描述"></el-table-column>
-        <el-table-column prop="createdAt" label="创建时间"></el-table-column>
+        <el-table-column label="创建时间">
+          <template scope="scope">
+            {{ scope.row.createdAt | toDateTime }}
+          </template>
+        </el-table-column>
         <el-table-column 
-          width="280"
+          width="120"
           label="操作"
           >
           <template scope="scope">
@@ -164,11 +168,6 @@ export default {
             item.enabled = '未锁定'
             item.isLock = 0
             break
-        }
-        if (item.createdAt) {
-          let date = new Date(item.createdAt)
-          const month = date.getMonth() + 1
-          item.createdAt = `${date.getFullYear()}-${month}-${date.getDate()}`
         }
       })
       return res

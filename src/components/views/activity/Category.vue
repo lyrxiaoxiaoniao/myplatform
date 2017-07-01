@@ -105,6 +105,7 @@
             stripe
             :data="tableData.data"
             ref="stepTable"
+            @select="onStepsTableSelection"
             @selection-change="onStepSelection">
             <el-table-column type="selection" width="40"></el-table-column>
             <el-table-column prop="id" label="ID" width="50"></el-table-column>
@@ -117,9 +118,19 @@
             <el-table-column label="步骤排序">
               <template scope="scope">
                 <el-input
-                  clearable
-                  v-if="scope.row.categories.length !== 0"
+                  @blur="onStepSortChange(scope.row, scope.row.categories[0].sort)"
+                  @keyup.enter.native="onStepSortChange(scope.row, scope.row.categories[0].sort)"
+                  :disabled="!scope.row.isSelected"
+                  v-if="scope.row.categories[0]"
                   v-model="scope.row.categories[0].sort"
+                  >
+                </el-input>
+                <el-input
+                  @blur="onStepSortChange(scope.row, scope.row.sort)"
+                  @keyup.enter.native="onStepSortChange(scope.row, scope.row.sort)"
+                  :disabled="!scope.row.isSelected"
+                  v-else="scope.row.categories[0]"
+                  v-model="scope.row.sort"
                   >
                 </el-input>
               </template>
@@ -165,6 +176,7 @@ export default {
       stepsSelection: [],
       tableData: null,
       dialogType: '',
+      sortNum: '',
       form: {
         keyword: ''
       },
@@ -188,18 +200,17 @@ export default {
     },
     onStepsListConfirm (value) {
       this.showStepsDialog = false
+    },
+    onStepSortChange (value, sort) {
+      console.log(value)
       const data = {
-        stages: this.stepsSelection,
-        ...value
+        sort: sort,
+        category_id: value.category_id,
+        stage_id: value.id
       }
-      api.POST(config.activity.typeRelateStage, data)
+      api.POST(config.activity.stepSort, data)
       .then(response => {
-        if (response.data.errcode === '0000') {
-          this.$notify({
-            title: '成功',
-            message: '关联成功',
-            type: 'success'
-          })
+        if (response.data.errcode !== '0000') {
         }
       })
       .catch(error => {
@@ -218,9 +229,37 @@ export default {
     onStepListSearch (value) {
       this.getStepList(value)
     },
+    onStepsTableSelection (selection, row) {
+      if (row.categories.length === 0) {
+        this.toggleRelation(config.activity.typeRelateStage, {
+          categories: [row.category_id],
+          stages: [row.id]
+        })
+      } else {
+        this.toggleRelation(config.activity.typeUnRelateStage, {
+          categories: [row.category_id],
+          stages: [row.id]
+        })
+      }
+    },
     onStepSelection (value) {
+      this.tableData.data.forEach(item => {
+        item.isSelected = false
+      })
       value.forEach(item => {
         this.stepsSelection.push(item.id)
+        item.isSelected = true
+      })
+    },
+    toggleRelation (URL, data) {
+      api.POST(URL, data)
+      .then(response => {
+        if (response.data.errcode !== '0000') {
+          this.$message.error('发生了错误,请重试')
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
       })
     },
     getStepList (data = null, showDialog) {
@@ -236,6 +275,10 @@ export default {
             this.$nextTick(() => {
               if (row.categories.length !== 0) {
                 this.$refs.stepTable.toggleRowSelection(row)
+                row.isSelected = true
+              } else {
+                row.isSelected = false
+                row.sort = ''
               }
             })
           })

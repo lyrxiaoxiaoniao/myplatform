@@ -1,24 +1,29 @@
 <template>
-  <li class="treeview">
+  <li
+    :class="[!isFolder ? 'pageLink' : '', 'treeview']"
+    @click="!isFolder ? toggleMenu : ''"
+    >
     <a v-if="isFolder" href="#">
       <i :class="model.icon"></i>
-      <span>{{ model.displayName }}</span>
+      <span class="treeview-display-name">{{ model.displayName }}</span>
       <span class="pull-right-container">
           <i class="fa fa-angle-left fa-fw pull-right" v-show="isFolder"></i>
       </span>
     </a>
     <router-link class="sidebar-routes" v-if="!isFolder" :to="{ path: model.url }">
       <i :class="model.icon"></i>
-      <span>{{ model.displayName }}</span>
+      <span class="treeview-display-name">{{ model.displayName }}</span>
       <span class="pull-right-container">
           <i class="fa fa-angle-left fa-fw pull-right" v-show="isFolder"></i>
       </span>
     </router-link>
     <ul class="treeview-menu" v-if="isFolder">
       <template v-for="item in model.children" v-if="(model.children && model.children.length)">
-        <router-link :to="{ path: item.url }">
-          <sidebar-menu class="siderbar-menu-item" :model="item"/>
-        </router-link>
+        <li>
+          <router-link :to="{ path: item.url }">
+            <sidebar-menu class="siderbar-menu-item" :model="item"/>
+          </router-link>
+        </li>
       </template>
     </ul>
   </li>
@@ -39,6 +44,15 @@ export default {
     }
   },
   methods: {
+    toggleMenu (event) {
+      console.log(event)
+      var active = document.querySelector('li.pageLink.active')
+
+      if (active) {
+        active.classList.remove('active')
+      }
+      event.toElement.parentElement.className = 'pageLink active'
+    },
     toggle: function () {
       if (this.isFolder) {
         this.showopen = !this.showopen
@@ -52,6 +66,14 @@ export default {
   .sidebar-menu > .pageLink:hover {
     background-color: #233;
     cursor: pointer;
+  }
+
+  .iconfont {
+    font-size: 14px !important;
+  }
+
+  .treeview-display-name {
+    margin-left: 5px;
   }
 
   .sidebar-menu > .pageLink > ul {
@@ -70,13 +92,24 @@ export default {
     color: white;
   }
 
-  .sidebar-menu > li > a {
-    padding: 12px 15px 12px 15px;
+  .sidebar-menu .treeview-menu {
+    padding-left: 0;
+  }
+
+  .sidebar-menu .treeview-menu > li :hover>a {
+    color: white;
   }
 
   .siderbar-menu-item {
-    padding: 5px 5px 5px 15px;
     font-size: 12px;
+  }
+
+  li.siderbar-menu-item:hover {
+    color: white;
+  }
+
+  .siderbar-menu-item span {
+    margin-left: 5px;
   }
 
   .arrow {
@@ -84,7 +117,12 @@ export default {
     float: right;
   }
 
-  .sidebar-menu li.active > a > .fa-angle-left, .sidebar-menu li.active > a > .pull-right-container > .fa-angle-left {
+  .pull-right-container i.fa.pull-right {
+    margin-right: 1rem;
+  }
+
+  /*.sidebar-menu li.active > a > .fa-angle-left, .sidebar-menu li.active > a > .pull-right-container > .fa-angle-left {*/
+  .sidebar-menu li.active>a>.fa-angle-left, .sidebar-menu li.active>a>.pull-right-container>.fa-angle-left {
     animation-name: rotate;
     animation-duration: .2s;
     animation-fill-mode: forwards;

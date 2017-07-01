@@ -35,7 +35,11 @@
         <el-table-column prop="type" label="类型" width="80"></el-table-column>
         <el-table-column prop="displayName" label="角色名称"></el-table-column>
         <el-table-column prop="description" label="角色描述"></el-table-column>
-        <el-table-column prop="createdAt" label="创建时间"></el-table-column>
+        <el-table-column label="创建时间">
+          <template scope="scope">
+            {{ scope.row.createdAt | toDateTime }}
+          </template>
+        </el-table-column>
         <el-table-column 
           width="320"
           label="操作"
@@ -227,13 +231,6 @@ export default {
       this.updateRoleList(data)
     },
     transformData (res) {
-      res.data.forEach(item => {
-        if (item.createdAt) {
-          let date = new Date(item.createdAt)
-          const month = date.getMonth() + 1
-          item.createdAt = `${date.getFullYear()}-${month}-${date.getDate()}`
-        }
-      })
       return res
     },
     updateRoleList (data) {

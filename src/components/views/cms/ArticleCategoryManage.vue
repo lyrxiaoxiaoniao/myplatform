@@ -1,19 +1,19 @@
 <template>
   <div class="sc-article-category-manage">
     <el-button class="category-add-button" @click="addMenu" type="primaty">新增文章板块</el-button>
-    <el-tree :data="data" :props="defaultProps" node-key="id" accordion :expand-on-click-node="false" :render-content="renderContent">
+    <el-tree :data="data" :props="defaultProps" node-key="id" accordion :expand-on-click-node="true" :render-content="renderContent">
     </el-tree>
-    <el-dialog title="提示" v-model="deleteVisible" size="tiny">
+    <el-dialog title="提示" v-model="deleteVisible">
       <span>确认要删除该板块吗？(将删除所有的子板块)</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="deleteVisible = false">取 消</el-button>
         <el-button type="danger" @click="deleteCategory">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog :title="isEditing? '编辑' : '新增'" v-model="addVisible" size="tiny">
+    <el-dialog :title="isEditing? '编辑' : '新增'" v-model="addVisible">
       <el-form labelPosition="right" label-width="90px">
         <el-form-item label="父级板块" required>
-          <el-cascader :options="options" change-on-select :props="props" @change="handleChange" v-model="formData.valueList" v-if="!isEditing"></el-cascader>
+          <el-cascader :options="options" :change-on-select="true" :props="props" @change="handleChange" v-model="formData.valueList" v-if="!isEditing"></el-cascader>
           <el-input v-else v-model="formData.parentName" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="板块名称" required>
@@ -25,14 +25,20 @@
         <el-form-item label="板块描述">
           <el-input v-model="formData.description"></el-input>
         </el-form-item>
-        <el-form-item label="图标选择">
-          <el-input v-model="formData.logo"></el-input>
+        <el-form-item label="启用板块" required>
+          <el-input v-model="formData.active" placeholder="填0为不启用，1为启用"></el-input>
         </el-form-item>
         <el-form-item label="同级排序">
           <el-input v-model="formData.sort"></el-input>
         </el-form-item>
         <el-form-item label="访问路径">
           <el-input v-model="formData.url"></el-input>
+        </el-form-item>
+        <el-form-item label="图标选择">
+          <el-upload class="avatar-uploader" :action="uploadUrl" :show-file-list="false" :on-success="uploadSuccess">
+            <img v-if="formData.logo" :src="formData.logo" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
         </el-form-item>
         <el-row type="flex" justify="space-around">
           <el-button type="primary" @click="addSubmit" size="large">提交</el-button>
@@ -71,12 +77,13 @@ export default {
         name: '',
         displayName: '',
         description: '',
-        parentId: 0,
+        parentId: '',
         sort: '',
         url: '',
         logo: '',
         valueList: [],
-        parentName: ''
+        parentName: '',
+        active: ''
       },
       rules: {
         valueList: [
@@ -85,10 +92,14 @@ export default {
         name: [
           { required: true, message: '请输入节点名', trigger: 'blur' }
         ]
-      }
+      },
+      uploadUrl: config.serverURI + config.uploadImgAPI
     }
   },
   methods: {
+    uploadSuccess(res, file, fileList) {
+      this.formData.logo = res.data[0]
+    },
     iteration(obj) {
       for (let key in obj) {
         if (obj.hasOwnProperty(key)) {
@@ -120,7 +131,7 @@ export default {
         .then(res => {
           let obj = res.data.data
           this.iteration(obj)
-          obj.push({ id: 0, name: '根级菜单', label: '根级菜单', value: 0 })
+          obj.push({ id: 0, displayName: '根级菜单', label: '根级菜单', value: 0 })
           this.options = obj
         })
     },
@@ -129,8 +140,8 @@ export default {
       this.isEditing = false
       this.addVisible = true
     },
-    edit(node, store, data) {
-      console.log(node, store, data)
+    edit(e, node, store, data) {
+      e.stopPropagation()
       this.isEditing = true
       if (Array.isArray(node.parent.data)) {
         this.formData.parentName = '根级目录'
@@ -147,7 +158,8 @@ export default {
       this.formData.sort = data.sort
       this.addVisible = true
     },
-    remove(store, data) {
+    remove(e, store, data) {
+      e.stopPropagation()
       this.deleteVisible = true
       this.deletedId = data.id
     },
@@ -158,7 +170,6 @@ export default {
     getData() {
       api.GET(config.articleCatlgAPI)
         .then(res => {
-          console.log(res.data, 'config')
           this.data = res.data.data
         })
     },
@@ -187,8 +198,8 @@ export default {
             <span>{node.label}</span>
           </span>
           <span style="float: right; margin-right: 20px">
-            <el-button size="mini" on-click={() => this.edit(node, store, data)}>编辑</el-button>
-            <el-button size="mini" on-click={() => this.remove(store, data)}>删除</el-button>
+            <el-button size="mini" on-click={(e) => this.edit(e, node, store, data)}>编辑</el-button>
+            <el-button size="mini" on-click={(e) => this.remove(e, store, data)}>删除</el-button>
           </span>
         </span>)
     },
@@ -201,9 +212,29 @@ export default {
       obj.sort = this.formData.sort
       obj.url = this.formData.url
       obj.logo = this.formData.logo
+      obj.active = this.formData.active
       if (this.isEditing) {
         obj.id = this.formData.id
       }
+
+      if (obj.parentId === '') {
+        this.$notify.error({
+          title: '错误',
+          message: '请提交必须参数'
+        })
+        this.isClicked = false
+        return
+      }
+
+      if (!(/^[0-1]$/.test(obj.active))) {
+        this.$notify.error({
+          title: '错误',
+          message: '请确认是否启用'
+        })
+        this.isClicked = false
+        return
+      }
+
       let url = this.isEditing ? config.editArticleCatlgAPI : config.addArticleCatlgAPI
       api.POST(url, obj)
         .then(res => {
@@ -217,6 +248,7 @@ export default {
               this.isEditing = false
               this.addVisible = false
               this.getData()
+              this.getList()
             } else {
               this.$notify({
                 title: '成功',
@@ -226,6 +258,7 @@ export default {
               this.isEditing = false
               this.addVisible = false
               this.getData()
+              this.getList()
             }
           } else {
             this.$notify.error({
@@ -253,12 +286,37 @@ export default {
 
 <style scoped>
 .sc-article-category-manage {
-  margin-top: 2rem;
-  border-top: 1px solid lightgray;
   padding: 2rem 4rem;
 }
 
 .category-add-button {
   margin-bottom: 1rem;
+}
+
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.avatar-uploader .el-upload:hover {
+  border-color: #20a0ff;
+}
+
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
 }
 </style>

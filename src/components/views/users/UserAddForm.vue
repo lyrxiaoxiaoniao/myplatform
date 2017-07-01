@@ -206,7 +206,6 @@ export default {
 <style>
 
   .userAddForm {
-    border-top: 1px solid lightgray;
     padding-top: 4rem;
     margin-top: 2rem;
   }

@@ -2,7 +2,10 @@
   <div class="articleAddForm" v-if="catlgList">
     <el-row>
       <el-col class="content-left" :span="5">
-        <el-form class="left-form" label-position="top" ref="form" :model="form" labelWidth="80px" :rules="leftFormRules">
+        <el-form
+          class="left-form"
+          label-position="top"
+          ref="form" :model="form" labelWidth="80px" :rules="leftFormRules">
           <el-form-item prop="pictures" class="upload-item">
             <el-upload
               class="upload-picture"
@@ -109,7 +112,7 @@ export default {
           { required: true, message: '请选择文章板块', trigger: 'blur' }
         ],
         author: [
-          { required: true, message: '请输入文章作者', trigger: 'change' }
+          { required: true, message: '请输入文章作者', trigger: 'blur' }
         ]
       },
       formRules: {
@@ -223,7 +226,6 @@ export default {
     },
     onUploadSuccess (response, file, fileList) {
       if (response.errcode === '0000') {
-        console.log(response)
         this.imageURL = file.url
         this.form.pictures[0] = response.data[0]
       }
@@ -360,6 +362,7 @@ export default {
 </script>
 <style scoped>
   .articleAddForm {
+    margin-top: 1rem;
     padding-top: 2rem;
     margin-left: 20px;
     margin-right: 20px;

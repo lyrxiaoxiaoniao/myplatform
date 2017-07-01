@@ -1,14 +1,17 @@
 /* eslint no-useless-escape: "off" */
 export default {
+  serverURI: 'https://gov.shencom.cn/gm',
+  // serverURI: 'http://192.168.1.114:8080',
   // serverURI: 'http://test.java.shencom.cn/gm',
   // serverURI: 'http://192.168.1.22:8080',
   // serverURI: 'http://192.168.1.34:8080',
-  serverURI: 'http://192.168.1.154:8080',
+  // serverURI: 'http://192.168.1.154:8080',
   basic: {
     key: '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArromvW2N\/rg0ADw9zpTL\ncGdO0wNazPcp+SepPrv1dicCamEVPfvPKlWMuYszt\/tE6lNjMT8pphmatPvgjAFy\nKfE1fEpcvHqRSZTUtlo\/fGJzh2nss6mxyDXlqi+sGitjwaGj6\/MXO6zLQcMQmZ\/U\nvliOhECvuLBsAqqLY8ik63Ah7ylWAap3jDD0OvgSy+glqebwfacy9WPYOy4K75n\/\nDQRw9FJBYFg1BtfbVn55Oji3AZ0E3lY96b0JhJGtFM6vjF0bhVDkmP\/XZINPcVZy\nxydRFvxjgA6we\/KmxXDD\/JdZmvGmrZ2XCAhGS3vuk3XJnkMquGYO4GAI13JIs8Z1\nrwIDAQAB\n-----END PUBLIC KEY-----',
     sendMail: '/sys/sendMsgVerify',
     forgetMail: '/admin/password/sendEmail',
     login: '/sys/login',
+    logout: '/sys/logout',
     refresh: '/sys/user'
   },
   report: {
@@ -58,10 +61,15 @@ export default {
     typeUpdate: '/activity/category/update',
     typeShowStage: '/activity/cs/show/relate/stage',
     typeRelateStage: '/activity/cs/create',
+    typeUnRelateStage: '/activity/cs/delete',
     stepList: '/activity/stage/index',
     stepCreate: '/activity/stage/create',
     stepDelete: '/activity/stage/delete',
     stepUpdate: '/activity/stage/update',
+    stepSort: '/activity/cs/update',
+    stepShowProps: '/activity/sp/show/relate/property',
+    stepRelateProps: '/activity/sp/create',
+    stepUnRelateProps: '/activity/sp/delete',
     optionList: '/activity/option/index',
     optionCreate: '/activity/option/create',
     optionDelete: '/activity/option/delete',
@@ -69,7 +77,12 @@ export default {
     propertyList: '/activity/property/index',
     propertyCreate: '/activity/property/create',
     propertyDelete: '/activity/property/delete',
-    propertyUpdate: '/activity/property/update'
+    propertyUpdate: '/activity/property/update',
+    activitySelectCatlg: '/activity/category/stage',
+    extraProperty: '/activity/extend/index',
+    extraPropertyAdd: '/activity/extend/key/create',
+    add: '/activity/info/create',
+    list: '/activity/info/index'
   },
   menuAPI: '/admin/menu/show_left',
   deleteMenuAPI: '/admin/menu/delete',
