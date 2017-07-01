@@ -36,7 +36,7 @@
                   <el-table-column prop="poster" label="素材" width="120">
                     <template scope="scope">
                       <img width="100%" :src="scope.row.poster" @click="bigImg(scope.row.poster)" alt="">
-                      <el-dialog v-model="dialogVisible" size="tiny">
+                      <el-dialog v-model="dialogVisible">
                         <img width="100%" :src="dialogImageUrl" alt="">
                       </el-dialog>
                     </template>
@@ -228,7 +228,6 @@ export default {
       ids: [],
       dialogImageUrl: '',
       dialogVisible: false,
-      dialogVisible1: false,
       keyword: null,
       pickerOptions2: {
         shortcuts: [{

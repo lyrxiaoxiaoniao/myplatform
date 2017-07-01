@@ -75,8 +75,7 @@ export default {
       options: [],
       props: {
         children: 'children',
-        label: 'name',
-        value: 'id'
+        label: 'name'
       },
       formData: {
         id: 0,
