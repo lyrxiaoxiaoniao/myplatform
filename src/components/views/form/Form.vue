@@ -1,66 +1,43 @@
 <template>
-  <div class="GD-container">
-    <div class="GD-left">
-      <el-tree :data="data" :props="defaultProps"
-              accordion
-              :highlight-current="true"
-              node-key="id"
-              @node-click="handleNodeClick"
-              style="max-height:600px;overflow:auto;">
-      </el-tree>
-    </div>
-    <div class="GD-right">
-      <kobe-table>
+<div>
+    <kobe-table>
         <div slot="kobe-table-header" class="kobe-table-header">
-          <el-row type="flex" justify="end">
-            <el-col :span="14">
-              <el-button type="primary">添加子分类</el-button>
-              <el-button type="primary">修改属性</el-button>
-              <el-button type="primary">更多操作</el-button>
-              <el-button type="primary">刷新</el-button>
-            </el-col>
+            <el-row type="flex" justify="end">
             <el-col :span="8">
-              <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
+                <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
                 <el-button slot="append" @click="onSearch" icon="search"></el-button>
-              </el-input>
+                </el-input>
             </el-col>
-            <el-button icon="upload2" type="primary" style="margin-left:10px;"></el-button>
+            <el-button icon="plus" type="primary" style="margin-left:10px;" @click="add"></el-button>
+            <el-button icon="upload2" type="primary"></el-button>
             <el-button icon="setting" type="primary"></el-button>
-          </el-row>
+            </el-row>
         </div>
         <div slot="kobe-table-content" class="kobe-table">
-          <el-table
-            ref="multipleTable"
+            <el-table
             border
             stripe
-            :data="response.data"
-            @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="55"></el-table-column>
+            :data="response.data">
             <el-table-column prop="id" label="ID" width="50"></el-table-column>
-            <el-table-column prop="title" label="栏目名称" width="120"></el-table-column>
-            <el-table-column prop="type_key" label="图片" width="130"></el-table-column>
-            <el-table-column prop="brief" label="创建时间"></el-table-column>
-            <el-table-column prop="sort" label="顺序" width="80"></el-table-column>
-            <el-table-column label="启用" width="80">
-              <template scope="scope">
-                {{ scope.row.active | isOpen }}
-              </template>
-            </el-table-column>
+            <el-table-column prop="title" label="method"></el-table-column>
+            <el-table-column prop="type_key" label="action"></el-table-column>
+            <el-table-column prop="brief" label="accept_charset"></el-table-column>
+            <el-table-column prop="sort" label="class"></el-table-column>
             <el-table-column 
-              width="100"
-              label="操作"
-              >
-              <template scope="scope">
+                width="220"
+                label="操作"
+                >
+                <template scope="scope">
                 <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
                 <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button>
-              </template>
+                </template>
             </el-table-column>
-          </el-table>
+            </el-table>
         </div>
         <div slot="kobe-table-footer" class="kobe-table-footer">
-          <el-row type="flex" justify="center">
+            <el-row type="flex" justify="center">
             <el-col :span="12">
-              <el-pagination
+                <el-pagination
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
                 :current-page="response.currentPage"
@@ -68,37 +45,62 @@
                 :page-size="response.pageSize"
                 :total="response.count"
                 layout="total, sizes, prev, pager, next, jumper">
-              </el-pagination>
+                </el-pagination>
             </el-col>
-          </el-row>
+            </el-row>
         </div>
-
-      </kobe-table>
-    </div>
-  </div>
+    </kobe-table>
+    <el-dialog title="编辑表单" v-model="showDialog">
+        <el-form :model="selected" label-width="120px">
+            <el-form-item label="method">
+                <el-input placeholder="示例:post/get" v-model="selected.url"></el-input>
+            </el-form-item>
+            <el-form-item label="action">
+                <el-input placeholder="示例:https://www.example.com" v-model="selected.url"></el-input>
+            </el-form-item>
+            <el-form-item label="accept_charset">
+                <el-input placeholder="示例:utf-8" v-model="selected.url"></el-input>
+            </el-form-item>
+            <el-form-item label="enctype">
+                <el-input placeholder="示例:utf-8" v-model="selected.brief"></el-input>
+            </el-form-item>
+            <el-form-item label="role">
+                <el-input placeholder="示例:utf-8" v-model="selected.content"></el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="closeDialog">取消</el-button>
+            <el-button @click="createType">确定</el-button>
+            <el-button @click="createType" v-if="dialogType === 'add'">确定</el-button>
+            <el-button @click="editType" v-if="dialogType === 'edit'">确定</el-button>
+        </div>
+    </el-dialog>
+</div>
 </template>
 <script>
 export default {
   data () {
     return {
       data: [],
-      multipleSelection: [],
       response: {
         data: null
       },
       error: null,
       showDialog: false,
-      isDialogDisabled: false,
       showStepsDialog: false,
       stepsSelection: [],
       tableData: null,
       dialogType: '',
       form: {
         keyword: ''
-      }
+      },
+      selected: {}
     }
   },
   methods: {
+    add () {
+      this.showDialog = true
+    },
     // 树形目录点击事件
     handleNodeClick (data, node) {
       this.parentId = data.id
@@ -112,10 +114,6 @@ export default {
       } else {
         this.$refs.multipleTable.clearSelection()
       }
-    },
-    handleSelectionChange (val) {
-      this.multipleSelection = val
-      console.log(this.multipleSelection)
     },
     handleSizeChange (value) {
       const data = {
@@ -157,20 +155,5 @@ export default {
 }
 </script>
 <style scoped>
-.GD-container{
-    height: 100%;
-    margin-top: 1.5rem;
-    padding: 1rem 2rem;
-    position: relative;
-}
-.GD-left{
-  width: 15%;
-}
-.GD-right{
-    width:83%;
-    position: absolute;
-    top: 0;
-    right: 0;
-}
 </style>
 

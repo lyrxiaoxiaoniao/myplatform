@@ -644,7 +644,6 @@ export default {
 .UP-container {
     padding: 1rem 3rem 0;
     margin-top: 1rem;
-    border-top: 1px solid lightgray;
     position: relative;
 }
 .up-adcontent {
