@@ -19,6 +19,12 @@ import DateInput from 'components/kobe/DateInput'
 import DoubleDate from 'components/kobe/DoubleDate'
 import TagGroup from 'components/kobe/TagGroup'
 import SwitchInput from 'components/kobe/ActiveSwitch'
+import RadioInput from 'components/kobe/ActiveRadio'
+import ActiveTextarea from 'components/kobe/ActiveTextarea'
+import ActiveUpload from 'components/kobe/ActiveUpload'
+import ActiveCheckbox from 'components/kobe/ActiveCheckbox'
+import ActiveSelect from 'components/kobe/ActiveSelect'
+import MapDialog from 'components/kobe/MapDialog'
 
 const install = (Vue) => {
   Vue.component('kobe-login', Login)
@@ -37,6 +43,12 @@ const install = (Vue) => {
   Vue.component('kobe-double-date', DoubleDate)
   Vue.component('kobe-tag-group', TagGroup)
   Vue.component('kobe-active-switch', SwitchInput)
+  Vue.component('kobe-active-radio', RadioInput)
+  Vue.component('kobe-active-textarea', ActiveTextarea)
+  Vue.component('kobe-active-upload', ActiveUpload)
+  Vue.component('kobe-active-checkbox', ActiveCheckbox)
+  Vue.component('kobe-active-select', ActiveSelect)
+  Vue.component('kobe-map-dialog', MapDialog)
 }
 
 export default install

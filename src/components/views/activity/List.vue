@@ -75,6 +75,8 @@ export default {
     },
     editListInfo (user) {
     },
+    checkInfo () {
+    },
     infoDelete () {
       this.$confirm('是否确定删除该条数据', '提示', {
         confirmButtonText: '确定',

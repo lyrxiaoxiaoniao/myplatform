@@ -147,6 +147,9 @@ export default {
       this.$refs[form].resetFields()
     },
     updateArticle () {
+      if (this.imageURL) {
+        this.form.pictures[0] = this.imageURL
+      }
       const form = {
         ...this.form,
         id: this.$route.query.id

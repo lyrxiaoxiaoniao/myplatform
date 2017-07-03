@@ -72,6 +72,7 @@ import SCActivityProperty from 'components/views/activity/Property'
 import SCActivityOption from 'components/views/activity/Options'
 import SCActivitiAdd from 'components/views/activity/Add'
 
+import SCTrainingList from 'components/views/training/List'
 import SCTrainingPublish from 'components/views/training/Publish'
 
 import SCFileResource from './components/views/fileresource/FileTable.vue'
@@ -480,6 +481,11 @@ const routes = [
         name: '培训管理',
         meta: { description: '活动管理' },
         children: [{
+          path: 'index',
+          component: SCTrainingList,
+          name: '培训列表',
+          meta: { description: '列表' }
+        }, {
           path: 'publish',
           component: SCTrainingPublish,
           name: '培训发布',

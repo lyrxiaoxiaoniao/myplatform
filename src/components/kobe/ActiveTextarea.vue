@@ -5,14 +5,15 @@
       v-model="data.value"
       @change="onChange"
       :placeholder="data.description"
-      ></el-input>
+      >
+    </el-input>
   </el-form-item>
 </template>
 
 <script>
 export default {
   // used for activity active form
-  name: 'kobe-active-input',
+  name: 'kobe-active-textarea',
   props: {
     data: {
       type: Object,
@@ -27,7 +28,7 @@ export default {
     },
     type: {
       type: String,
-      default: 'text'
+      default: 'textarea'
     }
   },
   data () {
@@ -46,7 +47,7 @@ export default {
           }]
         }
       }
-      this.$emit('input', data)
+      this.$emit('text', data)
     }
   },
   mounted () {

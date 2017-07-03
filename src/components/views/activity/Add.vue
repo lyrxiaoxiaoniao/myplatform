@@ -35,7 +35,7 @@
           </el-form-item>
           <el-form-item label="活动地址">
             <el-input v-model="basicForm.address">
-              <el-button slot="append" class="fa fa-map-marker"></el-button>
+              <el-button @click="openMap" slot="append" class="fa fa-map-marker"></el-button>
             </el-input>
           </el-form-item>
           <el-row type="flex" justify="space-between">
@@ -56,47 +56,24 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row type="flex">
-            <el-form-item label="报名">
-              <el-switch
-                v-model="hasSign"
-                on-text="开启"
-                off-text="关闭"
-                on-color="#13ce66"
-                off-color="#ff4949"
-                >
-              </el-switch>
-            </el-form-item>
-          </el-row>
-          <el-form-item v-if="hasSign" label="报名时间">
-            <el-col :span="11">
-              <el-date-picker
-                type="datetime"
-                placeholder="报名开始时间"
-                v-model="basicForm.start_sign"
-                >
-              </el-date-picker>
-            </el-col>
-            <el-col :span="2">
-              ---
-            </el-col>
-            <el-col :span="11">
-              <el-date-picker
-                type="datetime"
-                placeholder="报名结束时间"
-                v-model="basicForm.end_sign"
-                >
-              </el-date-picker>
-            </el-col>
-          </el-form-item>
           <el-form-item label="宣传海报">
-            <el-input></el-input>
+            <el-upload
+              class="cover-upload"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :show-file-list="false"
+              :on-success="handleCoverSuccess"
+              :before-upload="beforeCoverUpload">
+              <img v-if="coverURL" :src="coverURL" class="cover">
+              <i v-else class="el-icon-plus cover-uploader-icon"></i>
+            </el-upload>
           </el-form-item>
           <el-form-item label="活动内容">
             <vue-html5-editor :content="basicForm.brief" @change="onEditorChange"></vue-html5-editor>
           </el-form-item>
           <el-form-item label="标签">
-            <kobe-tag-group></kobe-tag-group>
+            <kobe-tag-group
+              >
+            </kobe-tag-group>
           </el-form-item>
           <el-form-item label="开启">
             <el-switch
@@ -139,25 +116,71 @@
       v-if="selectedTab === '-1' && showExtraInput"
       class="activity-extra-property"
       >
-      <el-form :model="extraForm" ref="extraForm" label-width="120px">
+      <el-form
+        :model="extraForm"
+        ref="extraForm"
+        class="activity-extraForm"
+        label-position="left"
+        label-width="120px">
+        <el-row type="flex">
+          <el-col :span="8">
+            <el-select
+              v-if="extraProperties"
+              placeholder="已有的附加属性"
+              multiple
+              @change="onSelectExtraProperties"
+              @remove-tag="onRemoveExtraProperty"
+              v-model="chosenProperties"
+              >
+              <el-option
+                v-for="item in extraProperties"
+                :label="item.label"
+                :value="item"
+                >
+              </el-option>
+            </el-select>
+          </el-col>
+          <el-col :span="6">
+            <el-input
+              v-model="extraProperty"
+              placeholder="请输入属性名称"
+              @keyup.enter.native="addExtraProperty">
+              <el-button slot="append" @click="addExtraProperty">添加</el-button>
+            </el-input>
+          </el-col>
+        </el-row>
+
+        <template
+          class="active-extra-property"
+          v-for="item,index in activeProperties"
+          >
+          <el-row type="flex">
+            <el-col :span="12">
+              <el-form-item
+                :label="item.label">
+                <el-input
+                  @blur="addExtraPropertyValue(item)"
+                  @keyup.enter.native="addExtraPropertyValue(item)"
+                  v-model="item.value">
+                  <el-button @click="deleteExtraPro(index, item)" slot="append" icon="delete2"></el-button>
+                </el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </template>
       </el-form>
-      <el-row type="flex"
-        >
-        <el-col :span="6">
-          <el-input
-            v-model="extraProperty"
-            placeholder="请输入属性名称"
-            @keyup.enter.native="addExtraProperty">
-            <el-button slot="append" @click="addExtraProperty">添加</el-button>
-          </el-input>
-        </el-col>
-      </el-row>
     </div>
     <div class="activity-action-container">
       <el-row type="flex" justify="center">
         <el-button @click="onCreateActivity">提交表单</el-button>
       </el-row>
     </div>
+    <kobe-map-dialog
+      :isShow="showMap"
+      @close="closeMap"
+      @confirm="onMapConfirm"
+      >
+    </kobe-map-dialog>
   </div>
 </template>
 
@@ -169,14 +192,18 @@ export default {
   name: 'sc-activity-add',
   data () {
     return {
+      coverURL: '',
       selectedTab: '-1',
       showExtraInput: false,
       error: null,
       response: null,
       categories: [],
       active: true,
+      showMap: false,
       extraProperty: '',
-      hasSign: false,
+      extraProperties: null,
+      chosenProperties: [],
+      activeProperties: [],
       form: {
         stages: [
         ],
@@ -188,18 +215,85 @@ export default {
         address: '',
         start_date: '',
         end_date: '',
-        start_sign: '',
-        end_sign: '',
         number: '',
         catgr_id: '',
         active: '',
         brief: ''
       },
       extraForm: {
-      }
+      },
+      addedExtraProperties: []
     }
   },
   methods: {
+    openMap () {
+      this.showMap = true
+    },
+    closeMap () {
+      this.showMap = false
+    },
+    onMapConfirm () {
+      // TODO
+      this.showMap = false
+    },
+    handleCoverSuccess () {
+    },
+    beforeCoverUpload () {
+    },
+    deleteExtraPro (index, item) {
+      let deleteItem
+      this.chosenProperties.forEach((item, index) => {
+        if (item.id === item.key_id) {
+          deleteItem = index
+        }
+      })
+      this.chosenProperties.splice(deleteItem, 1)
+      this.activeProperties.splice(index, 1)
+    },
+    onRemoveExtraProperty (data) {
+      let index
+      this.activeProperties.forEach(item => {
+        if (item.key_id === data.value.id) {
+          index = this.activeProperties.indexOf(item)
+        }
+      })
+      this.activeProperties.splice(index, 1)
+    },
+    addExtraPropertyValue(item) {
+      api.POST(config.activity.extraPropertyValueAdd, {
+        key_id: item.key_id,
+        label: item.label
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          item.values = []
+          item.values.push(response.data.data.id)
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    onSelectExtraProperties (value) {
+      const equal = value.length + this.addedExtraProperties.length === this.activeProperties.length
+      if (equal) return
+      if (!value || !value[value.length - 1]) return
+      if (!this.activeProperties) {
+        this.activeProperties = []
+      }
+
+      const item = value[value.length - 1]
+      let obj = {
+        activity_id: this.basicForm.catgr_id,
+        key_id: item.id,
+        label: item.label,
+        value: '',
+        values: [
+        ]
+      }
+
+      this.activeProperties.push(obj)
+    },
     togglteExtraProperty () {
       this.showExtraInput = !this.showExtraInput
       if (this.showExtraInput) {
@@ -213,6 +307,20 @@ export default {
       })
       .then(response => {
         if (response.data.errcode === '0000') {
+          this.addedExtraProperties.push(1)  // hacks
+          let obj = {
+            activity_id: this.basicForm.catgr_id,
+            key_id: response.data.data.id,
+            label: this.extraProperty,
+            value: '',
+            values: [
+            ]
+          }
+          if (this.activeProperties) {
+            this.activeProperties.push(obj)
+          } else {
+            this.activeProperties = [obj]
+          }
           this.extraProperty = ''
         }
       })
@@ -225,7 +333,9 @@ export default {
         category_id: this.basicForm.catgr_id
       })
       .then(response => {
-        console.log(response)
+        if (response.data.errcode === '0000') {
+          this.extraProperties = response.data.data
+        }
       })
       .catch(error => {
         this.$message.error(error)
@@ -235,6 +345,7 @@ export default {
       this.basicForm.start_date = this.toTimestamp(this.basicForm.start_date)
       this.basicForm.end_date = this.toTimestamp(this.basicForm.end_date)
 
+      this.form.exts = this.activeProperties
       const data = {
         ...this.form,
         ...this.basicForm
@@ -327,5 +438,31 @@ export default {
 }
 .activity-action-container {
   margin-top: 1rem;
+}
+.cover-upload .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.cover-upload .el-upload:hover {
+  border-color: #20a0ff;
+}
+.cover-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px !important;
+  text-align: center;
+}
+.cover {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
+.activity-extraForm .el-select {
+  width: 20rem;
 }
 </style>

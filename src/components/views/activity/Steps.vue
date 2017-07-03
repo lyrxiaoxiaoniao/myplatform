@@ -136,11 +136,13 @@
         </el-dialog>
       </div>
       <kobe-table-dialog
-        @close="onPropsTableClose"
-        @confirm="onPropsTableClose"
+        title="活动步骤的属性"
         :show="showProsDialog"
         :tableData="propsTable"
-        title="活动步骤的属性"
+        @close="onPropsTableClose"
+        @confirm="onPropsTableClose"
+        @sizeChange="onPropsSizeChange"
+        @pageChange="onPropsPageChange"
         v-if="propsTable"
         >
         <div slot="table">
@@ -221,6 +223,18 @@ export default{
     onPropsTableClose () {
       this.showProsDialog = false
     },
+    onPropsSizeChange (value) {
+      this.getPropsList({
+        stage_id: this.propsTable.id,
+        ...value
+      })
+    },
+    onPropsPageChange (value) {
+      this.getPropsList({
+        stage_id: this.propsTable.id,
+        ...value
+      })
+    },
     onPropsTableSelection (selection, row) {
       if (row.stages.length === 0) {
         this.toggleRelation(config.activity.stepRelateProps, {
@@ -246,7 +260,9 @@ export default{
     toggleRelation (URL, data) {
       api.POST(URL, data)
       .then(response => {
-        if (response.data.errcode !== '0000') {
+        if (response.data.errcode === '0000') {
+          // TODO
+        } else if (response.data.errcode !== '0000') {
           this.$message.error('发生了错误,请重试')
         }
       })

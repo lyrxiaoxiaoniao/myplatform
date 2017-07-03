@@ -79,9 +79,13 @@ export default {
     propertyDelete: '/activity/property/delete',
     propertyUpdate: '/activity/property/update',
     activitySelectCatlg: '/activity/category/stage',
-    extraProperty: '/activity/extend/index',
+    extraProperty: '/activity/extend/key/index',
     extraPropertyAdd: '/activity/extend/key/create',
+    extraPropertyValueAdd: '/activity/extend/value/create',
     add: '/activity/info/create',
+    list: '/activity/info/index'
+  },
+  training: {
     list: '/activity/info/index'
   },
   menuAPI: '/admin/menu/show_left',
