@@ -185,7 +185,6 @@ export default {
       imageList: [],
       imageURL: '',
       uploadUrl: config.serverURI + config.uploadImgAPI,
-      dialogVisible: false,
       ruleForm: {
         title: '',
         poster: '',
@@ -221,7 +220,7 @@ export default {
         title: '',
         poster: '',
         link: '',
-        linkType: '1',
+        linkType: '2',
         memo: '',
         content: '',
         typeId: '1',
@@ -446,36 +445,6 @@ export default {
           }
         })
     },
-    // 跳转新增广告页面
-    // toAddPoints () {
-    //   this.$router.push({
-    //     path: '/admin/ad/content/add'
-    //   })
-    // },
-    /**
-     * 跳转编辑广告页面
-     * id ： 当前所在行id
-     * */
-    // onEditAdvertisement (id) {
-    //   this.$router.push({
-    //     path: '/admin/ad/content/edit',
-    //     query: {
-    //       id: id
-    //     }
-    //   })
-    // },
-     /**
-     * 跳转广告页面详情
-     * id ： 当前所在行id
-     * */
-    // toAdvertisementDetail (id) {
-    //   this.$router.push({
-    //     path: '/admin/ad/content/detail',
-    //     query: {
-    //       id: id
-    //     }
-    //   })
-    // },
     onUpAdv (id) {
       this.$router.push({
         path: '/admin/ad/upload/index',

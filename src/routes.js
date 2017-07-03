@@ -75,6 +75,10 @@ import SCActivitiAdd from 'components/views/activity/Add'
 import SCTrainingList from 'components/views/training/List'
 import SCTrainingPublish from 'components/views/training/Publish'
 
+import SCFileResource from './components/views/fileresource/FileTable.vue'
+
+import SCCommodity from './components/views/produdcts/Commodity.vue'
+
 const routes = [
   {
     path: '/login',
@@ -536,6 +540,30 @@ const routes = [
             name: '广告点位上画管理',
             meta: {description: '按照广告点位上画到广告内容'}
           }]
+        }]
+      }, {
+        path: 'files',
+        component: DashMainView,
+        redirect: '/admin/files/index',
+        name: '文件资源',
+        meta: {description: '文件资源管理'},
+        children: [{
+          path: 'index',
+          component: SCFileResource,
+          name: '文件资源管理',
+          meta: {description: '集中上传管理文件资源和图片资源'}
+        }]
+      }, {
+        path: 'goods',
+        component: DashMainView,
+        redirect: '/admin/goods/index',
+        name: '商品管理',
+        meta: {description: '商品管理'},
+        children: [{
+          path: 'index',
+          component: SCCommodity,
+          name: '商品',
+          meta: {description: '列表'}
         }]
       }
     ]

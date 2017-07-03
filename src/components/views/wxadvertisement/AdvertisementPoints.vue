@@ -425,27 +425,6 @@
           }
         })
       },
-      // toAddPoints () {
-      //   this.$router.push({
-      //     path: '/admin/ad/point/add'
-      //   })
-      // },
-      // onEditAdvertisement (id) {
-      //   this.$router.push({
-      //     path: '/admin/ad/point/edit',
-      //     query: {
-      //       id: id
-      //     }
-      //   })
-      // },
-      // toAdvertisementDetail (id) {
-      //   this.$router.push({
-      //     path: '/admin/ad/point/detail',
-      //     query: {
-      //       id: id
-      //     }
-      //   })
-      // },
       onUpadv (id) {
         this.$router.push({
           path: '/admin/ad/upload/point',
