@@ -80,6 +80,9 @@ export default {
     add: '/activity/info/create',
     list: '/activity/info/index'
   },
+  training: {
+    list: '/activity/info/index'
+  },
   menuAPI: '/admin/menu/show_left',
   deleteMenuAPI: '/admin/menu/delete',
   addMenuAPI: '/admin/menu/create',

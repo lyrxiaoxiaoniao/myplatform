@@ -35,7 +35,7 @@
           </el-form-item>
           <el-form-item label="活动地址">
             <el-input v-model="basicForm.address">
-              <el-button slot="append" class="fa fa-map-marker"></el-button>
+              <el-button @click="openMap" slot="append" class="fa fa-map-marker"></el-button>
             </el-input>
           </el-form-item>
           <el-row type="flex" justify="space-between">
@@ -56,39 +56,6 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row type="flex">
-            <el-form-item label="报名">
-              <el-switch
-                v-model="hasSign"
-                on-text="开启"
-                off-text="关闭"
-                on-color="#13ce66"
-                off-color="#ff4949"
-                >
-              </el-switch>
-            </el-form-item>
-          </el-row>
-          <el-form-item v-if="hasSign" label="报名时间">
-            <el-col :span="11">
-              <el-date-picker
-                type="datetime"
-                placeholder="报名开始时间"
-                v-model="basicForm.start_sign"
-                >
-              </el-date-picker>
-            </el-col>
-            <el-col :span="2">
-              ---
-            </el-col>
-            <el-col :span="11">
-              <el-date-picker
-                type="datetime"
-                placeholder="报名结束时间"
-                v-model="basicForm.end_sign"
-                >
-              </el-date-picker>
-            </el-col>
-          </el-form-item>
           <el-form-item label="宣传海报">
             <el-upload
               class="cover-upload"
@@ -104,7 +71,9 @@
             <vue-html5-editor :content="basicForm.brief" @change="onEditorChange"></vue-html5-editor>
           </el-form-item>
           <el-form-item label="标签">
-            <kobe-tag-group></kobe-tag-group>
+            <kobe-tag-group
+              >
+            </kobe-tag-group>
           </el-form-item>
           <el-form-item label="开启">
             <el-switch
@@ -150,10 +119,11 @@
       <el-form
         :model="extraForm"
         ref="extraForm"
+        class="activity-extraForm"
         label-position="left"
         label-width="120px">
         <el-row type="flex">
-          <el-col :span="6">
+          <el-col :span="8">
             <el-select
               v-if="extraProperties"
               placeholder="已有的附加属性"
@@ -170,7 +140,7 @@
               </el-option>
             </el-select>
           </el-col>
-          <el-col :span="8" :offset="2">
+          <el-col :span="6">
             <el-input
               v-model="extraProperty"
               placeholder="请输入属性名称"
@@ -181,14 +151,22 @@
         </el-row>
 
         <template
-          v-for="item in activeProperties"
+          class="active-extra-property"
+          v-for="item,index in activeProperties"
           >
-          <el-form-item :label="item.label">
-            <el-input
-              @blur="addExtraPropertyValue(item)"
-              @keyup.enter.nativ="addExtraPropertyValue(item)"
-              v-model="item.value"></el-input>
-          </el-form-item>
+          <el-row type="flex">
+            <el-col :span="12">
+              <el-form-item
+                :label="item.label">
+                <el-input
+                  @blur="addExtraPropertyValue(item)"
+                  @keyup.enter.native="addExtraPropertyValue(item)"
+                  v-model="item.value">
+                  <el-button @click="deleteExtraPro(index, item)" slot="append" icon="delete2"></el-button>
+                </el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </template>
       </el-form>
     </div>
@@ -197,6 +175,12 @@
         <el-button @click="onCreateActivity">提交表单</el-button>
       </el-row>
     </div>
+    <kobe-map-dialog
+      :isShow="showMap"
+      @close="closeMap"
+      @confirm="onMapConfirm"
+      >
+    </kobe-map-dialog>
   </div>
 </template>
 
@@ -215,11 +199,11 @@ export default {
       response: null,
       categories: [],
       active: true,
+      showMap: false,
       extraProperty: '',
       extraProperties: null,
       chosenProperties: [],
       activeProperties: [],
-      hasSign: false,
       form: {
         stages: [
         ],
@@ -231,21 +215,40 @@ export default {
         address: '',
         start_date: '',
         end_date: '',
-        start_sign: '',
-        end_sign: '',
         number: '',
         catgr_id: '',
         active: '',
         brief: ''
       },
       extraForm: {
-      }
+      },
+      addedExtraProperties: []
     }
   },
   methods: {
+    openMap () {
+      this.showMap = true
+    },
+    closeMap () {
+      this.showMap = false
+    },
+    onMapConfirm () {
+      // TODO
+      this.showMap = false
+    },
     handleCoverSuccess () {
     },
     beforeCoverUpload () {
+    },
+    deleteExtraPro (index, item) {
+      let deleteItem
+      this.chosenProperties.forEach((item, index) => {
+        if (item.id === item.key_id) {
+          deleteItem = index
+        }
+      })
+      this.chosenProperties.splice(deleteItem, 1)
+      this.activeProperties.splice(index, 1)
     },
     onRemoveExtraProperty (data) {
       let index
@@ -258,9 +261,13 @@ export default {
     },
     addExtraPropertyValue(item) {
       api.POST(config.activity.extraPropertyValueAdd, {
+        key_id: item.key_id,
+        label: item.label
       })
       .then(response => {
         if (response.data.errcode === '0000') {
+          item.values = []
+          item.values.push(response.data.data.id)
         }
       })
       .catch(error => {
@@ -268,7 +275,8 @@ export default {
       })
     },
     onSelectExtraProperties (value) {
-      if (value.length < this.activeProperties.length) return
+      const equal = value.length + this.addedExtraProperties.length === this.activeProperties.length
+      if (equal) return
       if (!value || !value[value.length - 1]) return
       if (!this.activeProperties) {
         this.activeProperties = []
@@ -299,6 +307,7 @@ export default {
       })
       .then(response => {
         if (response.data.errcode === '0000') {
+          this.addedExtraProperties.push(1)  // hacks
           let obj = {
             activity_id: this.basicForm.catgr_id,
             key_id: response.data.data.id,
@@ -336,9 +345,6 @@ export default {
       this.basicForm.start_date = this.toTimestamp(this.basicForm.start_date)
       this.basicForm.end_date = this.toTimestamp(this.basicForm.end_date)
 
-      this.activeProperties.forEach(item => {
-        item.values.push(item.value)
-      })
       this.form.exts = this.activeProperties
       const data = {
         ...this.form,
@@ -448,12 +454,15 @@ export default {
   color: #8c939d;
   width: 178px;
   height: 178px;
-  line-height: 178px;
+  line-height: 178px !important;
   text-align: center;
 }
 .cover {
   width: 178px;
   height: 178px;
   display: block;
+}
+.activity-extraForm .el-select {
+  width: 20rem;
 }
 </style>

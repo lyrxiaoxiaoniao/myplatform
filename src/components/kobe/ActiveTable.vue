@@ -1,27 +1,27 @@
 <template>
-  <el-form-item label="">
+  <el-form-item :label="data.title">
   </el-form-item>
 </template>
 
 <script>
 export default {
-  name: 'kobe-double-time',
+  name: 'kobe-active-table',
   props: {
     data: {
       type: Object,
       default: {
-        title: '',
-        value: '',
-        id: ''
       }
     }
+  },
+  computed: {
   },
   data () {
     return {
     }
+  },
+  methods: {
+  },
+  mounted () {
   }
 }
-</script>
-
-<style>
-</style>
+</script>  

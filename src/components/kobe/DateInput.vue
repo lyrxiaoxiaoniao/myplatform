@@ -14,6 +14,7 @@
 
 <script>
 export default {
+  // used for activity active form
   name: 'kobe-date-input',
   props: {
     data: {
@@ -34,7 +35,18 @@ export default {
   },
   methods: {
     onChange () {
-      this.$emit('date', this.time)
+      const date = new Date(this.time).getTime()
+      let data = {
+        index: this.index,
+        data: {
+          id: this.data.id,
+          type_key: this.data.type_key,
+          options: [{
+            title: date
+          }]
+        }
+      }
+      this.$emit('date', data)
     }
   }
 }

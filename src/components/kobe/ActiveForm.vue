@@ -41,6 +41,27 @@
           @radio="onRadioChange"
           >
         </kobe-active-radio>
+        <kobe-active-textarea
+          v-if="item.type === 'textarea'"
+          :index="index"
+          :data="item"
+          @text="onTextareaChange"
+          >
+        </kobe-active-textarea>
+        <kobe-active-checkbox
+          v-if="item.type === 'checkbox'"
+          :index="index"
+          :data="item"
+          @checklist="onCheckboxChange"
+          >
+        </kobe-active-checkbox>
+        <kobe-active-select
+          v-if="item.type === 'select'"
+          :index="index"
+          :data="item"
+          @select="onSelectChange"
+          >
+        </kobe-active-select>
       </template>
     </el-form>
     <!-- <el-row type="flex" justify="center"> -->
@@ -70,8 +91,18 @@ export default {
   },
   methods: {
     onRadioChange (value) {
+      this.form.properties[value.index] = value.data
+      this.onFormChange()
     },
     onInputChange (value) {
+      this.form.properties[value.index] = value.data
+      this.onFormChange()
+    },
+    onCheckboxChange (value) {
+      this.form.properties[value.index] = value.data
+      this.onFormChange()
+    },
+    onTextareaChange (value) {
       this.form.properties[value.index] = value.data
       this.onFormChange()
     },
@@ -79,7 +110,13 @@ export default {
       this.form.properties[value.index] = value.data
       this.onFormChange()
     },
+    onSelectChange (value) {
+      this.form.properties[value.index] = value.data
+      this.onFormChange()
+    },
     onTimeChange (value) {
+      this.form.properties[value.index] = value.data
+      this.onFormChange()
     },
     onSubmit () {
       this.$emit('submit', this.form)

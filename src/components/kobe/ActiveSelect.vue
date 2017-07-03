@@ -1,38 +1,38 @@
 <template>
   <el-form-item :label="data.title">
-    <el-input
-      :type="type"
-      v-model="data.value"
-      @change="onChange"
-      :placeholder="data.description"
-      ></el-input>
+    <el-select
+      clearable
+      v-model="selected"
+      @change="onChange">
+      <el-option
+        v-for="item in data.options"
+        :label="item.title"
+        :value="item.title"
+        >
+      </el-option>
+    </el-select>
   </el-form-item>
 </template>
 
 <script>
 export default {
-  // used for activity active form
-  name: 'kobe-active-input',
+  name: 'kobe-active-select',
   props: {
     data: {
       type: Object,
       default: {
-        title: '',
-        value: '',
-        id: ''
       }
     },
     index: {
       type: Number
-    },
-    type: {
-      type: String,
-      default: 'text'
     }
   },
   data () {
     return {
+      selected: ''
     }
+  },
+  computed: {
   },
   methods: {
     onChange () {
@@ -42,14 +42,12 @@ export default {
           id: this.data.id,
           type_key: this.data.type_key,
           options: [{
-            title: this.data.value
+            title: this.selected
           }]
         }
       }
-      this.$emit('input', data)
+      this.$emit('select', data)
     }
-  },
-  mounted () {
   }
 }
 </script>
