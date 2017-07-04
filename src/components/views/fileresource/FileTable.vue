@@ -563,7 +563,6 @@ export default {
     height: 100%;
     margin-top: 1.5rem;
     padding: 1rem 2rem;
-    border-top: 1px solid lightgray;
     position: relative;
 }
 .FS-left{

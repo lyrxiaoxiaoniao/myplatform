@@ -10,11 +10,21 @@
           v-model="address"
           placeholder="搜索地址"
           >
-          <el-button @click="onSearch" slot="append" icon="search"></el-button>
+          <el-button
+            @click="onSearch"
+            @keyup.enter.native="onSearch"
+            slot="append"
+            icon="search"
+            >
+          </el-button>
         </el-input>
       </el-col>
     </el-row>
-    <div id="bmap"></div>
+    <div
+      id="bmap"
+      v-loading.body="loading"
+      element-loading-text="定位中...">
+    </div>
     <div slot="footer">
       <el-row type="flex" justify="end">
         <el-button @click="onConfirm">确定</el-button>
@@ -43,6 +53,11 @@ export default {
   },
   data () {
     return {
+      loading: true,
+      geo: {
+      },
+      map: {
+      },
       mapData: {
         zoom: 14,
         center: {
@@ -57,7 +72,6 @@ export default {
     show (newVal, oldVal) {
       if (newVal === true) {
         this.$nextTick(_ => {
-          console.log('111')
           this.init()
         })
       }
@@ -65,6 +79,19 @@ export default {
   },
   methods: {
     onSearch () {
+      /* eslint-disable */
+      if (this.address === '') return
+      this.geo = new BMap.Geocoder();
+      const city = this.mapData.address ? this.mapData.address.city : '北京市'
+      this.geo.getPoint(this.address, point => {
+        if (point) {
+          this.map.centerAndZoom(point, 14)
+          this.map.addOverlay(new BMap.Marker(point))
+        } else {
+          this.$message.info('无法搜索该地址')
+        }
+      }, city)
+      /* eslint-enable */
     },
     onConfirm () {
       this.$emit('confirm')
@@ -74,11 +101,25 @@ export default {
     },
     init () {
       /* eslint-disable */
-      const map = new BMap.Map('bmap')
+      this.map = new BMap.Map('bmap')
+      this.map.enableScrollWheelZoom()
+      this.map.clearOverlays()
+
       const point = new BMap.Point(this.mapData.center.lng, this.mapData.center.lat)
-      map.centerAndZoom(point, 15)
+      this.map.centerAndZoom(point, 14)
       const marker = new BMap.Marker(point)
-      map.addOverlay(marker)
+      this.map.addOverlay(marker)
+
+      let geolocation = new BMap.Geolocation()
+      geolocation.getCurrentPosition(r => {
+        this.loading = false
+        if (geolocation.getStatus() === window.BMAP_STATUS_SUCCESS) {
+          this.mapData.address = r.address
+          let marker = new BMap.Marker(r.point)
+          this.map.addOverlay(marker)
+          this.map.panTo(r.point)
+        }
+      }, {enableHighAccuracy: true})
       /* eslint-enable */
     }
   },

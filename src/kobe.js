@@ -25,6 +25,7 @@ import ActiveUpload from 'components/kobe/ActiveUpload'
 import ActiveCheckbox from 'components/kobe/ActiveCheckbox'
 import ActiveSelect from 'components/kobe/ActiveSelect'
 import MapDialog from 'components/kobe/MapDialog'
+import UploadFile from 'components/kobe/UploadFile'
 
 const install = (Vue) => {
   Vue.component('kobe-login', Login)
@@ -49,6 +50,7 @@ const install = (Vue) => {
   Vue.component('kobe-active-checkbox', ActiveCheckbox)
   Vue.component('kobe-active-select', ActiveSelect)
   Vue.component('kobe-map-dialog', MapDialog)
+  Vue.component('kobe-upload-file', UploadFile)
 }
 
 export default install
