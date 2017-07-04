@@ -61,7 +61,7 @@
                 <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选当前显示的文件夹与文件</el-checkbox>
                 <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange" style="border-top: 1px solid lightgray;padding-top:5px;">
                 <ul>
-                    <li v-for="city in cities.data" :key="city.id">
+                    <li v-for="(city, index) in cities.data" :key="city.id">
                         <div v-if="city.typeId === 5" class="FS-view">
                             <el-checkbox :label="city.id" class="FS-right-check"></el-checkbox>
                             <div @dblclick="enterFile(city.id)" class="FS-folder"></div>
@@ -76,36 +76,36 @@
                         </div>
                         <div v-else-if="city.typeId === 1" class="FS-view">
                             <span class="FS-view-mask">
-                                <a :href="city.remoteUrl"><i class="el-icon-view FS-view-icon" ></i></a>
+                                <a :href="city.remoteUrl" target="_blank"><i class="fa fa-arrow-down FS-view-icon" ></i></a>
                             </span>
                             <el-checkbox :label="city.id" class="FS-right-check"></el-checkbox>
                             <div class="FS-folder FS-word"></div>
                         </div>
                         <div v-else-if="city.typeId === 2" class="FS-view">
                             <span class="FS-view-mask">
-                                <a :href="city.remoteUrl"><i class="el-icon-view FS-view-icon" ></i></a>
+                                <a :href="city.remoteUrl" target="_blank"><i class="fa fa-arrow-down FS-view-icon" ></i></a>
                             </span>
                             <el-checkbox :label="city.id" class="FS-right-check"></el-checkbox>
                             <div class="FS-folder FS-pdf"></div>
                         </div>
                         <div v-else-if="city.typeId === 3" class="FS-view">
                             <span class="FS-view-mask">
-                                <a :href="city.remoteUrl"><i class="el-icon-view FS-view-icon" ></i></a>
+                                <a :href="city.remoteUrl" target="_blank"><i class="fa fa-arrow-down FS-view-icon" ></i></a>
                             </span>
                             <el-checkbox :label="city.id" class="FS-right-check"></el-checkbox>
                             <div class="FS-folder FS-txt"></div>
                         </div>
                         <div v-else-if="city.typeId === 4" class="FS-view">
                             <span class="FS-view-mask">
-                                <a :href="city.remoteUrl"><i class="el-icon-view FS-view-icon" ></i></a>
+                                <a :href="city.remoteUrl" target="_blank"><i class="fa fa-arrow-down FS-view-icon" ></i></a>
                             </span>
                             <el-checkbox :label="city.id" class="FS-right-check"></el-checkbox>
                             <div class="FS-folder FS-zip"></div>
                         </div>
                         <div>
-                            <P v-if="city.changeVal" @dblclick="dbChangeName(city)" class="FS-name">{{city.name}}</P>
-                            <template v-else>
-                                <el-input
+                            <P v-show="city.changeVal" @dblclick="dbChangeName(city, $event, index)" class="FS-name">{{city.name}}</P>
+                            <template>
+                                <el-input v-show="! city.changeVal"
                                     ref="folderName"
                                     class="FS-view-name"
                                     icon="edit"
@@ -271,7 +271,6 @@ export default {
       api.POST(config.createFilesAPI, {parentId: this.parentId})
       .then(response => {
         if (response.data.errcode === '0000') {
-          console.log(response)
           this.getTreeData()
           this.showFileList({id: this.parentId})
         }
@@ -280,7 +279,10 @@ export default {
     showDialog () {
       this.uploadShowDialod = true
     },
-    dbChangeName (val) {
+    dbChangeName (val, evt, index) {
+      this.$nextTick(() => {
+        this.$refs.folderName[index].$refs.input.focus()
+      })
       this.inputNameId = null
       val.changeVal = false
       this.inputNameId = val
@@ -295,7 +297,6 @@ export default {
     // 点击事件
     handleIconClick (ev) {
       // updateNameFilesAPI
-      // console.log(ev)
       if (this.inputNameId) {
         var obj = {}
         obj.id = this.inputNameId.id
@@ -362,7 +363,6 @@ export default {
       this.dialogVisible = true
     },
     uploadSuccess (response, file, fileList) {
-    //   console.log(file.url)
       this.localImgs = []
       this.removeImg(fileList)
     },
@@ -543,21 +543,21 @@ export default {
 .FS-folder {
   width: 100%;
   height: 100%;
-  background: url('../../../assets/folder.png') no-repeat center center;
+  background: url('/static/img/folder.png') no-repeat center center;
   background-size: 50% 40%;
   cursor: pointer;
 }
 .FS-word {
-  background: url('../../../assets/word.png') no-repeat center center;
+  background: url('/static/img/word.png') no-repeat center center;
 }
 .FS-txt {
-  background: url('../../../assets/txt.png') no-repeat center center;
+  background: url('/static/img/txt.png') no-repeat center center;
 }
 .FS-pdf {
-  background: url('../../../assets/pdf.png') no-repeat center center;
+  background: url('/static/img/pdf.png') no-repeat center center;
 }
 .FS-zip {
-  background: url('../../../assets/zip.png') no-repeat center center;
+  background: url('/static/img/zip.png') no-repeat center center;
 }
 .FS-container{
     height: 100%;

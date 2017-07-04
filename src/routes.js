@@ -79,6 +79,9 @@ import SCFileResource from './components/views/fileresource/FileTable.vue'
 
 import SCCommodity from './components/views/produdcts/Commodity.vue'
 
+import SCForm from './components/views/form/Form.vue'
+import SCField from './components/views/form/Field.vue'
+
 const routes = [
   {
     path: '/login',
@@ -563,6 +566,23 @@ const routes = [
           path: 'index',
           component: SCCommodity,
           name: '商品',
+          meta: {description: '列表'}
+        }]
+      }, {
+        path: 'form',
+        component: DashMainView,
+        redirect: '/admin/form/index',
+        name: '表单管理',
+        meta: {description: '表单管理'},
+        children: [{
+          path: 'index',
+          component: SCForm,
+          name: '表单',
+          meta: {description: '列表'}
+        }, {
+          path: 'field',
+          component: SCField,
+          name: '标签管理',
           meta: {description: '列表'}
         }]
       }

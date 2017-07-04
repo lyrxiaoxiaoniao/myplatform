@@ -518,7 +518,6 @@
   .sc-advertisement {
     margin-top: 2rem;
     padding:2rem 1rem;
-    border-top: 1px solid lightgray;
   }
   .sc-top-btn {
   	margin-bottom: 1rem;
