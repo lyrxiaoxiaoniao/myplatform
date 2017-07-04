@@ -120,8 +120,7 @@ Vue.use(VueHtml5Editor, {
     'image',
     'hr',
     'eraser',
-    'undo',
-    'info'
+    'undo'
   ]
 })
 

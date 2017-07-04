@@ -39,15 +39,7 @@
             </el-input>
           </el-form-item>
           <el-form-item label="宣传海报">
-            <el-upload
-              class="cover-upload"
-              action="https://jsonplaceholder.typicode.com/posts/"
-              :show-file-list="false"
-              :on-success="handleCoverSuccess"
-              :before-upload="beforeCoverUpload">
-              <img v-if="coverURL" :src="coverURL" class="cover">
-              <i v-else class="el-icon-plus cover-uploader-icon"></i>
-            </el-upload>
+            <el-button size="small" @click="uploadCover">选择图片</el-button>
           </el-form-item>
           <el-form-item label="培训内容">
             <vue-html5-editor :content="basicForm.brief" @change="onEditorChange"></vue-html5-editor>
@@ -69,7 +61,7 @@
             </el-switch>
           </el-form-item>
           <el-form-item label="培训附件">
-            <el-button>点击上传</el-button>
+            <el-button size="small" @click="uploadFile">选择附件</el-button>
           </el-form-item>
         </el-form>
       </el-tab-pane>
@@ -154,11 +146,12 @@
     <div class="activity-action-container">
       <el-row type="flex" justify="center">
         <el-button
+          type="primary"
           v-if="selectedTab === '-1'"
           @click="toTrainingList">
           培训列表
         </el-button>
-        <el-button @click="onCreateActivity">提交表单</el-button>
+        <el-button type="primary" @click="onCreateActivity">提交</el-button>
       </el-row>
     </div>
     <kobe-map-dialog
@@ -167,6 +160,20 @@
       @confirm="onMapConfirm"
       >
     </kobe-map-dialog>
+    <kobe-upload-file
+      @close="onUploadCoverClose"
+      @confirm="onUploadCoverConfirm"
+      title="上传封面图片"
+      :show="showUploadCover"
+      >
+    </kobe-upload-file>
+    <kobe-upload-file
+      @close="onUploadFileClose"
+      @confirm="onUploadFileConfirm"
+      title="上传附件"
+      :show="showUploadFile"
+      >
+    </kobe-upload-file>
   </div>
 </template>
 
@@ -180,7 +187,8 @@ export default {
     return {
       // activity category id for training
       categoryTrainingID: 12,
-      coverURL: '',
+      showUploadCover: false,
+      showUploadFile: false,
       selectedTab: '-1',
       showExtraInput: false,
       error: null,
@@ -203,7 +211,7 @@ export default {
         start_date: '',
         end_date: '',
         number: '',
-        catgr_id: this.categoryTrainingID,
+        catgr_id: 12,
         active: '',
         brief: ''
       },
@@ -213,6 +221,26 @@ export default {
     }
   },
   methods: {
+    uploadFile () {
+      this.showUploadFile = true
+    },
+    onUploadFileClose () {
+      this.showUploadFile = false
+    },
+    onUploadFileConfirm (list) {
+      // TODO
+      this.showUploadFile = false
+    },
+    uploadCover () {
+      this.showUploadCover = true
+    },
+    onUploadCoverClose () {
+      this.showUploadCover = false
+    },
+    onUploadCoverConfirm (list) {
+      // TODO
+      this.showUploadCover = false
+    },
     openMap () {
       this.showMap = true
     },
@@ -227,10 +255,6 @@ export default {
       this.$router.push({
         path: '/admin/training/index'
       })
-    },
-    handleCoverSuccess () {
-    },
-    beforeCoverUpload () {
     },
     deleteExtraPro (index, item) {
       let deleteItem
@@ -322,7 +346,7 @@ export default {
     },
     getExtraPros () {
       api.GET(config.activity.extraProperty, {
-        category_id: this.basicForm.catgr_id
+        category_id: this.categoryTrainingID
       })
       .then(response => {
         if (response.data.errcode === '0000') {
@@ -392,6 +416,7 @@ export default {
   },
   mounted () {
     this.getTrainingSteps()
+    this.getExtraPros()
   }
 }
 </script>
@@ -411,29 +436,6 @@ export default {
 }
 .activity-action-container {
   margin-top: 1rem;
-}
-.cover-upload .el-upload {
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-.cover-upload .el-upload:hover {
-  border-color: #20a0ff;
-}
-.cover-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px !important;
-  text-align: center;
-}
-.cover {
-  width: 178px;
-  height: 178px;
-  display: block;
 }
 .activity-extraForm .el-select {
   width: 20rem;
