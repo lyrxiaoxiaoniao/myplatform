@@ -183,7 +183,8 @@
             @close="onFilesClose"
             @confirm="onFilesfirm"
             title="选择文件资源"
-            :show="uploadShowDialod">
+            :show="uploadShowDialod"
+            :multiselect="false">
         </upload-file>
     </div>  
 </template>

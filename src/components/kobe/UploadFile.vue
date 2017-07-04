@@ -89,6 +89,9 @@ export default {
     show: {
       type: Boolean,
       default: false
+    },
+    multiselect: {
+      type: Boolean
     }
   },
   data () {
@@ -109,7 +112,7 @@ export default {
       data: [],
       checkAll: false,
       checkedCities: [],
-      cities: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+      cities: [],
       isIndeterminate: true
     }
   },
@@ -192,6 +195,11 @@ export default {
     },
     // 获取已经选择的方法
     handleCheckedCitiesChange (value) {
+      if (!this.multiselect) {
+        let lastSel = []
+        lastSel.push(this.checkedCities.pop())
+        this.checkedCities = lastSel
+      }
       let checkedCount = value.length
       this.checkAll = checkedCount === this.cities.length
       this.isIndeterminate = checkedCount > 0 && checkedCount < this.cities.length
