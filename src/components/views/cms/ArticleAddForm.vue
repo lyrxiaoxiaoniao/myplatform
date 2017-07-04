@@ -94,6 +94,7 @@ export default {
   data () {
     return {
       isEdit: false,
+      cover: '',
       form: {
         categoryId: null,
         pictures: [],
@@ -147,11 +148,9 @@ export default {
       this.$refs[form].resetFields()
     },
     updateArticle () {
-      if (this.imageURL) {
-        this.form.pictures[0] = this.imageURL
-      }
       const form = {
         ...this.form,
+        pictures: [this.cover],
         id: this.$route.query.id
       }
       api.POST(config.updateArticleAPI, form)
@@ -231,6 +230,7 @@ export default {
       if (response.errcode === '0000') {
         this.imageURL = file.url
         this.form.pictures[0] = response.data[0]
+        this.cover = response.data[0]
       }
     },
     onUploadError (error, file) {
@@ -334,6 +334,7 @@ export default {
           const data = response.data.data
           if (data.picture) {
             this.imageURL = data.picture
+            this.cover = data.picture
             let array = data.picture.split('/')
             this.form.pictures.push(array[array.length - 1])
           }
