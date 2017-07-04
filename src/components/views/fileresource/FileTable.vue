@@ -179,23 +179,19 @@
                 <el-button type="primary" @click="saveURL">确 定</el-button>
             </div>
         </el-dialog>
-        <upload-file
+        <kobe-upload-file
             @close="onFilesClose"
             @confirm="onFilesfirm"
             title="选择文件资源"
             :show="uploadShowDialod"
             :multiselect="false">
-        </upload-file>
+        </kobe-upload-file>
     </div>  
 </template>
 <script>
 import api from 'src/api'
 import config from 'src/config'
-import UploadFile from 'src/components/kobe/UploadFile.vue'
 export default {
-  components: {
-    UploadFile
-  },
   data () {
     return {
       inputNameId: null,
