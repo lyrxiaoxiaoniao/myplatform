@@ -406,7 +406,7 @@ export default {
     },
     onFormChange (value) {
       console.log('on form change')
-      console.log(value)
+      console.log(this.form)
       this.form.stages[value.index] = value
     },
     selectCategoty (value) {

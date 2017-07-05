@@ -77,6 +77,7 @@ export default {
 .sc-tutorial-setting-component {
   margin-left: 2rem;
   margin-top: 2rem;
+  padding-bottom: 1rem;
 }
 .sc-tutorial-setting-site {
   width: 600px;

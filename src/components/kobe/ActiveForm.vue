@@ -5,7 +5,7 @@
       v-model="form"
       label-width="120px"
       >
-      <template v-for="item, index in data.properties">
+      <template v-for="item, index in properties">
         <kobe-active-input
           v-if="item.type === 'input'"
           :data="item"
@@ -62,6 +62,33 @@
           @select="onSelectChange"
           >
         </kobe-active-select>
+        <kobe-active-rank
+          v-if="item.type === 'rank'"
+          :index="index"
+          :data="item"
+          @rank="onRankChange"
+          >
+        </kobe-active-rank>
+        <kobe-active-cert
+          v-if="item.type === 'cert'"
+          :index="index"
+          :data="item"
+          @cert="onCertChange"
+          >
+        </kobe-active-cert>
+        <kobe-active-sign
+          v-if="item.type === 'sign'"
+          :index="index"
+          :data="item"
+          @sign="onSignChange"
+          >
+        </kobe-active-sign>
+        <kobe-active-attendee
+          v-if="item.type === 'attendee'"
+          :index="index"
+          :data="item"
+          >
+        </kobe-active-attendee>
       </template>
     </el-form>
     <!-- <el-row type="flex" justify="center"> -->
@@ -89,7 +116,76 @@ export default {
       }
     }
   },
+  computed: {
+    // hacks for switch toggle component
+    properties () {
+      let rankData = {
+        data: [],
+        type: 'rank'
+      }
+      let certData = {
+        data: [],
+        type: 'cert'
+      }
+      let signData = {
+        data: [],
+        type: 'sign'
+      }
+      let attendeeData = {
+        data: [],
+        type: 'attendee'
+      }
+      let arr = []
+      this.data.properties.forEach((item, index) => {
+        if (item.type.startsWith('rank-')) {
+          item.type = item.type.split('-')[1]
+          rankData.data.push(item)
+        } else if (item.type.startsWith('cert-')) {
+          item.type = item.type.split('-')[1]
+          certData.data.push(item)
+        } else if (item.type.startsWith('sign-')) {
+          item.type = item.type.split('-')[1]
+          signData.data.push(item)
+        } else if (item.type.startsWith('attendee-')) {
+          item.type = item.type.split('-')[1]
+          attendeeData.data.push(item)
+        } else {
+          arr.push(item)
+        }
+      })
+      if (rankData.data.length) {
+        arr.push(rankData)
+      }
+      if (certData.data.length) {
+        arr.push(certData)
+      }
+      if (signData.data.length) {
+        arr.push(signData)
+      }
+      if (attendeeData.data.length) {
+        arr.push(attendeeData)
+      }
+
+      return arr
+    }
+  },
   methods: {
+    onSignChange (value) {
+    },
+    onCertChange (value) {
+      this.form.properties = [
+        ...this.form.properties,
+        ...value
+      ]
+      this.onFormChange()
+    },
+    onRankChange (value) {
+      this.form.properties = [
+        ...this.form.properties,
+        ...value
+      ]
+      this.onFormChange()
+    },
     onRadioChange (value) {
       this.form.properties[value.index] = value.data
       this.onFormChange()
