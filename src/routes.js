@@ -86,6 +86,7 @@ import SCTutorialSignIn from 'components/views/tutorial/Signin.vue'
 import SCTutorialManage from 'components/views/tutorial/Manage.vue'
 import SCTutorialCategory from 'components/views/tutorial/Category.vue'
 import SCTutorialTrash from 'components/views/tutorial/Trash.vue'
+import SCTutorialSetting from 'components/views/tutorial/Setting.vue'
 
 const routes = [
   {
@@ -616,6 +617,11 @@ const routes = [
           component: SCTutorialTrash,
           name: '课程回收站',
           meta: {description: '课程中心'}
+        }, {
+          path: 'setting',
+          component: SCTutorialSetting,
+          name: '线上课堂系统配置',
+          meta: {description: '修改系统配置信息'}
         }]
       }
     ]

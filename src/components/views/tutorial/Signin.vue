@@ -79,9 +79,9 @@ export default {
     }
   },
   methods: {
-    handleSizeChange () {
+    handleSizeChange (value) {
     },
-    handleCurrentChange () {
+    handleCurrentChange (value) {
     },
     getUserList (data = null) {
       api.GET(config.tutorial.user, data)

@@ -46,7 +46,7 @@
           </el-form>
           <div slot="footer">
             <el-button @click="closeSearchForm">取消</el-button>
-            <el-button @click="onAdvancedSearch"></el-button>
+            <el-button @click="onAdvancedSearch">搜索</el-button>
           </div>
         </el-dialog>
       </div>
@@ -123,9 +123,9 @@ export default {
     }
   },
   methods: {
-    handleSizeChange () {
+    handleSizeChange (value) {
     },
-    handleCurrentChange () {
+    handleCurrentChange (value) {
     },
     onAdvancedSearch () {
     },
