@@ -52,25 +52,24 @@
     </kobe-table>
     <el-dialog title="编辑表单" v-model="showDialog">
         <el-form :model="selected" label-width="120px">
-            <el-form-item label="method">
-                <el-input placeholder="示例:post/get" v-model="selected.url"></el-input>
-            </el-form-item>
-            <el-form-item label="action">
-                <el-input placeholder="示例:https://www.example.com" v-model="selected.url"></el-input>
-            </el-form-item>
-            <el-form-item label="accept_charset">
-                <el-input placeholder="示例:utf-8" v-model="selected.url"></el-input>
-            </el-form-item>
-            <el-form-item label="enctype">
-                <el-input placeholder="示例:utf-8" v-model="selected.brief"></el-input>
-            </el-form-item>
-            <el-form-item label="role">
-                <el-input placeholder="示例:utf-8" v-model="selected.content"></el-input>
-            </el-form-item>
+          <el-form-item label="method">
+              <el-input placeholder="示例:post/get" v-model="selected.url"></el-input>
+          </el-form-item>
+          <el-form-item label="action">
+              <el-input placeholder="示例:https://www.example.com" v-model="selected.url"></el-input>
+          </el-form-item>
+          <el-form-item label="accept_charset">
+              <el-input placeholder="示例:utf-8" v-model="selected.url"></el-input>
+          </el-form-item>
+          <el-form-item label="enctype">
+              <el-input placeholder="默认:application/x-www-form-urlencoded" v-model="selected.brief"></el-input>
+          </el-form-item>
+          <el-form-item label="role">
+              <el-input placeholder="form" v-model="selected.content"></el-input>
+          </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button @click="closeDialog">取消</el-button>
-            <el-button @click="createType">确定</el-button>
             <el-button @click="createType" v-if="dialogType === 'add'">确定</el-button>
             <el-button @click="editType" v-if="dialogType === 'edit'">确定</el-button>
         </div>
@@ -114,6 +113,53 @@ export default {
       } else {
         this.$refs.multipleTable.clearSelection()
       }
+    },
+    // 模态框显示
+    openDialog (e, data = null, type = null) {
+      if (data !== null && type === 'edit') {
+        this.dialogType = 'edit'
+        this.isDialogDisabled = false
+        this.selected = {
+          ...this.selected,
+          ...data
+        }
+      } else {
+        this.isDialogDisabled = false
+        this.dialogType = 'add'
+        Object.keys(this.selected).forEach(key => {
+          this.selected[key] = ''
+        })
+      }
+      this.showDialog = true
+    },
+    closeDialog () {
+      this.showDialog = false
+    },
+    // 新增form确认
+    createType () {
+      this.showDialog = false
+      // api.POST(config.activity.typeCreate, this.selected)
+      // .then(response => {
+      //   if (response.data.errcode === '0000') {
+      //     this.onSuccess('添加成功')
+      //   }
+      // })
+      // .catch(error => {
+      //   this.$message.error(error)
+      // })
+    },
+    // 修改form确认
+    editType () {
+      this.showDialog = false
+      // api.POST(config.activity.typeUpdate, this.selected)
+      // .then(response => {
+      //   if (response.data.errcode === '0000') {
+      //     this.onSuccess('修改成功')
+      //   }
+      // })
+      // .catch(error => {
+      //   this.$message.error(error)
+      // })
     },
     handleSizeChange (value) {
       const data = {
