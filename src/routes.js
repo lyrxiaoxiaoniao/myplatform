@@ -75,13 +75,19 @@ import SCActivitiAdd from 'components/views/activity/Add'
 import SCTrainingList from 'components/views/training/List'
 import SCTrainingPublish from 'components/views/training/Publish'
 
-import SCFileResource from './components/views/fileresource/FileTable.vue'
+import SCFileResource from 'components/views/fileresource/FileTable.vue'
 
-import SCCommodity from './components/views/produdcts/Commodity.vue'
+import SCCommodity from 'components/views/produdcts/Commodity.vue'
 
 import SCForm from './components/views/form/Form.vue'
 import SCFormDetail from './components/views/form/FormDetail.vue'
 import SCField from './components/views/form/Field.vue'
+
+import SCTutorialSignIn from 'components/views/tutorial/Signin.vue'
+import SCTutorialManage from 'components/views/tutorial/Manage.vue'
+import SCTutorialCategory from 'components/views/tutorial/Category.vue'
+import SCTutorialTrash from 'components/views/tutorial/Trash.vue'
+import SCTutorialSetting from 'components/views/tutorial/Setting.vue'
 
 import SCTeam from './components/views/team/Team.vue'
 import SCTeamClass from './components/views/team/TeamClass.vue'
@@ -616,6 +622,38 @@ const routes = [
           component: SCTeamClass,
           name: '团队分类',
           meta: {description: '管理'}
+        }]
+      }, {
+        path: 'tutorial',
+        component: DashMainView,
+        redirect: '/admin/tutorial/index',
+        name: '线上课堂应用',
+        meta: {description: '线上课堂管理'},
+        children: [{
+          path: 'index',
+          component: SCTutorialManage,
+          name: '课程管理',
+          meta: {description: '课程管理中心'}
+        }, {
+          path: 'category',
+          component: SCTutorialCategory,
+          name: '课程分类管理',
+          meta: {description: '课程分类管理中心'}
+        }, {
+          path: 'signin',
+          component: SCTutorialSignIn,
+          name: '课程报名管理',
+          meta: {description: '查看课程的详细信息'}
+        }, {
+          path: 'trash',
+          component: SCTutorialTrash,
+          name: '课程回收站',
+          meta: {description: '课程中心'}
+        }, {
+          path: 'setting',
+          component: SCTutorialSetting,
+          name: '线上课堂系统配置',
+          meta: {description: '修改系统配置信息'}
         }]
       }
     ]

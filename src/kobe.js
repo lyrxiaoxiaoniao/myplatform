@@ -26,6 +26,10 @@ import ActiveCheckbox from 'components/kobe/ActiveCheckbox'
 import ActiveSelect from 'components/kobe/ActiveSelect'
 import MapDialog from 'components/kobe/MapDialog'
 import UploadFile from 'components/kobe/UploadFile'
+import ActiveRank from 'components/kobe/ActiveRank'
+import ActiveCert from 'components/kobe/ActiveCert'
+import ActiveSign from 'components/kobe/ActiveSign'
+import ActiveAttendee from 'components/kobe/ActiveAttendee'
 
 const install = (Vue) => {
   Vue.component('kobe-login', Login)
@@ -51,6 +55,10 @@ const install = (Vue) => {
   Vue.component('kobe-active-select', ActiveSelect)
   Vue.component('kobe-map-dialog', MapDialog)
   Vue.component('kobe-upload-file', UploadFile)
+  Vue.component('kobe-active-rank', ActiveRank)
+  Vue.component('kobe-active-cert', ActiveCert)
+  Vue.component('kobe-active-sign', ActiveSign)
+  Vue.component('kobe-active-attendee', ActiveAttendee)
 }
 
 export default install
