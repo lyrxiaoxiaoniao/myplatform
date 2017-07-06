@@ -1,5 +1,5 @@
 <template>
-  <el-dialog @close="onClose" :title="title" v-model="show">
+  <el-dialog @close="onClose" :title="title" v-model="isShow">
     <div class="FS-container">
         <div class="FS-left">
             <el-tree :data="data"
@@ -121,6 +121,9 @@ export default {
       this.treeOpenval = []
       this.treeOpenval.push(this.parentId)
       return this.treeOpenval
+    },
+    isShow () {
+      return !!this.show
     }
   },
   methods: {
@@ -163,6 +166,7 @@ export default {
       })
     },
     uploadSuccess (response, file, fileList) {
+      console.log(response)
       this.localImgs = []
       this.removeImg(fileList)
     },

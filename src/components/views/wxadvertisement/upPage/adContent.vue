@@ -138,7 +138,7 @@
           </el-tab-pane>
       </el-tabs>
       <!--弹出框-->
-      <el-dialog title="选择广告位" :visible.sync="dialogTableVisible">
+      <el-dialog title="选择广告位" v-model="dialogTableVisible">
           <div>
               <el-form :inline="true" :model="formInline" class="demo-form-inline">
                   <el-form-item label="上画方式">

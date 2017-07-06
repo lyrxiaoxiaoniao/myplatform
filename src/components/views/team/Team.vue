@@ -14,9 +14,7 @@
         <div slot="kobe-table-header" class="kobe-table-header">
           <el-row type="flex" justify="end">
             <el-col :span="14">
-              <el-button type="primary">添加子分类</el-button>
-              <el-button type="primary">修改属性</el-button>
-              <el-button type="primary">更多操作</el-button>
+              <el-button type="primary">批量删除</el-button>
               <el-button type="primary">刷新</el-button>
             </el-col>
             <el-col :span="8">
@@ -37,15 +35,11 @@
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="ID" width="50"></el-table-column>
-            <el-table-column prop="title" label="栏目名称" width="120"></el-table-column>
-            <el-table-column prop="type_key" label="图片" width="130"></el-table-column>
-            <el-table-column prop="brief" label="创建时间"></el-table-column>
-            <el-table-column prop="sort" label="顺序" width="80"></el-table-column>
-            <el-table-column label="启用" width="80">
-              <template scope="scope">
-                {{ scope.row.active | isOpen }}
-              </template>
-            </el-table-column>
+            <el-table-column prop="title" label="团队名称"></el-table-column>
+            <el-table-column prop="logo" label="团队logo" width="150"></el-table-column>
+            <el-table-column prop="creatTime" label="创建时间" width="250"></el-table-column>
+            <el-table-column prop="panter" label="成员" width="100"></el-table-column>
+            <el-table-column prop="state" label="状态" width="150"></el-table-column>
             <el-table-column 
               width="100"
               label="操作"
