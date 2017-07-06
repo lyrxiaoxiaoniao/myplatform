@@ -80,9 +80,7 @@ export default {
       this.$emit('search', data)
     },
     onConfirm () {
-      this.$emit('confirm', {
-        categories: [this.tableData.id]
-      })
+      this.$emit('confirm', {})
     },
     handleSizeChange (value) {
       const data = {

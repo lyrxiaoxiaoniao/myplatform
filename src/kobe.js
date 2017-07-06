@@ -30,6 +30,7 @@ import ActiveRank from 'components/kobe/ActiveRank'
 import ActiveCert from 'components/kobe/ActiveCert'
 import ActiveSign from 'components/kobe/ActiveSign'
 import ActiveAttendee from 'components/kobe/ActiveAttendee'
+import ActiveAttendence from 'components/kobe/ActiveAttendence'
 
 const install = (Vue) => {
   Vue.component('kobe-login', Login)
@@ -59,6 +60,7 @@ const install = (Vue) => {
   Vue.component('kobe-active-cert', ActiveCert)
   Vue.component('kobe-active-sign', ActiveSign)
   Vue.component('kobe-active-attendee', ActiveAttendee)
+  Vue.component('kobe-active-attendence', ActiveAttendence)
 }
 
 export default install
