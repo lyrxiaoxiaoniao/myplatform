@@ -145,7 +145,7 @@
         <!--点击上传弹出框 -->
         <el-dialog
             title="上传文件"
-            :visible.sync="uploadVisible">
+            v-model="uploadVisible">
             <div class="FS-load-content">
                 <div class="FS-load-net">
                     <label>网络图片</label>

@@ -76,7 +76,7 @@
 	        </el-col>
 	      </el-row>
 	    </div>
-      <el-dialog :title="isEdit ? '修改广告点位' : '新增广告点位'" :visible.sync="dialogFormVisible">
+      <el-dialog :title="isEdit ? '修改广告点位' : '新增广告点位'" v-model="dialogFormVisible">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="点位名称" prop="spacename">
           <el-input v-model="ruleForm.spacename" placeholder="简单为宜"></el-input>
@@ -437,6 +437,18 @@
         if (deleteid) {
           this.ids = []
           this.ids.push(deleteid)
+        }
+        if (this.ids.length === 0) {
+          this.$confirm('请进行正确操作，请优先勾选点位？', '错误', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'error'
+          }).then(() => {
+            return
+          }).catch(() => {
+            return
+          })
+          return
         }
         this.$confirm('此操作将删除该广告点位，删除后，数据无法恢复。是否继续删除？', '删除', {
           confirmButtonText: '确定',

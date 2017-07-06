@@ -2,7 +2,7 @@
   <div class="sc-advertisement">
 		<el-row class="sc-top-header">
 		  <el-col :span="12">
-        <el-button type="primary" class="sc-top-btn" @click="addData()">新增</el-button>
+        <el-button type="primary" class="sc-top-btn" @click="addData">新增</el-button>
       </el-col>
 		  <el-col :span="3">
          <template>
@@ -75,7 +75,7 @@
 	        </el-col>
 	      </el-row>
 	    </div>
-    <el-dialog :title="isEdit ? '修改广告内容' : '新增广告内容'" :visible.sync="dialogFormVisible">
+    <el-dialog :title="isEdit ? '修改广告内容' : '新增广告内容'" v-model="dialogFormVisible">
        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="广告标题" prop="title">
           <el-input v-model="ruleForm.title" placeholder="请输入标题"></el-input>

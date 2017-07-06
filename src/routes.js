@@ -80,7 +80,12 @@ import SCFileResource from './components/views/fileresource/FileTable.vue'
 import SCCommodity from './components/views/produdcts/Commodity.vue'
 
 import SCForm from './components/views/form/Form.vue'
+import SCFormDetail from './components/views/form/FormDetail.vue'
 import SCField from './components/views/form/Field.vue'
+
+import SCTeam from './components/views/team/Team.vue'
+import SCTeamClass from './components/views/team/TeamClass.vue'
+import SCTeamDetail from './components/views/team/TeamDetail.vue'
 
 const routes = [
   {
@@ -584,6 +589,33 @@ const routes = [
           component: SCField,
           name: '标签管理',
           meta: {description: '列表'}
+        }, {
+          path: 'detail',
+          component: SCFormDetail,
+          name: '表单详情',
+          meta: {description: '列表'}
+        }]
+      }, {
+        path: 'team',
+        component: DashMainView,
+        redirect: '/admin/team/index',
+        name: '团队管理',
+        meta: {description: '列表'},
+        children: [{
+          path: 'index',
+          component: SCTeam,
+          name: '团队',
+          meta: {description: '列表'}
+        }, {
+          path: 'detail',
+          component: SCTeamDetail,
+          name: '团队详情',
+          meta: {description: '展示'}
+        }, {
+          path: 'class',
+          component: SCTeamClass,
+          name: '团队分类',
+          meta: {description: '管理'}
         }]
       }
     ]
