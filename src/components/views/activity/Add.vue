@@ -416,6 +416,15 @@ export default {
       .then(response => {
         if (response.data.errcode === '0000') {
           this.response = response.data.data
+          this.response.forEach((item, index) => {
+            const obj = {
+              id: item.id,
+              index: index,
+              type_key: item.type_key,
+              properties: []
+            }
+            this.form.stages.push(obj)
+          })
         }
       })
       .catch(error => {

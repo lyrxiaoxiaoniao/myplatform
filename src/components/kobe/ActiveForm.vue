@@ -80,15 +80,23 @@
           v-if="item.type === 'sign'"
           :index="index"
           :data="item"
-          @sign="onSignChange"
+          @sign="onSigninChange"
           >
         </kobe-active-sign>
         <kobe-active-attendee
           v-if="item.type === 'attendee'"
           :index="index"
           :data="item"
+          @attendee="onAttendeeChange"
           >
         </kobe-active-attendee>
+        <kobe-active-attendence
+          v-if="item.type === 'attendence'"
+          :index="index"
+          :data="item"
+          @attendence="onAttendenceChange"
+          >
+        </kobe-active-attendence>
       </template>
     </el-form>
     <!-- <el-row type="flex" justify="center"> -->
@@ -135,55 +143,80 @@ export default {
         data: [],
         type: 'attendee'
       }
+      let attendenceData = {
+        data: [],
+        type: 'attendence'
+      }
+      const datas = [rankData, certData, signData, attendeeData, attendenceData]
       let arr = []
       this.data.properties.forEach((item, index) => {
         if (item.type.startsWith('rank-')) {
           item.type = item.type.split('-')[1]
+          item.index = index
           rankData.data.push(item)
         } else if (item.type.startsWith('cert-')) {
           item.type = item.type.split('-')[1]
+          item.index = index
           certData.data.push(item)
         } else if (item.type.startsWith('sign-')) {
           item.type = item.type.split('-')[1]
+          item.index = index
           signData.data.push(item)
         } else if (item.type.startsWith('attendee-')) {
           item.type = item.type.split('-')[1]
+          item.index = index
           attendeeData.data.push(item)
+        } else if (item.type.startsWith('attendence-')) {
+          item.type = item.type.split('-')[1]
+          item.index = index
+          attendenceData.data.push(item)
         } else {
           arr.push(item)
         }
       })
-      if (rankData.data.length) {
-        arr.push(rankData)
-      }
-      if (certData.data.length) {
-        arr.push(certData)
-      }
-      if (signData.data.length) {
-        arr.push(signData)
-      }
-      if (attendeeData.data.length) {
-        arr.push(attendeeData)
-      }
+
+      datas.forEach(item => {
+        if (item.data.length) {
+          arr.push(item)
+        }
+      })
 
       return arr
     }
   },
   methods: {
-    onSignChange (value) {
+    onSigninChange (value) {
+    },
+    onAttendeeChange (value) {
+      value.forEach(item => {
+        if (item) {
+          this.form.properties[item.index] = item
+        }
+      })
+      this.onFormChange()
+    },
+    onAttendenceChange (value) {
+      value.forEach(item => {
+        if (item) {
+          this.form.properties[item.index] = item
+        }
+      })
+      this.onFormChange()
     },
     onCertChange (value) {
-      this.form.properties = [
-        ...this.form.properties,
-        ...value
-      ]
+      value.forEach(item => {
+        if (item) {
+          this.form.properties[item.index] = item
+        }
+      })
       this.onFormChange()
     },
     onRankChange (value) {
-      this.form.properties = [
-        ...this.form.properties,
-        ...value
-      ]
+      value.forEach(item => {
+        if (item) {
+          this.form.properties[item.index] = item
+        }
+      })
       this.onFormChange()
     },
     onRadioChange (value) {

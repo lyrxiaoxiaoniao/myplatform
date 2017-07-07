@@ -22,7 +22,7 @@
         :label="item.title"
         v-if="item.type === 'upload' && toggleSwitch"
         >
-        <div @click="openUploadDialog" class="active-cert-upload-container">
+        <div @click="openUploadDialog(index)" class="active-cert-upload-container">
           <img :src="coverURL" alt="">
           <i class="el-icon-plus avatar-uploader-icon"></i>
         </div>
@@ -71,6 +71,8 @@
 
 <script>
 export default {
+  // active cert toggle card
+  // used for kobe active form
   name: 'kobe-active-cert',
   props: {
     data: {
@@ -85,8 +87,9 @@ export default {
       content: '',
       unit: '',
       time: '',
-      form: {
-      }
+      itemIndex: '',
+      form: [
+      ]
     }
   },
   methods: {
@@ -94,16 +97,29 @@ export default {
       this.uploadDialogVisiable = false
     },
     onConfirmUpload (value) {
-      // TODO
+      this.coverURL = value[0]
+      const obj = this.data.data[this.itemIndex]
+      let item = {
+        id: obj.id,
+        index: obj.index,
+        type_key: obj.type_key,
+        options: [{
+          title: this.coverURL
+        }]
+      }
       this.uploadDialogVisiable = true
+      this.form[this.itemIndex] = item
+      this.$emit('cert', this.form)
     },
-    openUploadDialog () {
+    openUploadDialog (index) {
+      this.itemIndex = index
       this.uploadDialogVisiable = true
     },
     onSwitchChange (index) {
       const obj = this.data.data[index]
       let item = {
         id: obj.id,
+        index: obj.index,
         type_key: obj.type_key,
         options: [{
           title: this.toggleSwitch ? 1 : 0
@@ -117,6 +133,7 @@ export default {
       const date = new Date(this.time).getTime()
       let item = {
         id: obj.id,
+        index: obj.index,
         type_key: obj.type_key,
         options: [{
           title: date
@@ -129,6 +146,7 @@ export default {
       const obj = this.data.data[index]
       let item = {
         id: obj.id,
+        index: obj.index,
         type_key: obj.type_key,
         options: [{
           title: this.unit
@@ -141,6 +159,7 @@ export default {
       const obj = this.data.data[index]
       let item = {
         id: obj.id,
+        index: obj.index,
         type_key: obj.type_key,
         options: [{
           title: this.toggleSwitch

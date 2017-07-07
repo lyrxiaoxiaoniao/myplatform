@@ -34,6 +34,7 @@
 
 <script>
 export default {
+  // used for kobe active rank
   name: 'kobe-active-rank',
   props: {
     data: {
@@ -55,6 +56,7 @@ export default {
       const obj = this.data.data[index]
       let item = {
         id: obj.id,
+        index: obj.index,
         type_key: obj.type_key,
         options: [{
           title: this.number
@@ -67,9 +69,10 @@ export default {
       const obj = this.data.data[index]
       let item = {
         id: obj.id,
+        index: obj.index,
         type_key: obj.type_key,
         options: [{
-          title: this.switchOn
+          title: this.switchOn ? 1 : 0
         }]
       }
       this.form[index] = item

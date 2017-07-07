@@ -1,7 +1,6 @@
 <template>
   <el-card
-    class="box-card kobe-active-sign"
-    >
+    class="box-card kobe-active-sign">
     <div slot="header" class="clearfix">
       <span class="card-title">活动报名总开关</span>
     </div>
@@ -34,7 +33,13 @@
         :label="item.title"
         v-if="item.type === 'checkboxgroup' && toggleSwitch"
         >
-        <el-checkbox-group>
+        <el-checkbox-group
+          v-model="checklist"
+          >
+          <!-- <el-checkbox -->
+          <!--   :label="item.title" -->
+          <!--   v-for="item in checkboxs"> -->
+          <!-- </el-checkbox> -->
         </el-checkbox-group>
       </el-form-item>
     </div>
@@ -43,6 +48,8 @@
 
 <script>
 export default {
+  // active signin toggle card
+  // used for kobe active form
   name: 'kobe-active-sign',
   props: {
     data: {
@@ -53,6 +60,14 @@ export default {
     return {
       toggleSwitch: true,
       timerange: ''
+    }
+  },
+  computed: {
+    checkboxs () {
+      let arr = [
+        ...this.data.options
+      ]
+      return arr
     }
   },
   methods: {
