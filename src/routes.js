@@ -90,7 +90,6 @@ import SCTutorialTrash from 'components/views/tutorial/Trash.vue'
 import SCTutorialSetting from 'components/views/tutorial/Setting.vue'
 
 import SCTeam from './components/views/team/Team.vue'
-import SCTeamClass from './components/views/team/TeamClass.vue'
 import SCTeamDetail from './components/views/team/TeamDetail.vue'
 
 const routes = [
@@ -617,11 +616,6 @@ const routes = [
           component: SCTeamDetail,
           name: '团队详情',
           meta: {description: '展示'}
-        }, {
-          path: 'class',
-          component: SCTeamClass,
-          name: '团队分类',
-          meta: {description: '管理'}
         }]
       }, {
         path: 'tutorial',

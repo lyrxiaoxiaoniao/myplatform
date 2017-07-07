@@ -137,7 +137,7 @@
                 :picker-options="pickerOptions2"
                 placeholder="选择时间范围30天以内"
                 align="center"
-                style="width:55%">
+                style="width:620px">
               </el-date-picker>
               <el-button type="primary"  @click="searchEchart()">搜索</el-button>
             </div>
@@ -587,6 +587,18 @@ export default {
       if (deleteid) {
         this.ids = []
         this.ids.push(deleteid)
+      }
+      if (this.ids.length === 0) {
+        this.$confirm('请进行正确操作，请优先勾选点位？', '错误', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'error'
+        }).then(() => {
+          return
+        }).catch(() => {
+          return
+        })
+        return
       }
       this.$confirm('此操作将删除该广告点位，删除后，数据无法恢复。是否继续删除？', '删除', {
         confirmButtonText: '确定',

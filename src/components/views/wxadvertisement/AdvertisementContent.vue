@@ -6,7 +6,7 @@
       </el-col>
 		  <el-col :span="3">
          <template>
-          <el-select v-model="value1" placeholder="请选择" style="float:right;margin-right:10px;width:100px;">
+          <el-select v-model="value1" placeholder="请选择" style="float:right;margin-right:10px;width:110px;">
             <el-option
               v-for="item in option"
               :key="item.value"
@@ -461,6 +461,18 @@ export default {
       if (deleteid) {
         this.ids = []
         this.ids.push(deleteid)
+      }
+      if (this.ids.length === 0) {
+        this.$confirm('请进行正确操作，请优先勾选点位？', '错误', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'error'
+        }).then(() => {
+          return
+        }).catch(() => {
+          return
+        })
+        return
       }
       this.$confirm('此操作将删除该广告点位，删除后，数据无法恢复。是否继续删除？', '提示', {
         confirmButtonText: '确定',

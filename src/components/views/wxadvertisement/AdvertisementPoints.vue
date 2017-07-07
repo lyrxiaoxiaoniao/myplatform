@@ -6,7 +6,7 @@
       </el-col>
 		  <el-col :span="3">
          <template>
-          <el-select v-model="value1" placeholder="请选择" style="float:right;margin-right:10px;width:100px;">
+          <el-select v-model="value1" placeholder="请选择" style="float:right;margin-right:10px;width:110px;">
             <el-option
               v-for="item in option"
               :key="item.value"

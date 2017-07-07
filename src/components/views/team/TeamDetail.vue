@@ -1,39 +1,350 @@
 <template>
-<div class="TM-container">
+<div class="TM-container clearfix">
     <div class="TM-header">
-        <el-button type="primary">返回列表</el-button>
-        <el-select v-model="selectMode" placeholder="请选择处理方式">
+        <el-button type="primary" @click="goBack">返回列表</el-button>
+        <el-select v-model="selectMode" placeholder="请选择处理方式" style="width:150px;">
             <el-option label="审核" value="审核"></el-option>
             <el-option label="认证" value="认证"></el-option>
         </el-select>
     </div>
+    <div class="TM-right">
+        <el-tabs v-model="activeName" @tab-click="handleClick">
+            <el-tab-pane label="团队信息" name="first" class="TM-team">
+                <div>
+                    <h4>团队信息</h4>
+                    <el-form :model="selected" label-width="80px">
+                        <el-row>
+                            <el-col :span="24">
+                                <el-form-item label="团队名称:">
+                                    <p v-text="selected.title"></p>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="24">
+                                <el-form-item label="所属行业:">
+                                    <p v-text="selected.id"></p>
+                                </el-form-item>
+                            </el-col>
+                             <el-col :span="24">
+                                <el-form-item label="地区:">
+                                    <p v-text="selected.id"></p>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="24">
+                                <el-form-item label="创建时间:">
+                                    <p v-text="selected.created_at"></p>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="24">
+                                <el-form-item label="创建理由:">
+                                    <p v-text="selected.remark"></p>
+                                </el-form-item>
+                           </el-col>
+                        </el-row> 
+                    </el-form>
+                </div>
+                <div>
+                    <h4>组织信息</h4>
+                    <el-form :model="selected" label-width="80px">
+                        <el-row>
+                            <el-col :span="24">
+                                <el-form-item label="组织类型:">
+                                    <p v-text="selected.type"></p>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="24">
+                                <el-form-item label="企业名称:">
+                                    <p v-text="selected.team_ext.org_name"></p>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="24">
+                                <el-form-item label="组织代码:">
+                                    <p v-text="selected.team_ext.org_code"></p>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="24">
+                                <el-form-item label="负责人:">
+                                    <p v-text="selected.team_ext.manager"></p>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="24">
+                                <el-form-item label="联系电话:">
+                                    <p v-text="selected.team_ext.mobile"></p>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="24">
+                                <el-form-item label="认证时间:">
+                                    <p v-text="selected.audited_at"></p>
+                                </el-form-item>
+                            </el-col>
+                        </el-row> 
+                    </el-form>
+                </div>
+            </el-tab-pane>
+            <el-tab-pane label="团队成员" name="second">
+                <kobe-table>
+                    <div slot="kobe-table-header" class="kobe-table-header">
+                    <el-row type="flex" justify="end">
+                        <el-col :span="8">
+                        <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
+                            <el-button slot="append" @click="onSearch" icon="search"></el-button>
+                        </el-input>
+                        </el-col>
+                        <el-button icon="upload2" type="primary" style="margin-left:10px;"></el-button>
+                        <el-button icon="setting" type="primary"></el-button>
+                    </el-row>
+                    </div>
+                    <div slot="kobe-table-content" class="kobe-table">
+                    <el-table
+                        class="TD-member"
+                        border
+                        stripe
+                        :data="response.data">
+                        <el-table-column type="index" label="ID" width="70"></el-table-column>
+                        <el-table-column prop="user.avatar" label="微信图像" width="110px">
+                            <template scope="scope">
+                                <img style="width:58px; height:58px;" :src="scope.row.user.avatar" @click="bigImg(scope.row.user.avatar)" alt="">
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="user.realname" label="姓名" width="150"></el-table-column>
+                        <el-table-column prop="user.mobile" label="电话" width="200"></el-table-column>
+                        <el-table-column prop="user.province" label="省份" width="100"></el-table-column>
+                        <el-table-column prop="remark" label="申请理由"></el-table-column>
+                        <el-table-column 
+                        width="100"
+                        label="操作"
+                        >
+                        <template scope="scope">
+                            <el-button @click="detailData(scope.row)" size="small" icon="information"></el-button>
+                        </template>
+                        </el-table-column>
+                    </el-table>
+                    </div>
+                    <div slot="kobe-table-footer" class="kobe-table-footer">
+                    <el-row type="flex" justify="center">
+                        <el-col :span="12">
+                        <el-pagination
+                            @size-change="handleSizeChange"
+                            @current-change="handleCurrentChange"
+                            :current-page="response.currentPage"
+                            :page-sizes="[10, 20, 50, 100]"
+                            :page-size="response.pageSize"
+                            :total="response.count"
+                            layout="total, sizes, prev, pager, next, jumper">
+                        </el-pagination>
+                        </el-col>
+                    </el-row>
+                    </div>
+                </kobe-table>
+            </el-tab-pane>
+        </el-tabs>
+        <el-dialog v-model="dialogVisible" size="tiny">
+            <img width="100%" :src="dialogImageUrl" alt="">
+        </el-dialog>
+        <el-dialog v-model="dialogDetail" title="成员信息" size="tiny">
+            <el-form :model="dataDetail" label-width="80px">
+                <el-row>
+                    <el-col :span="24">
+                        <el-form-item label="姓名:">
+                            <p v-text="dataDetail.user.realname"></p>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="24">
+                        <el-form-item label="电话:">
+                            <p v-text="dataDetail.user.mobile"></p>
+                        </el-form-item>
+                    </el-col>
+                        <el-col :span="24">
+                        <el-form-item label="地区:">
+                            <p v-text="dataDetail.user.city"></p>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="24">
+                        <el-form-item label="创建理由:">
+                            <p v-text="dataDetail.remark"></p>
+                        </el-form-item>
+                    </el-col>
+                </el-row> 
+            </el-form>
+        </el-dialog>
+    </div>
     <div class="TM-left">
         <div>
             <h4>团队logo</h4>
+            <img width="100%" :src="selected.logo" alt="">
+            <p v-text="selected.team_ext.manager"></p>
         </div>
         <div>
             <h4>认证照片信息</h4>
+            <img width="100%" :src="selected.team_ext.idcard" alt="">
+            <img width="100%" :src="selected.team_ext.license" alt="">
         </div>
     </div>
-    <div class="TM-right"></div>
 </div>
 </template>
 <script>
+import config from 'src/config'
+import api from 'src/api'
 export default {
   data () {
     return {
-      selectMode: ''
+      id: this.$route.query.id,
+      dialogVisible: false,
+      dialogImageUrl: '',
+      dialogDetail: false,
+      dataDetail: {
+        user: {}
+      },
+      selectMode: '',
+      activeName: 'first',
+      response: {
+        data: null
+      },
+      form: {
+        keyword: ''
+      },
+      selected: {
+        team_ext: {}
+      }
     }
   },
-  methods: {}
+  methods: {
+    bigImg (url) {
+      this.dialogImageUrl = url
+      this.dialogVisible = true
+    },
+    detailData (data) {
+      this.dialogDetail = true
+      this.dataDetail = data
+      console.log(data)
+    },
+    handleClick (tab, event) {
+      console.log(tab, event)
+      if (tab.name === 'second') {
+        this.getMember({team_id: this.id})
+      }
+    },
+    handleSizeChange (value) {
+      const data = {
+        currentPage: this.response.currentPage,
+        pageSize: value,
+        ...this.form
+      }
+
+      this.getMember(data)
+    },
+    handleCurrentChange (value) {
+      const data = {
+        currentPage: value,
+        pageSize: this.response.pageSize,
+        ...this.form
+      }
+
+      this.getMember(data)
+    },
+    onSearch () {
+      const data = {
+        currentPage: 1,
+        pageSize: this.response.pageSize,
+        ...this.form
+      }
+      this.getMember(data)
+    },
+    getList (data = {}) {
+      api.GET(config.detailTeamAPI, data)
+      .then(response => {
+        this.selected = response.data.data
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    getMember (data = {}) {
+    //   memberTeamAPI
+      api.GET(config.memberTeamAPI, data)
+      .then(response => {
+        this.response = response.data.data
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    goBack () {
+      this.$router.push({
+        path: '/admin/team/index'
+      })
+    }
+  },
+  mounted () {
+    this.getList({id: this.id})
+  }
 }
 </script>
 
 <style scoped>
 .TM-container{
     padding: 1rem 2rem;
+    position: relative;
 }
 .TM-header{
     margin-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid lightgray;
+}
+.TM-left{
+    float: left;
+    width: 25%; 
+}
+.TM-left>div {
+    margin-top: 10px;
+    border: 1px solid lightgray;
+    background-color: #fff;
+}
+.TM-left>div h4{
+    height: 36px;
+    line-height: 36px;
+    padding-left: 10px;
+    border-bottom: 1px solid lightgray;
+}
+.TM-left>div:nth-of-type(2) img{
+    width: 49%;
+}
+.TM-right{
+    float: right;
+    width: 75%;
+    padding: 0 10px;
+}
+.TM-team>div{
+    width: 49%;
+    display: inline-block;
+    background-color: #fff;
+    padding: 10px;
+    margin-top: 10px;
+}
+.TM-team>div h4{
+    height: 36px;
+    line-height: 36px;
+    padding-left: 10px;
+    border-bottom: 1px solid lightgray;
+}
+.TM-team .el-form-item{
+    border-bottom: 1px solid lightgray;
+    margin-bottom: 0;
+}
+.clearfix { 
+    *zoom: 1; 
+} 
+.clearfix:before, 
+.clearfix:after { 
+    display: table; 
+    line-height: 0; 
+    content: ""; 
+} 
+.clearfix:after { 
+    clear: both; 
+} 
+.TD-member .el-table .cell {
+    white-space: nowrap;
+    word-break: normal;
+    line-height: 24px;
 }
 </style>
