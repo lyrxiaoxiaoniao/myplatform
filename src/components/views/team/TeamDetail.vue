@@ -14,24 +14,24 @@
                     <h4>团队信息</h4>
                     <el-form :model="selected" label-width="80px">
                         <el-row>
-                            <el-col :span="24">
+                            <el-col :span="12">
                                 <el-form-item label="团队名称:">
                                     <p v-text="selected.title"></p>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="24">
+                            <el-col :span="12">
                                 <el-form-item label="所属行业:">
-                                    <p v-text="selected.id"></p>
+                                    <p v-text="selected.industry ? selected.industry.value : ''"></p>
                                 </el-form-item>
                             </el-col>
-                             <el-col :span="24">
+                             <el-col :span="12">
                                 <el-form-item label="地区:">
-                                    <p v-text="selected.id"></p>
+                                    <p v-text="selected.region ? selected.region.title : ''"></p>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="24">
+                            <el-col :span="12">
                                 <el-form-item label="创建时间:">
-                                    <p v-text="selected.created_at"></p>
+                                    <p v-text="formatDate(selected.created_at)"></p>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="24">
@@ -46,34 +46,34 @@
                     <h4>组织信息</h4>
                     <el-form :model="selected" label-width="80px">
                         <el-row>
-                            <el-col :span="24">
+                            <el-col :span="12">
                                 <el-form-item label="组织类型:">
-                                    <p v-text="selected.type"></p>
+                                    <p v-text="selected.type ? selected.type.value : ''"></p>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="24">
+                            <el-col :span="12">
                                 <el-form-item label="企业名称:">
-                                    <p v-text="selected.team_ext.org_name"></p>
+                                    <p v-text="selected.team_ext ? selected.team_ext.org_name : ''"></p>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="24">
+                            <el-col :span="12">
                                 <el-form-item label="组织代码:">
-                                    <p v-text="selected.team_ext.org_code"></p>
+                                    <p v-text="selected.team_ext ? selected.team_ext.org_code : ''"></p>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="24">
+                            <el-col :span="12">
                                 <el-form-item label="负责人:">
-                                    <p v-text="selected.team_ext.manager"></p>
+                                    <p v-text="selected.team_ext ? selected.team_ext.manager : ''"></p>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="24">
+                            <el-col :span="12">
                                 <el-form-item label="联系电话:">
-                                    <p v-text="selected.team_ext.mobile"></p>
+                                    <p v-text="selected.team_ext ? selected.team_ext.mobile : ''"></p>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="24">
+                            <el-col :span="12">
                                 <el-form-item label="认证时间:">
-                                    <p v-text="selected.audited_at"></p>
+                                    <p v-text="formatDate(selected.audited_at)"></p>
                                 </el-form-item>
                             </el-col>
                         </el-row> 
@@ -89,8 +89,6 @@
                             <el-button slot="append" @click="onSearch" icon="search"></el-button>
                         </el-input>
                         </el-col>
-                        <el-button icon="upload2" type="primary" style="margin-left:10px;"></el-button>
-                        <el-button icon="setting" type="primary"></el-button>
                     </el-row>
                     </div>
                     <div slot="kobe-table-content" class="kobe-table">
@@ -140,6 +138,17 @@
         <el-dialog v-model="dialogVisible" size="tiny">
             <img width="100%" :src="dialogImageUrl" alt="">
         </el-dialog>
+        <el-dialog v-model="dialogImgs" size="tiny">
+            <el-carousel
+                indicator-position="outside"
+                :autoplay="false"
+                height="500px"
+                ref="carousel">
+                <el-carousel-item v-for="(item, index) in imgsURL" :key="item">
+                <img :src="item" height="500px">
+                </el-carousel-item>
+            </el-carousel>
+        </el-dialog>
         <el-dialog v-model="dialogDetail" title="成员信息" size="tiny">
             <el-form :model="dataDetail" label-width="80px">
                 <el-row>
@@ -170,13 +179,18 @@
     <div class="TM-left">
         <div>
             <h4>团队logo</h4>
-            <img width="100%" :src="selected.logo" alt="">
-            <p v-text="selected.team_ext.manager"></p>
+            <a href="javascript:;"><img width="100%" :src="selected.logo" alt="" @click="bigImg(selected.logo)"></a>
+            <div class="TM-manager">
+                <span>创建人：</span>
+                <span v-text="selected.team_ext ? selected.team_ext.manager : ''"></span>
+            </div>
         </div>
         <div>
             <h4>认证照片信息</h4>
-            <img width="100%" :src="selected.team_ext.idcard" alt="">
-            <img width="100%" :src="selected.team_ext.license" alt="">
+            <div class="TM-picture">
+                <a href="javascript:;"><img width="100%" :src="selected.team_ext ? selected.team_ext.idcard : ''" alt="" @click="getImgsURL"></a>
+                <a href="javascript:;"><img width="100%" :src="selected.team_ext ? selected.team_ext.license : ''" alt="" @click="getImgsURL"></a>
+            </div>
         </div>
     </div>
 </div>
@@ -188,6 +202,8 @@ export default {
   data () {
     return {
       id: this.$route.query.id,
+      dialogImgs: false,
+      imgsURL: [],
       dialogVisible: false,
       dialogImageUrl: '',
       dialogDetail: false,
@@ -203,11 +219,50 @@ export default {
         keyword: ''
       },
       selected: {
-        team_ext: {}
+        team_ext: {},
+        region: {
+          title: ''
+        },
+        industry: {
+          value: ''
+        },
+        type: {
+          value: ''
+        }
       }
     }
   },
   methods: {
+    // 时间转换 毫秒转换成 yyyy-mm-dd hh:mm:ss
+    formatDate (value) {
+      if (value) {
+        let date = new Date(value)
+        let M = date.getMonth() + 1
+        M = M < 10 ? ('0' + M) : M
+        let d = date.getDate()
+        d = d < 10 ? ('0' + d) : d
+        // let h = date.getHours()
+        let m = date.getMinutes()
+        m = m < 10 ? ('0' + m) : m
+        let s = date.getSeconds()
+        s = s < 10 ? ('0' + s) : s
+        value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
+      }
+      return value
+    },
+    getImgsURL () {
+      this.dialogImgs = true
+      if (this.selected.team_ext) {
+        this.imgsURL = []
+        if (this.selected.team_ext.license) {
+          this.imgsURL.push(this.selected.team_ext.license)
+        }
+        if (this.selected.team_ext.idcard) {
+          this.imgsURL.push(this.selected.team_ext.idcard)
+        }
+      }
+      console.log(this.imgsURL)
+    },
     bigImg (url) {
       this.dialogImageUrl = url
       this.dialogVisible = true
@@ -253,6 +308,7 @@ export default {
       api.GET(config.detailTeamAPI, data)
       .then(response => {
         this.selected = response.data.data
+        console.log(this.selected)
       })
       .catch(error => {
         this.$message.error(error)
@@ -305,8 +361,31 @@ export default {
     padding-left: 10px;
     border-bottom: 1px solid lightgray;
 }
-.TM-left>div:nth-of-type(2) img{
-    width: 49%;
+.TM-left>div:nth-of-type(1) a{
+    display: block;
+    text-align: center;
+    padding: 10px 0;
+}
+.TM-left>div:nth-of-type(1) a img{
+    width: 80%;
+    height: 200px;
+}
+.TM-manager{
+    padding: 10px 0;
+    text-align: center;
+    font-size: 16px;
+}
+.TM-picture{
+    display: flex;
+    justify-content: space-around;
+}
+.TM-picture a{
+    width: 50%;
+    padding: 5px 5px 10px;
+}
+.TM-picture a img{
+    width: 100%;
+    height: 150px;
 }
 .TM-right{
     float: right;
@@ -314,7 +393,7 @@ export default {
     padding: 0 10px;
 }
 .TM-team>div{
-    width: 49%;
+    width: 100%;
     display: inline-block;
     background-color: #fff;
     padding: 10px;

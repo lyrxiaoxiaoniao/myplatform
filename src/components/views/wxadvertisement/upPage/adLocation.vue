@@ -589,7 +589,7 @@ export default {
         this.ids.push(deleteid)
       }
       if (this.ids.length === 0) {
-        this.$confirm('请进行正确操作，请优先勾选点位？', '错误', {
+        this.$confirm('错误操作，请勾选删除对象？', '错误', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'error'
@@ -600,7 +600,7 @@ export default {
         })
         return
       }
-      this.$confirm('此操作将删除该广告点位，删除后，数据无法恢复。是否继续删除？', '删除', {
+      this.$confirm('此操作将删除该广告内容，删除后，数据无法恢复。是否继续删除？', '删除', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'error'

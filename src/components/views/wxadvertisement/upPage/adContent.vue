@@ -585,7 +585,7 @@ export default {
         this.ids.push(deleteid)
       }
       if (this.ids.length === 0) {
-        this.$confirm('请进行正确操作，请优先勾选点位？', '错误', {
+        this.$confirm('错误操作，请勾选删除对象？', '错误', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'error'
