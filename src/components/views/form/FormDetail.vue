@@ -182,7 +182,7 @@ export default {
         .then(response => {
           if (response.data.errcode === '0000') {
             this.onSuccess('添加成功')
-            this.getList({id: this.id})
+            // this.getList({id: this.id})
             this.showDialog = false
           }
         })
@@ -198,6 +198,7 @@ export default {
         type: 'success'
       })
       const data = {
+        id: this.id,
         pageSize: this.response.pageSize,
         currentPage: this.response.currentPage,
         ...this.form

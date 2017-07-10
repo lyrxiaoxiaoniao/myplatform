@@ -62,7 +62,7 @@
         </el-steps>
         
         <el-form :model="selected" label-width="120px" :rules="rules" ref="selected" style="margin:10px 15px 0 0">
-          <el-row type="flex" v-show="active === 0" style="flex-wrap: wrap;">
+          <el-row type="flex" v-show="active >= 0" style="flex-wrap: wrap;">
             <el-col :span="12">
               <el-form-item label="container_class">
                 <el-input v-model="selected.container_class" placeholder="标签外层容器，如form-group"></el-input>
@@ -109,7 +109,7 @@
             </el-col>
           </el-row>
 
-          <el-row type="flex" v-show="active === 1" style="flex-wrap: wrap;">
+          <el-row type="flex" v-show="active >= 1" style="flex-wrap: wrap;">
             <el-col :span="12">
               <el-form-item label="help">
                 <el-input v-model="selected.help" placeholder="输入帮助语"></el-input>
@@ -142,7 +142,7 @@
             </el-col>
           </el-row>
 
-          <el-row type="flex" v-show="active === 2 || active > 2" style="flex-wrap: wrap;">
+          <el-row type="flex" v-show="active >= 2 || active > 2" style="flex-wrap: wrap;">
             <el-col :span="12">
               <el-form-item label="minlength">
                 <el-input v-model="selected.minlength" placeholder="输入内容最小长度"></el-input>
@@ -200,7 +200,6 @@
           </el-row>
         </el-form>
 
-        <el-button style="margin-top: 12px;" @click="prev" v-if="active >= 1">上一步</el-button>
         <el-button style="margin-top: 12px;" @click="next" v-if="active <= 2">下一步</el-button>
 
         <div slot="footer" class="dialog-footer">
@@ -256,10 +255,6 @@ export default {
       console.log(this.active)
       if (this.active++ > 2) this.active = 2
     },
-    prev () {
-      console.log(this.active)
-      if (this.active-- < 0) this.active = 0
-    },
     toggleSelection (rows) {
       if (rows) {
         rows.forEach(row => {
@@ -277,11 +272,11 @@ export default {
       if (data !== null && type === 'edit') {
         this.dialogType = 'edit'
         this.dialogTitle = '修改标签'
-        this.getString(this.selected)
         this.selected = {
-          ...data,
-          ...this.selected
+          ...this.selected,
+          ...data
         }
+        this.getString(this.selected)
       } else {
         this.dialogType = 'add'
         this.dialogTitle = '新增标签'

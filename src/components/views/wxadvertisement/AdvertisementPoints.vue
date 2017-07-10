@@ -128,10 +128,6 @@
         <el-form-item label="点位说明" prop="description">
           <el-input type="textarea" v-model="ruleForm.description" placeholder="分类描述50字以内"></el-input>
         </el-form-item>
-        <!--<el-form-item>
-          <el-button type="primary" @click="submitForm('ruleForm')">保存修改内容</el-button>
-          <el-button type="primary" @click="resetForm()">返回管理首页</el-button>
-        </el-form-item>-->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -173,7 +169,8 @@
           spacename: '',
           typename: null,
           value: '',
-          tagList: []
+          tagList: [],
+          state: true
         },
         rules: {
           spacename: [
@@ -203,7 +200,8 @@
           spacename: '',
           typename: null,
           value: '',
-          tagList: []
+          tagList: [],
+          state: null
         }
         this.dynamicTags = []
         this.getTypeId()
@@ -247,7 +245,6 @@
         this.inputValue = ''
       },
       getData (id) {
-        // const id = this.$route.query.id
         if (this.options) {
           api.GET(config.showAdvPointAPI, {id: id})
           .then(response => {
