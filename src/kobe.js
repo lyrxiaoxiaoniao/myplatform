@@ -31,6 +31,8 @@ import ActiveCert from 'components/kobe/ActiveCert'
 import ActiveSign from 'components/kobe/ActiveSign'
 import ActiveAttendee from 'components/kobe/ActiveAttendee'
 import ActiveAttendence from 'components/kobe/ActiveAttendence'
+import ActiveAttendenceMode from 'components/kobe/ActiveAttendenceMode'
+import CategoryTree from 'components/kobe/CategoryTree'
 
 const install = (Vue) => {
   Vue.component('kobe-login', Login)
@@ -61,6 +63,8 @@ const install = (Vue) => {
   Vue.component('kobe-active-sign', ActiveSign)
   Vue.component('kobe-active-attendee', ActiveAttendee)
   Vue.component('kobe-active-attendence', ActiveAttendence)
+  Vue.component('kobe-active-attendence-mode', ActiveAttendenceMode)
+  Vue.component('kobe-category-tree', CategoryTree)
 }
 
 export default install

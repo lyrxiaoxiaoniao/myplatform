@@ -5,7 +5,7 @@
     <div class="kobe-table-header" slot="kobe-table-header">
       <el-row type="flex" justify="space-between">
         <el-col :span="4">
-          <el-button type="primary" icon="plus" @click="addActivity"></el-button>
+          <el-button type="primary" @click="addActivity">发布</el-button>
         </el-col>
       </el-row>
     </div>
@@ -30,8 +30,8 @@
           >
           <template scope="scope">
             <el-button size="small" icon="edit"></el-button>
-            <el-button size="small" icon="information"></el-button>
-            <el-button size="small" icon="delete2"></el-button>
+            <el-button @click="onDetail(scope.row.id)" size="small" icon="information"></el-button>
+            <el-button @click="onDelete(scope.row.id)" size="small" icon="delete2"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -71,9 +71,33 @@ export default {
     }
   },
   methods: {
+    onDelete (id) {
+      this.$confirm('此操作将删除该活动,删除后,数据无法恢复。\n是否继续?', '删除', {
+        confirmButtonText: '删除',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
     addActivity () {
       this.$router.push({
         path: '/admin/training/publish'
+      })
+    },
+    onDetail (id) {
+      api.GET(config.activity.detail, {
+        id: id
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          console.log(response.data)
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
       })
     },
     handleCurrentChange (value) {

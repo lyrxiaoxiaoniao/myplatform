@@ -30,7 +30,7 @@
         </el-table-column>
         <el-table-column label="操作" width="120px">
           <template scope="scope">
-            <el-button size="small" icon="information" @click="checkInfo(scope.row)"></el-button>
+            <el-button size="small" icon="information" @click="checkInfo(scope.row.id)"></el-button>
             <el-button size="small" icon="delete2" @click="infoDelete(scope.row.id)"></el-button>
           </template>
         </el-table-column>
@@ -75,15 +75,47 @@ export default {
     },
     editListInfo (user) {
     },
-    checkInfo () {
+    checkInfo (id) {
+      api.GET(config.activity.detail, {
+        id: id
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          console.log(response.data)
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     },
-    infoDelete () {
+    infoDelete (id) {
       this.$confirm('是否确定删除该条数据', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        console.log('Yes')
+        api.POST(config.activity.delete, {
+          id: id
+        })
+        .then(response => {
+          if (response.data.errcode === '0000') {
+            this.$notify({
+              title: '成功',
+              message: '删除成功',
+              type: 'success'
+            })
+
+            const data = {
+              pageSize: this.response.pageSize,
+              currentPage: this.response.currentPage,
+              ...this.form
+            }
+            this.getActivityList(data)
+          }
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
       })
     },
     handleSizeChange (value) {
