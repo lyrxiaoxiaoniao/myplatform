@@ -74,6 +74,7 @@ import SCActivitiAdd from 'components/views/activity/Add'
 
 import SCTrainingList from 'components/views/training/List'
 import SCTrainingPublish from 'components/views/training/Publish'
+import SCTrainingCategory from 'components/views/training/Category'
 
 import SCFileResource from 'components/views/fileresource/FileTable.vue'
 
@@ -500,6 +501,11 @@ const routes = [
           component: SCTrainingPublish,
           name: '培训发布',
           meta: { description: '发布新的活动' }
+        }, {
+          path: 'category',
+          component: SCTrainingCategory,
+          name: '培训分类管理',
+          meta: { description: '列表' }
         }]
       }, {
         path: 'userlabelmanage',

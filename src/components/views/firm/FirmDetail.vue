@@ -11,24 +11,17 @@
             <span class="sc-firm-card-title">企业登记信息</span>
           </div>
           <div class="sc-firm-detail">
-            <div>企业名称: <span>{{ response.company }}</span></div>
+            <div>企业名称: <span>{{ response.companyName }}</span></div>
             <div>企业地址: <span>{{ response.address }}</span></div>
             <div>所属行业: <span>{{ response.industryName }}</span></div>
+            <div>企业联系电话: <span>{{ response.phone }}</span></div>
             <div>企业人数: <span>{{ response.pnum }}</span></div>
             <div>所属街道: <span>{{ response.regionName }}</span></div>
-            <div>安全证书编号: <span>{{ response.safecert }}</span></div>
+            <div>企业主要负责人: <span>{{ response.headName }}</span></div>
+            <div>企业主要负责人联系电话: <span>{{ response.headPhone }}</span></div>
+            <div>企业安全管理人员: <span>{{ response.safePerName }}</span></div>
+            <div>企业安全管理人员联系电话: <span>{{ response.safePerPhone }}</span></div>
             <div>提交时间: <span>{{ response.createdAt | toDateTime }}</span> </div>
-          </div>
-        </el-card>
-
-        <el-card class="sc-firm-card">
-          <div slot="header">
-            <span class="sc-firm-card-title">组织信息</span>
-          </div>
-          <div class="sc-firm-detail">
-            <div>组织名称: <span>{{ response.orgaName }}</span></div>
-            <div>统一信用代码: <span>{{ response.orgaCode }}</span></div>
-            <div>详细地址: <span>{{ response.orgaAddress }}</span> </div>
           </div>
         </el-card>
 
@@ -44,14 +37,10 @@
         </el-card>
       </el-col>
 
-      <el-col :span="6" class="sc-firm-image-content" v-if="response.safecertUrl || response.orgaPhotoUrl">
-        <div class="sc-firm-detail-safecert" v-if="response.safecertUrl">
-          <img @click="openImage('企业主要负责人安全培训合格证书', response.safecertUrl)" class="img-responsive" :src="response.safecertUrl">
-          企业主要负责人安全培训合格证书
-        </div>
-        <div class="sc-firm-detail-organphoto" v-if="response.orgaPhotoUrl">
-          <img @click="openImage('组织机构代码证', response.orgaPhotoUrl)" class="img-responsive" :src="response.orgaPhotoUrl">
-          组织机构代码证
+      <el-col :span="6" class="sc-firm-image-content" v-if="response.licenseUrl">
+        <div class="sc-firm-detail-license" v-if="response.licenseUrl">
+          <img @click="openImage('企业主要负责人安全培训合格证书', response.licenseUrl)" class="img-responsive" :src="response.licenseUrl">
+          企业营业执照
         </div>
       </el-col>
     </el-row>
@@ -116,7 +105,7 @@ export default {
       this.showDialog = false
     },
     getFirmDetail (id) {
-      api.GET(config.firmDetailAPI, {
+      api.GET(config.firm.detail, {
         id
       })
         .then(response => {
@@ -149,7 +138,7 @@ export default {
         remark: this.form.remark,
         status: Number(this.form.status)
       }
-      api.POST(config.firmUpdateAPI, data)
+      api.POST(config.firm.update, data)
         .then(response => {
           if (response.status !== 200) {
             this.error = response.statusText
@@ -200,7 +189,7 @@ export default {
   margin-right: 30rem;
   padding-bottom: 10px;
 }
-.sc-firm-detail-safecert {
+.sc-firm-detail-license {
   cursor: pointer;
   text-align: center;
 }
@@ -213,7 +202,7 @@ export default {
   max-height: 25rem;
   margin: auto;
 }
-.sc-firm-detail-safecert img {
+.sc-firm-detail-license img {
   max-height: 25rem;
   margin: auto;
 }

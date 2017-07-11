@@ -97,6 +97,13 @@
           @attendence="onAttendenceChange"
           >
         </kobe-active-attendence>
+        <kobe-active-attendence-mode
+          v-if="item.type === 'attendencemode'"
+          :index="index"
+          :data="item"
+          @mode="onAttendenceModeChange"
+          >
+        </kobe-active-attendence-mode>
       </template>
     </el-form>
     <!-- <el-row type="flex" justify="center"> -->
@@ -147,7 +154,19 @@ export default {
         data: [],
         type: 'attendence'
       }
-      const datas = [rankData, certData, signData, attendeeData, attendenceData]
+      let attendenceModeData = {
+        data: [],
+        type: 'attendencemode'
+      }
+      const datas = [
+        rankData,
+        certData,
+        signData,
+        attendeeData,
+        attendenceModeData,
+        attendenceData
+      ]
+
       let arr = []
       this.data.properties.forEach((item, index) => {
         if (item.type.startsWith('rank-')) {
@@ -170,6 +189,10 @@ export default {
           item.type = item.type.split('-')[1]
           item.index = index
           attendenceData.data.push(item)
+        } else if (item.type.startsWith('attendencemode-')) {
+          item.type = item.type.split('-')[1]
+          item.index = index
+          attendenceModeData.data.push(item)
         } else {
           arr.push(item)
         }
@@ -188,6 +211,14 @@ export default {
     onSigninChange (value) {
     },
     onAttendeeChange (value) {
+      value.forEach(item => {
+        if (item) {
+          this.form.properties[item.index] = item
+        }
+      })
+      this.onFormChange()
+    },
+    onAttendenceModeChange (value) {
       value.forEach(item => {
         if (item) {
           this.form.properties[item.index] = item

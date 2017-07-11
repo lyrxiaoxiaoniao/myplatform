@@ -9,7 +9,7 @@
         >
         <el-form class="search-form" :model="form">
           <el-form-item class="advance-form-item" label="企业名称">
-            <el-input v-model="form.company"></el-input>
+            <el-input v-model="form.companyName"></el-input>
           </el-form-item>
           <el-form-item class="advance-form-item" label="所属行业">
             <el-input v-model="form.industryName"></el-input>
@@ -39,17 +39,18 @@
         border
         stripe
         :data="response.data">
-        <el-table-column prop="id" label="ID" width="80"></el-table-column>
-        <el-table-column prop="company" label="企业名称"></el-table-column>
-        <el-table-column prop="industryName" label="所属行业" width="120"></el-table-column>
+        <el-table-column prop="id" label="ID" width="60px"></el-table-column>
+        <el-table-column prop="companyName" label="企业名称" width="120px"></el-table-column>
+        <el-table-column prop="industryName" label="所属行业" width="120px"></el-table-column>
+        <el-table-column prop="phone" label="公司联系电话" width="120px"></el-table-column>
         <el-table-column prop="address" label="详细地址"></el-table-column>
         <el-table-column prop="status" label="状态" width="120"></el-table-column>
-        <el-table-column label="登记时间" width="180">
+        <el-table-column label="登记时间" width="150px">
           <template scope="scope">
             {{ scope.row.createdAt | toDateTime }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="120">
+        <el-table-column label="操作" width="120px">
           <template scope="scope">
             <el-button size="small" icon="information" @click="onEditFirmDetail(scope.row.id)"></el-button>
             <el-button size="small" icon="delete2" @click="onDeleteFirm(scope.row.id)"></el-button>
@@ -86,7 +87,7 @@ export default {
       response: null,
       error: null,
       form: {
-        company: '',
+        companyName: '',
         industryName: '',
         address: '',
         keyword: ''
@@ -130,7 +131,7 @@ export default {
       const data = {
         ...this.form
       }
-      api.GET(config.firmListAPI, data)
+      api.GET(config.firm.list, data)
       .then(response => {
         if (response.status !== 200) {
           this.error = response.statusText
@@ -151,7 +152,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.POST(config.firmDeleteAPI, {
+        api.POST(config.firm.delete, {
           id: id
         })
         .then(response => {
@@ -180,7 +181,7 @@ export default {
       if (!data) {
         return
       }
-      api.GET(config.firmListAPI, data)
+      api.GET(config.firm.list, data)
         .then(response => {
           if (response.status !== 200) {
             this.error = response.statusText
@@ -216,7 +217,7 @@ export default {
       return res
     },
     getFirmList () {
-      api.GET(config.firmListAPI)
+      api.GET(config.firm.list)
         .then(response => {
           if (response.status !== 200) {
             this.error = response.statusText
