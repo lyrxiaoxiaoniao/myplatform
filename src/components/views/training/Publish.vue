@@ -39,7 +39,10 @@
             </el-input>
           </el-form-item>
           <el-form-item label="宣传海报">
-            <el-button size="small" @click="uploadCover">选择图片</el-button>
+            <div @click="uploadCover" class="image-upload-container">
+              <img :src="form.cover" alt="" v-if="form.cover">
+              <i class="el-icon-plus avatar-uploader-icon"></i>
+            </div>
           </el-form-item>
           <el-form-item label="培训内容">
             <vue-html5-editor :content="basicForm.brief" @change="onEditorChange"></vue-html5-editor>
@@ -198,7 +201,7 @@ export default {
       extraProperty: '',
       extraProperties: null,
       chosenProperties: [],
-      activeProperties: [],
+      activeProperties: [], // extra properties
       form: {
         stages: [
         ],
@@ -210,9 +213,9 @@ export default {
         address: '',
         start_date: '',
         end_date: '',
-        number: '',
         catgr_id: 12,
         active: '',
+        cover: '',
         brief: ''
       },
       extraForm: {
@@ -275,10 +278,10 @@ export default {
       })
       this.activeProperties.splice(index, 1)
     },
-    addExtraPropertyValue(item) {
+    addExtraPropertyValue (item) {
       api.POST(config.activity.extraPropertyValueAdd, {
         key_id: item.key_id,
-        label: item.label
+        label: item.value
       })
       .then(response => {
         if (response.data.errcode === '0000') {
@@ -300,7 +303,6 @@ export default {
 
       const item = value[value.length - 1]
       let obj = {
-        activity_id: this.basicForm.catgr_id,
         key_id: item.id,
         label: item.label,
         value: '',
@@ -375,7 +377,7 @@ export default {
             message: '创建活动成功'
           })
           this.$router.push({
-            path: '/admin/activity'
+            path: '/admin/training'
           })
         }
       })
@@ -407,6 +409,15 @@ export default {
       .then(response => {
         if (response.data.errcode === '0000') {
           this.response = response.data.data
+          this.response.forEach((item, index) => {
+            let obj = {
+              index: index,
+              id: item.id,
+              type_key: item.type_key,
+              properties: []
+            }
+            this.form.stages.push(obj)
+          })
         }
       })
       .catch(error => {
@@ -439,5 +450,28 @@ export default {
 }
 .activity-extraForm .el-select {
   width: 20rem;
+}
+.image-upload-container {
+  width: 178px;
+  height: 178px;
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.image-upload-container:hover {
+  border-color: #20a0ff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.active-extra-property {
+  margin-top: 1rem;
 }
 </style>

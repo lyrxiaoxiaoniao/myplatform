@@ -29,7 +29,7 @@
           label="操作"
           >
           <template scope="scope">
-            <el-button size="small" icon="edit"></el-button>
+            <el-button @click="onEdit(scope.row.id)" size="small" icon="edit"></el-button>
             <el-button @click="onDetail(scope.row.id)" size="small" icon="information"></el-button>
             <el-button @click="onDelete(scope.row.id)" size="small" icon="delete2"></el-button>
           </template>
@@ -85,6 +85,14 @@ export default {
     addActivity () {
       this.$router.push({
         path: '/admin/training/publish'
+      })
+    },
+    onEdit (id) {
+      this.$router.push({
+        path: '/admin/training/edit',
+        query: {
+          id: id
+        }
       })
     },
     onDetail (id) {
