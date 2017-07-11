@@ -239,6 +239,7 @@ export default {
   showTeamAPI: '/activity/team/index',
   detailTeamAPI: '/activity/team/show',
   memberTeamAPI: '/activity/team/member',
+  auditTeamAPI: '/activity/team/audit',
   fixedLayout: false,
   hideLogoOnMobile: false,
   reportsStatusCatlg: [

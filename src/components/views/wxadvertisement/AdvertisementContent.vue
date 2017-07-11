@@ -161,6 +161,13 @@ import api from 'src/api'
 
 export default {
   data () {
+    var getposter = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请上传图片'))
+      } else {
+        callback()
+      }
+    }
     return {
       id: null,
       isEdit: false,
@@ -203,6 +210,9 @@ export default {
         link: [
           { required: true, message: '请输入广告地址', trigger: 'blur' }
         ],
+        poster: [
+          { validator: getposter, trigger: 'change' }
+        ],
         linkType: [
           { required: true, message: '请输入广告类型', trigger: 'change' }
         ]
@@ -226,6 +236,7 @@ export default {
         typeId: '1',
         tagList: ''
       }
+      this.value = '1'
       this.imageURL = ''
       this.dynamicTags = []
       this.getTypeId()
@@ -268,9 +279,10 @@ export default {
       return isJPG && isLt2M
     },
     onUploadSuccess (response, file, fileList) {
+      console.log(file, response)
       if (response.errcode === '0000') {
         this.imageURL = file.url
-        this.ruleForm.poster = response.data[0]
+        this.ruleForm.poster = response.data.remoteUrl
       }
     },
     onUploadError (error, file) {

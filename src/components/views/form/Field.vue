@@ -174,7 +174,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="required">
+              <el-form-item label="必填">
                 <el-radio-group v-model="selected.required">
                   <el-radio label="否"></el-radio>
                   <el-radio label="是"></el-radio>
@@ -182,7 +182,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="numeric">
+              <el-form-item label="整数">
                 <el-radio-group v-model="selected.figure">
                   <el-radio label="否"></el-radio>
                   <el-radio label="是"></el-radio>
@@ -190,7 +190,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="digits">
+              <el-form-item label="数字">
                 <el-radio-group v-model="selected.digits">
                   <el-radio label="否"></el-radio>
                   <el-radio label="是"></el-radio>
@@ -252,7 +252,6 @@ export default {
   },
   methods: {
     next () {
-      console.log(this.active)
       if (this.active++ > 2) this.active = 2
     },
     toggleSelection (rows) {
