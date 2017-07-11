@@ -32,8 +32,7 @@
           <el-tab-pane label="当前点位" name="first">
               <el-table :data="data.data" border stripe
                   @selection-change="handleSelectionChange"
-                  ref="multipleTable"
-                  style="min-height:300px">
+                  ref="multipleTable">
                   <el-table-column type="selection" width="55"></el-table-column>
                   <el-table-column type="index" label="ID" width="50"></el-table-column>
                   <el-table-column prop="title" label="点位名称" ></el-table-column>
@@ -78,8 +77,7 @@
           <el-tab-pane label="历史点位" name="second">
               <el-table :data="response.data" border stripe
                   @selection-change="handleSelectionChange"
-                  ref="multipleTable"
-                  style="min-height:300px">
+                  ref="multipleTable">
                   <el-table-column type="selection" width="55"></el-table-column>
                   <el-table-column type="index" label="ID" width="50"></el-table-column>
                   <el-table-column prop="title" label="点位名称" ></el-table-column>
@@ -236,7 +234,8 @@ export default {
           }
         }],
         disabledDate(time) {
-          return time.getTime() < Date.now() - 3600 * 1000 * 24 * 30 || time.getTime() > Date.now()
+          return time.getTime() > Date.now()
+          // return time.getTime() < Date.now() - 3600 * 1000 * 24 * 30 || time.getTime() > Date.now()
         }
       },
       value4: '',
@@ -554,6 +553,12 @@ export default {
       })
     },
     pointToAdv () {
+      if (!this.value3) {
+        this.$notify.info({
+          title: '消息',
+          message: '请选择时间区间！'
+        })
+      }
       var obj = {}
       obj.type = Number(this.formInline.type)
       obj.limitCount = Number(this.formInline.num)

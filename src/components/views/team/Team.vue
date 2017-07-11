@@ -125,7 +125,7 @@ export default {
         if (v.status === 4) {
           v.status = '认证通过'
         }
-        if (v.status === 4) {
+        if (v.status === 5) {
           v.status = '认证驳回'
         }
       })

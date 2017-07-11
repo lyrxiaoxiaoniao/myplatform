@@ -29,7 +29,7 @@
               <el-table :data="data.data" border stripe
                   @selection-change="handleSelectionChange"
                   ref="multipleTable"
-                  style="min-height:300px">
+                  style="max-height:500px;overflow:auto;">
                   <el-table-column type="selection" width="55"></el-table-column>
                   <el-table-column type="index" label="ID" width="50"></el-table-column>
                   <el-table-column prop="title" label="广告内容名称" ></el-table-column>
@@ -82,7 +82,7 @@
               <el-table :data="response.data" border stripe
                   @selection-change="handleSelectionChange"
                   ref="multipleTable"
-                  style="min-height:300px">
+                  style="max-height:500px;overflow:auto;">
                   <el-table-column type="selection" width="55"></el-table-column>
                   <el-table-column type="index" label="ID" width="50"></el-table-column>
                   <el-table-column prop="title" label="广告内容名称" ></el-table-column>
@@ -173,7 +173,7 @@
           <div style="border-top: 1px solid lightgray;padding-top: 1rem;">
               <div class="grid-content">
                   <el-input placeholder="请输入内容" v-model="keyword" style="width:35%;float:right;margin:0 10px 10px 0">
-                      <el-button slot="append" icon="search" @click="searchKeyword()"></el-button>
+                      <el-button slot="append" icon="search" @click="searchKeyword"></el-button>
                   </el-input>
               </div>
               <template>
@@ -199,7 +199,7 @@
           </div>
           <div class="up-dialog-footer">
               <el-button @click="dialogTableVisible = false">取消</el-button>
-              <el-button type="primary" @click="pointToAdv()">保存</el-button>
+              <el-button type="primary" @click="pointToAdv">保存</el-button>
           </div>
       </el-dialog>
     </div>
@@ -248,7 +248,7 @@ export default {
           }
         }],
         disabledDate(time) {
-          return time.getTime() < Date.now() - 3600 * 1000 * 24 * 30 || time.getTime() > Date.now()
+          return time.getTime() > Date.now()
         }
       },
       value4: '',
@@ -558,6 +558,12 @@ export default {
     },
     pointToAdv () {
       // pointToAdvAPI
+      if (!this.value3) {
+        this.$notify.info({
+          title: '消息',
+          message: '请选择时间区间！'
+        })
+      }
       var obj = {}
       obj.type = Number(this.formInline.type)
       obj.limitCount = Number(this.formInline.num)

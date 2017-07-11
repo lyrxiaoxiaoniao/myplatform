@@ -54,7 +54,6 @@
 	          <template scope="scope">
 	            <el-button size="small" icon="edit" @click="editData(scope.row.id)" title="修改"></el-button>
               <el-button size="small" icon="date" @click="onUpadv(scope.row.id)" title="上画"></el-button>
-	            <!--<el-button size="small" icon="information" @click="toAdvertisementDetail(scope.row.id)" title="查看"></el-button>-->
 	            <el-button size="small" icon="delete2" @click="onDeleteAdvertisement(scope.row.id)" title="删除"></el-button>
 	          </template>
 	        </el-table-column>
@@ -84,9 +83,9 @@
         <el-form-item label="点位标识" prop="slug">
           <el-input v-model="ruleForm.slug" placeholder="缩写，全英文，64字以内，如：app.weicome.first，用于引用的"></el-input>
         </el-form-item>
-        <el-form-item label="点位分类" required>
+        <el-form-item label="点位分类" prop="typename" required>
           <template>
-            <el-select v-model="value" placeholder="请选择">
+            <el-select v-model="ruleForm.typename" placeholder="请选择">
               <el-option
                 v-for="item in options"
                 :label="item.type"
@@ -95,7 +94,17 @@
             </el-select>
           </template>
         </el-form-item>
-        <el-form-item label="点位标签" prop="tagList" required>
+        <el-form-item label="有效控制" required>
+          <el-switch
+            v-model="ruleForm.state"
+            on-text="开"
+            off-text="关">
+          </el-switch>
+        </el-form-item>
+        <el-form-item label="点位说明" prop="description" required>
+          <el-input type="textarea" v-model="ruleForm.description" placeholder="分类描述50字以内"></el-input>
+        </el-form-item>
+        <el-form-item label="点位标签" prop="tagList">
           <el-tag
             :key="tag"
             v-for="tag in dynamicTags"
@@ -117,16 +126,6 @@
             >
           </el-input>
           <el-button v-else class="button-new-tag" size="small" @click="showInput">新增</el-button>
-        </el-form-item>
-        <el-form-item label="有效控制" required>
-          <el-switch
-            v-model="ruleForm.state"
-            on-text="开"
-            off-text="关">
-          </el-switch>
-        </el-form-item>
-        <el-form-item label="点位说明" prop="description">
-          <el-input type="textarea" v-model="ruleForm.description" placeholder="分类描述50字以内"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -159,7 +158,7 @@
         response: {},
         keyword: null,
         options: [],
-        value: '',
+        // value: '',
         dynamicTags: [],
         inputVisible: false,
         inputValue: '',
@@ -183,7 +182,7 @@
             { required: true, message: '请选择一个点位类型', trigger: 'change' }
           ],
           description: [
-            { required: false, message: '分类描述50字以内', trigger: 'blur' },
+            { required: true, message: '分类描述50字以内', trigger: 'blur' },
             { min: 0, max: 50, message: '分类描述长度在50字以内', trigger: 'blur' }
           ]
         }
@@ -198,8 +197,7 @@
           description: '',
           slug: '',
           spacename: '',
-          typename: null,
-          value: '',
+          typename: '1',
           tagList: [],
           state: null
         }
@@ -256,8 +254,8 @@
               const res = response.data.data
               this.ruleForm = res
               this.ruleForm.state = this.changeBoolean(res.state)
-              this.value = this.transformTypeid(this.ruleForm.typename)
-              this.dynamicTags = res.tagList.split(',')
+              this.ruleForm.typename = this.transformTypeid(this.ruleForm.typename)
+              this.dynamicTags = res.tagList ? res.tagList.split(',') : []
             }
           })
         }
@@ -267,7 +265,7 @@
           if (valid) {
             var obj = {}
             var sendURL
-            obj.typeId = Number(this.value)
+            obj.typeId = Number(this.ruleForm.typename)
             obj.description = this.ruleForm.description
             obj.slug = this.ruleForm.slug
             obj.spacename = this.ruleForm.spacename
@@ -493,15 +491,13 @@
       handleSizeChange (value) {
         this.updateList({
           currentPage: this.response.currentPage,
-          pageSize: value,
-          ...this.response.data
+          pageSize: value
         })
       },
       handleCurrentChange (value) {
         this.updateList({
           currentPage: value,
-          pageSize: this.response.pageSize,
-          ...this.response.data
+          pageSize: this.response.pageSize
         })
       },
       // 为调接口

@@ -2,10 +2,33 @@
 <div class="TM-container clearfix">
     <div class="TM-header">
         <el-button type="primary" @click="goBack">返回列表</el-button>
-        <el-select v-model="selectMode" placeholder="请选择处理方式" style="width:150px;">
-            <el-option label="审核" value="审核"></el-option>
-            <el-option label="认证" value="认证"></el-option>
+        <el-select v-show="selected.status !==4" v-model="selectMode" placeholder="处理方式" style="width:150px;" @change="operateStatus">
+            <el-option v-show="selected.status < 2 && selected.status !== 1" label="审核" value="审核"></el-option>
+            <el-option v-show="selected.status > 2 || selected.status === 1" label="认证" value="认证"></el-option>
         </el-select>
+        <el-dialog v-model="statusDialog" size="tiny" :title="statusTitle" @close="closeStatus">
+            <el-form :model="statusData" label-width="80px">
+                <el-form-item label="审核结果" v-show="statusTitle === '审核'">
+                    <el-select v-model="statusData.status" placeholder="审核操作" style="width:100%;">
+                        <el-option label="通过" value="1"></el-option>
+                        <el-option label="不通过" value="2"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="认证结果" v-show="statusTitle === '认证'">
+                    <el-select v-model="statusData.status" placeholder="认证操作" style="width:100%;">
+                        <el-option label="通过" value="4"></el-option>
+                        <el-option label="驳回" value="5"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="说明">
+                    <el-input type="textarea" v-model="statusData.explain"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="statusDialog = false">取消</el-button>
+                <el-button v-show="statusData.status" @click="auditStatus">确定</el-button>
+            </div>
+        </el-dialog>
     </div>
     <div class="TM-right">
         <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -21,12 +44,12 @@
                             </el-col>
                             <el-col :span="12">
                                 <el-form-item label="所属行业:">
-                                    <p v-text="selected.industry ? selected.industry.value : ''"></p>
+                                    <p v-text="selected.industry.value ? selected.industry.value : '无'"></p>
                                 </el-form-item>
                             </el-col>
                              <el-col :span="12">
                                 <el-form-item label="地区:">
-                                    <p v-text="selected.region ? selected.region.title : ''"></p>
+                                    <p v-text="selected.region ? selected.region.title : '无'"></p>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
@@ -42,36 +65,36 @@
                         </el-row> 
                     </el-form>
                 </div>
-                <div>
+                <div v-show="selected.status > 2 || selected.status === 1">
                     <h4>组织信息</h4>
                     <el-form :model="selected" label-width="80px">
                         <el-row>
                             <el-col :span="12">
                                 <el-form-item label="组织类型:">
-                                    <p v-text="selected.type ? selected.type.value : ''"></p>
+                                    <p v-text="selected.type.value ? selected.type.value : '无'"></p>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
                                 <el-form-item label="企业名称:">
-                                    <p v-text="selected.team_ext ? selected.team_ext.org_name : ''"></p>
+                                    <p v-text="selected.team_ext.org_name ? selected.team_ext.org_name : '无'"></p>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
                                 <el-form-item label="组织代码:">
-                                    <p v-text="selected.team_ext ? selected.team_ext.org_code : ''"></p>
+                                    <p v-text="selected.team_ext.org_code ? selected.team_ext.org_code : '无'"></p>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
                                 <el-form-item label="负责人:">
-                                    <p v-text="selected.team_ext ? selected.team_ext.manager : ''"></p>
+                                    <p v-text="selected.team_ext.manager ? selected.team_ext.manager : '无'"></p>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
                                 <el-form-item label="联系电话:">
-                                    <p v-text="selected.team_ext ? selected.team_ext.mobile : ''"></p>
+                                    <p v-text="selected.team_ext.mobile ? selected.team_ext.mobile : '无'"></p>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="12">
+                            <el-col :span="12" v-show="selected.audited_at">
                                 <el-form-item label="认证时间:">
                                     <p v-text="formatDate(selected.audited_at)"></p>
                                 </el-form-item>
@@ -145,7 +168,7 @@
                 height="500px"
                 ref="carousel">
                 <el-carousel-item v-for="(item, index) in imgsURL" :key="item">
-                <img :src="item" height="500px">
+                <img :src="item" height="500px" width="100%">
                 </el-carousel-item>
             </el-carousel>
         </el-dialog>
@@ -185,7 +208,7 @@
                 <span v-text="selected.team_ext ? selected.team_ext.manager : ''"></span>
             </div>
         </div>
-        <div>
+        <div v-show="selected.status > 2 || selected.status === 1">
             <h4>认证照片信息</h4>
             <div class="TM-picture">
                 <a href="javascript:;"><img width="100%" :src="selected.team_ext ? selected.team_ext.idcard : ''" alt="" @click="getImgsURL"></a>
@@ -202,6 +225,12 @@ export default {
   data () {
     return {
       id: this.$route.query.id,
+      statusTitle: '',
+      statusDialog: false,
+      statusData: {
+        status: null,
+        explain: ''
+      },
       dialogImgs: false,
       imgsURL: [],
       dialogVisible: false,
@@ -233,6 +262,44 @@ export default {
     }
   },
   methods: {
+    // 切换状态 审核 认证
+    operateStatus () {
+    //   console.log(this.selectMode)
+      if (this.selectMode) {
+        this.statusDialog = true
+        this.statusData.status = null
+        this.statusData.explain = ''
+        this.statusTitle = this.selectMode
+      }
+    },
+    auditStatus () {
+    //   auditTeamAPI
+      let data = {
+        id: this.id,
+        ...this.statusData
+      }
+      api.POST(config.auditTeamAPI, data)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.onSuccess('操作成功')
+          this.statusDialog = false
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    closeStatus () {
+      this.selectMode = null
+    },
+    onSuccess (string) {
+      this.$notify({
+        title: '成功',
+        message: string,
+        type: 'success'
+      })
+      this.getList({id: this.id})
+    },
     // 时间转换 毫秒转换成 yyyy-mm-dd hh:mm:ss
     formatDate (value) {
       if (value) {
@@ -261,7 +328,6 @@ export default {
           this.imgsURL.push(this.selected.team_ext.idcard)
         }
       }
-      console.log(this.imgsURL)
     },
     bigImg (url) {
       this.dialogImageUrl = url
@@ -270,10 +336,9 @@ export default {
     detailData (data) {
       this.dialogDetail = true
       this.dataDetail = data
-      console.log(data)
     },
     handleClick (tab, event) {
-      console.log(tab, event)
+    //   console.log(tab, event)
       if (tab.name === 'second') {
         this.getMember({team_id: this.id})
       }
@@ -284,7 +349,6 @@ export default {
         pageSize: value,
         ...this.form
       }
-
       this.getMember(data)
     },
     handleCurrentChange (value) {
@@ -293,7 +357,6 @@ export default {
         pageSize: this.response.pageSize,
         ...this.form
       }
-
       this.getMember(data)
     },
     onSearch () {
@@ -308,7 +371,6 @@ export default {
       api.GET(config.detailTeamAPI, data)
       .then(response => {
         this.selected = response.data.data
-        console.log(this.selected)
       })
       .catch(error => {
         this.$message.error(error)

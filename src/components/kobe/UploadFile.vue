@@ -123,6 +123,7 @@ export default {
       return this.treeOpenval
     },
     isShow () {
+      console.log(this.show)
       return !!this.show
     }
   },
