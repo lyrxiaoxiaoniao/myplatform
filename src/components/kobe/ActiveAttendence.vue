@@ -176,6 +176,12 @@ export default {
     }
   },
   mounted () {
+    if (this.data.data[1].values.length) {
+      const arr = JSON.parse(this.data.data[1].values[0].value)
+      this.timeRange = [
+        ...arr
+      ]
+    }
   }
 }
 </script>

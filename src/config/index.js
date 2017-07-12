@@ -88,7 +88,8 @@ export default {
   },
   training: {
     list: '/activity/info/index',
-    detail: '/activity/info/show'
+    detail: '/activity/info/show',
+    delete: '/activity/info/delete'
   },
   tutorial: {
     stages: '/activity/category/stage',

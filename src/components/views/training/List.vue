@@ -77,6 +77,27 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        api.POST(config.training.delete, {
+          id: id
+        })
+        .then(response => {
+          if (response.data.errcode === '0000') {
+            this.$notify({
+              title: '成功',
+              message: '删除成功',
+              type: 'success'
+            })
+          }
+          const data = {
+            pageSize: this.response.pageSize,
+            currentPage: this.response.currentPage,
+            ...this.form
+          }
+          this.getList(data)
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
       })
       .catch(error => {
         this.$message.error(error)

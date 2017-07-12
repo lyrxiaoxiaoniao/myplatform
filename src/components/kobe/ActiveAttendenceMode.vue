@@ -84,6 +84,8 @@ export default {
     }
   },
   mounted () {
+    this.signin = this.data.data[0].values[0] ? this.data.data[0].values[0].value : ''
+    this.signout = this.data.data[1].values[0] ? this.data.data[1].values[0].value : ''
   }
 }
 </script>

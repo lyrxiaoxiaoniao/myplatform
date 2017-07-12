@@ -70,7 +70,7 @@
       </el-tab-pane>
       <el-tab-pane
         v-if="response"
-        v-for="(item, index) in response"
+        v-for="(item, index) in stages"
         :label="item.title"
         :name="index.toString()"
         >
@@ -190,6 +190,7 @@ export default {
       // activity category id for training
       categoryTrainingID: 12,
       id: this.$route.query.id,
+      stages: null,
       showUploadCover: false,
       showUploadFile: false,
       extraPropertyChecked: false,
@@ -410,8 +411,15 @@ export default {
       })
       .then(response => {
         if (response.data.errcode === '0000') {
+          response.data.data.forEach(stage => {
+            if (stage.properties.length) {
+              stage.properties.forEach(property => {
+                property.values = []
+              })
+            }
+          })
           this.response = response.data.data
-          console.log(this.response)
+          this.getTrainingDetail(this.id)
         }
       })
       .catch(error => {
@@ -438,6 +446,30 @@ export default {
           this.activeProperties.push(obj)
         })
       }
+      let attributes = []
+      data.category.stages.forEach(stage => {
+        if (stage.attributes.length) {
+          stage.attributes.forEach(attribute => {
+            attributes.push(attribute)
+          })
+        }
+      })
+      this.response.forEach(stage => {
+        if (stage.properties.length) {
+          stage.properties.forEach(property => {
+            const typeKey = property.type_key
+            attributes.forEach(attribute => {
+              if (typeKey === attribute.attr_key) {
+                property.values.push({
+                  key: attribute.attr_key,
+                  value: attribute.attr_value
+                })
+              }
+            })
+          })
+        }
+      })
+      this.stages = this.response
     },
     getTrainingDetail (id) {
       api.GET(config.training.detail, {
@@ -445,7 +477,6 @@ export default {
       })
       .then(response => {
         if (response.data.errcode === '0000') {
-          console.log(response.data.data)
           this.showDetail(response.data.data)
         }
       })
@@ -457,7 +488,6 @@ export default {
   mounted () {
     this.getTrainingSteps()
     this.getExtraPros()
-    this.getTrainingDetail(this.id)
   }
 }
 </script>

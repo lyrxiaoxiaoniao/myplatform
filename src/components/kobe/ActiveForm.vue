@@ -10,56 +10,56 @@
           v-if="item.type === 'input'"
           :data="item"
           :index="index"
-          @input="onInputChange"
+          @input="onChange"
           >
         </kobe-active-input>
         <kobe-number-input
           v-if="item.type === 'number'"
           :data="item"
           :index="index"
-          @number="onNumberChange"
+          @number="onChange"
           >
         </kobe-number-input>
         <kobe-date-input
           v-if="item.type === 'datetime'"
           :index="index"
           :data="item"
-          @date="onTimeChange"
+          @date="onChange"
           >
         </kobe-date-input>
         <kobe-active-switch
           v-if="item.type === 'switch'"
           :index="index"
           :data="item"
-          @switch="onSwitchChange"
+          @switch="onChange"
           >
         </kobe-active-switch>
         <kobe-active-radio
           v-if="item.type === 'radio'"
           :index="index"
           :data="item"
-          @radio="onRadioChange"
+          @radio="onChange"
           >
         </kobe-active-radio>
         <kobe-active-textarea
           v-if="item.type === 'textarea'"
           :index="index"
           :data="item"
-          @text="onTextareaChange"
+          @text="onChange"
           >
         </kobe-active-textarea>
         <kobe-active-checkbox
           v-if="item.type === 'checkbox'"
           :index="index"
           :data="item"
-          @checklist="onCheckboxChange"
+          @checklist="onChange"
           >
         </kobe-active-checkbox>
         <kobe-active-select
           v-if="item.type === 'select'"
           :index="index"
           :data="item"
-          @select="onSelectChange"
+          @select="onChange"
           >
         </kobe-active-select>
         <kobe-active-rank
@@ -250,40 +250,12 @@ export default {
       })
       this.onFormChange()
     },
-    onRadioChange (value) {
-      this.form.properties[value.index] = value.data
-      this.onFormChange()
-    },
-    onInputChange (value) {
-      this.form.properties[value.index] = value.data
-      this.onFormChange()
-    },
-    onCheckboxChange (value) {
-      this.form.properties[value.index] = value.data
-      this.onFormChange()
-    },
-    onTextareaChange (value) {
-      this.form.properties[value.index] = value.data
-      this.onFormChange()
-    },
-    onNumberChange (value) {
-      this.form.properties[value.index] = value.data
-      this.onFormChange()
-    },
-    onSelectChange (value) {
-      this.form.properties[value.index] = value.data
-      this.onFormChange()
-    },
-    onTimeChange (value) {
+    onChange (value) {
       this.form.properties[value.index] = value.data
       this.onFormChange()
     },
     onSubmit () {
       this.$emit('submit', this.form)
-    },
-    onSwitchChange (value) {
-      this.form.properties[value.index] = value.data
-      this.onFormChange()
     },
     onFormChange () {
       const data = {

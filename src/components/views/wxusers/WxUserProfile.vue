@@ -8,7 +8,7 @@
               <kobe-info-cell title="姓名" :info="response.realname ? response.realname : '无'"></kobe-info-cell>
               <kobe-info-cell title="微信昵称" :info="response.nickname ? response.nickname : '无'"></kobe-info-cell>
               <kobe-info-cell title="手机" :info="response.mobile ? response.mobile : '无'"></kobe-info-cell>
-              <kobe-info-cell title="职位" :info="response.merchant.name ? response.merchant.name : '无'"></kobe-info-cell>
+              <kobe-info-cell title="职位" :info="response.fUserInfo.dutyType ? response.fUserInfo.dutyType : '无'"></kobe-info-cell>
               <kobe-info-cell>
                 <div slot="kobe-cell-content">
                   <el-row type="flex" justify="end">

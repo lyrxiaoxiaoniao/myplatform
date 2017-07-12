@@ -48,6 +48,13 @@
             :label="item.title"
             :name="index.toString()"
             >
+            <kobe-active-form
+              v-if="item.properties"
+              :data="item"
+              :index="index"
+              @form-change="onFormChange"
+              >
+            </kobe-active-form>
           </el-tab-pane>
         </el-tabs>
       </el-col>
@@ -72,6 +79,8 @@ export default {
     }
   },
   methods: {
+    onFormChange () {
+    },
     getStages () {
       api.GET(config.tutorial.stages, {
         category_id: this.categoryID
@@ -79,6 +88,7 @@ export default {
       .then(response => {
         if (response.data.errcode === '0000') {
           this.response = response.data.data
+          console.log(this.response)
         }
       })
       .catch(error => {
@@ -115,5 +125,6 @@ export default {
 }
 .tutorial-stage {
   margin-left: 1rem;
+  margin-right: 3rem;
 }
 </style>
