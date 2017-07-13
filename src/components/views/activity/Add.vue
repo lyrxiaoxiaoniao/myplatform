@@ -470,6 +470,9 @@ export default {
 .activity-action-container {
   margin-top: 1rem;
 }
+.activity-extraForm .el-row {
+  margin-bottom: 1rem;
+}
 .activity-extraForm .el-select {
   width: 20rem;
 }

@@ -23,8 +23,8 @@
         v-if="item.type === 'upload' && toggleSwitch"
         >
         <div @click="openUploadDialog(index)" class="active-cert-upload-container">
-          <img :src="coverURL" alt="">
-          <i class="el-icon-plus avatar-uploader-icon"></i>
+          <img v-if="coverURL" :src="coverURL" alt="cover">
+          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </div>
       </el-form-item>
       <el-form-item
@@ -44,6 +44,7 @@
         >
         <el-input
           @change="onInputChange(index)"
+          v-model="unit"
           placeholder="请输入发证单位"></el-input>
       </el-form-item>
       <el-form-item :label="item.title"
@@ -51,7 +52,7 @@
         >
         <el-date-picker
           @change="onTimeChange(index)"
-          v-model="time"
+          v-model="certTime"
           type="datetime"
           placeholder="选择日期"
           >
@@ -71,7 +72,7 @@
 
 <script>
 export default {
-  // active cert toggle card
+  // activity cert toggle card
   // used for kobe active form
   name: 'kobe-active-cert',
   props: {
@@ -86,10 +87,22 @@ export default {
       coverURL: '',
       content: '',
       unit: '',
-      time: '',
-      itemIndex: '',
-      form: [
-      ]
+      certTime: '',
+      itemIndex: ''
+    }
+  },
+  computed: {
+    form () {
+      const data = this.data.data[0]
+      const obj = [{
+        id: data.id,
+        index: data.index,
+        type_key: data.type_key,
+        options: [{
+          title: this.toggleSwitch ? 1 : 0
+        }]
+      }]
+      return obj
     }
   },
   methods: {
@@ -107,7 +120,7 @@ export default {
           title: this.coverURL
         }]
       }
-      this.uploadDialogVisiable = true
+      this.uploadDialogVisiable = false
       this.form[this.itemIndex] = item
       this.$emit('cert', this.form)
     },
@@ -130,7 +143,7 @@ export default {
     },
     onTimeChange(index) {
       const obj = this.data.data[index]
-      const date = new Date(this.time).getTime()
+      const date = new Date(this.certTime).getTime()
       let item = {
         id: obj.id,
         index: obj.index,
@@ -162,14 +175,90 @@ export default {
         index: obj.index,
         type_key: obj.type_key,
         options: [{
-          title: this.toggleSwitch
+          title: this.content
         }]
       }
       this.form[index] = item
       this.$emit('cert', this.form)
+    },
+    init () {
+      this.data.data.forEach((item, index) => {
+        if (item.values && item.values.length) {
+          const key = item.values[0].key
+          const value = item.values[0].value
+          switch (key) {
+            case 'activity_property_cert':
+              if (value === 1 || value === '1') {
+                this.toggleSwitch = true
+              } else {
+                this.toggleSwitch = false
+              }
+              let cert = {
+                id: item.id,
+                index: item.index,
+                type_key: item.type_key,
+                options: [{
+                  title: this.toggleSwitch ? 1 : 0
+                }]
+              }
+              this.form[index] = cert
+              break
+            case 'activity_property_cert_style':
+              this.coverURL = value
+              let img = {
+                id: item.id,
+                index: item.index,
+                type_key: item.type_key,
+                options: [{
+                  title: this.coverURL
+                }]
+              }
+              this.form[index] = img
+              break
+            case 'activity_property_cert_content':
+              this.content = value
+              let content = {
+                id: item.id,
+                index: item.index,
+                type_key: item.type_key,
+                options: [{
+                  title: this.content
+                }]
+              }
+              this.form[index] = content
+              break
+            case 'activity_property_cert_unit':
+              this.unit = value
+              let unit = {
+                id: item.id,
+                index: item.index,
+                type_key: item.type_key,
+                options: [{
+                  title: this.unit
+                }]
+              }
+              this.form[index] = unit
+              break
+            case 'activity_property_cert_date':
+              this.certTime = value
+              let time = {
+                id: item.id,
+                index: item.index,
+                type_key: item.type_key,
+                options: [{
+                  title: new Date(this.certTime).getTime()
+                }]
+              }
+              this.form[index] = time
+              break
+          }
+        }
+      })
+      this.$emit('cert', this.form)
     }
   },
   mounted () {
+    this.init()
   }
 }
 </script>

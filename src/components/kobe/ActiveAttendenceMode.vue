@@ -81,11 +81,45 @@ export default {
       }
       this.form[1] = item
       this.$emit('mode', this.form)
+    },
+    init () {
+      this.data.data.forEach((item, index) => {
+        if (item.values && item.values.length) {
+          const key = item.values[0].key
+          const value = item.values[0].value
+          switch (key) {
+            case 'activity_property_signin_mode':
+              this.signin = value
+              let obj = {
+                id: item.id,
+                index: item.index,
+                type_key: item.type_key,
+                options: [{
+                  title: this.signin
+                }]
+              }
+              this.form[index] = obj
+              break
+            case 'activity_property_signout_mode':
+              this.signout = value
+              let out = {
+                id: item.id,
+                index: item.index,
+                type_key: item.type_key,
+                options: [{
+                  title: this.signout
+                }]
+              }
+              this.form[index] = out
+              break
+          }
+          this.$emit('mode', this.form)
+        }
+      })
     }
   },
   mounted () {
-    this.signin = this.data.data[0].values[0] ? this.data.data[0].values[0].value : ''
-    this.signout = this.data.data[1].values[0] ? this.data.data[1].values[0].value : ''
+    this.init()
   }
 }
 </script>

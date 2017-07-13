@@ -41,7 +41,7 @@
           <el-form-item label="宣传海报">
             <div @click="uploadCover" class="image-upload-container">
               <img :src="form.cover" alt="" v-if="form.cover">
-              <i class="el-icon-plus avatar-uploader-icon"></i>
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </div>
           </el-form-item>
           <el-form-item label="培训内容">
@@ -447,6 +447,9 @@ export default {
 }
 .activity-action-container {
   margin-top: 1rem;
+}
+.activity-extraForm .el-row {
+  margin-bottom: 1rem;
 }
 .activity-extraForm .el-select {
   width: 20rem;

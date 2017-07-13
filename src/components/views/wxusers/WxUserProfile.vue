@@ -41,7 +41,12 @@
               <div>企业地址: {{ response.fCompanyInfo.address }}</div>
               <div>企业人数: {{ response.fCompanyInfo.count }}人</div>
               <div>所属行业: {{ response.fCompanyInfo.industryName }}</div>
+              <div>企业联系电话: {{ response.mobile }}</div>
               <div>所属街道: {{ response.fCompanyInfo.subDistrictName }}/{{ response.fCompanyInfo.community }}</div>
+              <div>企业主要负责人: {{ response.fCompanyInfo.headName }}</div>
+              <div>企业主要负责人联系电话: {{ response.fCompanyInfo.headPhone }}</div>
+              <div>企业安全管理人员: {{ response.fCompanyInfo.safePername }}</div>
+              <div>企业安全管理人员联系电话: {{ response.fCompanyInfo.safePerphone }}</div>
             </el-card>
           </el-col>
           <el-col :span="6" class="sc-wechat-profile-image-content">
