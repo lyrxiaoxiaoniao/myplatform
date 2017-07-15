@@ -150,11 +150,11 @@ export default {
   }
 
   .router-link-active .treeview-display-name {
-    color: white;
+    color: #000;
   }
 
   .router-link-active .iconfont {
-    color: white;
+    color: #000;
   }
 
 </style>

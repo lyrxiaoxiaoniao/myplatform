@@ -10,7 +10,8 @@
         </span>
         <div class="logo-lg">
           <img src="static/img/LOGO2.png" alt="Logo" class="img-responsive">
-          <span>{{ appInfo ? appInfo.appName : '深传互动' }}</span>
+          <span>深传互动</span>
+          <!-- <span>{{ appInfo ? appInfo.appName : '深传互动' }}</span> -->
         </div>
       </router-link>
 
@@ -98,22 +99,25 @@
             <!--     </li> -->
             <!--   </ul> -->
             <!-- </li> -->
-
             <li class="dropdown user user-menu">
               <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
-                <img v-bind:src="demo.avatar" class="user-image" alt="User Image">
-                <span class="hidden-xs">{{ demo.displayName }}</span>
+                <img v-bind:src="user.avatar" class="user-image" alt="User Image">
+                <span class="hidden-xs">{{ user.displayName }}</span>
               </a>
               <ul class="dropdown-menu user-setting-menu">
-                <li class="header">
-                  <el-row type="flex" justify="center">
-                    用户资料
-                  </el-row>
+                <li class="user-header">
+                  <img :src="user.avatar" alt="user-image" class="img-circle">
+                  <p>深传互动政务新媒体平台</p>
                 </li>
-                <li class="user-setting-menu-content">
-                  <el-row type="flex" justify="end">
+                <li class="user-setting-menu-content user-footer">
+                  <div class="pull-left">
+                    <el-button size="small">资料</el-button>
+                  </div>
+                  <div class="pull-right">
                     <el-button @click="onLogout" size="small">退出</el-button>
-                  </el-row>
+                  </div>
+                  <div>
+                  </div>
                 </li>
               </ul>
             </li>
@@ -121,8 +125,8 @@
         </div>
       </nav>
     </header>
-    <sidebar :display-name="demo.displayName"
-             :picture-url="demo.avatar"/>
+    <sidebar :display-name="user.displayName"
+             :picture-url="user.avatar"/>
 
     <div class="content-wrapper">
       <section class="content-header">
@@ -173,7 +177,7 @@ export default {
     ...mapState([
       'userInfo'
     ]),
-    demo () {
+    user () {
       return {
         displayName: this.userInfo.username,
         avatar: this.userInfo.avatar
@@ -298,6 +302,10 @@ hr.visible-xs-block {
 .content-header {
   border-bottom: 1px solid lightgray;
   padding-bottom: 1rem;
+}
+
+.main-header .logo {
+  background-color: #3c8dbc;
 }
 
 </style>

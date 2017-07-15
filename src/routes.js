@@ -114,7 +114,7 @@ const routes = [
     children: [{
       path: 'index',
       component: DashMainView,
-      name: '光明安监首页'
+      name: '深传互动'
     }]
   }, {
     path: '/admin',
@@ -124,7 +124,7 @@ const routes = [
       {
         path: 'index',
         component: DashMainView,
-        name: '光明安监'
+        name: '深传互动'
       }, {
         // User Module
         path: 'user',
