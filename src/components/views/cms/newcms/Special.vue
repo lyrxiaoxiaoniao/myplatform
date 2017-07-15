@@ -3,13 +3,24 @@
     <kobe-table>
         <div slot="kobe-table-header" class="kobe-table-header">
             <el-row type="flex" justify="end">
+            <el-col :span="16">
+                <el-button type="primary" @click="openDialog">添加专题</el-button>
+                <el-button type="primary">刷新</el-button>
+                 <el-select v-model="operation" placeholder="批量" style="width:150px;" @change="open3">
+                    <el-option label="批量" value="批量"></el-option>
+                    <el-option label="删除" value="删除"></el-option>
+                </el-select>
+            </el-col>
+            <el-select v-model="operation" placeholder="所有" style="width:150px;" @change="open3">
+                <el-option label="所有" value="所有"></el-option>
+                <el-option label="专题名称" value="专题名称"></el-option>
+            </el-select>
             <el-col :span="8">
                 <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
                 <el-button slot="append" @click="onSearch" icon="search"></el-button>
                 </el-input>
             </el-col>
-            <el-button icon="plus" type="primary" style="margin-left:10px;" @click="openDialog"></el-button>
-            <el-button icon="upload2" type="primary"></el-button>
+            <el-button icon="upload2" type="primary"  style="margin-left:10px;"></el-button>
             <el-button icon="setting" type="primary"></el-button>
             </el-row>
         </div>
@@ -20,13 +31,22 @@
             stripe
             :data="response.data"
             @selection-change="handleSelectionChange">
-            <!--<el-table-column type="selection" width="55"></el-table-column>-->
+            <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column type="index" label="ID" width="50"></el-table-column>
-            <el-table-column prop="name" label="name"></el-table-column>
-            <el-table-column prop="method" label="method"></el-table-column>
-            <el-table-column prop="action" label="action"></el-table-column>
-            <el-table-column prop="accept_charset" label="accept_charset"></el-table-column>
-            <!--<el-table-column prop="enctype" label="enctype"></el-table-column>-->
+            <el-table-column prop="name" label="专题名称"></el-table-column>
+            <el-table-column prop="method" label="文章数"></el-table-column>
+            <el-table-column prop="action" label="排序"></el-table-column>
+            <!-- <el-table-column prop="accept_charset" label="是否推荐"></el-table-column> -->
+            <el-table-column label="是否推荐" width="120">
+              <template scope="scope">
+                <el-switch
+                  v-model="scope.row.state"
+                  on-text="开"
+                  off-text="关"
+                  @change="toswitch(scope.row.state,scope.row.id)">
+                </el-switch>
+              </template>
+            </el-table-column>
             <el-table-column 
                 width="170"
                 label="操作"
@@ -34,7 +54,6 @@
                 <template scope="scope">
                 <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2" title="删除"></el-button>
                 <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit" title="修改"></el-button>
-                <el-button @click="toDetail(scope.row.id)" size="small" icon="information" title="详情"></el-button>
                 </template>
             </el-table-column>
             </el-table>
@@ -57,29 +76,23 @@
     </kobe-table>
     <el-dialog :title="dialogTitle" v-model="showDialog">
         <el-form :model="selected" label-width="120px" :rules="rules" ref="selected">
-          <el-form-item label="method" prop="method" required>
-              <el-select v-model="selected.method" placeholder="示例:post/get" style="width:100%;">
-                <el-option label="GET" value="GET"></el-option>
-                <el-option label="POST" value="POST"></el-option>
-              </el-select>
+          <el-form-item label="专题名称" prop="name" required>
+              <el-input placeholder="示例:专题名称" v-model="selected.name"></el-input>
           </el-form-item>
-          <el-form-item label="name" prop="name" required>
-              <el-input placeholder="示例:表单名" v-model="selected.name"></el-input>
+          <el-form-item label="专题排序" prop="action" required>
+              <el-input-number v-model="selected.method"></el-input-number>
           </el-form-item>
-          <el-form-item label="action" prop="action" required>
-              <el-input placeholder="示例:https://www.example.com" v-model="selected.action"></el-input>
+          <el-form-item label="是否推荐" prop="accept_charset">
+              <el-switch on-text="开" off-text="关" v-model="selected.accept_charset"></el-switch>
           </el-form-item>
-          <el-form-item label="accept_charset" prop="accept_charset">
-              <el-input placeholder="示例:utf-8" v-model="selected.accept_charset"></el-input>
-          </el-form-item>
-          <el-form-item label="enctype" prop="enctype">
-              <el-input placeholder="默认:application/x-www-form-urlencoded" v-model="selected.enctype"></el-input>
+          <el-form-item label="专题说明" prop="enctype">
+              <el-input type="textarea" placeholder="" v-model="selected.enctype"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button @click="closeDialog">取消</el-button>
-            <el-button @click="createType('selected')" v-if="dialogType === 'add'">确定</el-button>
-            <el-button @click="editType('selected')" v-if="dialogType === 'edit'">确定</el-button>
+            <el-button @click="createType('selected')" type="primary" v-if="dialogType === 'add'">确定</el-button>
+            <el-button @click="editType('selected')" type="primary" v-if="dialogType === 'edit'">确定</el-button>
         </div>
     </el-dialog>
 </div>
@@ -103,6 +116,7 @@ export default {
       })
     }
     return {
+      operation: '',
       response: {
         data: null
       },
@@ -120,8 +134,8 @@ export default {
         method: '',
         name: '',
         action: '',
-        accept_charset: 'utf-8',
-        enctype: 'application/x-www-form-urlencoded'
+        accept_charset: '',
+        enctype: ''
       },
       rules: {
         name: [
@@ -197,16 +211,16 @@ export default {
     createType (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          api.POST(config.addActivityFormAPI, this.selected)
-          .then(response => {
-            if (response.data.errcode === '0000') {
-              this.onSuccess('添加成功')
-              this.showDialog = false
-            }
-          })
-          .catch(error => {
-            this.$message.error(error)
-          })
+        //   api.POST(config.addActivityFormAPI, this.selected)
+        //   .then(response => {
+        //     if (response.data.errcode === '0000') {
+        //       this.onSuccess('添加成功')
+        //       this.showDialog = false
+        //     }
+        //   })
+        //   .catch(error => {
+        //     this.$message.error(error)
+        //   })
         } else {
           console.log('error submit!!')
           return false
@@ -215,16 +229,16 @@ export default {
     },
     // 修改form确认
     editType (formName) {
-      api.POST(config.editActivityFormAPI, this.selected)
-      .then(response => {
-        if (response.data.errcode === '0000') {
-          this.onSuccess('修改成功')
-          this.showDialog = false
-        }
-      })
-      .catch(error => {
-        this.$message.error(error)
-      })
+    //   api.POST(config.editActivityFormAPI, this.selected)
+    //   .then(response => {
+    //     if (response.data.errcode === '0000') {
+    //       this.onSuccess('修改成功')
+    //       this.showDialog = false
+    //     }
+    //   })
+    //   .catch(error => {
+    //     this.$message.error(error)
+    //   })
     },
     onSuccess (string) {
       this.$notify({
@@ -266,21 +280,13 @@ export default {
       this.getList(data)
     },
     getList (data = {}) {
-      api.GET(config.showActivityFormAPI, data)
-      .then(response => {
-        this.response = response.data.data
-      })
-      .catch(error => {
-        this.$message.error(error)
-      })
-    },
-    toDetail (id) {
-      this.$router.push({
-        path: '/admin/form/detail',
-        query: {
-          id: id
-        }
-      })
+    //   api.GET(config.showActivityFormAPI, data)
+    //   .then(response => {
+    //     this.response = response.data.data
+    //   })
+    //   .catch(error => {
+    //     this.$message.error(error)
+    //   })
     }
   },
   mounted () {
@@ -290,4 +296,3 @@ export default {
 </script>
 <style scoped>
 </style>
-

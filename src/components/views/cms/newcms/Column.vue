@@ -14,9 +14,9 @@
         <div slot="kobe-table-header" class="kobe-table-header">
           <el-row type="flex" justify="end">
             <el-col :span="14">
-              <el-button @click="openDialog" type="primary">添加子分类</el-button>
-              <el-button type="primary">修改属性</el-button>
-              <el-button type="primary">更多操作</el-button>
+              <el-button @click="openDialog" type="primary">添加栏目</el-button>
+              <el-button type="primary">权限分配</el-button>
+              <!-- <el-button type="primary">更多操作</el-button> -->
               <el-button type="primary">刷新</el-button>
             </el-col>
             <el-select v-model="form.value" placeholder="所有信息" style="width:120px;">
@@ -46,14 +46,10 @@
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="ID" width="50"></el-table-column>
             <el-table-column prop="title" label="栏目名称" width="120"></el-table-column>
-            <el-table-column prop="type_key" label="图片" width="130">
-              <template scope="scope">
-                <img width="100%" :src="scope.row.logo" @click="bigImg(scope.row.logo)" alt="">
-              </template>
-            </el-table-column>
+            <el-table-column prop="type_key" label="访问路径" width="130"></el-table-column>
             <el-table-column prop="brief" label="创建时间"></el-table-column>
             <el-table-column prop="sort" label="顺序" width="80"></el-table-column>
-            <el-table-column label="启用" width="80">
+            <el-table-column label="显示" width="80">
               <template scope="scope">
                 <el-switch
                   v-model="scope.row.state"
@@ -148,7 +144,13 @@ export default {
       multipleSelection: [],
       option: [{
         value: '1',
+        label: '所有信息'
+      }, {
+        value: '2',
         label: '栏目名称'
+      }, {
+        value: '3',
+        label: '访问路径'
       }],
       options: [{
         value: 'zhinan',

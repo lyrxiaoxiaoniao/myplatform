@@ -4,7 +4,7 @@
         <el-button type="primary" @click="goBack">返回列表</el-button>
         <el-select v-show="selected.status !==4" v-model="selectMode" placeholder="处理方式" style="width:150px;" @change="operateStatus">
             <el-option v-show="selected.status < 2 && selected.status !== 1" label="审核" value="审核"></el-option>
-            <el-option v-show="selected.status > 2 || selected.status === 1" label="认证" value="认证"></el-option>
+            <el-option v-show="selected.status > 2 || selected.status === 1" label="认证" value="认证"></el-option> 
         </el-select>
         <el-dialog v-model="statusDialog" size="tiny" :title="statusTitle" @close="closeStatus">
             <el-form :model="statusData" label-width="80px">

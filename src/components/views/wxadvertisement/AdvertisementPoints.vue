@@ -158,7 +158,6 @@
         response: {},
         keyword: null,
         options: [],
-        // value: '',
         dynamicTags: [],
         inputVisible: false,
         inputValue: '',

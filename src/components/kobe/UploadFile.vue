@@ -123,7 +123,6 @@ export default {
       return this.treeOpenval
     },
     isShow () {
-      console.log(this.show)
       return !!this.show
     }
   },
@@ -167,7 +166,6 @@ export default {
       })
     },
     uploadSuccess (response, file, fileList) {
-      console.log(response)
       this.localImgs = []
       this.removeImg(fileList)
     },
