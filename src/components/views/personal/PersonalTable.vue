@@ -11,14 +11,14 @@
           <el-form-item class="advance-form-item" label="企业名称">
             <el-input v-model="form.companyName"></el-input>
           </el-form-item>
-          <el-form-item class="advance-form-item" label="所属职位">
-            <el-input v-model="form.dutyName"></el-input>
+          <el-form-item class="advance-form-item" label="职位名称">
+            <el-input v-model="form.duty"></el-input>
           </el-form-item>
           <el-form-item class="advance-form-item" label="姓名">
             <el-input v-model="form.name"></el-input>
           </el-form-item>
           <el-form-item class="advance-form-item" label="联系电话">
-            <el-input v-model="form.mobile"></el-input>
+            <el-input v-model="form.phone"></el-input>
           </el-form-item>
           <el-row type="flex" justify="center">
             <el-button type="primary" @click="onAdvancedSearch">搜索</el-button>
@@ -45,8 +45,8 @@
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
         <el-table-column prop="companyName" label="企业名称"></el-table-column>
         <el-table-column prop="name" label="姓名" width="120"></el-table-column>
-        <el-table-column prop="dutyName" label="所属职位"></el-table-column>
-        <el-table-column prop="mobile" label="联系电话"></el-table-column>
+        <el-table-column prop="duty" label="职位名称"></el-table-column>
+        <el-table-column prop="phone" label="联系电话"></el-table-column>
         <el-table-column prop="status" label="状态" width="120"></el-table-column>
         <el-table-column label="登记时间" width="180">
           <template scope="scope">
@@ -91,10 +91,10 @@ export default {
       error: null,
       form: {
         companyName: '',
-        dutyName: '',
+        duty: '',
         name: '',
         keyword: '',
-        mobile: ''
+        phone: ''
       }
     }
   },

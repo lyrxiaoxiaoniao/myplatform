@@ -13,8 +13,8 @@
           <div class="sc-firm-detail">
             <div>企业名称: <span>{{ response.companyName }}</span></div>
             <div>姓名: <span>{{ response.name }}</span></div>
-            <div>所属职位: <span>{{ response.dutyName }}</span></div>
-            <div>联系方式: <span>{{ response.mobile }}</span></div>
+            <div>职位名称: <span>{{ response.duty }}</span></div>
+            <div>联系方式: <span>{{ response.phone }}</span></div>
             <div>提交时间: <span>{{ response.createdAt | toDateTime }}</span> </div>
           </div>
         </el-card>

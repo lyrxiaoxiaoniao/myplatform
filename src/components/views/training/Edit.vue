@@ -9,7 +9,7 @@
           :model="basicForm"
           label-width="120px"
           label-position="left">
-          <el-form-item label="活动名称" required>
+          <el-form-item label="培训名称" required>
             <el-input v-model="basicForm.title"></el-input>
           </el-form-item>
           <el-form-item label="举办时间" required>
@@ -33,33 +33,18 @@
               </el-date-picker>
             </el-col>
           </el-form-item>
-          <el-form-item label="活动地址">
+          <el-form-item label="培训地址">
             <el-input v-model="basicForm.address">
               <el-button @click="openMap" slot="append" class="fa fa-map-marker"></el-button>
             </el-input>
           </el-form-item>
-          <el-row type="flex" justify="space-between">
-            <el-col :span="11">
-              <el-form-item label="分类" required>
-                <el-select
-                  v-if="categories"
-                  v-model="basicForm.catgr_id"
-                  @change="selectCategoty"
-                  placeholder="活动分类">
-                  <el-option
-                    v-for="item in categories"
-                    :label="item.title"
-                    :value="item.category_id"
-                    >
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
           <el-form-item label="宣传海报">
-            <el-button size="small" @click="uploadCover">选择图片</el-button>
+            <div @click="uploadCover" class="image-upload-container">
+              <img :src="form.cover" alt="" v-if="form.cover">
+              <i class="el-icon-plus avatar-uploader-icon"></i>
+            </div>
           </el-form-item>
-          <el-form-item label="活动内容">
+          <el-form-item label="培训内容">
             <vue-html5-editor :content="basicForm.brief" @change="onEditorChange"></vue-html5-editor>
           </el-form-item>
           <el-form-item label="标签">
@@ -78,14 +63,14 @@
               >
             </el-switch>
           </el-form-item>
-          <el-form-item label="活动附件">
+          <el-form-item label="培训附件">
             <el-button size="small" @click="uploadFile">选择附件</el-button>
           </el-form-item>
         </el-form>
       </el-tab-pane>
       <el-tab-pane
         v-if="response"
-        v-for="(item, index) in response"
+        v-for="(item, index) in stages"
         :label="item.title"
         :name="index.toString()"
         >
@@ -100,8 +85,7 @@
     </el-tabs>
     <el-checkbox
       v-if="selectedTab === '-1'"
-      :disabled="basicForm.catgr_id === ''"
-      @change="togglteExtraProperty">
+      v-model="extraPropertyChecked">
       附加属性
     </el-checkbox>
     <div
@@ -144,8 +128,7 @@
 
         <template
           class="active-extra-property"
-          v-for="item,index in activeProperties"
-          >
+          v-for="item,index in activeProperties">
           <el-row type="flex">
             <el-col :span="12">
               <el-form-item
@@ -164,7 +147,13 @@
     </div>
     <div class="activity-action-container">
       <el-row type="flex" justify="center">
-        <el-button @click="onCreateActivity" type="primary">提交</el-button>
+        <el-button
+          type="primary"
+          v-if="selectedTab === '-1'"
+          @click="toTrainingList">
+          培训列表
+        </el-button>
+        <el-button type="primary" @click="onUpdateActivity">提交</el-button>
       </el-row>
     </div>
     <kobe-map-dialog
@@ -195,16 +184,20 @@ import config from 'src/config'
 import api from 'src/api'
 
 export default {
-  name: 'sc-activity-add',
+  name: 'sc-training-publish',
   data () {
     return {
+      // activity category id for training
+      categoryTrainingID: 12,
+      id: this.$route.query.id,
+      stages: null,
       showUploadCover: false,
       showUploadFile: false,
+      extraPropertyChecked: false,
       selectedTab: '-1',
       showExtraInput: false,
       error: null,
       response: null,
-      categories: [],
       active: true,
       showMap: false,
       extraProperty: '',
@@ -222,14 +215,22 @@ export default {
         address: '',
         start_date: '',
         end_date: '',
-        number: '',
-        catgr_id: '',
+        catgr_id: 12,
         active: '',
+        cover: '',
         brief: ''
       },
       extraForm: {
       },
       addedExtraProperties: []
+    }
+  },
+  watch: {
+    extraPropertyChecked (newVal, oldVal) {
+      this.showExtraInput = !this.showExtraInput
+      if (newVal === true) {
+        this.getExtraPros()
+      }
     }
   },
   methods: {
@@ -263,6 +264,11 @@ export default {
       // TODO
       this.showMap = false
     },
+    toTrainingList () {
+      this.$router.push({
+        path: '/admin/training/index'
+      })
+    },
     deleteExtraPro (index, item) {
       let deleteItem
       this.chosenProperties.forEach((item, index) => {
@@ -282,7 +288,7 @@ export default {
       })
       this.activeProperties.splice(index, 1)
     },
-    addExtraPropertyValue(item) {
+    addExtraPropertyValue (item) {
       api.POST(config.activity.extraPropertyValueAdd, {
         key_id: item.key_id,
         label: item.value
@@ -316,12 +322,6 @@ export default {
 
       this.activeProperties.push(obj)
     },
-    togglteExtraProperty () {
-      this.showExtraInput = !this.showExtraInput
-      if (this.showExtraInput) {
-        this.getExtraPros()
-      }
-    },
     addExtraProperty () {
       api.POST(config.activity.extraPropertyAdd, {
         label: this.extraProperty,
@@ -331,7 +331,6 @@ export default {
         if (response.data.errcode === '0000') {
           this.addedExtraProperties.push(1)  // hacks
           let obj = {
-            activity_id: this.basicForm.catgr_id,
             key_id: response.data.data.id,
             label: this.extraProperty,
             value: '',
@@ -352,7 +351,7 @@ export default {
     },
     getExtraPros () {
       api.GET(config.activity.extraProperty, {
-        category_id: this.basicForm.catgr_id
+        category_id: this.categoryTrainingID
       })
       .then(response => {
         if (response.data.errcode === '0000') {
@@ -363,7 +362,7 @@ export default {
         this.$message.error(error)
       })
     },
-    onCreateActivity () {
+    onUpdateActivity () {
       this.basicForm.start_date = this.toTimestamp(this.basicForm.start_date)
       this.basicForm.end_date = this.toTimestamp(this.basicForm.end_date)
 
@@ -372,16 +371,16 @@ export default {
         ...this.form,
         ...this.basicForm
       }
-      api.POST(config.activity.add, data)
+      api.POST(config.training.update, data)
       .then(response => {
         if (response.data.errcode === '0000') {
           this.$notify({
             title: '成功',
             type: 'success',
-            message: '创建活动成功'
+            message: '修改活动成功'
           })
           this.$router.push({
-            path: '/admin/activity'
+            path: '/admin/training'
           })
         }
       })
@@ -404,43 +403,89 @@ export default {
       this.basicForm.brief = data
     },
     onFormChange (value) {
-      console.log('on form change')
-      console.log(this.form)
       this.form.stages[value.index] = value
     },
-    selectCategoty (value) {
+    getTrainingSteps () {
       api.GET(config.activity.activitySelectCatlg, {
-        category_id: value
+        category_id: this.categoryTrainingID
       })
       .then(response => {
         if (response.data.errcode === '0000') {
-          this.response = response.data.data
-          this.response.forEach((item, index) => {
-            const obj = {
-              id: item.id,
+          response.data.data.forEach((stage, index) => {
+            let obj = {
               index: index,
-              type_key: item.type_key,
+              id: stage.id,
+              type_key: stage.type_key,
               properties: []
             }
             this.form.stages.push(obj)
+
+            if (stage.properties.length) {
+              stage.properties.forEach(property => {
+                property.values = []
+              })
+            }
           })
+          this.response = response.data.data
+          this.getTrainingDetail(this.id)
         }
       })
       .catch(error => {
         this.$message.error(error)
       })
     },
-    getCategories () {
-      api.GET(config.activity.typeList)
+    showDetail (data) {
+      if (data.title) this.basicForm.title = data.title
+      if (data.address) this.basicForm.address = data.address
+      if (data.start_date) this.basicForm.start_date = data.start_date
+      if (data.end_date) this.basicForm.end_date = data.end_date
+      if (data.brief) this.basicForm.brief = data.brief
+      if (data.active) this.basicForm.active = data.active === 1
+      if (data.cover) this.basicForm.cover = data.cover
+      if (data.exts.length) {
+        this.extraPropertyChecked = true
+        data.exts.forEach(item => {
+          let obj = {
+            key_id: item.key.id,
+            label: item.key.label,
+            value: item.value.label,
+            values: [item.value.id]
+          }
+          this.activeProperties.push(obj)
+        })
+      }
+      let attributes = []
+      data.category.stages.forEach(stage => {
+        if (stage.attributes.length) {
+          stage.attributes.forEach(attribute => {
+            attributes.push(attribute)
+          })
+        }
+      })
+      this.response.forEach(stage => {
+        if (stage.properties.length) {
+          stage.properties.forEach(property => {
+            const typeKey = property.type_key
+            attributes.forEach(attribute => {
+              if (typeKey === attribute.attr_key) {
+                property.values.push({
+                  key: attribute.attr_key,
+                  value: attribute.attr_value
+                })
+              }
+            })
+          })
+        }
+      })
+      this.stages = this.response
+    },
+    getTrainingDetail (id) {
+      api.GET(config.training.detail, {
+        id: id
+      })
       .then(response => {
         if (response.data.errcode === '0000') {
-          response.data.data.data.forEach(item => {
-            let object = {
-              title: item.title,
-              category_id: item.id
-            }
-            this.categories.push(object)
-          })
+          this.showDetail(response.data.data)
         }
       })
       .catch(error => {
@@ -449,7 +494,8 @@ export default {
     }
   },
   mounted () {
-    this.getCategories()
+    this.getTrainingSteps()
+    this.getExtraPros()
   }
 }
 </script>
@@ -475,6 +521,26 @@ export default {
 }
 .activity-extraForm .el-select {
   width: 20rem;
+}
+.image-upload-container {
+  width: 178px;
+  height: 178px;
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.image-upload-container:hover {
+  border-color: #20a0ff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
 }
 .active-extra-property {
   margin-top: 1rem;

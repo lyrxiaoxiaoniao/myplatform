@@ -75,6 +75,7 @@ import SCActivitiAdd from 'components/views/activity/Add'
 import SCTrainingList from 'components/views/training/List'
 import SCTrainingPublish from 'components/views/training/Publish'
 import SCTrainingCategory from 'components/views/training/Category'
+import SCTrainingEdit from 'components/views/training/Edit'
 
 import SCFileResource from 'components/views/fileresource/FileTable.vue'
 
@@ -92,6 +93,9 @@ import SCTutorialManage from 'components/views/tutorial/Manage.vue'
 import SCTutorialCategory from 'components/views/tutorial/Category.vue'
 import SCTutorialTrash from 'components/views/tutorial/Trash.vue'
 import SCTutorialSetting from 'components/views/tutorial/Setting.vue'
+import SCTutorialComment from 'components/views/tutorial/Comment.vue'
+import SCTutorialRankMange from 'components/views/tutorial/RankManage.vue'
+import SCTutorialPublish from 'components/views/tutorial/Publish.vue'
 
 import SCTeam from './components/views/team/Team.vue'
 import SCTeamDetail from './components/views/team/TeamDetail.vue'
@@ -512,7 +516,12 @@ const routes = [
           path: 'category',
           component: SCTrainingCategory,
           name: '培训分类管理',
-          meta: { description: '列表' }
+          meta: { description: '分类' }
+        }, {
+          path: 'edit',
+          component: SCTrainingEdit,
+          name: '培训信息修改',
+          meta: { description: '培训详细信息' }
         }]
       }, {
         path: 'userlabelmanage',
@@ -705,6 +714,21 @@ const routes = [
           component: SCTutorialSetting,
           name: '线上课堂系统配置',
           meta: {description: '修改系统配置信息'}
+        }, {
+          path: 'rank',
+          component: SCTutorialRankMange,
+          name: '课程评价打分管理',
+          meta: {description: '查看课程的详细评价打分'}
+        }, {
+          path: 'comment',
+          component: SCTutorialComment,
+          name: '课程评论信息',
+          meta: {description: '查看课程的详细信息'}
+        }, {
+          path: 'publish',
+          component: SCTutorialPublish,
+          name: '新增课程',
+          meta: {description: '发布新的课程'}
         }]
       }
     ]

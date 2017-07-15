@@ -22,7 +22,7 @@
         </el-table-column>
         <el-table-column prop="title" label="活动名称"></el-table-column>
         <el-table-column prop="category.title" label="活动类型" width="120px"></el-table-column>
-        <el-table-column prop="brief" label="活动描述"></el-table-column>
+        <el-table-column class="table-column-max-height" prop="brief" label="活动描述"></el-table-column>
         <el-table-column label="创建时间" width="150px">
           <template scope="scope">
             {{ scope.row.created_at | toDateTime }}
@@ -158,5 +158,9 @@ export default {
   margin-bottom: 5px;
   width: 56px;
   height: 56px;
+}
+.table-column-max-height {
+  max-height: 100px;
+  overflow-y: hidden;
 }
 </style>

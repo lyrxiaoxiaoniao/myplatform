@@ -7,23 +7,19 @@
       <i :class="model.icon"></i>
       <span class="treeview-display-name">{{ model.displayName }}</span>
       <span class="pull-right-container">
-          <i class="fa fa-angle-left fa-fw pull-right" v-show="isFolder"></i>
+        <i class="fa fa-angle-left fa-fw pull-right" v-show="isFolder"></i>
       </span>
     </a>
     <router-link class="sidebar-routes" v-if="!isFolder" :to="{ path: model.url }">
       <i :class="model.icon"></i>
-      <span class="treeview-display-name">{{ model.displayName }}</span>
+      <span class="page treeview-display-name">{{ model.displayName }}</span>
       <span class="pull-right-container">
           <i class="fa fa-angle-left fa-fw pull-right" v-show="isFolder"></i>
       </span>
     </router-link>
     <ul class="treeview-menu" v-if="isFolder">
-      <template v-for="item in model.children" v-if="(model.children && model.children.length)">
-        <li>
-          <router-link :to="{ path: item.url }">
-            <sidebar-menu class="siderbar-menu-item" :model="item"/>
-          </router-link>
-        </li>
+      <template v-for="item in model.children" v-if="(model.children && model.children.length > 0)">
+        <sidebar-menu class="siderbar-menu-item" :model="item"/>
       </template>
     </ul>
   </li>
@@ -58,6 +54,8 @@ export default {
         this.showopen = !this.showopen
       }
     }
+  },
+  mounted () {
   }
 }
 </script>
@@ -73,7 +71,10 @@ export default {
   }
 
   .treeview-display-name {
-    margin-left: 5px;
+    z-index: 1;
+    height: 100%;
+    width: 100%;
+    font-size: 12px;
   }
 
   .sidebar-menu > .pageLink > ul {
@@ -146,6 +147,14 @@ export default {
 
   .fa-mobile {
     font-size: 20px;
+  }
+
+  .router-link-active .treeview-display-name {
+    color: white;
+  }
+
+  .router-link-active .iconfont {
+    color: white;
   }
 
 </style>

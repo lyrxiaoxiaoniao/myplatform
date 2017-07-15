@@ -29,7 +29,7 @@
           label="操作"
           >
           <template scope="scope">
-            <el-button size="small" icon="edit"></el-button>
+            <el-button @click="onEdit(scope.row.id)" size="small" icon="edit"></el-button>
             <el-button @click="onDetail(scope.row.id)" size="small" icon="information"></el-button>
             <el-button @click="onDelete(scope.row.id)" size="small" icon="delete2"></el-button>
           </template>
@@ -77,6 +77,27 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        api.POST(config.training.delete, {
+          id: id
+        })
+        .then(response => {
+          if (response.data.errcode === '0000') {
+            this.$notify({
+              title: '成功',
+              message: '删除成功',
+              type: 'success'
+            })
+          }
+          const data = {
+            pageSize: this.response.pageSize,
+            currentPage: this.response.currentPage,
+            ...this.form
+          }
+          this.getList(data)
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
       })
       .catch(error => {
         this.$message.error(error)
@@ -85,6 +106,14 @@ export default {
     addActivity () {
       this.$router.push({
         path: '/admin/training/publish'
+      })
+    },
+    onEdit (id) {
+      this.$router.push({
+        path: '/admin/training/edit',
+        query: {
+          id: id
+        }
       })
     },
     onDetail (id) {

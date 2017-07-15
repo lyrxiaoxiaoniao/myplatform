@@ -31,7 +31,7 @@ export default {
 
 <style>
 .kobe-image-pane-info {
-  max-width: 20rem;
+  max-height: 25rem;
   text-align: center;
 }
 </style>

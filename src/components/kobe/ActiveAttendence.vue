@@ -61,6 +61,7 @@
           <el-row type="flex" justify="space-between">
             <el-select
               placeholder="请选择"
+              @change="onSelectChange(index)"
               v-model="obj.validate_time">
               <el-option
                 v-for="value in options"
@@ -79,7 +80,7 @@
 
 <script>
 export default {
-  // active attendence toggle card
+  // attendence time setting toggle card
   // used for kobe active attendence
   name: 'kobe-active-attendence',
   props: {
@@ -108,8 +109,21 @@ export default {
       }, {
         label: '两小时',
         value: '两小时'
-      }],
-      form: []
+      }]
+    }
+  },
+  computed: {
+    form () {
+      const data = this.data.data[0]
+      const obj = [{
+        id: data.id,
+        index: data.index,
+        type_key: data.type_key,
+        options: [{
+          title: this.toggleSwitch ? 1 : 0
+        }]
+      }]
+      return obj
     }
   },
   methods: {
@@ -121,6 +135,19 @@ export default {
         type_key: obj.type_key,
         options: [{
           title: this.toggleSwitch ? 1 : 0
+        }]
+      }
+      this.form[index] = item
+      this.$emit('attendence', this.form)
+    },
+    onSelectChange (index) {
+      const obj = this.data.data[index]
+      let item = {
+        id: obj.id,
+        index: index,
+        type_key: obj.type_key,
+        options: [{
+          title: JSON.stringify(this.timeRange)
         }]
       }
       this.form[index] = item
@@ -173,9 +200,52 @@ export default {
       if (!time) return ''
       const date = new Date(time).getTime()
       return date
+    },
+    init () {
+      this.data.data.forEach((item, index) => {
+        if (item.values && item.values.length) {
+          const key = item.values[0].key
+          const value = item.values[0].value
+          switch (key) {
+            case 'activity_property_attendence':
+              if (value === 1 || value === '1') {
+                this.toggleSwitch = true
+              } else {
+                this.toggleSwitch = false
+              }
+              let obj = {
+                id: item.id,
+                index: item.index,
+                type_key: item.type_key,
+                options: [{
+                  title: this.toggleSwitch ? 1 : 0
+                }]
+              }
+              this.form[index] = obj
+              break
+            case 'activity_property_attendence_info':
+              const arr = JSON.parse(value)
+              this.timeRange = [
+                ...arr
+              ]
+              let data = {
+                id: item.id,
+                index: item.index,
+                type_key: item.type_key,
+                options: [{
+                  title: JSON.stringify(this.timeRange)
+                }]
+              }
+              this.form[index] = data
+              break
+          }
+        }
+      })
+      this.$emit('attendence', this.form)
     }
   },
   mounted () {
+    this.init()
   }
 }
 </script>
