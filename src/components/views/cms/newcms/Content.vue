@@ -14,10 +14,22 @@
         <div slot="kobe-table-header" class="kobe-table-header">
           <el-row type="flex" justify="end">
             <el-col :span="14">
-              <el-button @click="openDialog" type="primary">添加子分类</el-button>
-              <el-button type="primary">修改属性</el-button>
-              <el-button type="primary">更多操作</el-button>
+              <el-button @click="openDialog" type="primary">添加栏目</el-button>
               <el-button type="primary">刷新</el-button>
+              <el-select v-model="operation" placeholder="批量" style="width:150px;" @change="open3">
+                <el-option label="移动" value="移动"></el-option>
+                <el-option label="删除" value="删除"></el-option>
+                <el-option label="复制" value="复制"></el-option>
+                <el-option label="审核" value="审核"></el-option>
+                <el-option label="通知" value="通知"></el-option>
+                <el-option label="提交" value="提交"></el-option>
+                <el-option label="推送至专题" value="推送至专题"></el-option>
+                <el-option label="保存固顶" value="保存固顶"></el-option>
+                <el-option label="推送到微信" value="推送到微信"></el-option>
+                <el-option label="群发微信通知" value="群发微信通知"></el-option>
+                <el-option label="归档" value="归档"></el-option>
+                <el-option label="出档" value="出档"></el-option>
+              </el-select>
             </el-col>
             <el-select v-model="form.value" placeholder="所有信息" style="width:120px;">
               <el-option
@@ -32,7 +44,8 @@
                 <el-button slot="append" @click="onSearch" icon="search"></el-button>
               </el-input>
             </el-col>
-            <el-button icon="upload2" type="primary" style="margin-left:10px;"></el-button>
+            <el-button @click="showDialog = true" icon="search" type="primary" style="margin-left:10px;">高级</el-button>
+            <el-button icon="upload2" type="primary"></el-button>
             <el-button icon="setting" type="primary"></el-button>
           </el-row>
         </div>
@@ -46,14 +59,10 @@
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="ID" width="50"></el-table-column>
             <el-table-column prop="title" label="栏目名称" width="120"></el-table-column>
-            <el-table-column prop="type_key" label="图片" width="130">
-              <template scope="scope">
-                <img width="100%" :src="scope.row.logo" @click="bigImg(scope.row.logo)" alt="">
-              </template>
-            </el-table-column>
+            <el-table-column prop="type_key" label="访问路径" width="130"></el-table-column>
             <el-table-column prop="brief" label="创建时间"></el-table-column>
             <el-table-column prop="sort" label="顺序" width="80"></el-table-column>
-            <el-table-column label="启用" width="80">
+            <el-table-column label="显示" width="80">
               <template scope="scope">
                 <el-switch
                   v-model="scope.row.state"
@@ -91,52 +100,76 @@
         </div>
       </kobe-table>
     </div>
-    <el-dialog v-model="dialogVisible" size="tiny">
-      <img width="100%" :src="dialogImageUrl" alt="">
-    </el-dialog>
-    <el-dialog :title="dialogTitle" v-model="showDialog" size="tiny">
-      <el-form :model="classData" label-width="80px">
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="上级分类">
-              <el-cascader
-                :options="options"
-                v-model="classData.selectedOptions"
-                @change="handleChange"
-                style="width:100%;">
-              </el-cascader>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="分类名称">
-              <el-input v-model="classData.explain"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="分类排序">
-              <el-input-number v-model="classData.num1"></el-input-number>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="是否启用">
-              <el-switch
-                v-model="classData.state"
-                on-text="开"
-                off-text="关">
-              </el-switch>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="分类说明">
-              <el-input type="textarea" v-model="classData.explain"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row> 
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-          <el-button @click="showDialog = false">取消</el-button>
-          <el-button>确定</el-button>
-      </div>
+    <el-dialog title="高级搜索" v-model="showDialog" size="tiny">
+        <el-form :model="classData" label-width="80px">
+            <el-row>
+                <el-col :span="24">
+                    <el-form-item label="关键字">
+                        <el-input v-model="classData.explain"></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                    <el-form-item label="栏目">
+                        <el-select v-model="classData.region" placeholder="请选择活动区域" style="width:100%;">
+                            <el-option label="区域一" value="shanghai"></el-option>
+                            <el-option label="区域二" value="beijing"></el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                    <el-form-item label="发布时间">
+                        <el-col :span="11">
+                            <el-date-picker type="datetime" placeholder="选择开始时间" v-model="classData.date1" style="width: 100%;"></el-date-picker>
+                        </el-col>
+                        <el-col class="line" :span="2">~~</el-col>
+                        <el-col :span="11">
+                            <el-date-picker type="datetime" placeholder="选择结束时间" v-model="classData.date2" style="width: 100%;"></el-date-picker>
+                        </el-col>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                    <el-form-item label="文章状态">
+                        <el-select v-model="classData.region" placeholder="请选择活动区域" multiple style="width:100%;">
+                            <el-option
+                                v-for="item in options"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                    <el-form-item label="文章类型">
+                        <el-select v-model="classData.region" placeholder="请选择活动区域" multiple style="width:100%;">
+                            <el-option
+                                v-for="item in options"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                    <el-form-item label="推荐固顶">
+                        <el-checkbox-group v-model="classData.type">
+                            <el-checkbox label="固顶文章" name="type"></el-checkbox>
+                            <el-checkbox label="推荐文章" name="type"></el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                    <el-form-item label="作者">
+                        <el-input v-model="classData.explain"></el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row> 
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="showDialog = false">取消</el-button>
+            <el-button type="primary">搜索</el-button>
+        </div>
     </el-dialog>
   </div>
 </template>
@@ -148,28 +181,42 @@ export default {
       multipleSelection: [],
       option: [{
         value: '1',
+        label: '所有信息'
+      }, {
+        value: '2',
         label: '栏目名称'
+      }, {
+        value: '3',
+        label: '访问路径'
       }],
       options: [{
-        value: 'zhinan',
-        label: '指南',
-        children: []
+        value: '1',
+        label: '草稿'
+      }, {
+        value: '2',
+        label: '待审核'
+      }, {
+        value: '3',
+        label: '已审核'
+      }, {
+        value: '4',
+        label: '退回'
       }],
       response: {
         data: null
       },
+      operation: '',
       classData: {
         selectedOptions: [],
         state: false,
-        num1: ''
+        num1: '',
+        region: '',
+        date1: '',
+        date2: '',
+        type: []
       },
       showDialog: false,
-      dialogVisible: false,
-      dialogImageUrl: '',
-      dialogTitle: '',
-      stepsSelection: [],
       tableData: null,
-      dialogType: '',
       form: {
         keyword: '',
         value: ''
@@ -177,10 +224,6 @@ export default {
     }
   },
   methods: {
-    bigImg (url) {
-      this.dialogImageUrl = url
-      this.dialogVisible = true
-    },
     // 树形结构选择
     handleChange (value) {
       console.log(value)
@@ -202,25 +245,6 @@ export default {
     handleSelectionChange (val) {
       this.multipleSelection = val
       console.log(this.multipleSelection)
-    },
-    // 模态框显示
-    openDialog (e, data = null, type = null) {
-      if (data !== null && type === 'edit') {
-        this.dialogType = 'edit'
-        this.dialogTitle = '修改分类'
-        // this.selected = {
-        //   ...this.selected,
-        //   ...data
-        // }
-        // this.getString(this.selected)
-      } else {
-        this.dialogType = 'add'
-        this.dialogTitle = '新增分类'
-        // Object.keys(this.selected).forEach(key => {
-        //   this.selected[key] = ''
-        // })
-      }
-      this.showDialog = true
     },
     // 删除表单
     deleteType (id) {
@@ -282,6 +306,23 @@ export default {
         title: '成功',
         message: string,
         type: 'success'
+      })
+    },
+    open3() {
+      this.$confirm('此操作将删除文章', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(({ value }) => {
+        this.$notify({
+          type: 'success',
+          message: '操作成功'
+        })
+      }).catch(() => {
+        this.$notify({
+          type: 'info',
+          message: '取消操作'
+        })
       })
     }
   },

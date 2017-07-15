@@ -80,6 +80,9 @@ import SCTrainingEdit from 'components/views/training/Edit'
 import SCFileResource from 'components/views/fileresource/FileTable.vue'
 
 import SCCommodity from 'components/views/produdcts/Commodity.vue'
+import SCOrder from 'components/views/produdcts/Order.vue'
+import SCSystemConfig from 'components/views/produdcts/SysConfig.vue'
+import SCOrderSet from 'components/views/produdcts/OrderSet.vue'
 
 import SCForm from './components/views/form/Form.vue'
 import SCFormDetail from './components/views/form/FormDetail.vue'
@@ -96,6 +99,10 @@ import SCTutorialPublish from 'components/views/tutorial/Publish.vue'
 
 import SCTeam from './components/views/team/Team.vue'
 import SCTeamDetail from './components/views/team/TeamDetail.vue'
+
+import SCNewcmsColumn from './components/views/cms/newcms/Column.vue'
+import SCNewcmsContent from './components/views/cms/newcms/Content.vue'
+import SCNewcmsSpecial from './components/views/cms/newcms/Special.vue'
 
 const routes = [
   {
@@ -586,11 +593,33 @@ const routes = [
         component: DashMainView,
         redirect: '/admin/goods/index',
         name: '商品管理',
-        meta: {description: '商品管理'},
+        meta: {description: '列表'},
         children: [{
           path: 'index',
           component: SCCommodity,
-          name: '商品',
+          name: '商品分类管理',
+          meta: {description: '列表'}
+        }, {
+          path: 'order',
+          component: DashMainView,
+          redirect: '/admin/goods/order/index',
+          name: '订单管理',
+          meta: {description: '列表'},
+          children: [{
+            path: 'index',
+            component: SCOrder,
+            name: '订单管理',
+            meta: {description: '列表'}
+          }, {
+            path: 'setting',
+            component: SCOrderSet,
+            name: '订单设置',
+            meta: {description: '修改订单处理配置信息'}
+          }]
+        }, {
+          path: 'system',
+          component: SCSystemConfig,
+          name: '系统配置',
           meta: {description: '列表'}
         }]
       }, {
@@ -613,6 +642,28 @@ const routes = [
           path: 'detail',
           component: SCFormDetail,
           name: '表单详情',
+          meta: {description: '列表'}
+        }]
+      }, {
+        path: 'newcms',
+        component: DashMainView,
+        redirect: '/admin/newcms/index',
+        name: 'cms信息管理',
+        meta: {description: '列表'},
+        children: [{
+          path: 'index',
+          component: SCNewcmsColumn,
+          name: '栏目管理',
+          meta: {description: '列表'}
+        }, {
+          path: 'content',
+          component: SCNewcmsContent,
+          name: '内容管理',
+          meta: {description: '列表'}
+        }, {
+          path: 'special',
+          component: SCNewcmsSpecial,
+          name: '专题管理',
           meta: {description: '列表'}
         }]
       }, {

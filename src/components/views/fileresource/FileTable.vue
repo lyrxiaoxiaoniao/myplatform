@@ -382,7 +382,6 @@ export default {
       var obj = {}
       obj.urls = this.localImgs.concat(this.netImgsURL)
       obj.parentId = this.parentId
-      // console.log(obj)
       api.POST(config.saveFilesAPI, obj)
       .then(response => {
         if (response.data.errcode === '0000') {
@@ -443,7 +442,6 @@ export default {
           api.POST(config.deleteFilesAPI, obj)
           .then(response => {
             if (response.data.errcode === '0000') {
-              console.log(response, 'test')
               this.getTreeData()
               this.showFileList({id: this.parentId})
               this.selectval = '1'
