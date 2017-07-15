@@ -22,10 +22,7 @@
         :label="item.title"
         v-if="item.type === 'number' && switchOn"
         >
-        <el-input-number
-          v-model="number"
-          @change="onNumberChange(index)"
-          >
+        <el-input-number v-model="number">
         </el-input-number>
       </el-form-item>
     </div>
@@ -64,22 +61,20 @@ export default {
   },
   watch: {
     number (newVal, oldVal) {
-    }
-  },
-  methods: {
-    onNumberChange (index) {
-      const obj = this.data.data[index]
+      const obj = this.data.data[1]
       let item = {
         id: obj.id,
         index: obj.index,
         type_key: obj.type_key,
         options: [{
-          title: this.number
+          title: newVal
         }]
       }
-      this.form[index] = item
+      this.form[1] = item
       this.$emit('rank', this.form)
-    },
+    }
+  },
+  methods: {
     onSwitchChange (index) {
       const obj = this.data.data[index]
       let item = {

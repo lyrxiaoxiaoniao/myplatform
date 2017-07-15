@@ -153,7 +153,7 @@
           @click="toTrainingList">
           培训列表
         </el-button>
-        <el-button type="primary" @click="onCreateActivity">提交</el-button>
+        <el-button type="primary" @click="onUpdateActivity">提交</el-button>
       </el-row>
     </div>
     <kobe-map-dialog
@@ -362,7 +362,7 @@ export default {
         this.$message.error(error)
       })
     },
-    onCreateActivity () {
+    onUpdateActivity () {
       this.basicForm.start_date = this.toTimestamp(this.basicForm.start_date)
       this.basicForm.end_date = this.toTimestamp(this.basicForm.end_date)
 
@@ -371,16 +371,16 @@ export default {
         ...this.form,
         ...this.basicForm
       }
-      api.POST(config.activity.add, data)
+      api.POST(config.training.update, data)
       .then(response => {
         if (response.data.errcode === '0000') {
           this.$notify({
             title: '成功',
             type: 'success',
-            message: '创建活动成功'
+            message: '修改活动成功'
           })
           this.$router.push({
-            path: '/admin/activity'
+            path: '/admin/training'
           })
         }
       })
@@ -411,7 +411,15 @@ export default {
       })
       .then(response => {
         if (response.data.errcode === '0000') {
-          response.data.data.forEach(stage => {
+          response.data.data.forEach((stage, index) => {
+            let obj = {
+              index: index,
+              id: stage.id,
+              type_key: stage.type_key,
+              properties: []
+            }
+            this.form.stages.push(obj)
+
             if (stage.properties.length) {
               stage.properties.forEach(property => {
                 property.values = []
