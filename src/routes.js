@@ -103,6 +103,8 @@ import SCTeamDetail from './components/views/team/TeamDetail.vue'
 import SCNewcmsColumn from './components/views/cms/newcms/Column.vue'
 import SCNewcmsContent from './components/views/cms/newcms/Content.vue'
 import SCNewcmsSpecial from './components/views/cms/newcms/Special.vue'
+import SCSysConfig from './components/views/cms/newcms/SystemConfig.vue'
+import SCInteraction from './components/views/cms/newcms/Interaction.vue'
 
 const routes = [
   {
@@ -664,6 +666,16 @@ const routes = [
           path: 'special',
           component: SCNewcmsSpecial,
           name: '专题管理',
+          meta: {description: '列表'}
+        }, {
+          path: 'sysconfig',
+          component: SCSysConfig,
+          name: '配置管理',
+          meta: {description: '列表'}
+        }, {
+          path: 'interact',
+          component: SCInteraction,
+          name: '互动管理',
           meta: {description: '列表'}
         }]
       }, {

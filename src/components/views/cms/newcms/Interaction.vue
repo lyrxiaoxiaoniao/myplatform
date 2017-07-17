@@ -4,16 +4,11 @@
         <div slot="kobe-table-header" class="kobe-table-header">
             <el-row type="flex" justify="end">
             <el-col :span="16">
-                <el-button type="primary" @click="openDialog">添加热词</el-button>
-                <el-button type="primary">刷新</el-button>
-                 <el-select v-model="operation" placeholder="批量" style="width:150px;" @change="open3">
-                    <el-option label="批量" value="批量"></el-option>
-                    <el-option label="删除" value="删除"></el-option>
-                </el-select>
+                <el-button type="primary" @click="openDialog(e, 'edit')">刷新</el-button>
             </el-col>
             <el-select v-model="operation" placeholder="所有" style="width:150px;" @change="open3">
                 <el-option label="所有" value="所有"></el-option>
-                <el-option label="专题名称" value="专题名称"></el-option>
+                <el-option label="词汇名称" value="词汇名称"></el-option>
             </el-select>
             <el-col :span="8">
                 <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
@@ -33,11 +28,11 @@
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column type="index" label="ID" width="50"></el-table-column>
-            <el-table-column prop="name" label="热词名称"></el-table-column>
-            <el-table-column prop="method" label="搜索次数"></el-table-column>
-            <el-table-column prop="action" label="排序"></el-table-column>
-            <!-- <el-table-column prop="accept_charset" label="是否推荐"></el-table-column> -->
-            <el-table-column label="是否推荐" width="120">
+            <el-table-column prop="name" label="文档标题"></el-table-column>
+            <el-table-column prop="method" label="评论内容"></el-table-column>
+            <el-table-column prop="action" label="用户/IP地址"></el-table-column>
+             <el-table-column prop="accept_charset" label="评论时间"></el-table-column> 
+            <el-table-column label="审核通过" width="120">
               <template scope="scope">
                 <el-switch
                   v-model="scope.row.state"
@@ -74,17 +69,45 @@
             </el-row>
         </div>
     </kobe-table>
-    <el-dialog :title="dialogTitle" v-model="showDialog">
-        <el-form :model="selected" label-width="120px" :rules="rules" ref="selected">
-          <el-form-item label="热词名称" prop="name" required>
-              <el-input placeholder="示例:专题名称" v-model="selected.name"></el-input>
-          </el-form-item>
-          <el-form-item label="热词排序" prop="action" required>
-              <el-input-number v-model="selected.method"></el-input-number>
-          </el-form-item>
-          <el-form-item label="是否推荐" prop="accept_charset">
-              <el-switch on-text="开" off-text="关" v-model="selected.accept_charset"></el-switch>
-          </el-form-item>
+    <el-dialog title="评论修改" v-model="showDialog" size="tiny">
+         <el-form :model="selected" label-width="80px" :rules="rules" ref="selected">
+            <el-row>
+                <el-col :span="24">
+                    <el-form-item label="文档">
+                        <el-input v-model="selected.explain"></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="审核通过" prop="accept_charset">
+                        <el-switch on-text="开" off-text="关" v-model="selected.accept_charset" style="margin-left:25px;"></el-switch>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="来源">
+                        <el-input v-model="selected.explain"></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="会员">
+                        <el-input v-model="selected.explain"></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="时间">
+                        <el-input v-model="selected.explain"></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                    <el-form-item label="评论">
+                        <el-input type="textarea" v-model="selected.explain"></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                    <el-form-item label="回复">
+                        <el-input type="textarea" v-model="selected.explain"></el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row> 
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button @click="closeDialog">取消</el-button>
@@ -120,7 +143,6 @@ export default {
       npm: [],
       error: null,
       showDialog: false,
-      dialogTitle: '',
       stepsSelection: [],
       tableData: null,
       dialogType: '',
@@ -181,22 +203,12 @@ export default {
     },
     // 模态框显示
     openDialog (e, data = null, type = null) {
+      /* eslint-disable */
       if (data !== null && type === 'edit') {
         this.dialogType = 'edit'
-        this.dialogTitle = '修改表单'
         this.selected = {
           ...this.selected,
           ...data
-        }
-      } else {
-        this.dialogType = 'add'
-        this.dialogTitle = '新增表单'
-        this.selected = {
-          method: '',
-          name: '',
-          action: '',
-          accept_charset: 'utf-8',
-          enctype: 'application/x-www-form-urlencoded'
         }
       }
       this.showDialog = true

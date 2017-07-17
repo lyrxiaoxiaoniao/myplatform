@@ -33,11 +33,11 @@
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column type="index" label="ID" width="50"></el-table-column>
-            <el-table-column prop="name" label="专题名称"></el-table-column>
-            <el-table-column prop="method" label="文章数"></el-table-column>
-            <el-table-column prop="action" label="排序"></el-table-column>
+            <el-table-column prop="name" label="标签名称"></el-table-column>
+            <el-table-column prop="method" label="文档数量"></el-table-column>
+            <el-table-column prop="action" label="创建时间"></el-table-column>
             <!-- <el-table-column prop="accept_charset" label="是否推荐"></el-table-column> -->
-            <el-table-column label="是否推荐" width="120">
+            <el-table-column label="是否有效" width="120">
               <template scope="scope">
                 <el-switch
                   v-model="scope.row.state"
@@ -79,7 +79,7 @@
           <el-form-item label="标签名称" prop="name" required>
               <el-input placeholder="示例:专题名称" v-model="selected.name"></el-input>
           </el-form-item>
-          <el-form-item label="是否推荐" prop="accept_charset">
+          <el-form-item label="是否有效" prop="accept_charset">
               <el-switch on-text="开" off-text="关" v-model="selected.accept_charset"></el-switch>
           </el-form-item>
         </el-form>

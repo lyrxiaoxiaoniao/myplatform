@@ -43,17 +43,17 @@
                 @row-dblclick="rowDbclick">
                 <el-table-column type="selection" width="55"></el-table-column>
                 <el-table-column prop="id" label="ID" width="50"></el-table-column>
-                <el-table-column prop="title" label="订单编号"></el-table-column>
-                <el-table-column prop="type_key" label="商品" width="150"></el-table-column>
-                <el-table-column prop="brief" label="买家手机号"></el-table-column>
-                <el-table-column prop="sort" label="成交金额" width="100"></el-table-column>
-                <el-table-column prop="sort" label="成交方式" width="100"></el-table-column>
-                <el-table-column prop="sort" label="订单时间" width="100"></el-table-column>
-                <el-table-column prop="sort" label="支付方式" width="100"></el-table-column>
-                <el-table-column prop="sort" label="物流方式" width="100"></el-table-column>
-                <el-table-column prop="sort" label="收货人" width="100"></el-table-column>
-                <el-table-column prop="sort" label="收货地址"></el-table-column>
-                <el-table-column prop="sort" label="状态" width="80"></el-table-column>
+                <el-table-column prop="orderNumber" label="订单编号"></el-table-column>
+                <el-table-column prop="goodsName" label="商品" width="150"></el-table-column>
+                <el-table-column prop="phone" label="买家手机号"></el-table-column>
+                <el-table-column prop="price" label="成交金额" width="100"></el-table-column>
+                <el-table-column prop="payWay" label="成交方式" width="100"></el-table-column>
+                <el-table-column prop="createdAt" label="订单时间" width="100"></el-table-column>
+                <el-table-column prop="payWay" label="支付方式" width="100"></el-table-column>
+                <el-table-column prop="freightWay" label="物流方式" width="100"></el-table-column>
+                <el-table-column prop="buyerName" label="收货人" width="100"></el-table-column>
+                <el-table-column prop="address" label="收货地址"></el-table-column>
+                <el-table-column prop="status" label="状态" width="80"></el-table-column>
             </el-table>
         </div>
         <div slot="kobe-table-footer" class="kobe-table-footer">
@@ -159,6 +159,8 @@
 </div>
 </template>
 <script>
+import config from 'src/config'
+import api from 'src/api'
 export default {
   data () {
     return {
@@ -217,7 +219,7 @@ export default {
     },
     // 双击行调用函数
     rowDbclick (row, e) {
-    //   window.alert(row, e)
+      console.log(row)
       this.showDialog = true
     },
     // 模态框显示
@@ -229,11 +231,6 @@ export default {
         //   ...data
         // }
         // this.getString(this.selected)
-      } else {
-        this.dialogType = 'add'
-        // Object.keys(this.selected).forEach(key => {
-        //   this.selected[key] = ''
-        // })
       }
       this.showDialog = true
     },
@@ -283,14 +280,15 @@ export default {
       this.getList(data)
     },
     getList (data = {}) {
-      console.log(1)
-      // api.GET(config.activity.typeList, data)
-      // .then(response => {
-      //   this.response = response.data.data
-      // })
-      // .catch(error => {
-      //   this.$message.error(error)
-      // })
+    //   mallOrderAPI
+      api.GET(config.mallOrderAPI, data)
+      .then(response => {
+        this.response = response.data.data
+        console.log(this.response)
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     },
     onSuccess (string) {
       this.$notify({

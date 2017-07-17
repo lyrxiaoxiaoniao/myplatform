@@ -76,17 +76,14 @@
     </kobe-table>
     <el-dialog :title="dialogTitle" v-model="showDialog">
         <el-form :model="selected" label-width="120px" :rules="rules" ref="selected">
-          <el-form-item label="专题名称" prop="name" required>
+          <el-form-item label="敏感词" prop="name" required>
               <el-input placeholder="示例:专题名称" v-model="selected.name"></el-input>
           </el-form-item>
-          <el-form-item label="专题排序" prop="action" required>
+          <el-form-item label="替换词" prop="action" required>
               <el-input-number v-model="selected.method"></el-input-number>
           </el-form-item>
-          <el-form-item label="是否推荐" prop="accept_charset">
+          <el-form-item label="是否有效" prop="accept_charset">
               <el-switch on-text="开" off-text="关" v-model="selected.accept_charset"></el-switch>
-          </el-form-item>
-          <el-form-item label="专题说明" prop="enctype">
-              <el-input type="textarea" placeholder="" v-model="selected.enctype"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">

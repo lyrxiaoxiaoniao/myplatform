@@ -47,6 +47,7 @@
               >
               <template scope="scope">
                 <el-button @click="toDetail(scope.row.id)" size="small" icon="information"></el-button>
+                <el-button @click="deleteId(scope.row.id)" size="small" icon="information"></el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -194,6 +195,15 @@ export default {
       }
       this.getList(data)
     },
+    // deleteId (id) {
+    //   api.POST(config.deleteTeamAPI, {id: id})
+    //   .then(response => {
+    //     this.data = response.data.data
+    //   })
+    //   .catch(error => {
+    //     this.$message.error(error)
+    //   })
+    // },
     getTree (data = {}) {
       // teamTreeAPI
       api.GET(config.teamTreeAPI, data)
