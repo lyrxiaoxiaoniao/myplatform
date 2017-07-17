@@ -603,7 +603,7 @@ const routes = [
           path: 'order',
           component: DashMainView,
           redirect: '/admin/goods/order/index',
-          name: '订单管理',
+          name: '订单',
           meta: {description: '列表'},
           children: [{
             path: 'index',

@@ -44,12 +44,12 @@
                             </el-col>
                             <el-col :span="12">
                                 <el-form-item label="所属行业:">
-                                    <p v-text="selected.industry.value ? selected.industry.value : '无'"></p>
+                                    <p v-text="selected.industry && selected.industry.value ? selected.industry.value : '无'"></p>
                                 </el-form-item>
                             </el-col>
                              <el-col :span="12">
                                 <el-form-item label="地区:">
-                                    <p v-text="selected.region ? selected.region.title : '无'"></p>
+                                    <p v-text="selected.region && selected.region.title ? selected.region.title : '无'"></p>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
@@ -71,27 +71,27 @@
                         <el-row>
                             <el-col :span="12">
                                 <el-form-item label="组织类型:">
-                                    <p v-text="selected.type.value ? selected.type.value : '无'"></p>
+                                    <p v-text="selected.type && selected.type.value ? selected.type.value : '无'"></p>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
                                 <el-form-item label="企业名称:">
-                                    <p v-text="selected.team_ext.org_name ? selected.team_ext.org_name : '无'"></p>
+                                    <p v-text="selected.team_ext && selected.team_ext.org_name ? selected.team_ext.org_name : '无'"></p>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
                                 <el-form-item label="组织代码:">
-                                    <p v-text="selected.team_ext.org_code ? selected.team_ext.org_code : '无'"></p>
+                                    <p v-text="selected.team_ext && selected.team_ext.org_code ? selected.team_ext.org_code : '无'"></p>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
                                 <el-form-item label="负责人:">
-                                    <p v-text="selected.team_ext.manager ? selected.team_ext.manager : '无'"></p>
+                                    <p v-text="selected.team_ext && selected.team_ext.manager ? selected.team_ext.manager : '无'"></p>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
                                 <el-form-item label="联系电话:">
-                                    <p v-text="selected.team_ext.mobile ? selected.team_ext.mobile : '无'"></p>
+                                    <p v-text="selected.team_ext && selected.team_ext.mobile ? selected.team_ext.mobile : '无'"></p>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12" v-show="selected.audited_at">
