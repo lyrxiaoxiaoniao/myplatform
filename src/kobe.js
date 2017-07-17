@@ -33,6 +33,11 @@ import ActiveAttendee from 'components/kobe/ActiveAttendee'
 import ActiveAttendence from 'components/kobe/ActiveAttendence'
 import ActiveAttendenceMode from 'components/kobe/ActiveAttendenceMode'
 import CategoryTree from 'components/kobe/CategoryTree'
+import TutorialUpload from 'components/kobe/tutorial/TutorialUpload'
+import TutorialCheck from 'components/kobe/tutorial/TutorialCheck'
+import TutorialType from 'components/kobe/tutorial/TutorialType'
+import PublishBasic from 'components/kobe/tutorial/PublishBasicForm'
+import TutorialCategory from 'components/kobe/tutorial/TutorialCategory'
 
 const install = (Vue) => {
   Vue.component('kobe-login', Login)
@@ -65,6 +70,11 @@ const install = (Vue) => {
   Vue.component('kobe-active-attendence', ActiveAttendence)
   Vue.component('kobe-active-attendence-mode', ActiveAttendenceMode)
   Vue.component('kobe-category-tree', CategoryTree)
+  Vue.component('kobe-tutorial-upload', TutorialUpload)
+  Vue.component('kobe-tutorial-check', TutorialCheck)
+  Vue.component('kobe-tutorial-type', TutorialType)
+  Vue.component('kobe-tutorial-publish-basic', PublishBasic)
+  Vue.component('kobe-tutorial-category', TutorialCategory)
 }
 
 export default install

@@ -9,34 +9,18 @@
 
     <el-row type="flex" class="sc-tutorial-publish-content">
       <el-col :span="6">
-        <el-card class="box-card">
+        <el-card class="box-card" v-if="response">
           <div slot="header" class="clearfix">
-            <span class="card-title">头图及属性</span>
+            <span class="card-title">{{ response[0].title }}</span>
           </div>
 
           <div>
-            <el-form label-width="80px">
-              <div class="img-upload-container">
-                <img src="" alt="">
-                <i class="el-icon-plus avatar-uploader-icon"></i>
-              </div>
-              <el-form-item label="课程类型">
-                <el-select></el-select>
-              </el-form-item>
-              <el-form-item label="主讲人">
-                <el-input></el-input>
-              </el-form-item>
-              <el-checkbox-group>
-                <el-row type="flex">
-                  <el-checkbox label="原创课程"></el-checkbox>
-                  <el-checkbox label="推荐本课程"></el-checkbox>
-                </el-row>
-                <el-row type="flex" justify="space-between">
-                  <el-checkbox label="置顶课程"></el-checkbox>
-                  <el-input-number size="small"></el-input-number>
-                </el-row>
-              </el-checkbox-group>
-            </el-form>
+            <kobe-tutorial-publish-basic
+              :data="response[0]"
+              :index="0"
+              @form-change="onFormChange"
+              >
+            </kobe-tutorial-publish-basic>
           </div>
         </el-card>
       </el-col>
@@ -45,16 +29,10 @@
         <el-tabs v-model="selectedTab">
           <el-tab-pane
             v-for="(item, index) in response"
+            v-if="response && index !== 0"
             :label="item.title"
             :name="index.toString()"
             >
-            <kobe-active-form
-              v-if="item.properties"
-              :data="item"
-              :index="index"
-              @form-change="onFormChange"
-              >
-            </kobe-active-form>
           </el-tab-pane>
         </el-tabs>
       </el-col>
@@ -74,7 +52,7 @@ export default {
       categoryID: 14,
       id: this.$route.query.id,
       type: this.$route.query.id ? 'edit' : 'add',
-      selectedTab: '',
+      selectedTab: '1',
       response: null
     }
   },
