@@ -114,7 +114,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="分类排序">
-              <el-input-number v-model="classData.num1"></el-input-number>
+              <el-input-number v-model="classData.num1" style="width:120px;"></el-input-number>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -307,4 +307,3 @@ export default {
     right: 0;
 }
 </style>
-
