@@ -13,7 +13,7 @@
             </el-col>
             <el-select v-model="operation" placeholder="所有" style="width:150px;" @change="open3">
                 <el-option label="所有" value="所有"></el-option>
-                <el-option label="专题名称" value="专题名称"></el-option>
+                <el-option label="词汇名称" value="词汇名称"></el-option>
             </el-select>
             <el-col :span="8">
                 <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
@@ -76,16 +76,13 @@
     </kobe-table>
     <el-dialog :title="dialogTitle" v-model="showDialog">
         <el-form :model="selected" label-width="120px" :rules="rules" ref="selected">
-          <el-form-item label="专题名称" prop="name" required>
+          <el-form-item label="来源名称" prop="name" required>
               <el-input placeholder="示例:专题名称" v-model="selected.name"></el-input>
           </el-form-item>
-          <el-form-item label="专题排序" prop="action" required>
-              <el-input-number v-model="selected.method"></el-input-number>
-          </el-form-item>
-          <el-form-item label="是否推荐" prop="accept_charset">
+          <el-form-item label="是否有效" prop="accept_charset">
               <el-switch on-text="开" off-text="关" v-model="selected.accept_charset"></el-switch>
           </el-form-item>
-          <el-form-item label="专题说明" prop="enctype">
+          <el-form-item label="来源说明" prop="enctype">
               <el-input type="textarea" placeholder="" v-model="selected.enctype"></el-input>
           </el-form-item>
         </el-form>

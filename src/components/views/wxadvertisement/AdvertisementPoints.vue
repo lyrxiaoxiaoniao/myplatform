@@ -50,7 +50,7 @@
               </el-switch>
             </template> 
           </el-table-column>
-	        <el-table-column label="操作" width="160">
+	        <el-table-column label="操作" width="170">
 	          <template scope="scope">
 	            <el-button size="small" icon="edit" @click="editData(scope.row.id)" title="修改"></el-button>
               <el-button size="small" icon="date" @click="onUpadv(scope.row.id)" title="上画"></el-button>
