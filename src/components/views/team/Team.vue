@@ -35,7 +35,7 @@
             <el-table-column prop="title" label="团队名称"></el-table-column>
             <el-table-column prop="logo" label="团队logo" width="150">
               <template scope="scope">
-                <img width="100%" :src="scope.row.logo" @click="bigImg(scope.row.logo)" alt="">
+                <img style="object-fit:cover;" :src="scope.row.logo" @click="bigImg(scope.row.logo)" alt="">
               </template>
             </el-table-column>
             <el-table-column prop="created_at" label="创建时间" width="250"></el-table-column>
@@ -54,7 +54,6 @@
         </div>
         <div slot="kobe-table-footer" class="kobe-table-footer">
           <el-row type="flex" justify="center">
-            <!-- <el-button type="text" style="color: #48576a; padding:5px 0;">删除</el-button> -->
             <el-col :span="12">
               <el-pagination
                 @size-change="handleSizeChange"

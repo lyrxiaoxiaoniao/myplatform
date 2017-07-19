@@ -83,6 +83,7 @@ import SCCommodity from 'components/views/produdcts/Commodity.vue'
 import SCOrder from 'components/views/produdcts/Order.vue'
 import SCSystemConfig from 'components/views/produdcts/SysConfig.vue'
 import SCOrderSet from 'components/views/produdcts/OrderSet.vue'
+import SCOrderDetail from 'components/views/produdcts/OrderDetail.vue'
 
 import SCForm from './components/views/form/Form.vue'
 import SCFormDetail from './components/views/form/FormDetail.vue'
@@ -617,6 +618,11 @@ const routes = [
             component: SCOrderSet,
             name: '订单设置',
             meta: {description: '修改订单处理配置信息'}
+          }, {
+            path: 'detail',
+            component: SCOrderDetail,
+            name: '订单详情',
+            meta: {description: '列出具体的订单详细信息'}
           }]
         }, {
           path: 'system',

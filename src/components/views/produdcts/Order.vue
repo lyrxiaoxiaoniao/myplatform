@@ -4,10 +4,13 @@
         <div slot="kobe-table-header" class="kobe-table-header">
             <el-row type="flex" justify="end">
             <el-col :span="14">
-                <el-button type="primary">更多操作</el-button>
                 <el-button type="primary">刷新</el-button>
+                <el-select v-model="classData.region" placeholder="更多操作">
+                    <el-option label="批量" value="1"></el-option>
+                    <el-option label="删除" value="2"></el-option>
+                </el-select>
             </el-col>
-            <el-select v-model="form.value" placeholder="全部物流" style="width:130px;">
+            <el-select v-model="form.logistics" placeholder="全部物流" style="width:130px;">
                 <el-option
                 v-for="item in option"
                 :key="item.value"
@@ -15,9 +18,9 @@
                 :value="item.value">
                 </el-option>
             </el-select>
-            <el-select v-model="form.value" placeholder="全部状态" style="width:130px;">
+            <el-select v-model="form.status" placeholder="全部状态" style="width:130px;">
                 <el-option
-                v-for="item in option"
+                v-for="item in option1"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value">
@@ -72,13 +75,6 @@
             </el-row>
         </div>
     </kobe-table>
-    <el-dialog title="订单详情" v-model="showDialog">
-        <span>123123</span>
-        <div slot="footer" class="dialog-footer">
-            <el-button @click="showDialog = false">取消</el-button>
-            <el-button type="primary">确定</el-button>
-        </div>
-    </el-dialog>
     <el-dialog title="高级搜索" v-model="searchDialog" size="tiny">
         <el-form :model="classData" label-width="80px">
             <el-row>
@@ -101,40 +97,54 @@
             <el-col :span="24">
                 <el-form-item label="订单类型">
                     <el-select v-model="classData.region" placeholder="请选择活动区域" style="width:100%;">
-                        <el-option label="区域一" value="shanghai"></el-option>
-                        <el-option label="区域二" value="beijing"></el-option>
+                        <el-option label="全部" value="1"></el-option>
+                        <el-option label="普通订单" value="2"></el-option>
+                        <el-option label="代付订单" value="3"></el-option>
+                        <el-option label="维权订单" value="4"></el-option>
+                        <el-option label="积分兑换订单" value="5"></el-option>
                     </el-select>
                 </el-form-item>
             </el-col>
             <el-col :span="12">
                 <el-form-item label="订单状态">
                     <el-select v-model="classData.region" placeholder="请选择活动区域">
-                        <el-option label="区域一" value="shanghai"></el-option>
-                        <el-option label="区域二" value="beijing"></el-option>
+                        <el-option label="全部状态" value="1"></el-option>
+                        <el-option label="待付款" value="2"></el-option>
+                        <el-option label="待发货" value="3"></el-option>
+                        <el-option label="已发货" value="4"></el-option>
+                        <el-option label="已完成" value="5"></el-option>
+                        <el-option label="已关闭" value="6"></el-option>
+                        <el-option label="退款中" value="7"></el-option>
                     </el-select>
                 </el-form-item>
             </el-col>
             <el-col :span="12">
                 <el-form-item label="物流方式">
                     <el-select v-model="classData.region" placeholder="请选择活动区域">
-                        <el-option label="区域一" value="shanghai"></el-option>
-                        <el-option label="区域二" value="beijing"></el-option>
+                        <el-option label="全部物流" value="1"></el-option>
+                        <el-option label="同城配送" value="2"></el-option>
+                        <el-option label="上门自提" value="3"></el-option>
+                        <el-option label="快递发货" value="4"></el-option>
                     </el-select>
                 </el-form-item>
             </el-col>
             <el-col :span="12">
                 <el-form-item label="维权状态">
                     <el-select v-model="classData.region" placeholder="请选择活动区域">
-                        <el-option label="区域一" value="shanghai"></el-option>
-                        <el-option label="区域二" value="beijing"></el-option>
+                        <el-option label="全部状态" value="1"></el-option>
+                        <el-option label="退款中" value="2"></el-option>
+                        <el-option label="退款结束" value="3"></el-option>
                     </el-select>
                 </el-form-item>
             </el-col>
             <el-col :span="12">
                 <el-form-item label="付款方式">
                     <el-select v-model="classData.region" placeholder="请选择活动区域">
-                        <el-option label="区域一" value="shanghai"></el-option>
-                        <el-option label="区域二" value="beijing"></el-option>
+                        <el-option label="全部" value="1"></el-option>
+                        <el-option label="微信支付" value="2"></el-option>
+                        <el-option label="支付宝支付" value="3"></el-option>
+                        <el-option label="上门现金" value="4"></el-option>
+                        <el-option label="积分兑换" value="5"></el-option>
                     </el-select>
                 </el-form-item>
             </el-col>
@@ -167,7 +177,41 @@ export default {
       multipleSelection: [],
       option: [{
         value: '1',
-        label: '栏目名称'
+        label: '全部物流'
+      }, {
+        value: '2',
+        label: '同城配送'
+      }, {
+        value: '3',
+        label: '上门自提'
+      }, {
+        value: '4',
+        label: '快递发货'
+      }],
+      option1: [{
+        value: '1',
+        label: '全部状态'
+      }, {
+        value: '2',
+        label: '待付款'
+      }, {
+        value: '3',
+        label: '待发货'
+      }, {
+        value: '4',
+        label: '已发货'
+      }, {
+        value: '4',
+        label: '已完成'
+      }, {
+        value: '4',
+        label: '已关闭'
+      }, {
+        value: '4',
+        label: '退款中'
+      }, {
+        value: '4',
+        label: '退款结束'
       }],
       options: [{
         value: 'zhinan',
@@ -184,14 +228,14 @@ export default {
         date1: '',
         date2: ''
       },
-      showDialog: false,
       searchDialog: false,
       stepsSelection: [],
       tableData: null,
       dialogType: '',
       form: {
         keyword: '',
-        value: ''
+        logistics: '',
+        status: ''
       }
     }
   },
@@ -220,19 +264,12 @@ export default {
     // 双击行调用函数
     rowDbclick (row, e) {
       console.log(row)
-      this.showDialog = true
-    },
-    // 模态框显示
-    openDialog (e, data = null, type = null) {
-      if (data !== null && type === 'edit') {
-        this.dialogType = 'edit'
-        // this.selected = {
-        //   ...this.selected,
-        //   ...data
+      this.$router.push({
+        path: '/admin/goods/order/detail'
+        // query: {
+        //   id: id
         // }
-        // this.getString(this.selected)
-      }
-      this.showDialog = true
+      })
     },
     // 删除表单
     deleteType (id) {

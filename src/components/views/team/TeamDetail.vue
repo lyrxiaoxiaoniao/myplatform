@@ -86,7 +86,7 @@
                             </el-col>
                             <el-col :span="12">
                                 <el-form-item label="负责人:">
-                                    <p v-text="selected.team_ext && selected.team_ext.manager ? selected.team_ext.manager : '无'"></p>
+                                    <p v-text="selected.team_ext && selected.team_ext.realname ? selected.team_ext.realname : '无'"></p>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
@@ -202,17 +202,17 @@
     <div class="TM-left">
         <div>
             <h4>团队logo</h4>
-            <a href="javascript:;"><img width="100%" :src="selected.logo" alt="" @click="bigImg(selected.logo)"></a>
+            <a href="javascript:;"><img style="object-fit:cover;" :src="selected.logo" alt="" @click="bigImg(selected.logo)"></a>
             <div class="TM-manager">
                 <span>创建人：</span>
-                <span v-text="selected.team_ext ? selected.team_ext.manager : ''"></span>
+                <span v-text="selected.team_ext && selected.team_ext.realname ? selected.team_ext.realname : '无'"></span>
             </div>
         </div>
         <div v-show="selected.status > 2 || selected.status === 1">
             <h4>认证照片信息</h4>
             <div class="TM-picture">
-                <a href="javascript:;"><img width="100%" :src="selected.team_ext && selected.team_ext.idcard ? selected.team_ext.idcard : ''" alt="" @click="getImgsURL"></a>
-                <a href="javascript:;"><img width="100%" :src="selected.team_ext && selected.team_ext.license ? selected.team_ext.license : ''" alt="" @click="getImgsURL"></a>
+                <a href="javascript:;"><img style="object-fit:cover;" :src="selected.team_ext && selected.team_ext.idcard ? selected.team_ext.idcard : ''" alt="" @click="getImgsURL"></a>
+                <a href="javascript:;"><img style="object-fit:cover;" :src="selected.team_ext && selected.team_ext.license ? selected.team_ext.license : ''" alt="" @click="getImgsURL"></a>
             </div>
         </div>
     </div>

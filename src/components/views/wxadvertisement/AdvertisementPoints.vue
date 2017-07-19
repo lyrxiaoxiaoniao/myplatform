@@ -61,7 +61,7 @@
 	    </div>
 	    <div class="sc-article-table-footer">
 	      <el-row type="flex" justify="center">
-          <el-button type="text" style="color: #48576a; padding:5px 0;" @click="onDeleteAdvertisement()">删除</el-button>
+          <el-button type="text" style="color: #48576a; padding:5px 0;" @click="onDeleteAdvertisement">删除</el-button>
 	        <el-col :span="12">
 	          <el-pagination
 	            @size-change="handleSizeChange"
