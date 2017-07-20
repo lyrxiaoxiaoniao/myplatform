@@ -2,7 +2,7 @@
   <div class="kobe-tutorial-upload">
     <div class="img-upload-container">
       <img v-if="url" :src="url" alt="cover">
-      <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+      <i v-else @click="openDialog" class="el-icon-plus avatar-uploader-icon"></i>
     </div>
     <kobe-upload-file
       title="上传头图"
@@ -21,6 +21,9 @@ export default {
   props: {
     data: {
       type: Object
+    },
+    index: {
+      type: Number
     }
   },
   data () {
@@ -30,10 +33,26 @@ export default {
     }
   },
   methods: {
+    openDialog () {
+      this.isShow = true
+    },
     onClose () {
       this.isShow = false
     },
     onConfirm (value) {
+      this.url = value[0]
+      let data = {
+        index: this.index,
+        data: {
+          id: this.data.id,
+          type_key: this.data.type_key,
+          options: [{
+            title: this.url
+          }]
+        }
+      }
+      this.isShow = false
+      this.$emit('upload', data)
     }
   },
   mounted () {

@@ -1,16 +1,22 @@
 <template>
-  <el-checkbox
-    @change="onChange"
-    v-model="checked"
-    >
-    {{ this.data.title }}
-  </el-checkbox>
+  <div :class="['kobe-tutorial-html', typeClass]">
+    <el-form-item :label="data.title">
+      <vue-html5-editor
+        :content="content"
+        @change="onChange"
+        >
+      </vue-html5-editor>
+    </el-form-item>
+  </div>
 </template>
 
 <script>
 export default {
-  name: 'kobe-tutorial-check',
+  name: 'kobe-tutorial-html',
   props: {
+    typeClass: {
+      type: String
+    },
     data: {
       type: Object
     },
@@ -20,24 +26,22 @@ export default {
   },
   data () {
     return {
-      checked: false
+      content: ''
     }
   },
   methods: {
-    init () {
-    },
-    onChange () {
+    onChange (value) {
       let data = {
         index: this.index,
         data: {
           id: this.data.id,
           type_key: this.data.type_key,
           options: [{
-            title: this.checked ? 1 : 0
+            title: value
           }]
         }
       }
-      this.$emit('check', data)
+      this.$emit('change', data)
     }
   },
   mounted () {

@@ -10,6 +10,7 @@
           v-if="item.type === 'upload'"
           :data="item"
           :index="index"
+          @upload="onChange"
           >
         </kobe-tutorial-upload>
         <kobe-tutorial-type
@@ -29,18 +30,21 @@
           v-if="item.type === 'checkbox-original'"
           :data="item"
           :index="index"
+          @check="onChange"
           >
         </kobe-tutorial-check>
         <kobe-tutorial-check
           v-if="item.type === 'checkbox-recommend'"
           :data="item"
           :index="index"
+          @check="onChange"
           >
         </kobe-tutorial-check>
         <kobe-tutorial-check
           v-if="item.type === 'checkbox-uppermost'"
           :data="item"
           :index="index"
+          @check="onChange"
           >
         </kobe-tutorial-check>
       </template>
@@ -77,10 +81,18 @@ export default {
     onChange (value) {
       this.form.properties[value.index] = value.data
       this.onFormChange()
+    },
+    onFormChange () {
+      const data = {
+        id: this.data.id,
+        index: this.index,
+        type_key: this.data.type_key,
+        ...this.form
+      }
+      this.$emit('form-change', data)
     }
   },
   mounted () {
-    console.log(this.data)
   }
 }
 </script>

@@ -36,8 +36,15 @@ import CategoryTree from 'components/kobe/CategoryTree'
 import TutorialUpload from 'components/kobe/tutorial/TutorialUpload'
 import TutorialCheck from 'components/kobe/tutorial/TutorialCheck'
 import TutorialType from 'components/kobe/tutorial/TutorialType'
-import PublishBasic from 'components/kobe/tutorial/PublishBasicForm'
+import TutorialPublishBasic from 'components/kobe/tutorial/PublishBasicForm'
 import TutorialCategory from 'components/kobe/tutorial/TutorialCategory'
+import TutorialPublish from 'components/kobe/tutorial/PublishForm'
+import TutorialTime from 'components/kobe/tutorial/TutorialTime'
+import TutorialHTML from 'components/kobe/tutorial/TutorialHTML'
+import TutorialMaterial from 'components/kobe/tutorial/TutorialMaterial'
+import TutorialSignin from 'components/kobe/tutorial/TutorialSignin'
+import TutorialAward from 'components/kobe/tutorial/TutorialAward'
+import TutorialTest from 'components/kobe/tutorial/TutorialTest'
 
 const install = (Vue) => {
   Vue.component('kobe-login', Login)
@@ -73,8 +80,15 @@ const install = (Vue) => {
   Vue.component('kobe-tutorial-upload', TutorialUpload)
   Vue.component('kobe-tutorial-check', TutorialCheck)
   Vue.component('kobe-tutorial-type', TutorialType)
-  Vue.component('kobe-tutorial-publish-basic', PublishBasic)
+  Vue.component('kobe-tutorial-publish-basic', TutorialPublishBasic)
   Vue.component('kobe-tutorial-category', TutorialCategory)
+  Vue.component('kobe-tutorial-publish-form', TutorialPublish)
+  Vue.component('kobe-tutorial-time', TutorialTime)
+  Vue.component('kobe-tutorial-html', TutorialHTML)
+  Vue.component('kobe-tutorial-material', TutorialMaterial)
+  Vue.component('kobe-tutorial-signin', TutorialSignin)
+  Vue.component('kobe-tutorial-award', TutorialAward)
+  Vue.component('kobe-tutorial-test', TutorialTest)
 }
 
 export default install
