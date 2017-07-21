@@ -8,7 +8,7 @@
       <template v-for="item, index in options">
         <div
           v-if="item.type === 'radio'"
-          :class="(index === 0 || index === 5) ? '': 'padding-left-5'"
+          :class="(item.type_key === 'activity_property_tutorial_pay' || item.type_key === 'activity_property_tutorial_senior_member') ? '': 'padding-left-5'"
           >
           <el-radio
             v-model="item.value"

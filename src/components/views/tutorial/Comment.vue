@@ -4,7 +4,7 @@
       <div slot="kobe-table-header" class="kobe-table-header">
         <el-row type="flex" justify="space-between">
           <el-col :span="16">
-            <el-button>刷新</el-button>
+            <el-button @click="onRefresh">刷新</el-button>
             <el-button>批量删除</el-button>
           </el-col>
           <el-select></el-select>  
@@ -137,6 +137,9 @@ export default {
       })
     },
     onEdit(item) {
+    },
+    onRefresh () {
+      this.getList()
     },
     handleSizeChange (value) {
       const data = {

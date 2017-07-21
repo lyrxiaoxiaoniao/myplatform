@@ -12,7 +12,7 @@
         <kobe-table v-if="response" class="sc-tutorial-manage-table">
           <div slot="kobe-table-header" class="kobe-table-header">
             <el-row type="flex">
-              <el-col :span="12">
+              <el-col :span="17">
                 <el-button type="primary" @click="onPublishTutorial">发布课程</el-button>
                 <el-button type="primary" @click="onRefresh">刷新</el-button>
                 <el-select clearable v-model="mutilAction" placeholder="批量操作">
@@ -24,7 +24,7 @@
                   </el-option>
                 </el-select>
               </el-col>
-              <el-col :span="8">
+              <el-col :span="6">
                 <el-input>
                   <el-button slot="append" icon="search"></el-button>
                 </el-input>
@@ -42,16 +42,22 @@
               <el-table-column prop="id" label="ID" width="80"></el-table-column>
               <el-table-column prop="title" label="课程名称"></el-table-column>
               <el-table-column prop="type" label="类型"></el-table-column>
-              <el-table-column label="创建时间">
+              <el-table-column label="创建时间" width="150">
                 <template scope="scope">
                   {{ scope.row.created_at | toDateTime }}
                 </template>
               </el-table-column>
               <el-table-column prop="click" label="点击"></el-table-column>
-              <el-table-column prop="author" label="主讲"></el-table-column>
+              <el-table-column prop="speaker" label="主讲"></el-table-column>
               <el-table-column label="状态">
                 <template scope="scope">
-                  <el-switch></el-switch>
+                  <el-switch
+                    on-text="开"
+                    off-text="关"
+                    v-model="scope.row.active"
+                    @change="onChangeSwitch(scope.row)"
+                    >
+                  </el-switch>
                 </template>
               </el-table-column>
               <el-table-column 
@@ -60,8 +66,8 @@
                 >
                 <template scope="scope">
                   <el-button @click="onEdit(scope.row)" size="small" icon="edit"></el-button>
-                  <el-button @click="onShow(scope.row)" size="small" icon="information"></el-button>
-                  <el-button @click="onDelete(scope.row)" size="small" icon="delete2"></el-button>
+                  <el-button @click="onShow(scope.row.id)" size="small" icon="information"></el-button>
+                  <el-button @click="onDelete(scope.row.id)" size="small" icon="delete2"></el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -177,14 +183,56 @@ export default {
     onRefresh () {
       this.getClassList()
     },
+    onChangeSwitch (data) {
+      api.POST(config.tutorial.toggleActive, {
+        ids: [data.id],
+        active: data.active === 1
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+        } else {
+          const data = {
+            pageSize: this.response.pageSize,
+            currentPage: this.response.currentPage,
+            ...this.advancedForm
+          }
+          this.getClassList(data)
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
     onPublishTutorial () {
       this.$router.push({
         path: '/admin/tutorial/publish'
       })
     },
-    onShow (value) {
+    onShow (id) {
+      this.$router.push({
+        path: '/admin/tutorial/info',
+        query: {
+          id: id
+        }
+      })
     },
     onDelete (value) {
+      this.$confirm('此操作将会删除选定的课程,课程将会进入课程回收站。是否继续删除？', '删除', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '删除成功'
+        })
+        const data = {
+          pageSize: this.response.pageSize,
+          currentPage: this.response.currentPage,
+          ...this.advancedForm
+        }
+        this.getClassList(data)
+      })
     },
     onEdit (value) {
     },
@@ -204,11 +252,39 @@ export default {
       }
       this.getClassList(data)
     },
+    transformData (data) {
+      let arr = []
+      data.forEach(item => {
+        let obj = {
+          ...item,
+          active: item.active === 1
+        }
+        item.attributes.forEach(attr => {
+          switch (attr.attr_key) {
+            case 'activity_property_tutorial_title':
+              obj.title = attr.attr_value
+              break
+            case 'activity_property_tutorial_content':
+              obj.content = attr.attr_value
+              break
+            case 'activity_property_tutorial_speaker':
+              obj.speaker = attr.attr_value
+              break
+            case 'activity_property_tutorial_digest':
+              obj.digest = attr.attr_value
+              break
+          }
+        })
+        arr.push(obj)
+      })
+      return arr
+    },
     getClassList (data = null) {
       api.GET(config.tutorial.class, data)
       .then(response => {
         if (response.data.errcode === '0000') {
           this.response = response.data.data
+          this.response.data = this.transformData(this.response.data)
         }
       })
       .catch(error => {
