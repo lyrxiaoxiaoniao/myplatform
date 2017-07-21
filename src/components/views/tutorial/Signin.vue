@@ -4,7 +4,7 @@
       <div slot="kobe-table-header" class="kobe-table-header">
         <el-row type="flex">
           <el-col :span="16">
-            <el-button type="primary">刷新</el-button>
+            <el-button @click="onRefresh" type="primary">刷新</el-button>
             <el-button type="primary">删除</el-button>
           </el-col>
           <el-col :span="8">
@@ -23,13 +23,13 @@
           >
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column prop="id" label="ID" width="80"></el-table-column>
-          <el-table-column prop="title" label="课程名称"></el-table-column>
+          <el-table-column prop="activity_info.title" label="课程名称"></el-table-column>
           <el-table-column prop="user" label="用户"></el-table-column>
           <el-table-column prop="mobile" label="手机"></el-table-column>
           <el-table-column prop="realname" label="真实姓名"></el-table-column>
-          <el-table-column prop="pay" label="支付方式"></el-table-column>
-          <el-table-column prop="rank" label="积分"></el-table-column>
-          <el-table-column prop="cash" label="现金"></el-table-column>
+          <el-table-column prop="pay.pay_way" label="支付方式"></el-table-column>
+          <el-table-column prop="pay.credit_price"; label="积分"></el-table-column>
+          <el-table-column prop="pay.price" label="现金"></el-table-column>
           <el-table-column label="报名时间">
             <template scope="scope">
               {{ scope.row.created_at | toDateTime }}
@@ -41,7 +41,7 @@
             label="操作"
             >
             <template scope="scope">
-              <el-button size="small" icon="delete2"></el-button>
+              <el-button @click="onSingleDelete(scope.row.id)" size="small" icon="delete2"></el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -75,16 +75,35 @@ export default {
   data () {
     return {
       error: null,
-      response: null
+      response: null,
+      form: {
+      }
     }
   },
   methods: {
+    onRefresh () {
+      this.getUserList()
+    },
+    onSingleDelete (id) {
+    },
     handleSizeChange (value) {
+      const data = {
+        pageSize: value,
+        currentPage: this.response.currentPage,
+        ...this.form
+      }
+      this.getUserList(data)
     },
     handleCurrentChange (value) {
+      const data = {
+        pageSize: this.response.pageSize,
+        currentPage: value,
+        ...this.form
+      }
+      this.getUserList(data)
     },
     getUserList (data = null) {
-      api.GET(config.tutorial.user, data)
+      api.GET(config.tutorial.attendee, data)
       .then(response => {
         if (response.data.errcode === '0000') {
           this.response = response.data.data
@@ -96,6 +115,7 @@ export default {
     }
   },
   mounted () {
+    this.getUserList()
   }
 }
 </script>

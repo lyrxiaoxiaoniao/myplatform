@@ -16,8 +16,11 @@
             <el-col :span="14">
               <el-button @click="openDialog" type="primary">添加子分类</el-button>
               <el-button type="primary">修改属性</el-button>
-              <el-button type="primary">更多操作</el-button>
-              <el-button type="primary">刷新</el-button>
+              <el-button @click="getList" type="primary">刷新</el-button>
+              <el-select @change="changeType(form.operation)" v-model="form.operation" placeholder="更多操作" style="width:150px;">
+                <el-option label="更多操作" value="更多操作"></el-option>
+                <el-option label="批量删除" value="批量删除"></el-option>
+            </el-select>
             </el-col>
             <el-select v-model="form.value" placeholder="所有信息" style="width:120px;">
               <el-option
@@ -45,26 +48,27 @@
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="ID" width="50"></el-table-column>
-            <el-table-column prop="title" label="栏目名称" width="120"></el-table-column>
+            <el-table-column prop="display_name" label="分类名称"></el-table-column>
             <el-table-column prop="type_key" label="图片" width="130">
               <template scope="scope">
                 <img width="100%" :src="scope.row.logo" @click="bigImg(scope.row.logo)" alt="">
               </template>
             </el-table-column>
-            <el-table-column prop="brief" label="创建时间"></el-table-column>
+            <el-table-column prop="created_at" label="创建时间"></el-table-column>
             <el-table-column prop="sort" label="顺序" width="80"></el-table-column>
-            <el-table-column label="启用" width="80">
+            <el-table-column label="启用" width="90">
               <template scope="scope">
                 <el-switch
-                  v-model="scope.row.state"
+                  style="width:60px;"
+                  v-model="scope.row.active"
                   on-text="开"
                   off-text="关"
-                  @change="toswitch(scope.row.state,scope.row.id)">
+                  @change="toswitch(scope.row.active,scope.row.id)">
                 </el-switch>
               </template>
             </el-table-column>
             <el-table-column 
-              width="100"
+              width="120"
               label="操作"
               >
               <template scope="scope">
@@ -95,73 +99,116 @@
       <img width="100%" :src="dialogImageUrl" alt="">
     </el-dialog>
     <el-dialog :title="dialogTitle" v-model="showDialog" size="tiny">
-      <el-form :model="classData" label-width="80px">
+      <el-form :model="classData" :rules="rules" ref="classData" label-width="80px">
         <el-row>
           <el-col :span="24">
-            <el-form-item label="上级分类">
+            <el-form-item label="上级分类" require>
               <el-cascader
-                :options="options"
-                v-model="classData.selectedOptions"
+                :options="cascaderData"
+                :props="props"
+                change-on-select
+                v-model="selectedOptions"
                 @change="handleChange"
                 style="width:100%;">
               </el-cascader>
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="分类名称">
-              <el-input v-model="classData.explain"></el-input>
+            <el-form-item label="分类名称" prop="display_name" require>
+              <el-input v-model="classData.display_name"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="分类排序">
-              <el-input-number v-model="classData.num1" style="width:120px;"></el-input-number>
+            <el-form-item label="分类排序" require>
+              <el-input-number v-model="classData.sort" style="width:120px;"></el-input-number>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="是否启用">
               <el-switch
-                v-model="classData.state"
+                v-model="classData.active"
                 on-text="开"
                 off-text="关">
               </el-switch>
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="分类说明">
-              <el-input type="textarea" v-model="classData.explain"></el-input>
+            <el-form-item label="分类说明" prop="description" require>
+              <el-input type="textarea" v-model="classData.description"></el-input>
+            </el-form-item>
+          </el-col>
+           <el-col :span="12">
+            <el-form-item label="分类ICON" prop="icon" require>
+              <el-upload
+                class="avatar-uploader"
+                :action="uploadURL"
+                :show-file-list="false"
+                :on-success="iconHandleAvatarSuccess"
+                :before-upload="beforeAvatarUpload">
+                <img v-if="icon" :src="icon" class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+            </el-form-item>
+          </el-col> 
+          <el-col :span="12">
+            <el-form-item label="分类图片" prop="logo" require>
+              <el-upload
+                class="avatar-uploader"
+                :action="uploadURL"
+                :show-file-list="false"
+                :on-success="handleAvatarSuccess"
+                :before-upload="beforeAvatarUpload">
+                <img v-if="logo" :src="logo" class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
             </el-form-item>
           </el-col>
         </el-row> 
       </el-form>
       <div slot="footer" class="dialog-footer">
           <el-button @click="showDialog = false">取消</el-button>
-          <el-button>确定</el-button>
+          <el-button @click="submitForm('classData')">确定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 <script>
+import config from 'src/config'
+import api from 'src/api'
 export default {
   data () {
     return {
       data: [],
+      defaultProps: {
+        children: 'children',
+        label: 'display_name'
+      },
+      cascaderData: [],
+      props: {
+        children: 'children',
+        label: 'display_name',
+        value: 'id'
+      },
+      uploadURL: config.serverURI + config.uploadFilesAPI,
       multipleSelection: [],
       option: [{
         value: '1',
         label: '栏目名称'
       }],
-      options: [{
-        value: 'zhinan',
-        label: '指南',
-        children: []
-      }],
       response: {
         data: null
       },
+      icon: '',
+      logo: '',
+      selectedOptions: [],
       classData: {
-        selectedOptions: [],
-        state: false,
-        num1: ''
+        parent_id: null,
+        display_name: '',
+        sort: '',
+        active: 1,
+        description: '',
+        logo: '',
+        icon: ''
       },
       showDialog: false,
       dialogVisible: false,
@@ -172,14 +219,103 @@ export default {
       dialogType: '',
       form: {
         keyword: '',
-        value: ''
+        value: '',
+        operation: ''
+      },
+      parentId: null,
+      ids: [],
+      rules: {
+        display_name: [
+          { required: true, message: '请输入分类名称', trigger: 'blur' }
+        ],
+        logo: [
+          { required: true, message: '请上传分类图片', trigger: 'change' }
+        ],
+        icon: [
+          { required: true, message: '请上传分类icon', trigger: 'change' }
+        ],
+        description: [
+          { required: true, message: '分类说明50字以内', trigger: 'blur' },
+          { min: 0, max: 50, message: '分类说明长度在50字以内', trigger: 'blur' }
+        ]
       }
     }
   },
   methods: {
+    // 将数据中所有的时间转换成 yyyy-mm-dd hh:mm:ss  state 状态值
+    transformDate (res) {
+      res.data.forEach(v => {
+        if (v.created_at) {
+          v.created_at = this.formatDate(v.created_at)
+        }
+        if (v.updated_at) {
+          v.updated_at = this.formatDate(v.updated_at)
+        }
+        if (v.active === 1) {
+          v.active = true
+        }
+        if (v.active === 0) {
+          v.active = false
+        }
+      })
+      return res
+    },
+    // 时间转换 毫秒转换成 yyyy-mm-dd hh:mm:ss
+    formatDate (value) {
+      let date = new Date(value)
+      let M = date.getMonth() + 1
+      M = M < 10 ? ('0' + M) : M
+      let d = date.getDate()
+      d = d < 10 ? ('0' + d) : d
+      // let h = date.getHours()
+      let m = date.getMinutes()
+      m = m < 10 ? ('0' + m) : m
+      let s = date.getSeconds()
+      s = s < 10 ? ('0' + s) : s
+      value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
+      return value
+    },
+    iconHandleAvatarSuccess(res, file) {
+      this.icon = window.URL.createObjectURL(file.raw)
+      this.classData.icon = res.data[0]
+    },
+    handleAvatarSuccess(res, file) {
+      this.logo = window.URL.createObjectURL(file.raw)
+      this.classData.logo = res.data[0]
+    },
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === 'image/jpeg'
+      const isLt2M = file.size / 1024 / 1024 < 2
+
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 JPG 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!')
+      }
+      return isJPG && isLt2M
+    },
     bigImg (url) {
       this.dialogImageUrl = url
       this.dialogVisible = true
+    },
+    changeType (val) {
+      if (val === '批量删除') {
+        this.deleteType()
+        this.form.operation = ''
+      } else {
+        this.form.operation = ''
+      }
+    },
+    toswitch (active, id) {
+      api.POST(config.activeCategoryAPI, {id: id, active: Number(active)})
+      .then(response => {
+        this.getList()
+        this.onSuccess('启用操作成功！')
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     },
     // 树形结构选择
     handleChange (value) {
@@ -188,7 +324,7 @@ export default {
     // 树形目录点击事件
     handleNodeClick (data, node) {
       this.parentId = data.id
-      this.showFileList({id: this.parentId})
+      this.getList({parent_id: this.parentId})
     },
     toggleSelection (rows) {
       if (rows) {
@@ -201,7 +337,10 @@ export default {
     },
     handleSelectionChange (val) {
       this.multipleSelection = val
-      console.log(this.multipleSelection)
+      this.ids = []
+      this.multipleSelection.forEach(v => {
+        this.ids.push(v.id)
+      })
     },
     // 模态框显示
     openDialog (e, data = null, type = null) {
@@ -222,23 +361,63 @@ export default {
       }
       this.showDialog = true
     },
+    submitForm (formName) {
+      console.log(this.classData)
+      this.classData.active = Number(this.classData.active)
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          var obj = {}
+          api.POST(config.createCategoryAPI, obj)
+            .then(response => {
+              if (response.status !== 200) {
+                this.error = response.statusText
+                return
+              }
+              if (response.data.errcode === '0000') {
+                this.onSuccess('创建成功')
+                this.getList()
+                this.showDialog = false
+              }
+            })
+        } else {
+          return false
+        }
+      })
+    },
     // 删除表单
     deleteType (id) {
+      if (id) {
+        this.ids = []
+        this.ids.push(id)
+      }
+      if (this.ids.length === 0) {
+        this.$confirm('请进行正确操作，请优先勾选表单？', '错误', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'error'
+        }).then(() => {
+          return
+        }).catch(() => {
+          return
+        })
+        return
+      }
       this.$confirm('是否确认删除该表单', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // api.POST(config.removeActivityFieldAPI, {
-        //   id: id
-        // })
-        // .then(response => {
-        //   if (response.data.errcode === '0000') {
-        //     this.onSuccess('删除成功')
-        //   } else {
-        //     this.$message.error('发生错误，请重试')
-        //   }
-        // })
+        api.POST(config.deleteCategoryAPI, {
+          ids: this.ids
+        })
+        .then(response => {
+          if (response.data.errcode === '0000') {
+            this.onSuccess('删除成功')
+            this.getList()
+          } else {
+            this.$message.error('发生错误，请重试')
+          }
+        })
       })
     },
     handleSizeChange (value) {
@@ -267,15 +446,40 @@ export default {
       }
       this.getList(data)
     },
+    iteration (obj) {
+      for (let key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          if (obj[key] instanceof Object) {
+            if (obj[key].length === 0) {
+              obj[key] = null
+            } else {
+              this.iteration(obj[key])
+            }
+          }
+        }
+      }
+    },
+    getTree () {
+      api.GET(config.categoryTreeAPI)
+      .then(response => {
+        var newData = response.data.data
+        this.iteration(newData)
+        this.data = newData
+        this.cascaderData = newData
+        console.log(this.cascaderData)
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
     getList (data = {}) {
-      console.log(1)
-      // api.GET(config.activity.typeList, data)
-      // .then(response => {
-      //   this.response = response.data.data
-      // })
-      // .catch(error => {
-      //   this.$message.error(error)
-      // })
+      api.GET(config.categoryIndexAPI, data)
+      .then(response => {
+        this.response = this.transformDate(response.data.data)
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     },
     onSuccess (string) {
       this.$notify({
@@ -286,6 +490,7 @@ export default {
     }
   },
   mounted () {
+    this.getTree()
     this.getList()
   }
 }
@@ -305,5 +510,28 @@ export default {
     position: absolute;
     top: 0;
     right: 0;
+}
+.avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+   border-color: #20a0ff;
+}
+.avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 140px;
+    height: 140px;
+    line-height: 178px;
+    text-align: center;
+}
+.avatar {
+    width: 140px;
+    height: 140px;
+    display: block;
 }
 </style>

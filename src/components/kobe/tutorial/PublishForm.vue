@@ -57,6 +57,7 @@
           v-if="item.type === 'award'"
           :data="item"
           :index="index"
+          @award="onAwardChange"
           >
         </kobe-tutorial-award>
         <kobe-tutorial-test
@@ -151,6 +152,14 @@ export default {
   methods: {
     onChange (value) {
       this.form.properties[value.index] = value.data
+      this.onFormChange()
+    },
+    onAwardChange (value) {
+      value.forEach(item => {
+        if (item) {
+          this.form.properties[item.index] = item.data
+        }
+      })
       this.onFormChange()
     },
     onMaterialChange (value) {

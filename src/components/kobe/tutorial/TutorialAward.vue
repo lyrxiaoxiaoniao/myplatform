@@ -20,10 +20,21 @@
         >
         <div>{{ index+1 }}. {{ item.title }}</div>
         <el-radio-group
-          v-model="item.value"
+          @change="onFreqChange(index)"
+          v-model="frequency"
+          v-if="index === 0"
           >
           <div v-for="(obj, sort) in item.options">
-            <el-radio label="index">{{ obj.title }}</el-radio>
+            <el-radio :label="obj.type_key">{{ obj.title }}</el-radio>
+          </div>
+        </el-radio-group>
+        <el-radio-group
+          @change="onQualifyChange(index)"
+          v-model="qualify"
+          v-if="index === 1"
+          >
+          <div v-for="(obj, sort) in item.options">
+            <el-radio :label="obj.type_key">{{ obj.title }}</el-radio>
           </div>
         </el-radio-group>
       </div>
@@ -41,20 +52,71 @@ export default {
   },
   data () {
     return {
-      toggleSwitch: true
+      controlIndex: '',
+      toggleSwitch: true,
+      frequency: '',
+      qualify: ''
     }
   },
   computed: {
     components () {
       let arr = []
-      this.data.data.forEach(item => {
+      this.data.data.forEach((item, index) => {
         item.value = ''
+        if (item.type === 'switch') {
+          this.controlIndex = index
+        }
         arr.push(item)
       })
       return arr
+    },
+    form () {
+      const data = this.data.data[this.controlIndex]
+      const item = [{
+        index: data.index,
+        data: {
+          id: data.id,
+          type_key: data.type_key,
+          options: [{
+            title: this.toggleSwitch ? 1 : 0
+          }]
+        }
+      }]
+
+      return item
     }
   },
   methods: {
+    onFreqChange (index) {
+      const data = this.data.data[index]
+      const item = [{
+        index: data.index,
+        data: {
+          id: data.id,
+          type_key: data.type_key,
+          options: [{
+            title: this.frequency
+          }]
+        }
+      }]
+      this.form[index] = item
+      this.$emit('award', this.form)
+    },
+    onQualifyChange (index) {
+      const data = this.data.data[index]
+      const item = [{
+        index: data.index,
+        data: {
+          id: data.id,
+          type_key: data.type_key,
+          options: [{
+            title: this.qualify
+          }]
+        }
+      }]
+      this.form[index] = item
+      this.$emit('award', this.form)
+    }
   },
   mounted () {
   }

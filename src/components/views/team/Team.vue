@@ -35,26 +35,25 @@
             <el-table-column prop="title" label="团队名称"></el-table-column>
             <el-table-column prop="logo" label="团队logo" width="150">
               <template scope="scope">
-                <img width="100%" :src="scope.row.logo" @click="bigImg(scope.row.logo)" alt="">
+                <img style="object-fit:cover;" :src="scope.row.logo" @click="bigImg(scope.row.logo)" alt="">
               </template>
             </el-table-column>
             <el-table-column prop="created_at" label="创建时间" width="250"></el-table-column>
             <el-table-column prop="number" label="成员" width="100"></el-table-column>
             <el-table-column prop="status" label="状态" width="150"></el-table-column>
             <el-table-column 
-              width="80"
+              width="120"
               label="操作"
               >
               <template scope="scope">
                 <el-button @click="toDetail(scope.row.id)" size="small" icon="information"></el-button>
-                <el-button @click="deleteId(scope.row.id)" size="small" icon="information"></el-button>
+                <el-button @click="deleteId(scope.row.id)" size="small" icon="delete2"></el-button>
               </template>
             </el-table-column>
           </el-table>
         </div>
         <div slot="kobe-table-footer" class="kobe-table-footer">
           <el-row type="flex" justify="center">
-            <!-- <el-button type="text" style="color: #48576a; padding:5px 0;">删除</el-button> -->
             <el-col :span="12">
               <el-pagination
                 @size-change="handleSizeChange"
@@ -195,15 +194,37 @@ export default {
       }
       this.getList(data)
     },
-    // deleteId (id) {
-    //   api.POST(config.deleteTeamAPI, {id: id})
-    //   .then(response => {
-    //     this.data = response.data.data
-    //   })
-    //   .catch(error => {
-    //     this.$message.error(error)
-    //   })
-    // },
+    deleteId (id) {
+      this.$confirm('是否确认删除该条数据', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        api.POST(config.deleteTeamAPI, {
+          id: id
+        })
+        .then(response => {
+          if (response.data.errcode === '0000') {
+            this.onSuccess('删除成功')
+          } else {
+            this.$message.error('发生错误，请重试')
+          }
+        })
+      })
+    },
+    onSuccess (string) {
+      this.$notify({
+        title: '成功',
+        message: string,
+        type: 'success'
+      })
+      const data = {
+        pageSize: this.response.pageSize,
+        currentPage: this.response.currentPage,
+        ...this.form
+      }
+      this.getList(data)
+    },
     getTree (data = {}) {
       // teamTreeAPI
       api.GET(config.teamTreeAPI, data)
