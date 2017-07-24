@@ -16,11 +16,11 @@
             <el-col :span="14">
               <el-button @click="openDialog" type="primary">添加子分类</el-button>
               <el-button type="primary">修改属性</el-button>
-              <el-button @click="getList" type="primary">刷新</el-button>
+              <el-button @click="getList()" type="primary">刷新</el-button>
               <el-select @change="changeType(form.operation)" v-model="form.operation" placeholder="更多操作" style="width:150px;">
                 <el-option label="更多操作" value="更多操作"></el-option>
                 <el-option label="批量删除" value="批量删除"></el-option>
-            </el-select>
+              </el-select>
             </el-col>
             <el-select v-model="form.value" placeholder="所有信息" style="width:120px;">
               <el-option
@@ -102,12 +102,12 @@
       <el-form :model="classData" :rules="rules" ref="classData" label-width="80px">
         <el-row>
           <el-col :span="24">
-            <el-form-item label="上级分类" require>
+            <el-form-item label="上级分类" prop="parent_id" require>
               <el-cascader
                 :options="cascaderData"
                 :props="props"
                 change-on-select
-                v-model="selectedOptions"
+                v-model="classData.parent_id"
                 @change="handleChange"
                 style="width:100%;">
               </el-cascader>
@@ -119,7 +119,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="分类排序" require>
+            <el-form-item label="分类排序" prop="sort" require>
               <el-input-number v-model="classData.sort" style="width:120px;"></el-input-number>
             </el-form-item>
           </el-col>
@@ -138,14 +138,14 @@
             </el-form-item>
           </el-col>
            <el-col :span="12">
-            <el-form-item label="分类ICON" prop="icon" require>
+            <el-form-item label="分类icon" prop="icon" require>
               <el-upload
                 class="avatar-uploader"
                 :action="uploadURL"
                 :show-file-list="false"
                 :on-success="iconHandleAvatarSuccess"
                 :before-upload="beforeAvatarUpload">
-                <img v-if="icon" :src="icon" class="avatar">
+                <img v-if="classData.icon" :src="classData.icon" class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
             </el-form-item>
@@ -158,7 +158,7 @@
                 :show-file-list="false"
                 :on-success="handleAvatarSuccess"
                 :before-upload="beforeAvatarUpload">
-                <img v-if="logo" :src="logo" class="avatar">
+                <img v-if="classData.logo" :src="classData.logo" class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
             </el-form-item>
@@ -200,16 +200,16 @@ export default {
       },
       icon: '',
       logo: '',
-      selectedOptions: [],
       classData: {
-        parent_id: null,
+        parent_id: [],
         display_name: '',
-        sort: '',
+        sort: null,
         active: 1,
         description: '',
         logo: '',
         icon: ''
       },
+      selectedOptions: [],
       showDialog: false,
       dialogVisible: false,
       dialogImageUrl: '',
@@ -228,11 +228,14 @@ export default {
         display_name: [
           { required: true, message: '请输入分类名称', trigger: 'blur' }
         ],
+        parent_id: [
+          { type: 'array', required: true, message: '请选择上级分类', trigger: 'change' }
+        ],
         logo: [
           { required: true, message: '请上传分类图片', trigger: 'change' }
         ],
         icon: [
-          { required: true, message: '请上传分类icon', trigger: 'change' }
+          { required: true, message: '请上传分类ICON', trigger: 'change' }
         ],
         description: [
           { required: true, message: '分类说明50字以内', trigger: 'blur' },
@@ -325,6 +328,7 @@ export default {
     handleNodeClick (data, node) {
       this.parentId = data.id
       this.getList({parent_id: this.parentId})
+      console.log(node)
     },
     toggleSelection (rows) {
       if (rows) {
@@ -345,28 +349,41 @@ export default {
     // 模态框显示
     openDialog (e, data = null, type = null) {
       if (data !== null && type === 'edit') {
+        console.log(data, 'qwe')
         this.dialogType = 'edit'
         this.dialogTitle = '修改分类'
-        // this.selected = {
-        //   ...this.selected,
-        //   ...data
-        // }
-        // this.getString(this.selected)
+        this.classData = {
+          ...this.classData,
+          ...data
+        }
+        this.classData.parent_id = []
+        if (data.parent) {
+          this.classData.parent_id.push(data.parent.id)
+        } else {
+          this.classData.parent_id.push(data.id)
+        }
       } else {
         this.dialogType = 'add'
         this.dialogTitle = '新增分类'
-        // Object.keys(this.selected).forEach(key => {
-        //   this.selected[key] = ''
-        // })
+        this.classData = {
+          parent_id: [],
+          display_name: '',
+          sort: null,
+          active: 1,
+          description: '',
+          logo: '',
+          icon: ''
+        }
       }
       this.showDialog = true
     },
     submitForm (formName) {
-      console.log(this.classData)
       this.classData.active = Number(this.classData.active)
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          var obj = {}
+          var obj = this.classData
+          obj.parent_id = this.classData.parent_id
+          obj.parent_id = obj.parent_id.pop()
           api.POST(config.createCategoryAPI, obj)
             .then(response => {
               if (response.status !== 200) {
@@ -376,6 +393,7 @@ export default {
               if (response.data.errcode === '0000') {
                 this.onSuccess('创建成功')
                 this.getList()
+                this.getTree()
                 this.showDialog = false
               }
             })
@@ -414,6 +432,7 @@ export default {
           if (response.data.errcode === '0000') {
             this.onSuccess('删除成功')
             this.getList()
+            this.getTree()
           } else {
             this.$message.error('发生错误，请重试')
           }
@@ -464,9 +483,9 @@ export default {
       .then(response => {
         var newData = response.data.data
         this.iteration(newData)
+        newData.push({ id: 0, display_name: '根级分类', label: '根级分类', value: 0 })
         this.data = newData
         this.cascaderData = newData
-        console.log(this.cascaderData)
       })
       .catch(error => {
         this.$message.error(error)
@@ -526,7 +545,7 @@ export default {
     color: #8c939d;
     width: 140px;
     height: 140px;
-    line-height: 178px;
+    line-height: 140px !important;
     text-align: center;
 }
 .avatar {

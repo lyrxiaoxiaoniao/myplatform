@@ -265,10 +265,10 @@ export default {
     rowDbclick (row, e) {
       console.log(row)
       this.$router.push({
-        path: '/admin/goods/order/detail'
-        // query: {
-        //   id: id
-        // }
+        path: '/admin/goods/order/detail',
+        query: {
+          id: row
+        }
       })
     },
     // 删除表单
