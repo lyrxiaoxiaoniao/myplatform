@@ -28,10 +28,22 @@
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column type="index" label="ID" width="50"></el-table-column>
-            <el-table-column prop="name" label="文档标题"></el-table-column>
-            <el-table-column prop="method" label="评论内容"></el-table-column>
-            <el-table-column prop="action" label="用户/IP地址"></el-table-column>
-            <el-table-column prop="accept_charset" label="评论时间"></el-table-column> 
+            <el-table-column prop="name" label="商品名称"></el-table-column>
+            <el-table-column prop="method" label="订单号"></el-table-column>
+            <el-table-column prop="action" label="用户"></el-table-column>
+            <el-table-column prop="accept_charset" label="手机/IP地址"></el-table-column> 
+            <el-table-column prop="accept_charset" label="真实姓名"></el-table-column>
+            <el-table-column prop="accept_charset" label="评分">
+              <el-rate
+                v-model="value5"
+                disabled
+                show-text
+                text-color="#ff9900"
+                text-template="{value}">
+              </el-rate>
+            </el-table-column>
+            <el-table-column prop="accept_charset" label="评价内容"></el-table-column>
+            <el-table-column prop="accept_charset" label="评价时间"></el-table-column>
             <el-table-column label="审核通过" width="120">
               <template scope="scope">
                 <el-switch
@@ -43,12 +55,11 @@
               </template>
             </el-table-column>
             <el-table-column 
-                width="170"
+                width="100"
                 label="操作"
                 >
                 <template scope="scope">
                 <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2" title="删除"></el-button>
-                <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit" title="修改"></el-button>
                 </template>
             </el-table-column>
             </el-table>

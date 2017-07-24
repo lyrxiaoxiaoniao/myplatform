@@ -1,6 +1,6 @@
 <template>
     <div class="OD-container">
-        <div style="width:480px;">
+        <div>
             <el-card class="box-card">
                 <div slot="header" class="clearfix">
                     <span style="line-height: 36px;font-size:18px;font-weight:600;">待发货</span>
@@ -33,7 +33,13 @@
                         <el-table-column prop="status" label="价格" width="150"></el-table-column>
                     </el-table>
                 </el-tab-pane>
-                <el-tab-pane label="物流信息" name="second">物流信息</el-tab-pane>
+                <el-tab-pane label="物流信息" name="second">
+                    <el-steps :space="50" direction="vertical" :active="1">
+                        <el-step title="步骤 3" icon="time"></el-step>
+                        <el-step title="步骤 2" icon="time"></el-step>
+                        <el-step title="步骤 1" icon="time"></el-step>
+                    </el-steps>
+                </el-tab-pane>
             </el-tabs>  
         </div>
     </div>
@@ -58,14 +64,13 @@ export default {
 <style scoped>
 .OD-container{
     padding: 1rem;
-    display: flex;
-    justify-content: flex-end;
+    min-width: 800px;
+    max-width: 1200px
 }
 .sendHeader{
     background-color: #fff;
 }
 .OD-right{
-    flex: 1;
     padding-left: 10px; 
 }
 .text {
@@ -86,6 +91,6 @@ export default {
 }
 
 .box-card {
-    width: 480px;
+    width: 100%;
 }
 </style>

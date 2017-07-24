@@ -80,6 +80,8 @@ import SCTrainingEdit from 'components/views/training/Edit'
 import SCFileResource from 'components/views/fileresource/FileTable.vue'
 
 import SCCommodity from 'components/views/produdcts/Commodity.vue'
+import SCProducts from 'components/views/produdcts/Products.vue'
+import SCInteract from 'components/views/produdcts/Interaction.vue'
 import SCOrder from 'components/views/produdcts/Order.vue'
 import SCSystemConfig from 'components/views/produdcts/SysConfig.vue'
 import SCOrderSet from 'components/views/produdcts/OrderSet.vue'
@@ -603,6 +605,16 @@ const routes = [
           component: SCCommodity,
           name: '商品分类管理',
           meta: {description: '列表'}
+        }, {
+          path: 'product',
+          component: SCProducts,
+          name: '商品管理信息',
+          meta: {description: '列表'}
+        }, {
+          path: 'interact',
+          component: SCInteract,
+          name: '互动管理',
+          meta: {description: '评价列表'}
         }, {
           path: 'order',
           component: DashMainView,
