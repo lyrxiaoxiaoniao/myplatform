@@ -128,75 +128,74 @@ export default {
       form: {
         properties: [
         ]
+      },
+      rankData: {
+        data: [],
+        type: 'rank'
+      },
+      certData: {
+        data: [],
+        type: 'cert'
+      },
+      signData: {
+        data: [],
+        type: 'sign'
+      },
+      attendeeData: {
+        data: [],
+        type: 'attendee'
+      },
+      attendenceData: {
+        data: [],
+        type: 'attendence'
+      },
+      attendenceModeData: {
+        data: [],
+        type: 'attendencemode'
       }
     }
   },
   computed: {
     // hacks for switch toggle component
     properties () {
-      let rankData = {
-        data: [],
-        type: 'rank'
-      }
-      let certData = {
-        data: [],
-        type: 'cert'
-      }
-      let signData = {
-        data: [],
-        type: 'sign'
-      }
-      let attendeeData = {
-        data: [],
-        type: 'attendee'
-      }
-      let attendenceData = {
-        data: [],
-        type: 'attendence'
-      }
-      let attendenceModeData = {
-        data: [],
-        type: 'attendencemode'
-      }
-      const datas = [
-        rankData,
-        certData,
-        signData,
-        attendeeData,
-        attendenceModeData,
-        attendenceData
-      ]
-
       let arr = []
       this.data.properties.forEach((item, index) => {
         if (item.type.startsWith('rank-')) {
           item.type = item.type.split('-')[1]
           item.index = index
-          rankData.data.push(item)
+          this.rankData.data.push(item)
         } else if (item.type.startsWith('cert-')) {
           item.type = item.type.split('-')[1]
           item.index = index
-          certData.data.push(item)
+          this.certData.data.push(item)
         } else if (item.type.startsWith('sign-')) {
           item.type = item.type.split('-')[1]
           item.index = index
-          signData.data.push(item)
+          this.signData.data.push(item)
         } else if (item.type.startsWith('attendee-')) {
           item.type = item.type.split('-')[1]
           item.index = index
-          attendeeData.data.push(item)
+          this.attendeeData.data.push(item)
         } else if (item.type.startsWith('attendence-')) {
           item.type = item.type.split('-')[1]
           item.index = index
-          attendenceData.data.push(item)
+          this.attendenceData.data.push(item)
         } else if (item.type.startsWith('attendencemode-')) {
           item.type = item.type.split('-')[1]
           item.index = index
-          attendenceModeData.data.push(item)
+          this.attendenceModeData.data.push(item)
         } else {
           arr.push(item)
         }
       })
+      const datas = [
+        this.rankData,
+        this.certData,
+        this.signData,
+        this.attendeeData,
+        this.attendenceModeData,
+        this.attendenceData
+      ]
 
       datas.forEach(item => {
         if (item.data.length) {

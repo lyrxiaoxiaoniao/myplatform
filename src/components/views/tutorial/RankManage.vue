@@ -2,12 +2,15 @@
   <div class="sc-tutorial-rank">
     <kobe-table v-if="response">
       <div slot="kobe-table-header" class="kobe-table-header">
-        <el-row type="flex">
-          <el-button>刷新</el-button>
-          <el-button>批量删除</el-button>
+        <el-row type="flex" justify="space-between">
+          <el-col :span="16">
+            <el-button>刷新</el-button>
+            <el-button>批量删除</el-button>
+          </el-col>
           <el-select></el-select>  
-          <el-input></el-input>
-          <el-button>搜索</el-button>
+          <el-col :span="4">
+            <el-input></el-input>
+          </el-col>
         </el-row>
       </div>
       <div slot="kobe-table-content" class="kobe-table">
@@ -102,6 +105,9 @@
 </template>
 
 <script>
+import api from 'src/api'
+import config from 'src/config'
+
 export default {
   name: 'sc-tutorial-rank',
   data () {
@@ -133,11 +139,32 @@ export default {
     },
     onEdit(item) {
     },
-    handleSizeChange () {
+    handleSizeChange (value) {
+      const data = {
+        pageSize: value,
+        currentPage: this.response.currentPage,
+        ...this.form
+      }
+      this.getList(data)
     },
-    handleCurrentChange () {
+    handleCurrentChange (value) {
+      const data = {
+        currentPage: value,
+        pageSize: this.response.pageSize,
+        ...this.form
+      }
+      this.getList(data)
     },
     getList (data = null) {
+      api.GET(config.tutorial.commentList, data)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.response = response.data.data
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     }
   },
   mounted () {

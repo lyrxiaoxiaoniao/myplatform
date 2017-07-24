@@ -99,6 +99,7 @@ import SCTutorialSetting from 'components/views/tutorial/Setting.vue'
 import SCTutorialComment from 'components/views/tutorial/Comment.vue'
 import SCTutorialRankMange from 'components/views/tutorial/RankManage.vue'
 import SCTutorialPublish from 'components/views/tutorial/Publish.vue'
+import SCTutorialInfo from 'components/views/tutorial/Info.vue'
 
 import SCTeam from './components/views/team/Team.vue'
 import SCTeamDetail from './components/views/team/TeamDetail.vue'
@@ -126,7 +127,7 @@ const routes = [
     children: [{
       path: 'index',
       component: DashMainView,
-      name: '光明安监首页'
+      name: '深传互动'
     }]
   }, {
     path: '/admin',
@@ -136,7 +137,7 @@ const routes = [
       {
         path: 'index',
         component: DashMainView,
-        name: '光明安监'
+        name: '深传互动'
       }, {
         // User Module
         path: 'user',
@@ -759,6 +760,11 @@ const routes = [
           component: SCTutorialPublish,
           name: '新增课程',
           meta: {description: '发布新的课程'}
+        }, {
+          path: 'info',
+          component: SCTutorialInfo,
+          name: '查看课程信息',
+          meta: {description: '查看课程的详细信息'}
         }]
       }
     ]

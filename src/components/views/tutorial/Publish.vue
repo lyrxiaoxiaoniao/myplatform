@@ -4,39 +4,23 @@
       <el-button>返回列表</el-button>
       <el-button>课程预览</el-button>
       <el-button>保存草稿</el-button>
-      <el-button>提交发布</el-button>
+      <el-button @click="onPublish">提交发布</el-button>
     </el-row>
 
     <el-row type="flex" class="sc-tutorial-publish-content">
       <el-col :span="6">
-        <el-card class="box-card">
+        <el-card class="box-card" v-if="response">
           <div slot="header" class="clearfix">
-            <span class="card-title">头图及属性</span>
+            <span class="card-title">{{ response[0].title }}</span>
           </div>
 
           <div>
-            <el-form label-width="80px">
-              <div class="img-upload-container">
-                <img src="" alt="">
-                <i class="el-icon-plus avatar-uploader-icon"></i>
-              </div>
-              <el-form-item label="课程类型">
-                <el-select></el-select>
-              </el-form-item>
-              <el-form-item label="主讲人">
-                <el-input></el-input>
-              </el-form-item>
-              <el-checkbox-group>
-                <el-row type="flex">
-                  <el-checkbox label="原创课程"></el-checkbox>
-                  <el-checkbox label="推荐本课程"></el-checkbox>
-                </el-row>
-                <el-row type="flex" justify="space-between">
-                  <el-checkbox label="置顶课程"></el-checkbox>
-                  <el-input-number size="small"></el-input-number>
-                </el-row>
-              </el-checkbox-group>
-            </el-form>
+            <kobe-tutorial-publish-basic
+              :data="response[0]"
+              :index="0"
+              @form-change="onFormChange"
+              >
+            </kobe-tutorial-publish-basic>
           </div>
         </el-card>
       </el-col>
@@ -45,18 +29,26 @@
         <el-tabs v-model="selectedTab">
           <el-tab-pane
             v-for="(item, index) in response"
+            v-if="response && index !== 0"
             :label="item.title"
             :name="index.toString()"
             >
-            <kobe-active-form
-              v-if="item.properties"
+            <kobe-tutorial-publish-form
               :data="item"
               :index="index"
+              :typeClass="[(index === 1 || index === 2) ? 'tutorial-publish-border': '', 'tutorial-publish-form']"
               @form-change="onFormChange"
               >
-            </kobe-active-form>
+            </kobe-tutorial-publish-form>
           </el-tab-pane>
         </el-tabs>
+
+        <div class="tutorial-action" v-if="response">
+          <el-row type="flex" justify="center">
+            <el-button @click="onPrevTab" v-if="selectedTab !== '1'" type="primary">上一步</el-button>
+            <el-button @click="onNextTab" v-if="selectedTab !== String(response.length-1)" type="primary">下一步</el-button>
+          </el-row>
+        </div>
       </el-col>
     </el-row>
   </div>
@@ -74,12 +66,51 @@ export default {
       categoryID: 14,
       id: this.$route.query.id,
       type: this.$route.query.id ? 'edit' : 'add',
-      selectedTab: '',
-      response: null
+      selectedTab: '1',
+      response: null,
+      form: {
+        stages: [
+        ],
+        exts: [
+        ]
+      }
     }
   },
   methods: {
-    onFormChange () {
+    onPublish () {
+      const data = {
+        catgr_id: this.categoryID,
+        ...this.form
+      }
+      api.POST(config.activity.add, data)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.$notify({
+            title: '成功',
+            type: 'success',
+            message: '创建活动成功'
+          })
+          this.$router.push({
+            path: '/admin/training'
+          })
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    onFormChange (value) {
+      console.log('form change')
+      console.log(value)
+      this.form.stages[value.index] = value
+    },
+    onPrevTab () {
+      const current = Number(this.selectedTab)
+      this.selectedTab = String(current - 1)
+    },
+    onNextTab () {
+      const current = Number(this.selectedTab)
+      this.selectedTab = String(current + 1)
     },
     getStages () {
       api.GET(config.tutorial.stages, {
@@ -88,7 +119,15 @@ export default {
       .then(response => {
         if (response.data.errcode === '0000') {
           this.response = response.data.data
-          console.log(this.response)
+          this.response.forEach((item, index) => {
+            let obj = {
+              index: index,
+              id: item.id,
+              type_key: item.type_key,
+              properties: []
+            }
+            this.form.stages.push(obj)
+          })
         }
       })
       .catch(error => {
@@ -126,5 +165,16 @@ export default {
 .tutorial-stage {
   margin-left: 1rem;
   margin-right: 3rem;
+}
+.tutorial-publish-form {
+  margin-left: 1rem;
+  padding: 2rem;
+}
+.tutorial-publish-border {
+  border: 1px solid lightgray;
+}
+.tutorial-action {
+  margin-top: 1rem;
+  padding-bottom: 1rem;
 }
 </style>

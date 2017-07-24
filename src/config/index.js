@@ -1,8 +1,7 @@
 /* eslint no-useless-escape: "off" */
 export default {
   // serverURI: 'https://gov.shencom.cn/gm',
-  serverURI: 'http://192.168.1.23:8080',
-  // serverURI: 'http://test.java.shencom.cn/gm',
+  serverURI: 'http://test.java.shencom.cn/gm',
   basic: {
     key: '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArromvW2N\/rg0ADw9zpTL\ncGdO0wNazPcp+SepPrv1dicCamEVPfvPKlWMuYszt\/tE6lNjMT8pphmatPvgjAFy\nKfE1fEpcvHqRSZTUtlo\/fGJzh2nss6mxyDXlqi+sGitjwaGj6\/MXO6zLQcMQmZ\/U\nvliOhECvuLBsAqqLY8ik63Ah7ylWAap3jDD0OvgSy+glqebwfacy9WPYOy4K75n\/\nDQRw9FJBYFg1BtfbVn55Oji3AZ0E3lY96b0JhJGtFM6vjF0bhVDkmP\/XZINPcVZy\nxydRFvxjgA6we\/KmxXDD\/JdZmvGmrZ2XCAhGS3vuk3XJnkMquGYO4GAI13JIs8Z1\nrwIDAQAB\n-----END PUBLIC KEY-----',
     sendMail: '/sys/sendMsgVerify',
@@ -96,9 +95,19 @@ export default {
   },
   tutorial: {
     stages: '/activity/category/stage',
-    category: '',
+    category: '/activity/ac/index',
+    categoryAdd: '/activity/ac/create',
+    attendee: '/activity/tutorial/attendee/index',
+    favor: '/activity/tutorial/favor/index',
+    attendeeDel: '/activity/tutorial/attendee/delete',
     user: '',
-    class: ''
+    toggleActive: '/activity/tutorial/active/update',
+    class: '/activity/tutorial/info/index',
+    commentList: '/activity/tutorial/comment/index',
+    clickBoard: '/activity/tutorial/click/index',
+    commentBoard: '/activity/tutorial/actcom/content/index',
+    rankBoard: '/activity/tutorial/actcom/score/index',
+    signinBoard: '/activity/tutorial/actatt/index'
   },
   menuAPI: '/admin/menu/show_left',
   deleteMenuAPI: '/admin/menu/delete',

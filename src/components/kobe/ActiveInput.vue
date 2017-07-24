@@ -5,7 +5,8 @@
       v-model="data.value"
       @change="onChange"
       :placeholder="data.description"
-      ></el-input>
+      >
+    </el-input>
   </el-form-item>
 </template>
 

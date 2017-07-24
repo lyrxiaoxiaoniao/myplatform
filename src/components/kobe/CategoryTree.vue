@@ -1,7 +1,8 @@
 <template>
-  <div class="kobe-category-tree">
+  <div :class="['kobe-category-tree', ...typeClass]">
     <p>{{ title }}</p>
     <el-tree
+      :default-expand-all="true"
       :data="data"
       :props="defaultProps"
       @node-click="handleNodeClick"
@@ -22,6 +23,9 @@ export default {
       type: String,
       default: 'kobe-category-tree'
     },
+    typeClass: {
+      type: Array
+    },
     defaultProps: {
       children: 'children',
       label: 'label'
@@ -30,7 +34,7 @@ export default {
       type: Array,
       default: () => {
         return [{
-          label: 'kobe-tree-main',
+          label: '根节点',
           children: [{
             label: '一级 1',
             children: [{
