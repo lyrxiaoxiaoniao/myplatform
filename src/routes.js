@@ -127,7 +127,7 @@ const routes = [
     children: [{
       path: 'index',
       component: DashMainView,
-      name: '深传互动'
+      name: '主页'
     }]
   }, {
     path: '/admin',

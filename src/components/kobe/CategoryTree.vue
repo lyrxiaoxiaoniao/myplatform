@@ -86,6 +86,7 @@ export default {
 <style>
 .kobe-category-tree {
   margin-top: 1rem;
+  margin-left: 1rem;
   padding: 1rem;
   border: 1px solid lightgray;
 }

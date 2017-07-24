@@ -6,9 +6,6 @@
           <h2>{{ title }}</h2>
         </a>
       </div>
-      <div class="text-response text-center error" v-if="response">
-        {{ response }}
-      </div>
     </slot>
   
     <div class="login-box-body">
@@ -74,6 +71,8 @@ export default {
         .then(response => {
           if (response.data.errcode === '0000') {
             this.response = '短信已发送,请查收'
+          } else {
+            this.$message.error(response.data.errmsg)
           }
         })
         .catch(error => {
@@ -110,16 +109,16 @@ export default {
 
       this.loginSended = true
       // password encrypt
-      this.encrypt()
+      const encryptedPwd = this.encrypt()
 
       // encrypt error
-      if (!this.password) {
+      if (!encryptedPwd) {
       }
 
       // login request
       api.POST(config.basic.login, {
         username: this.username,
-        password: this.password,
+        password: encryptedPwd,
         // mail code
         code: this.mailCode
       })
@@ -129,7 +128,7 @@ export default {
           this.$store.commit('SET_TOKEN', response.data.data.token)
           this.$router.push('/admin')
         } else if (response.data.errcode === '0') {
-          this.response = response.data.errmsg
+          this.$message.error(response.data.errmsg)
           this.loginSended = false
         } else {
           this.$message.error(response.data.errmsg)
@@ -148,7 +147,7 @@ export default {
         let crypt = new window.JSEncrypt()
         crypt.setKey(pubkey)
         let crypted = crypt.encrypt(content)
-        this.password = crypted
+        return crypted
       } catch (ex) {
         return false
       }

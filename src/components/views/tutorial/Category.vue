@@ -2,11 +2,11 @@
   <div class="sc-tutorial-category-component">
     <el-row tpye="flex">
       <el-col :span="4">
-        <kobe-category-tree
-          :title="'课程分类'"
+        <el-tree
           :data="categories"
+          @node-click="onClickNode"
           >
-        </kobe-category-tree>
+        </el-tree>
       </el-col>
       <el-col :span="20">
         <kobe-table>
@@ -18,7 +18,14 @@
                 <el-button type="primary">更多操作</el-button>
                 <el-button @click="onRefresh" type="primary">刷新</el-button>
               </el-col>
-              <el-select></el-select>
+              <el-select v-model="selectedKeyword" clearable>
+                <el-option
+                  v-for="item in searchOptions"
+                  :label="item.label"
+                  :value="item.value"
+                  >
+                </el-option>
+              </el-select>
               <el-col :span="8">
                 <el-input>
                   <el-button slot="append" icon="search"></el-button>
@@ -29,6 +36,8 @@
               <el-form :model="addForm" label-width="120px" :rules="rules">
                 <el-form-item label="上级分类">
                   <el-cascader
+                    clearable
+                    change-on-select
                     expand-trigger="hover"
                     :options="categories"
                     @change="handleCatlgChange"
@@ -41,7 +50,7 @@
                 </el-form-item>
                 <el-row type="flex">
                   <el-form-item label="分类排序">
-                    <el-input-number></el-input-number>
+                    <el-input-number v-model="addForm.sort"></el-input-number>
                   </el-form-item>
                   <el-form-item label="是否启用">
                     <el-switch v-model="addForm.status"></el-switch>
@@ -67,6 +76,49 @@
                 <el-button @click="onAddCategory" type="primary">确定</el-button>   
               </div>
             </el-dialog>
+            <el-dialog title="查看/修改分类" v-model="EditDialogVisiable">
+              <el-form :model="editForm" label-width="120px">
+                <el-form-item label="上级分类">
+                  <el-cascader
+                    clearable
+                    change-on-select
+                    expand-trigger="hover"
+                    :options="categories"
+                    v-model="editedCategory"
+                    >
+                  </el-cascader>
+                </el-form-item>
+                <el-form-item label="分类名称">
+                  <el-input v-model="editForm.name"></el-input>
+                </el-form-item>
+                <el-row type="flex">
+                  <el-form-item label="分类排序">
+                    <el-input-number v-model="editForm.sort"></el-input-number>
+                  </el-form-item>
+                  <el-form-item label="是否启用">
+                    <el-switch v-model="editForm.status"></el-switch>
+                  </el-form-item>
+                </el-row>
+                <el-form-item label="分类说明">
+                  <el-input type="textarea" v-model="editForm.brief"></el-input>
+                </el-form-item>
+                <el-form-item label="分类图片">
+                  <el-upload
+                    class="avatar-uploader"
+                    :action="uploadAction"
+                    :show-file-list="false"
+                    :on-success="handleAvatarSuccess"
+                    :before-upload="beforeAvatarUpload">
+                    <img v-if="editForm.lb_img" :src="editForm.lb_img" class="avatar">
+                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                  </el-upload>
+                </el-form-item>
+              </el-form>
+              <div slot="footer">
+                <el-button @click="closeEditDialog">取消</el-button>   
+                <el-button @click="onUpdateCategory" type="primary">确定</el-button>   
+              </div>
+            </el-dialog>
           </div>
           <div slot="kobe-table-content" class="kobe-table">
             <el-table
@@ -74,13 +126,14 @@
               border
               stripe
               :data="response.data"
+              @selection-change="handleSelectionChange"
               >
               <el-table-column type="selection" width="55"></el-table-column>
               <el-table-column prop="id" label="ID" width="80"></el-table-column>
               <el-table-column prop="name" label="分类名称"></el-table-column>
               <el-table-column label="图片">
                 <template scope="scope">
-                  <img :src="scope.row.lb_img" alt="">
+                  <img class="user-img-avatar" :src="scope.row.lb_img" alt="">
                 </template>
               </el-table-column>
               <el-table-column label="创建时间" width="150">
@@ -89,9 +142,9 @@
                 </template>
               </el-table-column>
               <el-table-column prop="sort" label="顺序" width="80"></el-table-column>
-              <el-table-column label="启用">
+              <el-table-column label="启用" width="120">
                 <template scope="scope">
-                  <el-switch v-model="scope.row.status" @click="toggleSwicth"></el-switch>
+                  <el-switch v-model="scope.row.status" @change="toggleSwicth(scope.row)"></el-switch>
                 </template>
               </el-table-column>
               <el-table-column
@@ -99,8 +152,8 @@
                 label="操作"
                 >
                 <template scope="scope">
-                  <el-button size="small" icon="delete2"></el-button>
-                  <el-button size="small" icon="edit"></el-button>
+                  <el-button @click="onDelete(scope.row.id)" size="small" icon="delete2"></el-button>
+                  <el-button @click="showEditDialog(scope.row)" size="small" icon="edit"></el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -139,6 +192,7 @@ export default {
       error: null,
       response: null,
       addDialogVisiable: false,
+      EditDialogVisiable: false,
       uploadAction: config.serverURI + config.uploadFilesAPI,
       imageUrl: '',
       rules: {
@@ -150,212 +204,41 @@ export default {
         p_id: '',
         name: '',
         brief: '',
+        sort: 0,
+        status: true,
+        lb_img: ''
+      },
+      editForm: {
+        catgr_id: 14,
+        p_id: '',
+        name: '',
+        brief: '',
         sort: '',
         status: true,
         lb_img: ''
       },
-      options: [{
-        value: 'zhinan',
-        label: '指南',
-        children: [{
-          value: 'shejiyuanze',
-          label: '设计原则',
-          children: [{
-            value: 'yizhi',
-            label: '一致'
-          }, {
-            value: 'fankui',
-            label: '反馈'
-          }, {
-            value: 'xiaolv',
-            label: '效率'
-          }, {
-            value: 'kekong',
-            label: '可控'
-          }]
-        }, {
-          value: 'daohang',
-          label: '导航',
-          children: [{
-            value: 'cexiangdaohang',
-            label: '侧向导航'
-          }, {
-            value: 'dingbudaohang',
-            label: '顶部导航'
-          }]
-        }]
+      searchForm: {
+      },
+      selectedNode: 0,
+      categories: null,
+      selectedKeyword: '',
+      searchOptions: [{
+        value: 'keyword',
+        label: '所有信息'
       }, {
-        value: 'zujian',
-        label: '组件',
-        children: [{
-          value: 'basic',
-          label: 'Basic',
-          children: [{
-            value: 'layout',
-            label: 'Layout 布局'
-          }, {
-            value: 'color',
-            label: 'Color 色彩'
-          }, {
-            value: 'typography',
-            label: 'Typography 字体'
-          }, {
-            value: 'icon',
-            label: 'Icon 图标'
-          }, {
-            value: 'button',
-            label: 'Button 按钮'
-          }]
-        }, {
-          value: 'form',
-          label: 'Form',
-          children: [{
-            value: 'radio',
-            label: 'Radio 单选框'
-          }, {
-            value: 'checkbox',
-            label: 'Checkbox 多选框'
-          }, {
-            value: 'input',
-            label: 'Input 输入框'
-          }, {
-            value: 'input-number',
-            label: 'InputNumber 计数器'
-          }, {
-            value: 'select',
-            label: 'Select 选择器'
-          }, {
-            value: 'cascader',
-            label: 'Cascader 级联选择器'
-          }, {
-            value: 'switch',
-            label: 'Switch 开关'
-          }, {
-            value: 'slider',
-            label: 'Slider 滑块'
-          }, {
-            value: 'time-picker',
-            label: 'TimePicker 时间选择器'
-          }, {
-            value: 'date-picker',
-            label: 'DatePicker 日期选择器'
-          }, {
-            value: 'datetime-picker',
-            label: 'DateTimePicker 日期时间选择器'
-          }, {
-            value: 'upload',
-            label: 'Upload 上传'
-          }, {
-            value: 'rate',
-            label: 'Rate 评分'
-          }, {
-            value: 'form',
-            label: 'Form 表单'
-          }]
-        }, {
-          value: 'data',
-          label: 'Data',
-          children: [{
-            value: 'table',
-            label: 'Table 表格'
-          }, {
-            value: 'tag',
-            label: 'Tag 标签'
-          }, {
-            value: 'progress',
-            label: 'Progress 进度条'
-          }, {
-            value: 'tree',
-            label: 'Tree 树形控件'
-          }, {
-            value: 'pagination',
-            label: 'Pagination 分页'
-          }, {
-            value: 'badge',
-            label: 'Badge 标记'
-          }]
-        }, {
-          value: 'notice',
-          label: 'Notice',
-          children: [{
-            value: 'alert',
-            label: 'Alert 警告'
-          }, {
-            value: 'loading',
-            label: 'Loading 加载'
-          }, {
-            value: 'message',
-            label: 'Message 消息提示'
-          }, {
-            value: 'message-box',
-            label: 'MessageBox 弹框'
-          }, {
-            value: 'notification',
-            label: 'Notification 通知'
-          }]
-        }, {
-          value: 'navigation',
-          label: 'Navigation',
-          children: [{
-            value: 'menu',
-            label: 'NavMenu 导航菜单'
-          }, {
-            value: 'tabs',
-            label: 'Tabs 标签页'
-          }, {
-            value: 'breadcrumb',
-            label: 'Breadcrumb 面包屑'
-          }, {
-            value: 'dropdown',
-            label: 'Dropdown 下拉菜单'
-          }, {
-            value: 'steps',
-            label: 'Steps 步骤条'
-          }]
-        }, {
-          value: 'others',
-          label: 'Others',
-          children: [{
-            value: 'dialog',
-            label: 'Dialog 对话框'
-          }, {
-            value: 'tooltip',
-            label: 'Tooltip 文字提示'
-          }, {
-            value: 'popover',
-            label: 'Popover 弹出框'
-          }, {
-            value: 'card',
-            label: 'Card 卡片'
-          }, {
-            value: 'carousel',
-            label: 'Carousel 走马灯'
-          }, {
-            value: 'collapse',
-            label: 'Collapse 折叠面板'
-          }]
-        }]
-      }, {
-        value: 'ziyuan',
-        label: '资源',
-        children: [{
-          value: 'axure',
-          label: 'Axure Components'
-        }, {
-          value: 'sketch',
-          label: 'Sketch Templates'
-        }, {
-          value: 'jiaohu',
-          label: '组件交互文档'
-        }]
+        value: 'name',
+        label: '栏目名称'
       }],
-      categories: [],
+      editedCategory: [],
       selectedCategory: []
     }
   },
   methods: {
     handleAvatarSuccess(res, file) {
-      console.log(res)
+      if (res.errcode === '0000') {
+        this.addForm.lb_img = res.data[0]
+        this.imageUrl = res.data[0]
+      }
     },
     beforeAvatarUpload(file) {
       const isLt2M = file.size / 1024 / 1024 < 2
@@ -365,10 +248,53 @@ export default {
       }
       return isLt2M
     },
+    handleSelectionChange (val) {
+    },
     handleCatlgChange (value) {
     },
+    onDelete (id) {
+      this.$confirm('此操作将删除选定分类。如分类下属有子栏目，或者具体课程，将无法删除。是否继续删除', '删除', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        api.POST(config.tutorial.categoryDelete, {
+          ids: [id]
+        })
+        .then(response => {
+          if (response.data.errcode === '0000') {
+            this.$message({
+              type: 'success',
+              message: '删除成功'
+            })
+            const data = {
+              pageSize: this.response.pageSize,
+              currentPage: this.response.currentPage,
+              ...this.searchForm
+            }
+            this.getCategoryList(data)
+          }
+        })
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    onClickNode (node) {
+      const data = {
+        p_id: node.value
+      }
+      this.getCategoryList(data, true)
+    },
     onAddCategory () {
-      this.addForm.p_id = this.selectedCategory.shift()
+      if (this.selectedCategory.length === 3) {
+        this.$message({
+          message: '最多只能添加二级分类',
+          type: 'warning'
+        })
+        return
+      }
+      this.addForm.p_id = this.selectedCategory.pop()
       this.addDialogVisiable = false
       this.addForm.status = this.addForm.status ? 1 : 0
       api.POST(config.tutorial.categoryAdd, this.addForm)
@@ -379,6 +305,15 @@ export default {
             message: '添加成功',
             type: 'success'
           })
+          this.addForm = {
+            catgr_id: 14,
+            p_id: '',
+            name: '',
+            brief: '',
+            sort: '',
+            status: true,
+            lb_img: ''
+          }
           this.getCategoryList()
         }
       })
@@ -386,8 +321,26 @@ export default {
         this.$message.error(error)
       })
     },
+    onUpdateCategory () {
+      console.log(this.editForm)
+    },
     toggleSwicth (value) {
-      console.log(value)
+      api.POST(config.tutorial.categoryUpdate, {
+        id: value.id,
+        status: value.status ? 1 : 0
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.$notify({
+            title: '成功',
+            message: '修改成功',
+            type: 'success'
+          })
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     },
     showAddDialog () {
       this.addDialogVisiable = true
@@ -395,24 +348,51 @@ export default {
     closeAddDialog () {
       this.addDialogVisiable = false
     },
+    closeEditDialog () {
+      this.EditDialogVisiable = false
+    },
+    showEditDialog (value) {
+      this.editForm = {
+        catgr_id: 14,
+        p_id: value.p_id,
+        name: value.name,
+        brief: value.brief,
+        sort: value.sort,
+        status: value.status === 1 || value.status === true,
+        lb_img: value.lb_img
+      }
+      this.EditDialogVisiable = true
+    },
     onRefresh () {
       this.getCategoryList()
     },
     handleSizeChange (value) {
+      const data = {
+        currentPage: this.response.currentPage,
+        pageSize: value,
+        ...this.searchForm
+      }
+      this.getCategoryList(data)
     },
     handleCurrentChange (value) {
+      const data = {
+        currentPage: value,
+        pageSize: this.response.pageSize,
+        ...this.searchForm
+      }
+      this.getCategoryList(data)
     },
     transformTreeData (data) {
       let object = []
       data.forEach(item => {
         let category = {}
-        category.value = item.id
+        category.value = item.id.toString()
         category.label = item.name
         if (item.children && item.children.length !== 0) {
           const children = this.transformTreeData(item.children)
           category.children = children
         } else {
-          category.children = []
+          category.children = null
         }
         object.push(category)
       })
@@ -425,7 +405,7 @@ export default {
       })
       return data
     },
-    getCategoryList (data = null) {
+    getCategoryList (data = null, isRefresh) {
       api.GET(config.tutorial.category, {
         catgr_id: this.categoryID,
         p_id: 0,
@@ -434,14 +414,16 @@ export default {
       .then(response => {
         if (response.data.errcode === '0000') {
           this.response = this.transformListData(response.data.data)
-          const data = this.transformTreeData(this.response.data)
-          const root = {
-            label: '根级分类',
-            children: data,
-            value: 0
+          if (isRefresh) {
+            return
           }
-          this.categories = []
-          this.categories.unshift(root)
+          const data = this.transformTreeData(this.response.data)
+          const root = [{
+            value: '0',
+            label: '根级分类',
+            children: data
+          }]
+          this.categories = [...root]
         }
       })
       .catch(error => {
@@ -456,4 +438,8 @@ export default {
 </script>
 
 <style>
+.sc-tutorial-category-component .el-tree {
+  margin-top: 1rem;
+  margin-left: 1rem;
+}
 </style>
