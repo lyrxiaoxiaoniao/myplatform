@@ -97,6 +97,7 @@ export default {
     stages: '/activity/category/stage',
     category: '/activity/ac/index',
     categoryAdd: '/activity/ac/create',
+    categoryUpdate: '/activity/ac/active/update',
     attendee: '/activity/tutorial/attendee/index',
     favor: '/activity/tutorial/favor/index',
     attendeeDel: '/activity/tutorial/attendee/delete',

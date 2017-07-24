@@ -11,7 +11,20 @@
           :class="(item.type_key === 'activity_property_tutorial_pay' || item.type_key === 'activity_property_tutorial_senior_member') ? '': 'padding-left-5'"
           >
           <el-radio
-            v-model="item.value"
+            v-if="item.type === 'radio' && item.type_key === 'activity_property_tutorial_pay'"
+            v-model="needPay"
+            >
+            {{ item.title }}
+          </el-radio>
+          <el-radio
+            v-if="item.type === 'radio' && item.type_key === 'activity_property_tutorial_pay_credit'"
+            v-model="needCredit"
+            >
+            {{ item.title }}
+          </el-radio>
+          <el-radio
+            v-if="item.type === 'radio' && item.type_key === 'activity_property_tutorial_senior_member'"
+            v-model="seniorMember"
             >
             {{ item.title }}
           </el-radio>
@@ -42,6 +55,9 @@ export default {
   },
   data () {
     return {
+      needPay: false,
+      seniorMember: false,
+      needCredit: false
     }
   },
   computed: {
@@ -57,6 +73,7 @@ export default {
   methods: {
   },
   mounted () {
+    console.log(this.options)
   }
 }
 </script>

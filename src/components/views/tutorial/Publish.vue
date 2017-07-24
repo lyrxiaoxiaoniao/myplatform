@@ -1,7 +1,7 @@
 <template>
   <div class="sc-tutorial-publish">
     <el-row type="flex">
-      <el-button>返回列表</el-button>
+      <el-button @click="toTutorialList">返回列表</el-button>
       <el-button>课程预览</el-button>
       <el-button>保存草稿</el-button>
       <el-button @click="onPublish">提交发布</el-button>
@@ -77,6 +77,9 @@ export default {
     }
   },
   methods: {
+    toTutorialList () {
+      this.$router.go(-1)
+    },
     onPublish () {
       const data = {
         catgr_id: this.categoryID,
