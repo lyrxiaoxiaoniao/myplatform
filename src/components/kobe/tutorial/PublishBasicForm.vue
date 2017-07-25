@@ -41,6 +41,7 @@
           >
         </kobe-tutorial-check>
         <kobe-tutorial-check
+          class="margin-left-0"
           v-if="item.type === 'checkbox-uppermost'"
           :data="item"
           :index="index"

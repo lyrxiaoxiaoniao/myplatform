@@ -25,6 +25,9 @@ export default {
   props: {
     data: {
       type: Object
+    },
+    index: {
+      type: Number
     }
   },
   data () {
@@ -35,7 +38,19 @@ export default {
     }
   },
   methods: {
-    handleCatlgChange () {
+    handleCatlgChange (value) {
+      const id = value[value.length - 1]
+      let data = {
+        index: this.index,
+        data: {
+          id: this.data.id,
+          type_key: this.data.type_key,
+          options: [{
+            title: id
+          }]
+        }
+      }
+      this.$emit('change', data)
     },
     transformTreeData (data) {
       let object = []

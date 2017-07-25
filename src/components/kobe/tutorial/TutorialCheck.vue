@@ -1,5 +1,6 @@
 <template>
   <el-checkbox
+    class="margin-left-0"
     @change="onChange"
     v-model="checked"
     >
@@ -44,3 +45,9 @@ export default {
   }
 }
 </script>
+
+<style>
+.margin-left-0 {
+  margin-left: 0!important;
+}
+</style>

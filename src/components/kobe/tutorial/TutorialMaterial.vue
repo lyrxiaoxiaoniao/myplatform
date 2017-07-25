@@ -103,6 +103,7 @@ export default {
         }
       }
       this.form[this.uploadIndex] = item
+      this.showUpload = false
       this.$emit('material', this.form)
     },
     onRadioChange (index) {

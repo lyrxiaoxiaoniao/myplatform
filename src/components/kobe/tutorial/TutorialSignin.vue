@@ -10,28 +10,46 @@
           v-if="item.type === 'radio'"
           :class="(item.type_key === 'activity_property_tutorial_pay' || item.type_key === 'activity_property_tutorial_senior_member') ? '': 'padding-left-5'"
           >
-          <el-radio
+          <el-radio-group
             v-if="item.type === 'radio' && item.type_key === 'activity_property_tutorial_pay'"
+            @change="onPayRadioChange(index)"
             v-model="needPay"
             >
-            {{ item.title }}
-          </el-radio>
-          <el-radio
+            <el-radio
+              label="1"
+              >
+              {{ item.title }}
+            </el-radio>
+          </el-radio-group>
+          <el-radio-group
             v-if="item.type === 'radio' && item.type_key === 'activity_property_tutorial_pay_credit'"
             v-model="needCredit"
+            @change="onCreditChange(index)"
             >
-            {{ item.title }}
-          </el-radio>
-          <el-radio
+            <el-radio
+              label="1"
+              >
+              {{ item.title }}
+            </el-radio>
+          </el-radio-group>
+          <el-radio-group
             v-if="item.type === 'radio' && item.type_key === 'activity_property_tutorial_senior_member'"
             v-model="seniorMember"
+            @change="onMemberRadioChange(index)"
             >
-            {{ item.title }}
-          </el-radio>
+            <el-radio
+              label="1"
+              >
+              {{ item.title }}
+            </el-radio>
+          </el-radio-group>
         </div>
 
         <el-input-number
-          class="padding-left-5" v-if="item.type === 'number'">
+          class="padding-left-5"
+          v-if="item.type === 'number'"
+          v-model="number"
+          >
         </el-input-number>
         
         <el-input
@@ -51,13 +69,18 @@ export default {
   props: {
     data: {
       type: Object
+    },
+    index: {
+      type: Number
     }
   },
   data () {
     return {
       needPay: false,
       seniorMember: false,
-      needCredit: false
+      needCredit: false,
+      number: 0,
+      form: []
     }
   },
   computed: {
@@ -70,10 +93,77 @@ export default {
       return arr
     }
   },
+  watch: {
+    number (newVal, oldVal) {
+      let data, num
+      this.data.data.forEach((item, index) => {
+        if (item.type_key === 'activity_property_tutorial_credit_num') {
+          data = item
+          num = index
+        }
+      })
+      let item = {
+        index: data.index,
+        data: {
+          id: data.id,
+          type_key: data.type_key,
+          options: [{
+            title: newVal
+          }]
+        }
+      }
+      this.form[num] = item
+      this.$emit('signin', this.form)
+    }
+  },
   methods: {
+    onPayRadioChange (index) {
+      const data = this.data.data[index]
+      const item = {
+        index: data.index,
+        data: {
+          id: data.id,
+          type_key: data.type_key,
+          options: [{
+            title: this.needPay ? 1 : 0
+          }]
+        }
+      }
+      this.form[index] = item
+      this.$emit('signin', this.form)
+    },
+    onCreditChange (index) {
+      const data = this.data.data[index]
+      const item = {
+        index: data.index,
+        data: {
+          id: data.id,
+          type_key: data.type_key,
+          options: [{
+            title: this.needCredit ? 1 : 0
+          }]
+        }
+      }
+      this.form[index] = item
+      this.$emit('signin', this.form)
+    },
+    onMemberRadioChange (index) {
+      const data = this.data.data[index]
+      const item = {
+        index: data.index,
+        data: {
+          id: data.id,
+          type_key: data.type_key,
+          options: [{
+            title: this.seniorMember ? 1 : 0
+          }]
+        }
+      }
+      this.form[index] = item
+      this.$emit('signin', this.form)
+    }
   },
   mounted () {
-    console.log(this.options)
   }
 }
 </script>

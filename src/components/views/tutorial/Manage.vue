@@ -2,10 +2,11 @@
   <div class="sc-tutorial-manage-component">
     <el-row type="flex">
       <el-col :span="4">
-        <kobe-category-tree
-          :title="'课程分类'"
+        <el-tree
+          :data="categories"
+          @node-click="onClickNode"
           >
-        </kobe-category-tree>
+        </el-tree>
       </el-col>
 
       <el-col :span="20">
@@ -147,6 +148,8 @@ export default {
       error: null,
       response: null,
       searchDialogVisiable: false,
+      categoryID: 14,
+      categories: null,
       mutilAction: '',
       mutilActionOptions: [{
         label: '删除',
@@ -280,12 +283,52 @@ export default {
       })
       return arr
     },
+    transformTreeData (data) {
+      let object = []
+      data.forEach(item => {
+        let category = {}
+        category.value = item.id.toString()
+        category.label = item.name
+        if (item.children && item.children.length !== 0) {
+          const children = this.transformTreeData(item.children)
+          category.children = children
+        } else {
+          category.children = null
+        }
+        object.push(category)
+      })
+
+      return object
+    },
+    onClickNode () {
+    },
+    getCategoryList () {
+      api.GET(config.tutorial.category, {
+        catgr_id: this.categoryID,
+        p_id: 0
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          const data = this.transformTreeData(response.data.data.data)
+          const root = [{
+            value: '0',
+            label: '根级分类',
+            children: data
+          }]
+          this.categories = [...root]
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
     getClassList (data = null) {
       api.GET(config.tutorial.class, data)
       .then(response => {
         if (response.data.errcode === '0000') {
+          const data = this.transformData(this.response.data)
           this.response = response.data.data
-          this.response.data = this.transformData(this.response.data)
+          this.response.data = data
         }
       })
       .catch(error => {
@@ -295,9 +338,14 @@ export default {
   },
   mounted () {
     this.getClassList()
+    this.getCategoryList()
   }
 }
 </script>
 
 <style>
+.sc-tutorial-manage-component .el-tree {
+  margin-top: 1rem;
+  margin-left: 1rem;
+}
 </style>
