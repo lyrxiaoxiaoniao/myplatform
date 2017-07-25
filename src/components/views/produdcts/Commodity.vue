@@ -15,12 +15,16 @@
           <el-row type="flex" justify="end">
             <el-col :span="14">
               <el-button @click="openDialog" type="primary">添加子分类</el-button>
-              <el-button type="primary">修改属性</el-button>
               <el-button @click="getList()" type="primary">刷新</el-button>
-              <el-select @change="changeType(form.operation)" v-model="form.operation" placeholder="更多操作" style="width:150px;">
-                <el-option label="更多操作" value="更多操作"></el-option>
-                <el-option label="批量删除" value="批量删除"></el-option>
-              </el-select>
+              <el-dropdown @command="handleCommand" style="margin-left:10px;">
+                <el-button type="primary">
+                  更多操作<i class="el-icon-caret-bottom el-icon--right"></i>
+                </el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="批量删除">批量删除</el-dropdown-item>
+                  <el-dropdown-item command="移动">移动</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </el-col>
             <el-select v-model="form.value" placeholder="所有信息" style="width:120px;">
               <el-option
@@ -192,8 +196,14 @@ export default {
       uploadURL: config.serverURI + config.uploadFilesAPI,
       multipleSelection: [],
       option: [{
+        value: '0',
+        label: '全部'
+      }, {
         value: '1',
         label: '栏目名称'
+      }, {
+        value: '2',
+        label: '访问路径'
       }],
       response: {
         data: null
@@ -219,8 +229,7 @@ export default {
       dialogType: '',
       form: {
         keyword: '',
-        value: '',
-        operation: ''
+        value: ''
       },
       parentId: null,
       ids: [],
@@ -245,6 +254,11 @@ export default {
     }
   },
   methods: {
+    handleCommand (command) {
+      if (command === '批量删除') {
+        this.deleteType()
+      }
+    },
     // 将数据中所有的时间转换成 yyyy-mm-dd hh:mm:ss  state 状态值
     transformDate (res) {
       res.data.forEach(v => {
@@ -302,14 +316,6 @@ export default {
       this.dialogImageUrl = url
       this.dialogVisible = true
     },
-    changeType (val) {
-      if (val === '批量删除') {
-        this.deleteType()
-        this.form.operation = ''
-      } else {
-        this.form.operation = ''
-      }
-    },
     toswitch (active, id) {
       api.POST(config.activeCategoryAPI, {id: id, active: Number(active)})
       .then(response => {
@@ -328,7 +334,6 @@ export default {
     handleNodeClick (data, node) {
       this.parentId = data.id
       this.getList({parent_id: this.parentId})
-      console.log(node)
     },
     toggleSelection (rows) {
       if (rows) {

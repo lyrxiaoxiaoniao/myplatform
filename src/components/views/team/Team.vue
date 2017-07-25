@@ -33,9 +33,9 @@
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="ID" width="50"></el-table-column>
             <el-table-column prop="title" label="团队名称"></el-table-column>
-            <el-table-column prop="logo" label="团队logo" width="150">
+            <el-table-column prop="logo" label="团队logo" width="110">
               <template scope="scope">
-                <img style="object-fit:cover;" :src="scope.row.logo" @click="bigImg(scope.row.logo)" alt="">
+                <img style="width:58px; height:58px;" :src="scope.row.logo" @click="bigImg(scope.row.logo)" alt="">
               </template>
             </el-table-column>
             <el-table-column prop="created_at" label="创建时间" width="250"></el-table-column>

@@ -17,7 +17,7 @@
               <el-button @click="openDialog" type="primary">新增商品</el-button>
               <el-dropdown @command="handleCommand">
                 <el-button type="primary">
-                  更多菜单<i class="el-icon-caret-bottom el-icon--right"></i>
+                  更多操作<i class="el-icon-caret-bottom el-icon--right"></i>
                 </el-button>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="复制">复制</el-dropdown-item>
@@ -56,11 +56,13 @@
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="ID" width="50"></el-table-column>
-            <el-table-column prop="title" label="栏目名称" width="120"></el-table-column>
-            <el-table-column prop="type_key" label="访问路径" width="130"></el-table-column>
-            <el-table-column prop="brief" label="创建时间"></el-table-column>
+            <el-table-column prop="title" label="商品"></el-table-column>
+            <el-table-column prop="type_key" label="价格" width="130"></el-table-column>
             <el-table-column prop="sort" label="顺序" width="80"></el-table-column>
-            <el-table-column label="显示" width="80">
+            <el-table-column prop="sort" label="库存" width="80"></el-table-column>
+            <el-table-column prop="sort" label="销量" width="80"></el-table-column>
+            <el-table-column prop="brief" label="创建时间" width="220"></el-table-column>
+            <el-table-column label="上架" width="80">
               <template scope="scope">
                 <el-switch
                   v-model="scope.row.state"
@@ -144,7 +146,6 @@ export default {
   },
   methods: {
     handleCommand (command) {
-      console.log(command)
       if (command === '复制') {
         this.onTips(command)
       }

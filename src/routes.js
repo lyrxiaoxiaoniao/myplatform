@@ -81,6 +81,7 @@ import SCFileResource from 'components/views/fileresource/FileTable.vue'
 
 import SCCommodity from 'components/views/produdcts/Commodity.vue'
 import SCProducts from 'components/views/produdcts/Products.vue'
+import SCAddProducts from 'components/views/produdcts/addGoods/addProduct.vue'
 import SCInteract from 'components/views/produdcts/Interaction.vue'
 import SCOrder from 'components/views/produdcts/Order.vue'
 import SCSystemConfig from 'components/views/produdcts/SysConfig.vue'
@@ -607,9 +608,21 @@ const routes = [
           meta: {description: '列表'}
         }, {
           path: 'product',
-          component: SCProducts,
+          component: DashMainView,
+          redirect: '/admin/goods/product/index',
           name: '商品管理信息',
-          meta: {description: '列表'}
+          meta: {description: '列表'},
+          children: [{
+            path: 'index',
+            component: SCProducts,
+            name: '商品信息管理',
+            meta: {description: '列表'}
+          }, {
+            path: 'add',
+            component: SCAddProducts,
+            name: '商品信息管理',
+            meta: {description: '列表'}
+          }]
         }, {
           path: 'interact',
           component: SCInteract,
@@ -692,7 +705,7 @@ const routes = [
           name: '配置管理',
           meta: {description: '列表'}
         }, {
-          path: 'interact',
+          path: 'interaction',
           component: SCInteraction,
           name: '互动管理',
           meta: {description: '列表'}

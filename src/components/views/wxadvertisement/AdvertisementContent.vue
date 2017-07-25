@@ -80,7 +80,7 @@
         <el-form-item label="广告标题" prop="title">
           <el-input v-model="ruleForm.title" placeholder="请输入标题"></el-input>
         </el-form-item>
-        <el-form-item label="点位分类" prop="typeId" required>
+        <!-- <el-form-item label="点位分类" prop="typeId" required>
           <template>
             <el-select v-model="value" placeholder="请选择">
               <el-option
@@ -90,7 +90,7 @@
               </el-option>
             </el-select>
           </template>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="广告内容" prop="poster" required>
           <el-upload
             class="avatar-uploader"
@@ -107,15 +107,15 @@
             <div slot="tip" class="el-upload__tip">只能上传jpg图片文件，且不超过2M</div>
           </el-upload>
         </el-form-item>
-        <el-form-item label="点位类型" prop="linkType" required>
+        <!-- <el-form-item label="链接方式" prop="linkType" required>
           <el-radio-group v-model="ruleForm.linkType">
             <el-radio label="1">不跳转链接</el-radio>
             <el-radio label="2">完整地址链接</el-radio>
             <el-radio label="3">系统内部链接</el-radio>
           </el-radio-group>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="链接地址" prop="link">
-          <el-input v-model="ruleForm.link" placeholder="链接地址，外链请使用完整http://或者https://开始"></el-input>
+          <el-input v-model="ruleForm.link" placeholder="请输入对应ID"></el-input>
         </el-form-item>
         <el-form-item label="文字链接" prop="content">
           <el-input v-model="ruleForm.content" placeholder="文字链内容，替换alt"></el-input>
@@ -175,6 +175,9 @@ export default {
       multipleSelection: [],
       ids: [],
       option: [{
+        value: '0',
+        label: '全部'
+      }, {
         value: '1',
         label: '广告标题'
       }, {
@@ -200,7 +203,7 @@ export default {
         memo: '',
         content: '',
         typeId: '',
-        tagList: ''
+        tagList: []
       },
       inpValue: [],
       rules: {
@@ -208,7 +211,7 @@ export default {
           { required: true, message: '请输入标题', trigger: 'blur' }
         ],
         link: [
-          { required: true, message: '请输入广告地址', trigger: 'blur' }
+          { required: true, message: '请输入对应ID', trigger: 'blur' }
         ],
         poster: [
           { validator: getposter, trigger: 'change' }
@@ -316,7 +319,8 @@ export default {
         if (valid) {
           var sendURL
           var obj = {}
-          obj.typeId = Number(this.value)
+          // obj.typeId = Number(this.value)
+          obj.typeId = 1
           obj.link = this.ruleForm.link
           obj.linkType = Number(this.ruleForm.linkType)
           obj.content = this.ruleForm.content
@@ -520,6 +524,11 @@ export default {
      * 根据搜索关键字来搜索匹配的字段
     */
     searchKeyword () {
+      if (this.value1 === '0') {
+        this.updateList({
+          title: this.keyword
+        })
+      }
       if (this.value1 === '1') {
         this.updateList({
           title: this.keyword

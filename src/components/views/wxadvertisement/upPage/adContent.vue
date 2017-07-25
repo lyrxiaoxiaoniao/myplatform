@@ -1,5 +1,9 @@
 <template>
   <div class="UP-container">
+    <div  class="sc-header">
+      <el-button type="primary" @click="goBack()"><<返回</el-button>
+      <el-button type="primary" @click="toDialog()">选择广告位</el-button>
+    </div>
     <div class="up-adcontent">
         <div style="border-bottom:1px solid lightgray;height:60px;">
             <el-col :span="20" style="margin-top:10px;"><h4 style="margin-left:2rem;">广告内容基本信息</h4></el-col>
@@ -24,10 +28,6 @@
         </div> 
     </div>
     <div class="up-content-right">
-      <div  class="sc-header">
-        <el-button type="primary" @click="goBack()"><<返回</el-button>
-        <el-button type="primary" @click="toDialog()">选择广告位</el-button>
-      </div>
       <el-tabs v-model="activeName" @tab-click="handleClick" style="margin-top:10px;">
           <el-tab-pane label="当前点位" name="first">
               <el-table :data="data.data" border stripe
@@ -659,7 +659,7 @@ export default {
 </script>
 <style scoped>
 .UP-container {
-    padding: 1rem 3rem 0;
+    padding: 0 3rem 0;
     margin-top: 1rem;
     position: relative;
 }
@@ -680,14 +680,14 @@ export default {
     width: 65%;
     position: absolute;
     right: 3rem;
-    top: 0;
+    top: 45px;
 }
 .up-img img{
     width: 250px;
     height: 150px;
 }
 .sc-header {
-    margin: 10px 0 0;
+    margin: 10px 0 10px 0;
 }
 .up-dialog-footer{
     margin-top: 1rem;
