@@ -184,7 +184,7 @@ import config from 'src/config'
 import api from 'src/api'
 
 export default {
-  name: 'sc-training-publish',
+  name: 'sc-training-edit',
   data () {
     return {
       // activity category id for training
