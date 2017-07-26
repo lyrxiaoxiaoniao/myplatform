@@ -94,7 +94,7 @@ export default {
             message: '创建活动成功'
           })
           this.$router.push({
-            path: '/admin/training'
+            path: '/admin/tutorial'
           })
         }
       })

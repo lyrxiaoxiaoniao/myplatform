@@ -3,6 +3,7 @@
     <el-row type="flex">
       <el-col :span="4">
         <el-tree
+          highlight-current
           :data="categories"
           @node-click="onClickNode"
           >
@@ -16,14 +17,19 @@
               <el-col :span="17">
                 <el-button type="primary" @click="onPublishTutorial">发布课程</el-button>
                 <el-button type="primary" @click="onRefresh">刷新</el-button>
-                <el-select clearable v-model="mutilAction" placeholder="批量操作">
-                  <el-option
-                    v-for="item in mutilActionOptions"
-                    :label="item.label"
-                    :value="item.value"
-                    >
-                  </el-option>
-                </el-select>
+                <el-dropdown @command="handleDropDown">
+                  <el-button type="primary">
+                    批量操作<i class="el-icon-caret-bottom el-icon--right"></i>
+                  </el-button>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item command="delete">删除</el-dropdown-item>
+                    <el-dropdown-item command="move">移动</el-dropdown-item>
+                    <el-dropdown-item command="recommand">设置为推荐课程</el-dropdown-item>
+                    <el-dropdown-item command="uppermost">设置为置顶课程</el-dropdown-item>
+                    <el-dropdown-item command="online">上线</el-dropdown-item>
+                    <el-dropdown-item command="offline">下线</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
               </el-col>
               <el-col :span="6">
                 <el-input>
@@ -38,6 +44,7 @@
               border
               stripe
               :data="response.data"
+              @selection-change="handleSelectionChange"
               >
               <el-table-column type="selection" width="55"></el-table-column>
               <el-table-column prop="id" label="ID" width="80"></el-table-column>
@@ -66,7 +73,7 @@
                 label="操作"
                 >
                 <template scope="scope">
-                  <el-button @click="onEdit(scope.row)" size="small" icon="edit"></el-button>
+                  <el-button @click="onEdit(scope.row.id)" size="small" icon="edit"></el-button>
                   <el-button @click="onShow(scope.row.id)" size="small" icon="information"></el-button>
                   <el-button @click="onDelete(scope.row.id)" size="small" icon="delete2"></el-button>
                 </template>
@@ -147,29 +154,10 @@ export default {
     return {
       error: null,
       response: null,
+      tableSelection: [],
       searchDialogVisiable: false,
       categoryID: 14,
       categories: null,
-      mutilAction: '',
-      mutilActionOptions: [{
-        label: '删除',
-        value: 'del'
-      }, {
-        label: '移动',
-        value: 'move'
-      }, {
-        label: '设置为推荐课程',
-        value: 'recommand'
-      }, {
-        label: '设置为置顶课程',
-        value: 'upmost'
-      }, {
-        label: '上线',
-        value: 'on'
-      }, {
-        label: '下线',
-        value: 'offline'
-      }],
       advancedForm: {
       }
     }
@@ -206,6 +194,19 @@ export default {
         this.$message.error(error)
       })
     },
+    handleSelectionChange (val) {
+      this.tableSelection = val
+    },
+    handleDropDown (val) {
+      if (!this.tableSelection.length) {
+        this.$message.info('请选择需要操作的数据')
+      }
+      switch (val) {
+        case 'delete':
+          this.onDelete(this.tableSelection)
+          break
+      }
+    },
     onPublishTutorial () {
       this.$router.push({
         path: '/admin/tutorial/publish'
@@ -225,20 +226,33 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // TODO
-        this.$message({
-          type: 'success',
-          message: '删除成功'
+        const data = value.length ? [...value] : [value]
+        api.POST(config.tutorial.delete, {
+          ids: data
         })
-        const data = {
-          pageSize: this.response.pageSize,
-          currentPage: this.response.currentPage,
-          ...this.advancedForm
-        }
-        this.getClassList(data)
+        .then(response => {
+          if (response.data.errcode === '0000') {
+            this.$message({
+              type: 'success',
+              message: '删除成功'
+            })
+            const data = {
+              pageSize: this.response.pageSize,
+              currentPage: this.response.currentPage,
+              ...this.advancedForm
+            }
+            this.getClassList(data)
+          }
+        })
       })
     },
-    onEdit (value) {
+    onEdit (id) {
+      this.$router.push({
+        path: '/admin/tutorial/edit',
+        query: {
+          id: id
+        }
+      })
     },
     handleSizeChange (value) {
       const data = {
@@ -257,6 +271,7 @@ export default {
       this.getClassList(data)
     },
     transformData (data) {
+      if (!data) return
       let arr = []
       data.forEach(item => {
         let obj = {
@@ -284,6 +299,7 @@ export default {
       return arr
     },
     transformTreeData (data) {
+      if (!data) return
       let object = []
       data.forEach(item => {
         let category = {}
@@ -326,7 +342,7 @@ export default {
       api.GET(config.tutorial.class, data)
       .then(response => {
         if (response.data.errcode === '0000') {
-          const data = this.transformData(this.response.data)
+          const data = this.transformData(response.data.data.data)
           this.response = response.data.data
           this.response.data = data
         }
