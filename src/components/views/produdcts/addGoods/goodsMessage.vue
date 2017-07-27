@@ -35,7 +35,7 @@
             </el-input>
             <el-button v-else class="button-new-tag" size="small" @click="showInput">新增</el-button>
         </el-form-item>
-        <el-form-item label="图片" prop="poster">
+        <el-form-item label="图片" prop="poster" class="gm-line">
             <el-upload
                 class="avatar-uploader"
                 :action="uploadUrl"
@@ -52,18 +52,20 @@
             </el-upload>
         </el-form-item>
         <el-form-item label="支付方式">
-             <el-radio-group v-model="form.resource" style="display:block;padding:8px 0;"> 
+             <el-radio-group v-model="form.resource" style="display:block;padding:8px 0;font-size: 14px;"> 
                 <el-row style="margin-bottom:20px;">
                     <el-col :span="5">
                         <el-radio label="使用现金支付"></el-radio>
                     </el-col>
-                    <el-col :span="8">
-                        <el-input placeholder="请输入内容" v-model="input3">
+                    <el-col :span="8" style="margin-top:-9px;">
+                        <label style="width:70px;text-align:right;padding-right:20px;">价格</label>
+                        <el-input placeholder="请输入" v-model="form.input3" style="width:150px;">
                             <template slot="prepend">￥</template>
                         </el-input>
                     </el-col>
-                    <el-col :span="8">
-                        <el-input placeholder="请输入内容" v-model="input3">
+                    <el-col :span="8" style="margin-top:-9px;">
+                        <label style="width:70px;text-align:right;padding-right:20px;">原价</label>
+                        <el-input placeholder="请输入" v-model="form.input3" style="width:150px;">
                             <template slot="prepend">￥</template>
                         </el-input>
                     </el-col>
@@ -72,15 +74,67 @@
                     <el-col :span="5">
                         <el-radio label="使用积分支付"></el-radio>
                     </el-col>
-                    <el-col :span="8">
-                        <el-input placeholder="请输入内容" v-model="input3">
+                    <el-col :span="8" style="margin-top:-9px;">
+                        <label style="width:70px;text-align:right;padding-right:20px;">积分</label>
+                        <el-input placeholder="请输入" v-model="form.input3" style="width:150px;">
                             <template slot="prepend">￥</template>
                         </el-input>
                     </el-col>
-                    <el-col :span="8">
-                        <el-input placeholder="请输入内容" v-model="input3">
+                    <el-col :span="8" style="margin-top:-9px;">
+                        <label style="width:70px;text-align:right;padding-right:20px;">原积分</label>
+                        <el-input placeholder="请输入" v-model="form.input3" style="width:150px;">
                             <template slot="prepend">￥</template>
                         </el-input>
+                    </el-col>
+                </el-row>
+             </el-radio-group> 
+        </el-form-item>
+        <el-form-item label="运费设置">
+             <el-radio-group v-model="form.resource1" style="display:block;padding:8px 0;font-size: 14px;"> 
+                <el-row style="margin-bottom:20px;">
+                    <el-col :span="5">
+                        <el-radio label="统一运费"></el-radio>
+                    </el-col>
+                    <el-col :span="8" style="margin-top:-9px;">
+                        <label style="width:70px;text-align:right;padding-right:20px;">价格</label>
+                        <el-input placeholder="请输入" v-model="form.input3" style="width:150px;">
+                            <template slot="prepend">￥</template>
+                        </el-input>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="5">
+                        <el-radio label="运费模板"></el-radio>
+                    </el-col>
+                    <el-col :span="8" style="margin-top:-9px;">
+                        <el-input placeholder="请选择运费模板" v-model="form.input3" style="width:224px;"></el-input>
+                    </el-col>
+                </el-row>
+             </el-radio-group> 
+        </el-form-item>
+        <el-form-item label="每人限购">
+            <template>
+                <el-input-number v-model="form.num1" :min="1"></el-input-number>
+            </template>
+        </el-form-item>
+        <el-form-item label="开售时间">
+             <el-radio-group v-model="form.resource2" style="display:block;padding:8px 0;font-size: 14px;"> 
+                <el-row style="margin-bottom:20px;">
+                    <el-col :span="5">
+                        <el-radio label="立即开售"></el-radio>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="5">
+                        <el-radio label="指定时间"></el-radio>
+                    </el-col>
+                    <el-col :span="8" style="margin-top:-9px;">
+                        <el-date-picker
+                            style="width:224px;"
+                            v-model="form.value1"
+                            type="datetime"
+                            placeholder="选择日期时间">
+                        </el-date-picker>
                     </el-col>
                 </el-row>
              </el-radio-group> 
@@ -94,7 +148,12 @@ export default {
   data () {
     return {
       form: {
-        resource: ''
+        resource: '',
+        resource1: '',
+        resource2: '',
+        num1: '',
+        input3: '',
+        value1: ''
       },
       dynamicTags: [],
       inputVisible: false,
@@ -145,3 +204,10 @@ export default {
   }
 }
 </script>
+<style scoped>
+.gm-line {
+    margin-bottom: 35px;
+    border-bottom: 1px solid lightgray;
+}
+</style>
+

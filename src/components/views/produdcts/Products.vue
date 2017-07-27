@@ -14,7 +14,7 @@
         <div slot="kobe-table-header" class="kobe-table-header">
           <el-row type="flex" justify="end">
             <el-col :span="14">
-              <el-button @click="openDialog" type="primary">新增商品</el-button>
+              <el-button @click="addProduct" type="primary">新增商品</el-button>
               <el-dropdown @command="handleCommand">
                 <el-button type="primary">
                   更多操作<i class="el-icon-caret-bottom el-icon--right"></i>
@@ -56,13 +56,13 @@
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="ID" width="50"></el-table-column>
-            <el-table-column prop="title" label="商品"></el-table-column>
-            <el-table-column prop="type_key" label="价格" width="130"></el-table-column>
+            <el-table-column prop="name" label="商品"></el-table-column>
+            <el-table-column prop="credit_sell_price" label="价格" width="130"></el-table-column>
             <el-table-column prop="sort" label="顺序" width="80"></el-table-column>
             <el-table-column prop="sort" label="库存" width="80"></el-table-column>
             <el-table-column prop="sort" label="销量" width="80"></el-table-column>
-            <el-table-column prop="brief" label="创建时间" width="220"></el-table-column>
-            <el-table-column label="上架" width="80">
+            <el-table-column prop="created_at" label="创建时间" width="220"></el-table-column>
+            <el-table-column label="上架" width="95">
               <template scope="scope">
                 <el-switch
                   v-model="scope.row.state"
@@ -73,12 +73,12 @@
               </template>
             </el-table-column>
             <el-table-column 
-              width="100"
+              width="120"
               label="操作"
               >
               <template scope="scope">
                 <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
-                <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button>
+                <!-- <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button> -->
               </template>
             </el-table-column>
           </el-table>
@@ -106,6 +106,8 @@
   </div>
 </template>
 <script>
+import config from 'src/config'
+import api from 'src/api'
 export default {
   data () {
     return {
@@ -145,6 +147,11 @@ export default {
     }
   },
   methods: {
+    addProduct () {
+      this.$router.push({
+        path: '/admin/goods/product/add'
+      })
+    },
     handleCommand (command) {
       if (command === '复制') {
         this.onTips(command)
@@ -156,6 +163,36 @@ export default {
     bigImg (url) {
       this.dialogImageUrl = url
       this.dialogVisible = true
+    },
+    // 将数据中所有的时间转换成 yyyy-mm-dd hh:mm:ss  state 状态值
+    transformDate (res) {
+      res.data.forEach(v => {
+        if (v.created_at) {
+          v.created_at = this.formatDate(v.created_at)
+        }
+        if (v.active === 1) {
+          v.active = true
+        }
+        if (v.active === 0) {
+          v.active = false
+        }
+      })
+      return res
+    },
+    // 时间转换 毫秒转换成 yyyy-mm-dd hh:mm:ss
+    formatDate (value) {
+      let date = new Date(value)
+      let M = date.getMonth() + 1
+      M = M < 10 ? ('0' + M) : M
+      let d = date.getDate()
+      d = d < 10 ? ('0' + d) : d
+      // let h = date.getHours()
+      let m = date.getMinutes()
+      m = m < 10 ? ('0' + m) : m
+      let s = date.getSeconds()
+      s = s < 10 ? ('0' + s) : s
+      value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
+      return value
     },
     // 树形结构选择
     handleChange (value) {
@@ -244,14 +281,13 @@ export default {
       this.getList(data)
     },
     getList (data = {}) {
-      console.log(1)
-      // api.GET(config.activity.typeList, data)
-      // .then(response => {
-      //   this.response = response.data.data
-      // })
-      // .catch(error => {
-      //   this.$message.error(error)
-      // })
+      api.GET(config.showGoodsListAPI, data)
+      .then(response => {
+        this.response = this.transformDate(response.data.data)
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     },
     onSuccess (string) {
       this.$notify({

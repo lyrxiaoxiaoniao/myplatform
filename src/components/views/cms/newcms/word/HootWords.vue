@@ -6,12 +6,16 @@
             <el-col :span="16">
                 <el-button type="primary" @click="openDialog">添加热词</el-button>
                 <el-button type="primary">刷新</el-button>
-                 <el-select v-model="operation" placeholder="批量" style="width:150px;" @change="open3">
-                    <el-option label="批量" value="批量"></el-option>
-                    <el-option label="删除" value="删除"></el-option>
-                </el-select>
+                <el-dropdown @command="handleCommand" style="margin-left:10px;">
+                  <el-button type="primary">
+                    更多操作<i class="el-icon-caret-bottom el-icon--right"></i>
+                  </el-button>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item command="批量删除">批量删除</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
             </el-col>
-            <el-select v-model="operation" placeholder="所有" style="width:150px;" @change="open3">
+            <el-select v-model="operation" placeholder="所有" style="width:150px;">
                 <el-option label="所有" value="所有"></el-option>
                 <el-option label="专题名称" value="专题名称"></el-option>
             </el-select>
@@ -34,21 +38,20 @@
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column type="index" label="ID" width="50"></el-table-column>
             <el-table-column prop="name" label="热词名称"></el-table-column>
-            <el-table-column prop="method" label="搜索次数"></el-table-column>
-            <el-table-column prop="action" label="排序"></el-table-column>
-            <!-- <el-table-column prop="accept_charset" label="是否推荐"></el-table-column> -->
+            <el-table-column prop="search_times" label="搜索次数"></el-table-column>
+            <el-table-column prop="order_at" label="排序"></el-table-column>
             <el-table-column label="是否推荐" width="120">
               <template scope="scope">
                 <el-switch
-                  v-model="scope.row.state"
+                  v-model="scope.row.active"
                   on-text="开"
                   off-text="关"
-                  @change="toswitch(scope.row.state,scope.row.id)">
+                  @change="toswitch(scope.row.active, scope.row.id)">
                 </el-switch>
               </template>
             </el-table-column>
             <el-table-column 
-                width="170"
+                width="120"
                 label="操作"
                 >
                 <template scope="scope">
@@ -79,11 +82,11 @@
           <el-form-item label="热词名称" prop="name" required>
               <el-input placeholder="示例:专题名称" v-model="selected.name"></el-input>
           </el-form-item>
-          <el-form-item label="热词排序" prop="action" required>
-              <el-input-number v-model="selected.method"></el-input-number>
+          <el-form-item label="热词排序">
+              <el-input-number v-model="selected.order_at"></el-input-number>
           </el-form-item>
-          <el-form-item label="是否推荐" prop="accept_charset">
-              <el-switch on-text="开" off-text="关" v-model="selected.accept_charset"></el-switch>
+          <el-form-item label="是否推荐">
+              <el-switch on-text="开" off-text="关" v-model="selected.active"></el-switch>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -103,7 +106,7 @@ export default {
       if (!value) {
         return callback(new Error('不能为空'))
       }
-      api.GET(config.checknameFormAPI, {name: value})
+      api.GET(config.selectByNameHotWordListAPI, {name: value})
       .then(response => {
         if (response.data.errcode === '5000') {
           return callback(new Error('有重名，请重新输入！'))
@@ -128,26 +131,64 @@ export default {
         keyword: ''
       },
       selected: {
-        method: '',
         name: '',
-        action: '',
-        accept_charset: '',
-        enctype: ''
+        search_times: '',
+        order_at: '',
+        active: null
       },
+      ids: [],
       rules: {
         name: [
           { validator: checkName, trigger: 'blur' }
-        ],
-        method: [
-          { required: true, message: '不能为空，示例:post/get', trigger: 'blur' }
-        ],
-        action: [
-          { required: true, message: '不能为空，示例:https://www.example.com', trigger: 'blur' }
         ]
       }
     }
   },
   methods: {
+    handleCommand (command) {
+      if (command === '批量删除') {
+        this.deleteType()
+      }
+    },
+    transformDate (res) {
+      res.data.forEach(v => {
+        if (v.active === 1) {
+          v.active = true
+        }
+        if (v.active === 0) {
+          v.active = false
+        }
+      })
+      return res
+    },
+    changeNum (val) {
+      if (val) {
+        val = 1
+      } else {
+        val = 0
+      }
+      return val
+    },
+    toswitch (active, id) {
+      var obj = {
+        id: id,
+        active: this.changeNum(active)
+      }
+      api.POST(config.updateActiveHotWordListAPI, obj)
+      .then(response => {
+        if (response.status !== 200) {
+          this.error = response.statusText
+          return
+        }
+        if (response.data.errcode === '0000') {
+          this.$notify({
+            title: '成功',
+            message: '修改状态成功！',
+            type: 'success'
+          })
+        }
+      })
+    },
     toggleSelection (rows) {
       if (rows) {
         rows.forEach(row => {
@@ -159,16 +200,36 @@ export default {
     },
     handleSelectionChange (val) {
       this.multipleSelection = val
+      this.ids = []
+      this.multipleSelection.forEach(v => {
+        this.ids.push(v.id)
+      })
     },
     // 删除表单
     deleteType (id) {
+      if (id) {
+        this.ids = []
+        this.ids.push(id)
+      }
+      if (this.ids.length === 0) {
+        this.$confirm('请进行正确操作，请优先勾选点位？', '错误', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'error'
+        }).then(() => {
+          return
+        }).catch(() => {
+          return
+        })
+        return
+      }
       this.$confirm('是否确认删除该表单', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.POST(config.removeActivityFormAPI, {
-          id: id
+        api.POST(config.removeHotWordListAPI, {
+          ids: this.ids
         })
         .then(response => {
           if (response.data.errcode === '0000') {
@@ -192,14 +253,20 @@ export default {
         this.dialogType = 'add'
         this.dialogTitle = '新增表单'
         this.selected = {
-          method: '',
+          order_at: '',
           name: '',
-          action: '',
-          accept_charset: 'utf-8',
-          enctype: 'application/x-www-form-urlencoded'
+          active: ''
         }
       }
       this.showDialog = true
+    },
+    getNum (res) {
+      if (res === true) {
+        res = 1
+      } else {
+        res = 0
+      }
+      return res
     },
     closeDialog () {
       this.showDialog = false
@@ -208,16 +275,17 @@ export default {
     createType (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-        //   api.POST(config.addActivityFormAPI, this.selected)
-        //   .then(response => {
-        //     if (response.data.errcode === '0000') {
-        //       this.onSuccess('添加成功')
-        //       this.showDialog = false
-        //     }
-        //   })
-        //   .catch(error => {
-        //     this.$message.error(error)
-        //   })
+          this.selected.active = this.getNum(this.selected.active)
+          api.POST(config.addHotWordListAPI, this.selected)
+          .then(response => {
+            if (response.data.errcode === '0000') {
+              this.onSuccess('添加成功')
+              this.showDialog = false
+            }
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
         } else {
           console.log('error submit!!')
           return false
@@ -226,16 +294,17 @@ export default {
     },
     // 修改form确认
     editType (formName) {
-    //   api.POST(config.editActivityFormAPI, this.selected)
-    //   .then(response => {
-    //     if (response.data.errcode === '0000') {
-    //       this.onSuccess('修改成功')
-    //       this.showDialog = false
-    //     }
-    //   })
-    //   .catch(error => {
-    //     this.$message.error(error)
-    //   })
+      this.selected.active = this.getNum(this.selected.active)
+      api.POST(config.editHotWordListAPI, this.selected)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.onSuccess('修改成功')
+          this.showDialog = false
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     },
     onSuccess (string) {
       this.$notify({
@@ -277,13 +346,13 @@ export default {
       this.getList(data)
     },
     getList (data = {}) {
-    //   api.GET(config.showActivityFormAPI, data)
-    //   .then(response => {
-    //     this.response = response.data.data
-    //   })
-    //   .catch(error => {
-    //     this.$message.error(error)
-    //   })
+      api.GET(config.showHotWordListAPI, data)
+      .then(response => {
+        this.response = this.transformDate(response.data.data)
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     }
   },
   mounted () {

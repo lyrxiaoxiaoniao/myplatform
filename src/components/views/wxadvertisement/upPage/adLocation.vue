@@ -230,23 +230,23 @@ export default {
       dialogVisible: false,
       keyword: null,
       pickerOptions2: {
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }],
+        // shortcuts: [{
+        //   text: '最近一周',
+        //   onClick(picker) {
+        //     const end = new Date()
+        //     const start = new Date()
+        //     start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+        //     picker.$emit('pick', [start, end])
+        //   }
+        // }, {
+        //   text: '最近一个月',
+        //   onClick(picker) {
+        //     const end = new Date()
+        //     const start = new Date()
+        //     start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+        //     picker.$emit('pick', [start, end])
+        //   }
+        // }],
         disabledDate(time) {
           return time.getTime() > Date.now()
         }
@@ -279,7 +279,7 @@ export default {
         this.echartData.showCount.push(v.showCount)
       })
     },
-      /**
+    /**
       * echarts 搜索的数据
     */
     searchEchart () {
@@ -433,14 +433,20 @@ export default {
         }
       })
     },
+    getTime1 () {
+      var now = new Date()
+      var time = `${now.getFullYear()}-${(now.getMonth() + 1)}-${now.getDate()}`
+      now = Date.parse(new Date(time))
+      return now
+    },
     handleClick (tab, event) {
       if (this.activeName === 'second') {
         this.getHistory()
       }
       var obj = {}
       obj.id = this.id
-      obj.beginTime = Date.now() - 3600 * 1000 * 24 * 7
-      obj.endTime = Date.now()
+      obj.beginTime = this.getTime1() - 3600 * 1000 * 24 * 7
+      obj.endTime = this.getTime1()
       this.queryCount(obj)
     },
     getHistory () {

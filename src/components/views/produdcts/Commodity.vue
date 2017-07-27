@@ -354,7 +354,6 @@ export default {
     // 模态框显示
     openDialog (e, data = null, type = null) {
       if (data !== null && type === 'edit') {
-        console.log(data, 'qwe')
         this.dialogType = 'edit'
         this.dialogTitle = '修改分类'
         this.classData = {

@@ -6,12 +6,16 @@
             <el-col :span="16">
                 <el-button type="primary" @click="openDialog">添加来源</el-button>
                 <el-button type="primary">刷新</el-button>
-                 <el-select v-model="operation" placeholder="批量" style="width:150px;" @change="open3">
-                    <el-option label="批量" value="批量"></el-option>
-                    <el-option label="删除" value="删除"></el-option>
-                </el-select>
+                <el-dropdown @command="handleCommand" style="margin-left:10px;">
+                  <el-button type="primary">
+                    更多操作<i class="el-icon-caret-bottom el-icon--right"></i>
+                  </el-button>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item command="批量删除">批量删除</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
             </el-col>
-            <el-select v-model="operation" placeholder="所有" style="width:150px;" @change="open3">
+            <el-select v-model="operation" placeholder="所有" style="width:150px;">
                 <el-option label="所有" value="所有"></el-option>
                 <el-option label="词汇名称" value="词汇名称"></el-option>
             </el-select>
@@ -36,7 +40,6 @@
             <el-table-column prop="name" label="来源名称"></el-table-column>
             <el-table-column prop="method" label="文档数量"></el-table-column>
             <el-table-column prop="action" label="创建时间"></el-table-column>
-            <!-- <el-table-column prop="accept_charset" label="是否推荐"></el-table-column> -->
             <el-table-column label="是否推荐" width="120">
               <template scope="scope">
                 <el-switch
@@ -79,10 +82,10 @@
           <el-form-item label="来源名称" prop="name" required>
               <el-input placeholder="示例:专题名称" v-model="selected.name"></el-input>
           </el-form-item>
-          <el-form-item label="是否有效" prop="accept_charset">
+          <el-form-item label="是否有效">
               <el-switch on-text="开" off-text="关" v-model="selected.accept_charset"></el-switch>
           </el-form-item>
-          <el-form-item label="来源说明" prop="enctype">
+          <el-form-item label="来源说明">
               <el-input type="textarea" placeholder="" v-model="selected.enctype"></el-input>
           </el-form-item>
         </el-form>
@@ -134,20 +137,20 @@ export default {
         accept_charset: '',
         enctype: ''
       },
+      ids: [],
       rules: {
         name: [
           { validator: checkName, trigger: 'blur' }
-        ],
-        method: [
-          { required: true, message: '不能为空，示例:post/get', trigger: 'blur' }
-        ],
-        action: [
-          { required: true, message: '不能为空，示例:https://www.example.com', trigger: 'blur' }
         ]
       }
     }
   },
   methods: {
+    handleCommand (command) {
+      if (command === '批量删除') {
+        this.deleteType()
+      }
+    },
     toggleSelection (rows) {
       if (rows) {
         rows.forEach(row => {
@@ -159,9 +162,29 @@ export default {
     },
     handleSelectionChange (val) {
       this.multipleSelection = val
+      this.ids = []
+      this.multipleSelection.forEach(v => {
+        this.ids.push(v.id)
+      })
     },
     // 删除表单
     deleteType (id) {
+      if (id) {
+        this.ids = []
+        this.ids.push(id)
+      }
+      if (this.ids.length === 0) {
+        this.$confirm('请进行正确操作，请优先勾选点位？', '错误', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'error'
+        }).then(() => {
+          return
+        }).catch(() => {
+          return
+        })
+        return
+      }
       this.$confirm('是否确认删除该表单', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -194,9 +217,7 @@ export default {
         this.selected = {
           method: '',
           name: '',
-          action: '',
-          accept_charset: 'utf-8',
-          enctype: 'application/x-www-form-urlencoded'
+          action: ''
         }
       }
       this.showDialog = true

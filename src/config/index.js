@@ -1,7 +1,8 @@
 /* eslint no-useless-escape: "off" */
 export default {
   // serverURI: 'https://gov.shencom.cn/gm',
-  serverURI: 'http://test.java.shencom.cn/gm',
+  // serverURI: 'http://test.java.shencom.cn/gm',
+  serverURI: 'http://192.168.1.27:8080',
   basic: {
     key: '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArromvW2N\/rg0ADw9zpTL\ncGdO0wNazPcp+SepPrv1dicCamEVPfvPKlWMuYszt\/tE6lNjMT8pphmatPvgjAFy\nKfE1fEpcvHqRSZTUtlo\/fGJzh2nss6mxyDXlqi+sGitjwaGj6\/MXO6zLQcMQmZ\/U\nvliOhECvuLBsAqqLY8ik63Ah7ylWAap3jDD0OvgSy+glqebwfacy9WPYOy4K75n\/\nDQRw9FJBYFg1BtfbVn55Oji3AZ0E3lY96b0JhJGtFM6vjF0bhVDkmP\/XZINPcVZy\nxydRFvxjgA6we\/KmxXDD\/JdZmvGmrZ2XCAhGS3vuk3XJnkMquGYO4GAI13JIs8Z1\nrwIDAQAB\n-----END PUBLIC KEY-----',
     sendMail: '/sys/sendMsgVerify',
@@ -264,6 +265,23 @@ export default {
   activeCategoryAPI: '/award/category/active',
   showCategoryAPI: '/award/category/show',
   updateCategoryAPI: '/award/category/update',
+  /* 商品管理 */
+  showGoodsListAPI: '/award/goods/index',
+  /* NewCMS接口 */
+  /* 热词管理 */
+  showHotWordListAPI: '/cms/hotword/index',
+  editHotWordListAPI: '/cms/hotword/update',
+  addHotWordListAPI: '/cms/hotword/create',
+  removeHotWordListAPI: '/cms/hotword/delete',
+  selectByNameHotWordListAPI: '/cms/hotword/selectByName',
+  updateActiveHotWordListAPI: '/cms/hotword/updateActive',
+  /* 来源管理 */
+  addWordSourceListAPI: '/cms/wordsource/create',
+  editWordSourceListAPI: '/cms/wordsource/update',
+  showWordSourceListAPI: '/cms/wordsource/index',
+  removeWordSourceListAPI: '/cms/wordsource/delete',
+  selectByNameWordSourceListAPI: '/cms/wordsource/selectByName',
+  updateActiveWordSourceAPI: '/cms/hotword/updateActive',
   fixedLayout: false,
   hideLogoOnMobile: false,
   reportsStatusCatlg: [

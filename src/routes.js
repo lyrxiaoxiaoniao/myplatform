@@ -110,6 +110,8 @@ import SCNewcmsContent from './components/views/cms/newcms/Content.vue'
 import SCNewcmsSpecial from './components/views/cms/newcms/Special.vue'
 import SCSysConfig from './components/views/cms/newcms/SystemConfig.vue'
 import SCInteraction from './components/views/cms/newcms/Interaction.vue'
+import SCHotWords from './components/views/cms/newcms/word/HootWords.vue'
+import SCWordSource from './components/views/cms/newcms/word/Source.vue'
 
 const routes = [
   {
@@ -620,8 +622,8 @@ const routes = [
           }, {
             path: 'add',
             component: SCAddProducts,
-            name: '商品信息管理',
-            meta: {description: '列表'}
+            name: '商品信息',
+            meta: {description: '添加'}
           }]
         }, {
           path: 'interact',
@@ -707,8 +709,25 @@ const routes = [
         }, {
           path: 'interaction',
           component: SCInteraction,
-          name: '互动管理',
+          name: '互动管理信息',
           meta: {description: '列表'}
+        }, {
+          path: 'word',
+          component: DashMainView,
+          redirect: '/admin/newcms/word/index',
+          name: '词汇管理',
+          meta: {description: '列表'},
+          children: [{
+            path: 'index',
+            component: SCHotWords,
+            name: '热词管理',
+            meta: {description: '列表'}
+          }, {
+            path: 'source',
+            component: SCWordSource,
+            name: '来源管理',
+            meta: {description: '列表'}
+          }]
         }]
       }, {
         path: 'team',
