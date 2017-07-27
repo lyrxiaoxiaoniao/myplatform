@@ -422,6 +422,12 @@ export default {
             message: '修改成功',
             type: 'success'
           })
+          const data = {
+            currentPage: this.response.currentPage,
+            pageSize: this.response.pageSize,
+            ...this.searchForm
+          }
+          this.getCategoryList(data, true)
         } else {
           this.$message.error(response.data.errmsg)
         }
@@ -431,7 +437,7 @@ export default {
       })
     },
     toggleSwicth (value) {
-      api.POST(config.tutorial.categoryUpdate, {
+      api.POST(config.tutorial.categoryActiveUpdate, {
         id: value.id,
         status: value.status ? 1 : 0
       })
@@ -468,11 +474,11 @@ export default {
         id: value.id,
         catgr_id: 14,
         p_id: value.p_id,
-        name: value.name,
-        brief: value.brief,
-        sort: value.sort,
+        name: value.name ? value.name : '',
+        brief: value.brief ? value.brief : '',
+        sort: value.sort ? value.sort : 0,
         status: value.status === 1 || value.status === true,
-        lb_img: value.lb_img
+        lb_img: value.lb_img ? value.lb_img : ''
       }
       this.editedCategory = [value.p_id.toString(), value.id.toString()]
       if (value.p_id !== 0) this.editedCategory.unshift('0')

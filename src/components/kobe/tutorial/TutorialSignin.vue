@@ -161,9 +161,78 @@ export default {
       }
       this.form[index] = item
       this.$emit('signin', this.form)
+    },
+    init () {
+      if (this.data.data && this.data.data.length) {
+        this.data.data.forEach((item, index) => {
+          if (!item.values) return
+          let data
+          switch (item.type_key) {
+            case 'activity_property_tutorial_pay':
+              const pay = item.values[0].value
+              this.needPay = pay
+              data = {
+                index: item.index,
+                data: {
+                  id: item.id,
+                  type_key: item.type_key,
+                  options: [{
+                    title: this.needPay
+                  }]
+                }
+              }
+              break
+            case 'activity_property_tutorial_pay_credit':
+              const credit = item.values[0].value
+              this.needCredit = credit
+              data = {
+                index: item.index,
+                data: {
+                  id: item.id,
+                  type_key: item.type_key,
+                  options: [{
+                    title: this.needCredit
+                  }]
+                }
+              }
+              break
+            case 'activity_property_tutorial_credit_num':
+              const num = item.values[0].value
+              this.number = num
+              data = {
+                index: item.index,
+                data: {
+                  id: item.id,
+                  type_key: item.type_key,
+                  options: [{
+                    title: this.number
+                  }]
+                }
+              }
+              break
+            case 'activity_property_tutorial_senior_member':
+              const member = item.values[0].value
+              this.seniorMember = member
+              data = {
+                index: item.index,
+                data: {
+                  id: item.id,
+                  type_key: item.type_key,
+                  options: [{
+                    title: this.seniorMember
+                  }]
+                }
+              }
+              break
+          }
+          this.form[index] = data
+        })
+        this.$emit('signin', this.form)
+      }
     }
   },
   mounted () {
+    this.init()
   }
 }
 </script>

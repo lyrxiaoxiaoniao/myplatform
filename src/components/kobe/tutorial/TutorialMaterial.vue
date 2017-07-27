@@ -136,9 +136,78 @@ export default {
       }
       this.form[index] = item
       this.$emit('material', this.form)
+    },
+    init () {
+      if (this.data.data && this.data.data.length) {
+        this.data.data.forEach((item, index) => {
+          if (!item.values || !item.values.length) return
+          let data
+          switch (item.type_key) {
+            case 'activity_property_tutorial_external_material':
+              const external = item.values[0].value
+              this.radio = (external === '1' || external === 1) ? 0 : 2
+              data = {
+                index: item.index,
+                data: {
+                  id: item.id,
+                  type_key: item.type_key,
+                  options: [{
+                    title: external
+                  }]
+                }
+              }
+              break
+            case 'activity_property_tutorial_external_url':
+              const link = item.values[0].value
+              this.link = link
+              data = {
+                index: item.index,
+                data: {
+                  id: item.id,
+                  type_key: item.type_key,
+                  options: [{
+                    title: this.link
+                  }]
+                }
+              }
+              break
+            case 'activity_property_tutorial_server_material':
+              const server = item.values[0].value
+              this.radio = (server === '1' || server === 1) ? 2 : 0
+              data = {
+                index: item.index,
+                data: {
+                  id: item.id,
+                  type_key: item.type_key,
+                  options: [{
+                    title: server
+                  }]
+                }
+              }
+              break
+            case 'activity_property_tutorial_server_url':
+              const url = item.values[0].value
+              this.url = url
+              data = {
+                index: item.index,
+                data: {
+                  id: item.id,
+                  type_key: item.type_key,
+                  options: [{
+                    title: this.url
+                  }]
+                }
+              }
+              break
+          }
+          this.form[index] = data
+        })
+        this.$emit('material', this.form)
+      }
     }
   },
   mounted () {
+    this.init()
   }
 }
 </script>

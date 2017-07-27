@@ -158,9 +158,78 @@ export default {
       }
       this.form[index] = item
       this.$emit('award', this.form)
+    },
+    init () {
+      if (this.data.data && this.data.data.length) {
+        this.data.data.forEach((item, index) => {
+          if (!item.values) return
+          let data
+          switch (item.type_key) {
+            case 'activity_property_tutorial_reward':
+              const value = item.values[0].value
+              this.toggleSwitch = (value === '1' || value === 1)
+              data = {
+                index: item.index,
+                data: {
+                  id: item.id,
+                  type_key: item.type_key,
+                  options: [{
+                    title: this.toggleSwitch ? 1 : 0
+                  }]
+                }
+              }
+              break
+            case 'activity_property_tutorial_frequently':
+              const freq = item.values[0].value
+              this.frequency = freq
+              data = {
+                index: item.index,
+                data: {
+                  id: item.id,
+                  type_key: item.type_key,
+                  options: [{
+                    title: this.frequency
+                  }]
+                }
+              }
+              break
+            case 'activity_property_tutorial_award_':
+              const qualify = item.values[0].value
+              this.qualify = qualify
+              data = {
+                index: item.index,
+                data: {
+                  id: item.id,
+                  type_key: item.type_key,
+                  options: [{
+                    title: this.qualify
+                  }]
+                }
+              }
+              break
+            case 'activity_property_tutorial_time_length':
+              const time = item.values[0].value
+              this.minutes = time
+              data = {
+                index: item.index,
+                data: {
+                  id: item.id,
+                  type_key: item.type_key,
+                  options: [{
+                    title: this.minutes
+                  }]
+                }
+              }
+              break
+          }
+          this.form[index] = data
+        })
+        this.$emit('award', this.form)
+      }
     }
   },
   mounted () {
+    this.init()
   }
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div class="kobe-tutorial-upload">
     <div class="img-upload-container">
-      <img v-if="url" :src="url" alt="cover">
+      <img v-if="url" :src="url" alt="cover" class="avatar">
       <i v-else @click="openDialog" class="el-icon-plus avatar-uploader-icon"></i>
     </div>
     <kobe-upload-file
@@ -53,9 +53,27 @@ export default {
       }
       this.isShow = false
       this.$emit('upload', data)
+    },
+    init () {
+      if (this.data.values && this.data.values.length) {
+        const value = this.data.values[0]
+        this.url = value.value
+        let data = {
+          index: this.index,
+          data: {
+            id: this.data.id,
+            type_key: this.data.type_key,
+            options: [{
+              title: this.url
+            }]
+          }
+        }
+        this.$emit('upload', data)
+      }
     }
   },
   mounted () {
+    this.init()
   }
 }
 </script>

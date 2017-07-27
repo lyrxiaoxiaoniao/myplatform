@@ -3,8 +3,8 @@
     <el-row type="flex">
       <el-button @click="toTutorialList">返回列表</el-button>
       <el-button>课程预览</el-button>
-      <el-button>保存草稿</el-button>
-      <el-button @click="onPublish">提交发布</el-button>
+      <el-button @click="onSubmit(0, '保存成功')">保存草稿</el-button>
+      <el-button @click="onSubmit(1, '创建活动成功')">提交发布</el-button>
     </el-row>
 
     <el-row type="flex" class="sc-tutorial-publish-content">
@@ -80,9 +80,10 @@ export default {
     toTutorialList () {
       this.$router.go(-1)
     },
-    onPublish () {
+    onSubmit (active, msg) {
       const data = {
         catgr_id: this.categoryID,
+        active: active,
         ...this.form
       }
       api.POST(config.activity.add, data)
@@ -91,7 +92,7 @@ export default {
           this.$notify({
             title: '成功',
             type: 'success',
-            message: '创建活动成功'
+            message: msg
           })
           this.$router.push({
             path: '/admin/tutorial'

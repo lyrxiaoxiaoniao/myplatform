@@ -3,11 +3,11 @@
     <el-row type="flex">
       <el-button @click="back">返回列表</el-button>
       <el-button>课程预览</el-button>
-      <el-button>保存草稿</el-button>
-      <el-button>提交发布</el-button>
+      <el-button @click="onSbumit(0, '保存成功')">保存草稿</el-button>
+      <el-button @click="onSubmit(1, '修改活动成功')">修改发布</el-button>
     </el-row>
 
-    <el-row type="flex">
+    <el-row type="flex" class="sc-tutorial-publish-content">
       <el-col :span="6">
         <el-card class="box-card" v-if="stages">
           <div slot="header" class="clearfix">
@@ -16,6 +16,7 @@
 
           <div>
             <kobe-tutorial-publish-basic
+              v-if="stages[0].properties"
               :data="stages[0]"
               :index="0"
               @form-change="onFormChange"
@@ -24,7 +25,7 @@
           </div>
         </el-card>
       </el-col>
-      <el-col :span="18">
+      <el-col :span="18" class="tutorial-stage">
         <el-tabs v-model="selectedTab">
           <el-tab-pane
             v-for="(item, index) in stages"
@@ -64,22 +65,75 @@ export default {
       id: this.$route.query.id,
       categoryID: 14,
       stages: null,
+      response: null,
       selectedTab: '1',
+      basicForm: {
+      },
       form: {
         stages: [
-        ],
-        exts: [
         ]
       }
     }
   },
   methods: {
+    onPrevTab () {
+      const current = Number(this.selectedTab)
+      this.selectedTab = String(current - 1)
+    },
+    onNextTab () {
+      const current = Number(this.selectedTab)
+      this.selectedTab = String(current + 1)
+    },
     back () {
       this.$router.go(-1)
     },
     onFormChange () {
     },
-    onSave () {
+    onSubmit (active, msg) {
+      const data = {
+        catgr_id: this.categoryID,
+        active: active,
+        ...this.form
+      }
+      api.POST(config.tutorial.update, data)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.$notify({
+            title: '成功',
+            type: 'success',
+            message: msg
+          })
+          this.$router.push({
+            path: '/admin/tutorial'
+          })
+        }
+      })
+    },
+    showDetail (data) {
+      let attributes = []
+      data.category.stages.forEach(stage => {
+        if (stage.attributes.length) {
+          stage.attributes.forEach(attribute => {
+            attributes.push(attribute)
+          })
+        }
+      })
+      this.response.forEach(stage => {
+        if (stage.properties.length) {
+          stage.properties.forEach(property => {
+            const typeKey = property.type_key
+            attributes.forEach(attribute => {
+              if (typeKey === attribute.attr_key) {
+                property.values.push({
+                  key: attribute.attr_key,
+                  value: attribute.attr_value
+                })
+              }
+            })
+          })
+        }
+      })
+      this.stages = this.response
     },
     getDetail (id) {
       api.GET(config.tutorial.detail, {
@@ -87,7 +141,7 @@ export default {
       })
       .then(response => {
         if (response.data.errcode === '0000') {
-          console.log(response.data.data)
+          this.showDetail(response.data.data)
         }
       })
       .catch(error => {
@@ -100,8 +154,7 @@ export default {
       })
       .then(response => {
         if (response.data.errcode === '0000') {
-          this.stages = response.data.data
-          this.stages.forEach((item, index) => {
+          response.data.data.forEach((item, index) => {
             let obj = {
               index: index,
               id: item.id,
@@ -109,7 +162,13 @@ export default {
               properties: []
             }
             this.form.stages.push(obj)
+            if (item.properties.length) {
+              item.properties.forEach(property => {
+                property.values = []
+              })
+            }
           })
+          this.response = response.data.data
           this.getDetail(this.id)
         }
       })
@@ -125,4 +184,8 @@ export default {
 </script>
 
 <style>
+.sc-tutorial-edit {
+  margin-top: 1rem;
+  margin-left: 1rem;
+}
 </style>

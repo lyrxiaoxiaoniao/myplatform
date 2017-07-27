@@ -39,14 +39,13 @@ export default {
   },
   methods: {
     handleCatlgChange (value) {
-      const id = value[value.length - 1]
       let data = {
         index: this.index,
         data: {
           id: this.data.id,
           type_key: this.data.type_key,
           options: [{
-            title: id
+            title: value
           }]
         }
       }
@@ -82,10 +81,28 @@ export default {
       .catch(error => {
         this.$message.error(error)
       })
+    },
+    init () {
+      if (this.data.values && this.data.values.length) {
+        const value = this.data.values[0]
+        this.selected = JSON.parse(value.value)
+        let data = {
+          index: this.index,
+          data: {
+            id: this.data.id,
+            type_key: this.data.type_key,
+            options: [{
+              title: this.selected
+            }]
+          }
+        }
+        this.$emit('change', data)
+      }
     }
   },
   mounted () {
     this.getCategoryList()
+    this.init()
   }
 }
 </script>
