@@ -29,12 +29,39 @@ export default {
     }
   },
   methods: {
-    onChange () {
+    init () {
+      if (this.data.values && this.data.values.length) {
+        const value = this.data.values[0]
+        const time = JSON.parse(value.value)
+        let timerange = []
+        time.forEach(item => {
+          timerange.push(new Date(item))
+        })
+        this.time = timerange
+        let arr = this.transformTime(this.time)
+        let data = {
+          index: this.index,
+          data: {
+            id: this.data.id,
+            type_key: this.data.type_key,
+            options: [{
+              title: arr
+            }]
+          }
+        }
+        this.$emit('time', data)
+      }
+    },
+    transformTime (data) {
       let arr = []
-      this.time.forEach(item => {
+      data.forEach(item => {
         let date = new Date(item).getTime()
         arr.push(date)
       })
+      return arr
+    },
+    onChange () {
+      let arr = this.transformTime(this.time)
       let data = {
         index: this.index,
         data: {
@@ -49,6 +76,7 @@ export default {
     }
   },
   mounted () {
+    this.init()
   }
 }
 </script>

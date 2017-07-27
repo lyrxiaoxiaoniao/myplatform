@@ -2,7 +2,7 @@
   <el-form-item :label="data.title">
     <el-input
       :type="type"
-      v-model="data.value"
+      v-model="input"
       @change="onChange"
       :placeholder="data.description"
       >
@@ -33,6 +33,7 @@ export default {
   },
   data () {
     return {
+      input: ''
     }
   },
   methods: {
@@ -43,14 +44,32 @@ export default {
           id: this.data.id,
           type_key: this.data.type_key,
           options: [{
-            title: this.data.value
+            title: this.input
           }]
         }
       }
       this.$emit('input', data)
+    },
+    init () {
+      if (this.data.values && this.data.values.length) {
+        const value = this.data.values[0]
+        this.input = value.value
+        let data = {
+          index: this.index,
+          data: {
+            id: this.data.id,
+            type_key: this.data.type_key,
+            options: [{
+              title: this.data.value
+            }]
+          }
+        }
+        this.$emit('input', data)
+      }
     }
   },
   mounted () {
+    this.init()
   }
 }
 </script>

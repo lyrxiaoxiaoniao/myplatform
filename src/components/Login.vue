@@ -28,7 +28,7 @@
             </div>
           </div>
           <div class="login-button-group">
-            <el-button @click.prevent="login" :disabled="loginSended" type="primary" class="btn btn-primary btn-block btn-flat">登录</el-button>
+            <el-button @click.prevent="login" type="primary" class="btn btn-primary btn-block btn-flat">登录</el-button>
           </div>
         </form>
       </slot>

@@ -25,6 +25,9 @@ export default {
   props: {
     data: {
       type: Object
+    },
+    index: {
+      type: Number
     }
   },
   data () {
@@ -35,7 +38,18 @@ export default {
     }
   },
   methods: {
-    handleCatlgChange () {
+    handleCatlgChange (value) {
+      let data = {
+        index: this.index,
+        data: {
+          id: this.data.id,
+          type_key: this.data.type_key,
+          options: [{
+            title: value
+          }]
+        }
+      }
+      this.$emit('change', data)
     },
     transformTreeData (data) {
       let object = []
@@ -67,10 +81,28 @@ export default {
       .catch(error => {
         this.$message.error(error)
       })
+    },
+    init () {
+      if (this.data.values && this.data.values.length) {
+        const value = this.data.values[0]
+        this.selected = JSON.parse(value.value)
+        let data = {
+          index: this.index,
+          data: {
+            id: this.data.id,
+            type_key: this.data.type_key,
+            options: [{
+              title: this.selected
+            }]
+          }
+        }
+        this.$emit('change', data)
+      }
     }
   },
   mounted () {
     this.getCategoryList()
+    this.init()
   }
 }
 </script>

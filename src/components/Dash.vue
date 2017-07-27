@@ -136,7 +136,7 @@
         </div>
         <ol class="breadcrumb">
           <li><router-link to="/admin"><i class="fa fa-home"></i>主页</router-link></li>
-          <li class="active">{{$route.name.toUpperCase()}}</li>
+          <li class="active"><router-link :to="$route.path">{{$route.name.toUpperCase()}}</router-link></li>
         </ol>
       </section>
 

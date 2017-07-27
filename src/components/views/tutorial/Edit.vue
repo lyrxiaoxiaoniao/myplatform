@@ -1,22 +1,23 @@
 <template>
-  <div class="sc-tutorial-publish">
+  <div class="sc-tutorial-edit">
     <el-row type="flex">
-      <el-button @click="toTutorialList">返回列表</el-button>
+      <el-button @click="back">返回列表</el-button>
       <el-button>课程预览</el-button>
-      <el-button @click="onSubmit(0, '保存成功')">保存草稿</el-button>
-      <el-button @click="onSubmit(1, '创建活动成功')">提交发布</el-button>
+      <el-button @click="onSbumit(0, '保存成功')">保存草稿</el-button>
+      <el-button @click="onSubmit(1, '修改活动成功')">修改发布</el-button>
     </el-row>
 
     <el-row type="flex" class="sc-tutorial-publish-content">
       <el-col :span="6">
-        <el-card class="box-card" v-if="response">
+        <el-card class="box-card" v-if="stages">
           <div slot="header" class="clearfix">
-            <span class="card-title">{{ response[0].title }}</span>
+            <span class="card-title">{{ stages[0].title }}</span>
           </div>
 
           <div>
             <kobe-tutorial-publish-basic
-              :data="response[0]"
+              v-if="stages[0].properties"
+              :data="stages[0]"
               :index="0"
               @form-change="onFormChange"
               >
@@ -24,12 +25,11 @@
           </div>
         </el-card>
       </el-col>
-
       <el-col :span="18" class="tutorial-stage">
         <el-tabs v-model="selectedTab">
           <el-tab-pane
-            v-for="(item, index) in response"
-            v-if="response && index !== 0"
+            v-for="(item, index) in stages"
+            v-if="stages && index !== 0"
             :label="item.title"
             :name="index.toString()"
             >
@@ -37,11 +37,11 @@
               :data="item"
               :index="index"
               :typeClass="[(index === 1 || index === 2) ? 'tutorial-publish-border': '', 'tutorial-publish-form']"
-              @form-change="onFormChange"
               >
             </kobe-tutorial-publish-form>
           </el-tab-pane>
         </el-tabs>
+
 
         <div class="tutorial-action" v-if="response">
           <el-row type="flex" justify="center">
@@ -55,30 +55,39 @@
 </template>
 
 <script>
-import api from 'src/api'
 import config from 'src/config'
+import api from 'src/api'
 
 export default {
-  name: 'sc-tutorial-publish',
+  name: 'sc-tutorial-edit',
   data () {
     return {
-      // activity category id for tutorial
-      categoryID: 14,
       id: this.$route.query.id,
-      type: this.$route.query.id ? 'edit' : 'add',
-      selectedTab: '1',
+      categoryID: 14,
+      stages: null,
       response: null,
+      selectedTab: '1',
+      basicForm: {
+      },
       form: {
         stages: [
-        ],
-        exts: [
         ]
       }
     }
   },
   methods: {
-    toTutorialList () {
+    onPrevTab () {
+      const current = Number(this.selectedTab)
+      this.selectedTab = String(current - 1)
+    },
+    onNextTab () {
+      const current = Number(this.selectedTab)
+      this.selectedTab = String(current + 1)
+    },
+    back () {
       this.$router.go(-1)
+    },
+    onFormChange () {
     },
     onSubmit (active, msg) {
       const data = {
@@ -86,7 +95,7 @@ export default {
         active: active,
         ...this.form
       }
-      api.POST(config.activity.add, data)
+      api.POST(config.tutorial.update, data)
       .then(response => {
         if (response.data.errcode === '0000') {
           this.$notify({
@@ -99,22 +108,45 @@ export default {
           })
         }
       })
+    },
+    showDetail (data) {
+      let attributes = []
+      data.category.stages.forEach(stage => {
+        if (stage.attributes.length) {
+          stage.attributes.forEach(attribute => {
+            attributes.push(attribute)
+          })
+        }
+      })
+      this.response.forEach(stage => {
+        if (stage.properties.length) {
+          stage.properties.forEach(property => {
+            const typeKey = property.type_key
+            attributes.forEach(attribute => {
+              if (typeKey === attribute.attr_key) {
+                property.values.push({
+                  key: attribute.attr_key,
+                  value: attribute.attr_value
+                })
+              }
+            })
+          })
+        }
+      })
+      this.stages = this.response
+    },
+    getDetail (id) {
+      api.GET(config.tutorial.detail, {
+        id: id
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.showDetail(response.data.data)
+        }
+      })
       .catch(error => {
         this.$message.error(error)
       })
-    },
-    onFormChange (value) {
-      console.log('form change')
-      console.log(value)
-      this.form.stages[value.index] = value
-    },
-    onPrevTab () {
-      const current = Number(this.selectedTab)
-      this.selectedTab = String(current - 1)
-    },
-    onNextTab () {
-      const current = Number(this.selectedTab)
-      this.selectedTab = String(current + 1)
     },
     getStages () {
       api.GET(config.tutorial.stages, {
@@ -122,8 +154,7 @@ export default {
       })
       .then(response => {
         if (response.data.errcode === '0000') {
-          this.response = response.data.data
-          this.response.forEach((item, index) => {
+          response.data.data.forEach((item, index) => {
             let obj = {
               index: index,
               id: item.id,
@@ -131,7 +162,14 @@ export default {
               properties: []
             }
             this.form.stages.push(obj)
+            if (item.properties.length) {
+              item.properties.forEach(property => {
+                property.values = []
+              })
+            }
           })
+          this.response = response.data.data
+          this.getDetail(this.id)
         }
       })
       .catch(error => {
@@ -146,39 +184,8 @@ export default {
 </script>
 
 <style>
-.sc-tutorial-publish {
+.sc-tutorial-edit {
   margin-top: 1rem;
   margin-left: 1rem;
-}
-.sc-tutorial-publish-content {
-  margin-top: 1rem;
-}
-.img-upload-container {
-  margin: 1rem auto;
-  width: 178px;
-  height: 178px;
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-.img-upload-container:hover {
-  border-color: #20a0ff;
-}
-.tutorial-stage {
-  margin-left: 1rem;
-  margin-right: 3rem;
-}
-.tutorial-publish-form {
-  margin-left: 1rem;
-  padding: 2rem;
-}
-.tutorial-publish-border {
-  border: 1px solid lightgray;
-}
-.tutorial-action {
-  margin-top: 1rem;
-  padding-bottom: 1rem;
 }
 </style>

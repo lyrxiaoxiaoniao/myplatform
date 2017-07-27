@@ -30,6 +30,23 @@ export default {
     }
   },
   methods: {
+    init () {
+      if (this.data.values && this.data.values.length) {
+        const value = this.data.values[0]
+        this.content = value.value
+        let data = {
+          index: this.index,
+          data: {
+            id: this.data.id,
+            type_key: this.data.type_key,
+            options: [{
+              title: value
+            }]
+          }
+        }
+        this.$emit('change', data)
+      }
+    },
     onChange (value) {
       let data = {
         index: this.index,
@@ -45,6 +62,7 @@ export default {
     }
   },
   mounted () {
+    this.init()
   }
 }
 </script>

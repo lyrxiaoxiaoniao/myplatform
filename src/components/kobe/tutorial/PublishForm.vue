@@ -10,6 +10,7 @@
           v-if="item.type === 'select'"
           :data="item"
           :index="index"
+          @change="onChange"
           >
         </kobe-tutorial-category>
         <kobe-active-input
@@ -51,6 +52,7 @@
           v-if="item.type === 'signin'"
           :data="item"
           :index="index"
+          @signin="onSigninChange"
           >
         </kobe-tutorial-signin>
         <kobe-tutorial-award
@@ -152,6 +154,14 @@ export default {
   methods: {
     onChange (value) {
       this.form.properties[value.index] = value.data
+      this.onFormChange()
+    },
+    onSigninChange (value) {
+      value.forEach(item => {
+        if (item) {
+          this.form.properties[item.index] = item.data
+        }
+      })
       this.onFormChange()
     },
     onAwardChange (value) {

@@ -101,6 +101,7 @@ import SCTutorialComment from 'components/views/tutorial/Comment.vue'
 import SCTutorialRankMange from 'components/views/tutorial/RankManage.vue'
 import SCTutorialPublish from 'components/views/tutorial/Publish.vue'
 import SCTutorialInfo from 'components/views/tutorial/Info.vue'
+import SCTutorialEdit from 'components/views/tutorial/Edit.vue'
 
 import SCTeam from './components/views/team/Team.vue'
 import SCTeamDetail from './components/views/team/TeamDetail.vue'
@@ -797,6 +798,11 @@ const routes = [
           component: SCTutorialInfo,
           name: '查看课程信息',
           meta: {description: '查看课程的详细信息'}
+        }, {
+          path: 'edit',
+          component: SCTutorialEdit,
+          name: '修改课程信息',
+          meta: {description: '修改课程的详细信息'}
         }]
       }
     ]

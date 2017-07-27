@@ -3,6 +3,7 @@
     <el-row tpye="flex">
       <el-col :span="4">
         <el-tree
+          highlight-current
           :data="categories"
           @node-click="onClickNode"
           >
@@ -11,24 +12,23 @@
       <el-col :span="20">
         <kobe-table>
           <div slot="kobe-table-header" class="kobe-table-header">
-            <el-row type="flex">
+            <el-row type="flex" justify="space-between">
               <el-col :span="12">
                 <el-button @click="showAddDialog" type="primary">添加子分类</el-button>
-                <el-button type="primary">修改属性</el-button>
-                <el-button type="primary">更多操作</el-button>
+                <el-dropdown @command="handleDropDown">
+                  <el-button type="primary">
+                    更多操作<i class="el-icon-caret-bottom el-icon--right"></i>
+                  </el-button>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item command="delete">批量删除</el-dropdown-item>
+                    <el-dropdown-item command="move">批量移动</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
                 <el-button @click="onRefresh" type="primary">刷新</el-button>
               </el-col>
-              <el-select v-model="selectedKeyword" clearable>
-                <el-option
-                  v-for="item in searchOptions"
-                  :label="item.label"
-                  :value="item.value"
-                  >
-                </el-option>
-              </el-select>
               <el-col :span="8">
-                <el-input>
-                  <el-button slot="append" icon="search"></el-button>
+                <el-input v-model="searchForm.name" placeholder="请输入分类名称">
+                  <el-button slot="append" icon="search" @click="onSearch"></el-button>
                 </el-input>
               </el-col>
             </el-row>
@@ -76,7 +76,7 @@
                 <el-button @click="onAddCategory" type="primary">确定</el-button>   
               </div>
             </el-dialog>
-            <el-dialog title="查看/修改分类" v-model="EditDialogVisiable">
+            <el-dialog title="查看/修改分类" v-model="editDialogVisiable">
               <el-form :model="editForm" label-width="120px">
                 <el-form-item label="上级分类">
                   <el-cascader
@@ -117,6 +117,24 @@
               <div slot="footer">
                 <el-button @click="closeEditDialog">取消</el-button>   
                 <el-button @click="onUpdateCategory" type="primary">确定</el-button>   
+              </div>
+            </el-dialog>
+            <el-dialog title="移动分类" v-model="moveDialogVisiable">
+              <el-form :model="moveForm" label-width="120px">
+                <el-form-item label="移动到">
+                  <el-cascader
+                    clearable
+                    change-on-select
+                    expand-trigger="hover"
+                    :options="categories"
+                    v-model="moveCategory"
+                    >
+                  </el-cascader>
+                </el-form-item>
+              </el-form>
+              <div slot="footer">
+                <el-button @click="closeMoveDialog">取消</el-button>   
+                <el-button @click="onMoveCategory" type="primary">确定</el-button>   
               </div>
             </el-dialog>
           </div>
@@ -192,7 +210,8 @@ export default {
       error: null,
       response: null,
       addDialogVisiable: false,
-      EditDialogVisiable: false,
+      editDialogVisiable: false,
+      moveDialogVisiable: false,
       uploadAction: config.serverURI + config.uploadFilesAPI,
       imageUrl: '',
       rules: {
@@ -218,22 +237,35 @@ export default {
         lb_img: ''
       },
       searchForm: {
+        catgr_id: 14,
+        name: ''
+      },
+      moveForm: {
       },
       selectedNode: 0,
       categories: null,
-      selectedKeyword: '',
-      searchOptions: [{
-        value: 'keyword',
-        label: '所有信息'
-      }, {
-        value: 'name',
-        label: '栏目名称'
-      }],
+      tableSelection: [],
+      moveCategory: [],
       editedCategory: [],
       selectedCategory: []
     }
   },
   methods: {
+    handleDropDown (val) {
+      if (!this.tableSelection.length) {
+        this.$message.info('请选择需要操作的数据')
+        return
+      }
+      let ids = []
+      this.tableSelection.forEach(item => {
+        ids.push(item.id)
+      })
+      if (val === 'delete') {
+        this.onDelete(ids)
+      } else if (val === 'move') {
+        this.moveDialogVisiable = true
+      }
+    },
     handleAvatarSuccess(res, file) {
       if (res.errcode === '0000') {
         this.addForm.lb_img = res.data[0]
@@ -249,18 +281,19 @@ export default {
       return isLt2M
     },
     handleSelectionChange (val) {
+      this.tableSelection = val
     },
     handleCatlgChange (value) {
     },
-    onDelete (id) {
+    onDelete (ids) {
+      let data = ids.length ? {ids: [...ids]} : {ids: [ids]}
+
       this.$confirm('此操作将删除选定分类。如分类下属有子栏目，或者具体课程，将无法删除。是否继续删除', '删除', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.POST(config.tutorial.categoryDelete, {
-          ids: [id]
-        })
+        api.POST(config.tutorial.categoryDelete, data)
         .then(response => {
           if (response.data.errcode === '0000') {
             this.$message({
@@ -273,6 +306,8 @@ export default {
               ...this.searchForm
             }
             this.getCategoryList(data)
+          } else {
+            this.$message.error(response.data.errmsg)
           }
         })
       })
@@ -281,10 +316,62 @@ export default {
       })
     },
     onClickNode (node) {
+      this.selectedNode = node.value
       const data = {
         p_id: node.value
       }
       this.getCategoryList(data, true)
+    },
+    onSearch () {
+      const data = {
+        currentPage: 1,
+        pageSize: this.response.pageSize,
+        p_id: this.selectedNode,
+        ...this.searchForm
+      }
+      this.getCategoryList(data, true)
+    },
+    closeMoveDialog () {
+      this.moveDialogVisiable = false
+    },
+    onMoveCategory () {
+      if (!this.moveCategory.length) {
+        this.$message.error('请选择移动的分类')
+        return
+      }
+      if (this.moveCategory.length === 3) {
+        this.$message({
+          message: '最多只能添加二级分类',
+          type: 'info'
+        })
+        return
+      }
+      const id = this.moveCategory[this.moveCategory.length - 1]
+      let ids = []
+      this.tableSelection.forEach(item => {
+        ids.push(item.id)
+      })
+      api.POST(config.tutorial.categoryMove, {
+        ids: ids,
+        id: id
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.$notify({
+            title: '成功',
+            message: '移动成功',
+            type: 'success'
+          })
+          const data = {
+            currentPage: this.response.currentPage,
+            pageSize: this.response.pageSize,
+            p_id: 0,
+            ...this.searchForm
+          }
+          this.getCategoryList(data)
+        }
+      })
+      this.moveDialogVisiable = false
     },
     onAddCategory () {
       if (this.selectedCategory.length === 3) {
@@ -322,10 +409,35 @@ export default {
       })
     },
     onUpdateCategory () {
-      console.log(this.editForm)
+      const data = {
+        ...this.editForm,
+        status: this.editForm.status ? 1 : 0
+      }
+      this.editDialogVisiable = false
+      api.POST(config.tutorial.categoryUpdate, data)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.$notify({
+            title: '成功',
+            message: '修改成功',
+            type: 'success'
+          })
+          const data = {
+            currentPage: this.response.currentPage,
+            pageSize: this.response.pageSize,
+            ...this.searchForm
+          }
+          this.getCategoryList(data, true)
+        } else {
+          this.$message.error(response.data.errmsg)
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     },
     toggleSwicth (value) {
-      api.POST(config.tutorial.categoryUpdate, {
+      api.POST(config.tutorial.categoryActiveUpdate, {
         id: value.id,
         status: value.status ? 1 : 0
       })
@@ -336,6 +448,12 @@ export default {
             message: '修改成功',
             type: 'success'
           })
+          const data = {
+            currentPage: this.response.currentPage,
+            pageSize: this.response.pageSize,
+            ...this.searchForm
+          }
+          this.getCategoryList(data)
         }
       })
       .catch(error => {
@@ -349,19 +467,22 @@ export default {
       this.addDialogVisiable = false
     },
     closeEditDialog () {
-      this.EditDialogVisiable = false
+      this.editDialogVisiable = false
     },
     showEditDialog (value) {
       this.editForm = {
+        id: value.id,
         catgr_id: 14,
         p_id: value.p_id,
-        name: value.name,
-        brief: value.brief,
-        sort: value.sort,
+        name: value.name ? value.name : '',
+        brief: value.brief ? value.brief : '',
+        sort: value.sort ? value.sort : 0,
         status: value.status === 1 || value.status === true,
-        lb_img: value.lb_img
+        lb_img: value.lb_img ? value.lb_img : ''
       }
-      this.EditDialogVisiable = true
+      this.editedCategory = [value.p_id.toString(), value.id.toString()]
+      if (value.p_id !== 0) this.editedCategory.unshift('0')
+      this.editDialogVisiable = true
     },
     onRefresh () {
       this.getCategoryList()
