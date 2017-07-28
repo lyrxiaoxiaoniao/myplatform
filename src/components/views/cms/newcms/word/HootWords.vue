@@ -5,7 +5,7 @@
             <el-row type="flex" justify="end">
             <el-col :span="16">
                 <el-button type="primary" @click="openDialog">添加热词</el-button>
-                <el-button type="primary">刷新</el-button>
+                <el-button @click="getList()" type="primary">刷新</el-button>
                 <el-dropdown @command="handleCommand" style="margin-left:10px;">
                   <el-button type="primary">
                     更多操作<i class="el-icon-caret-bottom el-icon--right"></i>
@@ -36,7 +36,7 @@
             :data="response.data"
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column type="index" label="ID" width="50"></el-table-column>
+            <el-table-column prop="id" label="ID" width="50"></el-table-column>
             <el-table-column prop="name" label="热词名称"></el-table-column>
             <el-table-column prop="search_times" label="搜索次数"></el-table-column>
             <el-table-column prop="order_at" label="排序"></el-table-column>
@@ -68,7 +68,7 @@
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
                 :current-page="response.currentPage"
-                :page-sizes="[10, 20, 50, 100]"
+                :page-sizes="[10 ,15 , 20, 50, 100]"
                 :page-size="response.pageSize"
                 :total="response.count"
                 layout="total, sizes, prev, pager, next, jumper">

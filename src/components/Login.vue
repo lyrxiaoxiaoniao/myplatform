@@ -45,7 +45,7 @@ export default {
   name: 'bs-login',
   data() {
     return {
-      title: '深传互动',
+      title: '安全光明',
       mailButtonText: '发送验证码',
       username: '',
       password: '',
