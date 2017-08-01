@@ -10,8 +10,7 @@
         </span>
         <div class="logo-lg">
           <img src="static/img/LOGO2.png" alt="Logo" class="img-responsive">
-          <span>深传互动</span>
-          <!-- <span>{{ appInfo ? appInfo.appName : '深传互动' }}</span> -->
+          <span>{{ appInfo ? appInfo.appName : '深传互动' }}</span>
         </div>
       </router-link>
 

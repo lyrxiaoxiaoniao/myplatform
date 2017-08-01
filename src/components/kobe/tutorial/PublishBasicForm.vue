@@ -17,6 +17,7 @@
           v-if="item.type === 'select'"
           :data="item"
           :index="index"
+          @change="onChange"
           >
         </kobe-tutorial-type>
         <kobe-active-input

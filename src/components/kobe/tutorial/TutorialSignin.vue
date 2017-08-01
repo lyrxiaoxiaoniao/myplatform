@@ -165,10 +165,11 @@ export default {
     init () {
       if (this.data.data && this.data.data.length) {
         this.data.data.forEach((item, index) => {
-          if (!item.values) return
+          if (!item.values[0]) return
           let data
           switch (item.type_key) {
             case 'activity_property_tutorial_pay':
+              if (!item.values) break
               const pay = item.values[0].value
               this.needPay = pay
               data = {
@@ -183,6 +184,7 @@ export default {
               }
               break
             case 'activity_property_tutorial_pay_credit':
+              if (!item.values[0]) return
               const credit = item.values[0].value
               this.needCredit = credit
               data = {
@@ -197,6 +199,7 @@ export default {
               }
               break
             case 'activity_property_tutorial_credit_num':
+              if (!item.values[0]) return
               const num = item.values[0].value
               this.number = num
               data = {
@@ -211,6 +214,7 @@ export default {
               }
               break
             case 'activity_property_tutorial_senior_member':
+              if (!item.values[0]) break
               const member = item.values[0].value
               this.seniorMember = member
               data = {

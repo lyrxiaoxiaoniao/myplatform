@@ -3,6 +3,8 @@
     <el-row tpye="flex">
       <el-col :span="4">
         <el-tree
+          :default-expanded-keys="['0']"
+          node-key="value"
           highlight-current
           :data="categories"
           @node-click="onClickNode"
@@ -17,18 +19,18 @@
                 <el-button @click="showAddDialog" type="primary">添加子分类</el-button>
                 <el-dropdown @command="handleDropDown">
                   <el-button type="primary">
-                    更多操作<i class="el-icon-caret-bottom el-icon--right"></i>
+                    批量操作<i class="el-icon-caret-bottom el-icon--right"></i>
                   </el-button>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item command="delete">批量删除</el-dropdown-item>
-                    <el-dropdown-item command="move">批量移动</el-dropdown-item>
+                    <el-dropdown-item command="delete">删除</el-dropdown-item>
+                    <el-dropdown-item command="move">移动</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
                 <el-button @click="onRefresh" type="primary">刷新</el-button>
               </el-col>
               <el-col :span="8">
                 <el-input v-model="searchForm.name" placeholder="请输入分类名称">
-                  <el-button slot="append" icon="search" @click="onSearch"></el-button>
+                  <el-button slot="append" icon="search"  @keyup.enter="onSearch" @click="onSearch"></el-button>
                 </el-input>
               </el-col>
             </el-row>
@@ -311,8 +313,8 @@ export default {
           }
         })
       })
-      .catch(error => {
-        this.$message.error(error)
+      .catch(_ => {
+        this.$message.error('取消')
       })
     },
     onClickNode (node) {
@@ -383,8 +385,11 @@ export default {
       }
       this.addForm.p_id = this.selectedCategory.pop()
       this.addDialogVisiable = false
-      this.addForm.status = this.addForm.status ? 1 : 0
-      api.POST(config.tutorial.categoryAdd, this.addForm)
+      const status = this.addForm.status ? 1 : 0
+      api.POST(config.tutorial.categoryAdd, {
+        ...this.addForm,
+        status: status
+      })
       .then(response => {
         if (response.data.errcode === '0000') {
           this.$notify({
@@ -401,7 +406,12 @@ export default {
             status: true,
             lb_img: ''
           }
-          this.getCategoryList()
+          const data = {
+            pageSize: this.response.pageSize,
+            currentPage: this.response.currentPage,
+            ...this.searchForm
+          }
+          this.getCategoryList(data)
         }
       })
       .catch(error => {
@@ -425,6 +435,7 @@ export default {
           const data = {
             currentPage: this.response.currentPage,
             pageSize: this.response.pageSize,
+            p_id: this.selectedNode,
             ...this.searchForm
           }
           this.getCategoryList(data, true)
@@ -451,9 +462,10 @@ export default {
           const data = {
             currentPage: this.response.currentPage,
             pageSize: this.response.pageSize,
+            p_id: this.selectedNode,
             ...this.searchForm
           }
-          this.getCategoryList(data)
+          this.getCategoryList(data, true)
         }
       })
       .catch(error => {
@@ -522,7 +534,7 @@ export default {
     },
     transformListData (data) {
       data.data.forEach(item => {
-        item.status = !!item.status
+        item.status = (item.status === 1 || item.status === '1')
       })
       return data
     },
