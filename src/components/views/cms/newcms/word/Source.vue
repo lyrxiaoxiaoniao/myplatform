@@ -34,29 +34,30 @@
             border
             stripe
             :data="response.data"
-            @selection-change="handleSelectionChange">
+            @selection-change="handleSelectionChange"
+            @row-dblclick="openDialog">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column type="index" label="ID" width="50"></el-table-column>
+            <el-table-column prop="id" label="ID" width="50"></el-table-column>
             <el-table-column prop="name" label="来源名称"></el-table-column>
-            <el-table-column prop="method" label="文档数量"></el-table-column>
-            <el-table-column prop="action" label="创建时间"></el-table-column>
+            <el-table-column prop="wordnum" label="文档数量"></el-table-column>
+            <el-table-column prop="created_at" label="创建时间"></el-table-column>
             <el-table-column label="是否推荐" width="120">
               <template scope="scope">
                 <el-switch
-                  v-model="scope.row.state"
+                  v-model="scope.row.active"
                   on-text="开"
                   off-text="关"
-                  @change="toswitch(scope.row.state,scope.row.id)">
+                  @change="toswitch(scope.row.active,scope.row.id)">
                 </el-switch>
               </template>
             </el-table-column>
             <el-table-column 
-                width="170"
+                width="120"
                 label="操作"
                 >
                 <template scope="scope">
                 <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2" title="删除"></el-button>
-                <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit" title="修改"></el-button>
+                <el-button @click="openDialog(scope.row, 'edit')" size="small" icon="edit" title="修改"></el-button>
                 </template>
             </el-table-column>
             </el-table>
@@ -83,10 +84,10 @@
               <el-input placeholder="示例:专题名称" v-model="selected.name"></el-input>
           </el-form-item>
           <el-form-item label="是否有效">
-              <el-switch on-text="开" off-text="关" v-model="selected.accept_charset"></el-switch>
+              <el-switch on-text="开" off-text="关" v-model="selected.active"></el-switch>
           </el-form-item>
           <el-form-item label="来源说明">
-              <el-input type="textarea" placeholder="" v-model="selected.enctype"></el-input>
+              <el-input type="textarea" placeholder="" v-model="selected.state"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -106,7 +107,7 @@ export default {
       if (!value) {
         return callback(new Error('不能为空'))
       }
-      api.GET(config.checknameFormAPI, {name: value})
+      api.GET(config.selectByNameWordSourceListAPI, {name: value})
       .then(response => {
         if (response.data.errcode === '5000') {
           return callback(new Error('有重名，请重新输入！'))
@@ -131,11 +132,10 @@ export default {
         keyword: ''
       },
       selected: {
-        method: '',
         name: '',
-        action: '',
-        accept_charset: '',
-        enctype: ''
+        wordnum: '',
+        created_at: '',
+        active: null
       },
       ids: [],
       rules: {
@@ -146,10 +146,71 @@ export default {
     }
   },
   methods: {
+     // 将数据中所有的时间转换成 yyyy-mm-dd hh:mm:ss  state 状态值
+    transformDate (res) {
+      res.data.forEach(v => {
+        if (v.created_at) {
+          v.created_at = this.formatDate(v.created_at)
+        }
+        // if (v.updated_at) {
+        //   v.updated_at = this.formatDate(v.updated_at)
+        // }
+        if (v.active === 1) {
+          v.active = true
+        }
+        if (v.active === 0) {
+          v.active = false
+        }
+      })
+      return res
+    },
+    // 时间转换 毫秒转换成 yyyy-mm-dd hh:mm:ss
+    formatDate (value) {
+      let date = new Date(value)
+      let M = date.getMonth() + 1
+      M = M < 10 ? ('0' + M) : M
+      let d = date.getDate()
+      d = d < 10 ? ('0' + d) : d
+      // let h = date.getHours()
+      let m = date.getMinutes()
+      m = m < 10 ? ('0' + m) : m
+      let s = date.getSeconds()
+      s = s < 10 ? ('0' + s) : s
+      value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
+      return value
+    },
     handleCommand (command) {
       if (command === '批量删除') {
         this.deleteType()
       }
+    },
+    changeNum (val) {
+      if (val) {
+        val = 1
+      } else {
+        val = 0
+      }
+      return val
+    },
+    toswitch (active, id) {
+      var obj = {
+        id: id,
+        active: this.changeNum(active)
+      }
+      api.POST(config.updateActiveHotWordListAPI, obj)
+      .then(response => {
+        if (response.status !== 200) {
+          this.error = response.statusText
+          return
+        }
+        if (response.data.errcode === '0000') {
+          this.$notify({
+            title: '成功',
+            message: '修改状态成功！',
+            type: 'success'
+          })
+        }
+      })
     },
     toggleSelection (rows) {
       if (rows) {
@@ -190,8 +251,8 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.POST(config.removeActivityFormAPI, {
-          id: id
+        api.POST(config.removeWordSourceListAPI, {
+          ids: this.ids
         })
         .then(response => {
           if (response.data.errcode === '0000') {
@@ -203,7 +264,7 @@ export default {
       })
     },
     // 模态框显示
-    openDialog (e, data = null, type = null) {
+    openDialog (data = null, type = null) {
       if (data !== null && type === 'edit') {
         this.dialogType = 'edit'
         this.dialogTitle = '修改表单'
@@ -215,9 +276,9 @@ export default {
         this.dialogType = 'add'
         this.dialogTitle = '新增表单'
         this.selected = {
-          method: '',
+          state: '',
           name: '',
-          action: ''
+          active: ''
         }
       }
       this.showDialog = true
@@ -225,20 +286,29 @@ export default {
     closeDialog () {
       this.showDialog = false
     },
+    getNum (res) {
+      if (res === true) {
+        res = 1
+      } else {
+        res = 0
+      }
+      return res
+    },
     // 新增form确认
     createType (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-        //   api.POST(config.addActivityFormAPI, this.selected)
-        //   .then(response => {
-        //     if (response.data.errcode === '0000') {
-        //       this.onSuccess('添加成功')
-        //       this.showDialog = false
-        //     }
-        //   })
-        //   .catch(error => {
-        //     this.$message.error(error)
-        //   })
+          this.selected.active = this.getNum(this.selected.active)
+          api.POST(config.addWordSourceListAPI, this.selected)
+          .then(response => {
+            if (response.data.errcode === '0000') {
+              this.onSuccess('添加成功')
+              this.showDialog = false
+            }
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
         } else {
           console.log('error submit!!')
           return false
@@ -247,16 +317,23 @@ export default {
     },
     // 修改form确认
     editType (formName) {
-    //   api.POST(config.editActivityFormAPI, this.selected)
-    //   .then(response => {
-    //     if (response.data.errcode === '0000') {
-    //       this.onSuccess('修改成功')
-    //       this.showDialog = false
-    //     }
-    //   })
-    //   .catch(error => {
-    //     this.$message.error(error)
-    //   })
+      this.selected.active = this.getNum(this.selected.active)
+      var obj = {
+        state: this.selected.state,
+        name: this.selected.name,
+        active: this.selected.active,
+        id: this.selected.id
+      }
+      api.POST(config.editWordSourceListAPI, obj)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.onSuccess('修改成功')
+          this.showDialog = false
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     },
     onSuccess (string) {
       this.$notify({
@@ -298,13 +375,13 @@ export default {
       this.getList(data)
     },
     getList (data = {}) {
-    //   api.GET(config.showActivityFormAPI, data)
-    //   .then(response => {
-    //     this.response = response.data.data
-    //   })
-    //   .catch(error => {
-    //     this.$message.error(error)
-    //   })
+      api.GET(config.showWordSourceListAPI, data)
+      .then(response => {
+        this.response = this.transformDate(response.data.data)
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     }
   },
   mounted () {
