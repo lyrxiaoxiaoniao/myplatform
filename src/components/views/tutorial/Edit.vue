@@ -3,7 +3,7 @@
     <el-row type="flex">
       <el-button @click="back">返回列表</el-button>
       <el-button>课程预览</el-button>
-      <el-button @click="onSbumit(0, '保存成功')">保存草稿</el-button>
+      <el-button @click="onSubmit(0, '保存成功')">保存草稿</el-button>
       <el-button @click="onSubmit(1, '修改活动成功')">修改发布</el-button>
     </el-row>
 
@@ -37,6 +37,7 @@
               :data="item"
               :index="index"
               :typeClass="[(index === 1 || index === 2) ? 'tutorial-publish-border': '', 'tutorial-publish-form']"
+              @form-change="onFormChange"
               >
             </kobe-tutorial-publish-form>
           </el-tab-pane>
@@ -87,10 +88,12 @@ export default {
     back () {
       this.$router.go(-1)
     },
-    onFormChange () {
+    onFormChange (value) {
+      this.form.stages[value.index] = value
     },
     onSubmit (active, msg) {
       const data = {
+        id: this.$route.query.id,
         catgr_id: this.categoryID,
         active: active,
         ...this.form
