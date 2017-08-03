@@ -40,6 +40,7 @@
     "babel-eslint": "^7.0.0",
     "babel-helper-vue-jsx-merge-props": "^2.0.2",
     "babel-loader": "^6.0.0",
+    "babel-plugin-jsx-v-model": "^1.0.0",
     "babel-plugin-syntax-jsx": "^6.18.0",
     "babel-plugin-transform-runtime": "^6.0.0",
     "babel-plugin-transform-vue-jsx": "^3.4.3",

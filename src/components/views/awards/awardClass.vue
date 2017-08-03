@@ -8,7 +8,7 @@
               node-key="id"
               @node-click="handleNodeClick">
       </el-tree>
-    </el-col>
+   </el-col>
     <el-col :span="20">
       <kobe-table>
         <div slot="kobe-table-header" class="kobe-table-header">
@@ -26,7 +26,7 @@
                 </el-dropdown-menu>
               </el-dropdown>
             </el-col>
-            <el-select v-model="form.value" placeholder="所有信息" style="width:120px;">
+            <el-select v-model="form.value" placeholder="所有信息" style="width:140px;">
               <el-option
                 v-for="item in option"
                 :key="item.value"
@@ -53,9 +53,9 @@
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="ID" width="50"></el-table-column>
             <el-table-column prop="display_name" label="分类名称"></el-table-column>
-            <el-table-column prop="type_key" label="图片" width="130">
+            <el-table-column prop="logo" label="图片" width="95">
               <template scope="scope">
-                <img width="100%" :src="scope.row.logo" @click="bigImg(scope.row.logo)" alt="">
+                <img style="width:58px;height:58px;" :src="scope.row.logo" @click="bigImg(scope.row.logo)" alt="">
               </template>
             </el-table-column>
             <el-table-column prop="created_at" label="创建时间"></el-table-column>
@@ -98,21 +98,44 @@
           </el-row>
         </div>
       </kobe-table>
-      </el-col>
+     </el-col>
     </el-row>
     <el-dialog v-model="dialogVisible" size="tiny">
       <img width="100%" :src="dialogImageUrl" alt="">
+    </el-dialog>
+    <el-dialog title="移动" v-model="dialogVisibleMove" size="tiny">
+        <div style="width:100%">
+            <el-row type="flex" justify="center">
+                <el-col :span="4">
+                  <p class="FS-moveName">移动到</p>
+                </el-col>
+                <el-col :span="20">
+                    <el-cascader
+                      style="width:100%;"
+                      change-on-select
+                      :options="cascaderData"
+                      :props="props"
+                      v-model="selectedOptions"
+                      @change="handleChangeMove">
+                  </el-cascader>
+                </el-col>
+            </el-row>
+        </div>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisibleMove = false">取 消</el-button>
+            <el-button type="primary" @click="confirmMove">确 定</el-button>
+        </span>
     </el-dialog>
     <el-dialog :title="dialogTitle" v-model="showDialog" size="tiny">
       <el-form :model="classData" :rules="rules" ref="classData" label-width="80px">
         <el-row>
           <el-col :span="24">
-            <el-form-item label="上级分类" prop="parent_id" require>
+            <el-form-item label="上级分类">
               <el-cascader
                 :options="cascaderData"
                 :props="props"
-                change-on-select
-                v-model="classData.parent_id"
+                :change-on-select="true"
+                v-model="stepsSelection"
                 @change="handleChange"
                 style="width:100%;">
               </el-cascader>
@@ -124,7 +147,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="分类排序" prop="sort" require>
+            <el-form-item label="分类排序">
               <el-input-number v-model="classData.sort" style="width:120px;"></el-input-number>
             </el-form-item>
           </el-col>
@@ -143,7 +166,7 @@
             </el-form-item>
           </el-col>
            <el-col :span="12">
-            <el-form-item label="分类icon" prop="icon" require>
+            <el-form-item label="分类icon">
               <el-upload
                 class="avatar-uploader"
                 :action="uploadURL"
@@ -156,7 +179,7 @@
             </el-form-item>
           </el-col> 
           <el-col :span="12">
-            <el-form-item label="分类图片" prop="logo" require>
+            <el-form-item label="分类图片">
               <el-upload
                 class="avatar-uploader"
                 :action="uploadURL"
@@ -172,7 +195,8 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
           <el-button @click="showDialog = false">取消</el-button>
-          <el-button @click="submitForm('classData')">确定</el-button>
+          <el-button @click="submitForm('classData')" v-if="dialogType === 'add'">确定</el-button>
+          <el-button @click="editForm()" v-if="dialogType === 'edit'">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -183,6 +207,8 @@ import api from 'src/api'
 export default {
   data () {
     return {
+      moveVal: null,
+      dialogVisibleMove: false,
       data: [],
       defaultProps: {
         children: 'children',
@@ -238,15 +264,6 @@ export default {
         display_name: [
           { required: true, message: '请输入分类名称', trigger: 'blur' }
         ],
-        parent_id: [
-          { type: 'array', required: true, message: '请选择上级分类', trigger: 'change' }
-        ],
-        logo: [
-          { required: true, message: '请上传分类图片', trigger: 'change' }
-        ],
-        icon: [
-          { required: true, message: '请上传分类ICON', trigger: 'change' }
-        ],
         description: [
           { required: true, message: '分类说明50字以内', trigger: 'blur' },
           { min: 0, max: 50, message: '分类说明长度在50字以内', trigger: 'blur' }
@@ -259,15 +276,15 @@ export default {
       if (command === '批量删除') {
         this.deleteType()
       }
+      if (command === '移动') {
+        this.confirmMove()
+      }
     },
     // 将数据中所有的时间转换成 yyyy-mm-dd hh:mm:ss  state 状态值
     transformDate (res) {
       res.data.forEach(v => {
         if (v.created_at) {
           v.created_at = this.formatDate(v.created_at)
-        }
-        if (v.updated_at) {
-          v.updated_at = this.formatDate(v.updated_at)
         }
         if (v.active === 1) {
           v.active = true
@@ -302,16 +319,11 @@ export default {
       this.classData.logo = res.data[0]
     },
     beforeAvatarUpload(file) {
-      const isJPG = file.type === 'image/jpeg'
       const isLt2M = file.size / 1024 / 1024 < 2
-
-      if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!')
-      }
       if (!isLt2M) {
         this.$message.error('上传头像图片大小不能超过 2MB!')
       }
-      return isJPG && isLt2M
+      return isLt2M
     },
     bigImg (url) {
       this.dialogImageUrl = url
@@ -330,6 +342,10 @@ export default {
     // 树形结构选择
     handleChange (value) {
       console.log(value)
+    },
+    handleChangeMove (value) {
+      console.log(value)
+      this.moveVal = value
     },
     // 树形目录点击事件
     handleNodeClick (data, node) {
@@ -361,11 +377,11 @@ export default {
           ...this.classData,
           ...data
         }
-        this.classData.parent_id = []
+        this.stepsSelection = []
         if (data.parent) {
-          this.classData.parent_id.push(data.parent.id)
+          this.stepsSelection.push(data.parent.id)
         } else {
-          this.classData.parent_id.push(data.id)
+          this.stepsSelection.push(data.id)
         }
       } else {
         this.dialogType = 'add'
@@ -383,12 +399,13 @@ export default {
       this.showDialog = true
     },
     submitForm (formName) {
-      this.classData.active = Number(this.classData.active)
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          this.classData.active = Number(this.classData.active)
           var obj = this.classData
-          obj.parent_id = this.classData.parent_id
-          obj.parent_id = obj.parent_id.pop()
+          var pid = this.stepsSelection
+          obj.parent_id = pid.shift()
+          console.log(obj)
           api.POST(config.createCategoryAPI, obj)
             .then(response => {
               if (response.status !== 200) {
@@ -405,6 +422,45 @@ export default {
         } else {
           return false
         }
+      })
+    },
+    editForm () {
+      this.classData.active = Number(this.classData.active)
+      var obj = this.classData
+      var pid = this.stepsSelection
+      obj.parent_id = pid.shift()
+      obj.created_at = this.classData.created_at
+      api.POST(config.updateCategoryAPI, obj)
+      .then(response => {
+        if (response.status !== 200) {
+          this.error = response.statusText
+          return
+        }
+        if (response.data.errcode === '0000') {
+          this.onSuccess('修改成功')
+          this.getList()
+          this.getTree()
+          this.showDialog = false
+        }
+      })
+    },
+    // 批量移动
+    confirmMove () {
+      this.dialogVisibleMove = true
+      this.parentId = null
+      this.parentId = this.moveVal.shift()
+      var obj = {}
+      obj.ids = this.ids
+      obj.id = this.parentId
+      api.POST(config.moveCategoryAPI, obj)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.getList()
+          this.getTree()
+          this.dialogVisibleMove = false
+        }
+      }).catch(error => {
+        this.$message.error(error)
       })
     },
     // 删除表单
@@ -524,16 +580,6 @@ export default {
     height: 100%;
     margin-top: 1.5rem;
     padding: 1rem 2rem;
-    position: relative;
-}
-.GD-left{
-  width: 15%;
-}
-.GD-right{
-    width:83%;
-    position: absolute;
-    top: 0;
-    right: 0;
 }
 .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
@@ -557,5 +603,10 @@ export default {
     width: 140px;
     height: 140px;
     display: block;
+}
+.FS-moveName{
+    font-weight: 600;
+    font-size: 14px;
+    margin: 7px 0 0 7px;
 }
 </style>
