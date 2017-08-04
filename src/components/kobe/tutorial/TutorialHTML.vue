@@ -40,7 +40,7 @@ export default {
             id: this.data.id,
             type_key: this.data.type_key,
             options: [{
-              title: value
+              title: this.content
             }]
           }
         }

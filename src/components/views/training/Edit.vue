@@ -368,6 +368,7 @@ export default {
 
       this.form.exts = this.activeProperties
       const data = {
+        id: this.$route.query.id,
         ...this.form,
         ...this.basicForm
       }

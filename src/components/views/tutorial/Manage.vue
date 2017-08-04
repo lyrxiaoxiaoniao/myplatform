@@ -3,6 +3,8 @@
     <el-row type="flex">
       <el-col :span="4">
         <el-tree
+          :default-expanded-keys="['0']"
+          node-key="value"
           highlight-current
           :data="categories"
           @node-click="onClickNode"
@@ -16,7 +18,6 @@
             <el-row type="flex">
               <el-col :span="17">
                 <el-button type="primary" @click="onPublishTutorial">发布课程</el-button>
-                <el-button type="primary" @click="onRefresh">刷新</el-button>
                 <el-dropdown @command="handleDropDown">
                   <el-button type="primary">
                     批量操作<i class="el-icon-caret-bottom el-icon--right"></i>
@@ -30,6 +31,7 @@
                     <el-dropdown-item command="offline">下线</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
+                <el-button type="primary" @click="onRefresh">刷新</el-button>
               </el-col>
               <el-col :span="6">
                 <el-input>
@@ -47,9 +49,9 @@
               @selection-change="handleSelectionChange"
               >
               <el-table-column type="selection" width="55"></el-table-column>
-              <el-table-column prop="id" label="ID" width="80"></el-table-column>
-              <el-table-column prop="title" label="课程名称"></el-table-column>
-              <el-table-column prop="type" label="类型"></el-table-column>
+              <el-table-column prop="id" label="ID" width="70"></el-table-column>
+              <el-table-column prop="title" label="课程名称" min-width="160"></el-table-column>
+              <el-table-column prop="type" label="类型" width="100"></el-table-column>
               <el-table-column label="创建时间" width="150">
                 <template scope="scope">
                   {{ scope.row.created_at | toDateTime }}
@@ -158,6 +160,7 @@ export default {
       searchDialogVisiable: false,
       categoryID: 14,
       categories: null,
+      selectedNode: 0,
       advancedForm: {
       }
     }
@@ -177,18 +180,22 @@ export default {
     onChangeSwitch (data) {
       api.POST(config.tutorial.toggleActive, {
         ids: [data.id],
-        active: data.active === 1
+        active: data.active ? 1 : 0
       })
       .then(response => {
         if (response.data.errcode === '0000') {
-        } else {
-          const data = {
-            pageSize: this.response.pageSize,
-            currentPage: this.response.currentPage,
-            ...this.advancedForm
-          }
-          this.getClassList(data)
+          this.$notify({
+            title: '成功',
+            message: '修改成功',
+            type: 'success'
+          })
         }
+        const data = {
+          pageSize: this.response.pageSize,
+          currentPage: this.response.currentPage,
+          ...this.advancedForm
+        }
+        this.getClassList(data)
       })
       .catch(error => {
         this.$message.error(error)
@@ -203,7 +210,21 @@ export default {
       }
       switch (val) {
         case 'delete':
-          this.onDelete(this.tableSelection)
+          let arr = []
+          this.tableSelection.forEach(item => {
+            arr.push(item.id)
+          })
+          this.onDelete(arr)
+          break
+        case 'move':
+          break
+        case 'recommand':
+          break
+        case 'uppermost':
+          break
+        case 'online':
+          break
+        case 'offline':
           break
       }
     },
@@ -292,6 +313,9 @@ export default {
             case 'activity_property_tutorial_digest':
               obj.digest = attr.attr_value
               break
+            case 'activity_property_tutorial_type':
+              obj.type = attr.attr_value
+              break
           }
         })
         arr.push(obj)
@@ -316,7 +340,15 @@ export default {
 
       return object
     },
-    onClickNode () {
+    onClickNode (node) {
+      this.selectedNode = node.value
+      const data = {
+        id: node.value,
+        pageSize: this.response.pageSize,
+        currentPage: 1
+        // searchForm
+      }
+      this.getClassList(data)
     },
     getCategoryList () {
       api.GET(config.tutorial.category, {

@@ -14,14 +14,14 @@
               <el-row type="flex">
                 <el-col :span="8">
                   <div class="img-upload-container">
-                    <img v-if="cover" :src="cover" alt="cover">
+                    <img v-if="info.cover" :src="info.cover" alt="cover" class="avatar">
                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                   </div>
                   <el-form-item label="课程类型">
-                    <el-select></el-select>
+                    <el-input v-model="info.type"></el-input>
                   </el-form-item>
                   <el-form-item label="主讲人">
-                    <el-input></el-input>
+                    <el-input v-model="info.speaker"></el-input>
                   </el-form-item>
                   <el-form-item label="课程二维码">
                     <img src="" alt="">
@@ -29,17 +29,25 @@
                 </el-col>
                 <el-col :span="16">
                   <el-form-item label="分类">
-                    <el-select></el-select>
+                    <el-cascader
+                      v-if="categories"
+                      clearable
+                      change-on-select
+                      expand-trigger="hover"
+                      :options="categories"
+                      v-model="selectedCategory"
+                      >
+                    </el-cascader>
                   </el-form-item>
                   <el-form-item label="名称">
-                    <el-input></el-input>
+                    <el-input v-model="info.title"></el-input>
                   </el-form-item>
                   <el-form-item label="时间">
                     <el-date-picker></el-date-picker>
                     <el-date-picker></el-date-picker>
                   </el-form-item>
                   <el-form-item label="课程摘要">
-                    <el-input type="textarea"></el-input>
+                    <el-input autosize type="textarea" v-model="info.digest"></el-input>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -49,23 +57,23 @@
             <el-form label-width="120px">
               <el-row type="flex">
                 <el-form-item label="课程访问量">
-                  <el-input></el-input>
+                  <el-input v-model="clickCount"></el-input>
                 </el-form-item>
                 <el-form-item label="课程评论量">
-                  <el-input></el-input>
+                  <el-input v-model="commentCount"></el-input>
                 </el-form-item>
               </el-row>
               <el-row type="flex">
                 <el-form-item label="课程报名量">
-                  <el-input></el-input>
+                  <el-input v-model="signCount"></el-input>
                 </el-form-item>
                 <el-form-item label="课程收藏量">
-                  <el-input></el-input>
+                  <el-input v-model="favorCount"></el-input>
                 </el-form-item>
               </el-row>
               <el-row type="flex">
                 <el-form-item label="课程综合评分">
-                  <el-rate></el-rate>
+                  <el-rate disabled show-text v-model="rank"></el-rate>
                 </el-form-item>
               </el-row>
             </el-form>
@@ -76,7 +84,7 @@
       <el-tab-pane label="报名情况" name="1">
         <el-row type="flex">
           <el-col :span="19">
-            <el-button type="primary">刷新</el-button>
+            <el-button @click="onSignRefresh" type="primary">刷新</el-button>
             <el-button type="primary">删除</el-button>
           </el-col>
           <el-col :span="5">
@@ -94,18 +102,17 @@
             >
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="ID" width="80"></el-table-column>
-            <el-table-column prop="id" label="课程名称"></el-table-column>
-            <el-table-column prop="id" label="用户"></el-table-column>
+            <el-table-column prop="nickname" label="用户"></el-table-column>
             <el-table-column prop="mobile" label="手机"></el-table-column>
-            <el-table-column prop="mobile" label="真实姓名"></el-table-column>
-            <el-table-column prop="mobile" label="支付方式"></el-table-column>
-            <el-table-column prop="mobile" label="积分"></el-table-column>
-            <el-table-column prop="mobile" label="现金"></el-table-column>
-            <el-table-column label="报名时间">
-              <template scoped="scoped">
-                {{ scoped.row.created_at | toDateTime }}
-              </template>
-            </el-table-column>
+            <el-table-column prop="realname" label="真实姓名"></el-table-column>
+            <el-table-column prop="pay.pay_way" label="支付方式"></el-table-column>
+            <el-table-column prop="pay.credit_price" label="积分"></el-table-column>
+            <el-table-column prop="pay.price" label="现金"></el-table-column>
+            <!-- <el-table-column label="报名时间"> -->
+            <!--   <template scope="scope"> -->
+            <!--     {{ scope.row.created_at | toDateTime }} -->
+            <!--   </template> -->
+            <!-- </el-table-column> -->
             <el-table-column
               width="80"
               label="操作"
@@ -153,13 +160,12 @@
             >
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="ID" width="80"></el-table-column>
-            <el-table-column prop="id" label="课程名称"></el-table-column>
-            <el-table-column prop="id" label="用户"></el-table-column>
+            <el-table-column prop="nickname" label="用户"></el-table-column>
             <el-table-column prop="mobile" label="手机"></el-table-column>
-            <el-table-column prop="mobile" label="真实姓名"></el-table-column>
+            <el-table-column prop="realname" label="真实姓名"></el-table-column>
             <el-table-column label="收藏时间">
-              <template scoped="scoped">
-                {{ scoped.row.created_at | toDateTime }}
+              <template scope="scope">
+                {{ scope.row.created_at | toDateTime }}
               </template>
             </el-table-column>
             <el-table-column
@@ -209,14 +215,13 @@
             >
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="ID" width="80"></el-table-column>
-            <el-table-column prop="id" label="课程名称"></el-table-column>
-            <el-table-column prop="id" label="用户"></el-table-column>
+            <el-table-column prop="nickname" label="用户"></el-table-column>
             <el-table-column prop="mobile" label="手机"></el-table-column>
-            <el-table-column prop="mobile" label="真实姓名"></el-table-column>
+            <el-table-column prop="realname" label="真实姓名"></el-table-column>
             <el-table-column prop="content" label="评论内容"></el-table-column>
             <el-table-column label="评论时间">
-              <template scoped="scoped">
-                {{ scoped.row.created_at | toDateTime }}
+              <template scope="scope">
+                {{ scope.row.created_at | toDateTime }}
               </template>
             </el-table-column>
             <el-table-column
@@ -257,6 +262,34 @@
             </el-input>
           </el-col>
         </el-row>
+        <div>
+          <el-table
+            border
+            stripe
+            v-if="rankList"
+            :data="rankList.data"
+            >
+            <el-table-column type="selection" width="55"></el-table-column>
+            <el-table-column prop="id" label="ID" width="80"></el-table-column>
+            <el-table-column prop="nickname" label="用户"></el-table-column>
+            <el-table-column prop="mobile" label="手机"></el-table-column>
+            <el-table-column prop="realname" label="真实姓名"></el-table-column>
+            <el-table-column prop="content" label="评论内容"></el-table-column>
+            <el-table-column label="评论时间">
+              <template scope="scope">
+                {{ scope.row.created_at | toDateTime }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              width="80"
+              label="操作"
+              >
+              <template scope="scope">
+                <el-button size="small" icon="delete2"></el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
       </el-tab-pane>
 
       <el-tab-pane label="奖励情况" name="5">
@@ -285,11 +318,20 @@ export default {
   data () {
     return {
       id: this.$route.query.id,
+      info: {},
       selectedTab: '',
       cover: '',
       signinList: null,
       collectList: null,
-      commentList: null
+      commentList: null,
+      rankList: null,
+      categories: null,
+      selectedCategory: [],
+      clickCount: '',
+      commentCount: '',
+      signCount: '',
+      favorCount: '',
+      rank: 0
     }
   },
   methods: {
@@ -318,10 +360,32 @@ export default {
       }
       this.getSigninList(data)
     },
+    onSignRefresh () {
+      this.getSigninList()
+    },
     getSigninList (data = null) {
-      api.GET(config.tutorial.attendee, data)
+      api.GET(config.tutorial.attendee, {
+        id: this.id,
+        ...data
+      })
       .then(response => {
         if (response.data.errcode === '0000') {
+          let data = response.data.data
+          data.data.forEach(item => {
+            if (item.pay) {
+              switch (item.pay.pay_way) {
+                case '1':
+                  item.pay.pay_way = '免费'
+                  break
+                case '2':
+                  item.pay.pay_way = '积分支付'
+                  break
+                case '3':
+                  item.pay.pay_way = '现金支付'
+                  break
+              }
+            }
+          })
           this.signinList = response.data.data
         }
       })
@@ -330,7 +394,10 @@ export default {
       })
     },
     getCollectionList (data = null) {
-      api.GET(config.tutorial.favor, data)
+      api.GET(config.tutorial.favor, {
+        id: this.id,
+        ...data
+      })
       .then(response => {
         if (response.data.errcode === '0000') {
           this.collectList = response.data.data
@@ -341,7 +408,10 @@ export default {
       })
     },
     getCommentList (data = null) {
-      api.GET(config.tutorial.commentList, data)
+      api.GET(config.tutorial.commentList, {
+        id: this.id,
+        ...data
+      })
       .then(response => {
         if (response.data.errcode === '0000') {
           this.commentList = response.data.data
@@ -350,9 +420,146 @@ export default {
       .catch(error => {
         this.$message.error(error)
       })
+    },
+    getRankList (data = null) {
+      api.GET(config.tutorial.commentList, {
+        id: this.id,
+        ...data
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.rankList = response.data.data
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    counterDetail (id) {
+      api.GET(config.tutorial.counter, {
+        id: id
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          let arr = response.data.data
+          arr.forEach(item => {
+            switch (item.counter) {
+              case 'click':
+                this.clickCount = item.count
+                break
+              case 'comment':
+                this.commentCount = item.count
+                break
+              case 'favor':
+                this.favorCount = item.count
+                break
+              case 'sign':
+                this.signCount = item.count
+                break
+            }
+          })
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    getClassDetail (id) {
+      api.GET(config.tutorial.detail, {
+        id: id
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.getCategoryList()
+          let data = response.data.data
+          data.category.stages.forEach(item => {
+            if (item.attributes.length) {
+              item.attributes.forEach(attr => {
+                switch (attr.attr_key) {
+                  case 'activity_property_tutorial_speaker':
+                    this.info.speaker = attr.attr_value
+                    break
+                  case 'activity_property_tutorial_figure':
+                    this.info.cover = attr.attr_value
+                    break
+                  case 'activity_property_tutorial_title':
+                    this.info.title = attr.attr_value
+                    break
+                  case 'activity_property_tutorial_digest':
+                    this.info.digest = attr.attr_value
+                    break
+                  case 'activity_property_tutorial_category':
+                    this.info.category = JSON.parse(attr.attr_value)
+                    this.selectedCategory = JSON.parse(attr.attr_value)
+                    break
+                  case 'activity_property_tutorial_type':
+                    this.info.type = attr.attr_value
+                    break
+                  case 'activity_property_image_upload':
+                    this.info.cover = attr.attr_value
+                    break
+                }
+              })
+            }
+          })
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    getAvgRank (id) {
+      api.GET(config.tutorial.rankAvg, {
+        id: id
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.rank = response.data.data
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    transformTreeData (data) {
+      let object = []
+      data.forEach(item => {
+        let category = {}
+        category.value = item.id.toString()
+        category.label = item.name
+        if (item.children && item.children.length !== 0) {
+          const children = this.transformTreeData(item.children)
+          category.children = children
+        } else {
+          category.children = null
+        }
+        object.push(category)
+      })
+
+      return object
+    },
+    getCategoryList () {
+      api.GET(config.tutorial.category, {
+        p_id: 0,
+        catgr_id: 14
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.categories = this.transformTreeData(response.data.data.data)
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     }
   },
   mounted () {
+    this.getCommentList()
+    this.getCollectionList()
+    this.getRankList()
+    this.getClassDetail(this.id)
+    this.counterDetail(this.id)
+    this.getAvgRank(this.id)
     this.getSigninList()
   }
 }
@@ -364,6 +571,9 @@ export default {
   margin-top: 1rem;
   margin-bottom: 0;
   padding-bottom: 2rem;
+}
+.sc-tutorial-info .el-table {
+  margin-top: 1rem;
 }
 .sc-tutorial-info-basic {
   border-bottom: 1px solid lightgray;

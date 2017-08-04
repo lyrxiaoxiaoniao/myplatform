@@ -76,6 +76,11 @@
           </template>
         </el-table-column>
         <el-table-column prop="status" label="状态" width="80"></el-table-column>
+        <el-table-column label="显示" width="120">
+          <template scope="scope">
+            <el-switch on-text="开" off-text="关" v-model="scope.row.active" @change="toggleSwicth(scope.row)"></el-switch>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="120px">
           <template scope="scope">
             <el-button size="small" icon="information" @click="selectCase(scope.row.id)"></el-button>
@@ -135,6 +140,30 @@ export default {
     }
   },
   methods: {
+    toggleSwicth (value) {
+      api.POST(config.report.toggleActive, {
+        active: value.active ? 1 : 0,
+        id: value.id
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.$notify({
+            title: '成功',
+            message: '修改成功',
+            type: 'success'
+          })
+          let data = {
+            pageSize: this.response.pageSize,
+            currentPage: this.response.currentPage,
+            ...this.searchForm
+          }
+          this.updateCase(data)
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
     handleSizeChange (value) {
       let data = {
         pageSize: value,
@@ -286,6 +315,7 @@ export default {
             item.status = '已驳回'
             break
         }
+        item.active = item.active === 1
       })
       return res
     },

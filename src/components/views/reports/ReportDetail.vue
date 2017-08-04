@@ -67,6 +67,12 @@
             <li>
               <div>受理意见：<span>{{ response.summary }}</span></div>
             </li>
+            <li v-if="response.feedback">
+              <div>用户评论：<span>{{ response.feedback.content }}</span></div>
+            </li>
+            <li v-if="response.feedback">
+              <div>用户评价：<span>{{ response.feedback.attitude }}分</span></div>
+            </li>
           </ul>
         </el-col>
         <el-col :span="11" :offset="1" class="imgListWrapper">

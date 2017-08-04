@@ -80,7 +80,7 @@
         <el-form-item label="广告标题" prop="title">
           <el-input v-model="ruleForm.title" placeholder="请输入标题"></el-input>
         </el-form-item>
-        <!-- <el-form-item label="点位分类" prop="typeId" required>
+         <el-form-item label="点位分类" prop="typeId" required>
           <template>
             <el-select v-model="value" placeholder="请选择">
               <el-option
@@ -90,7 +90,7 @@
               </el-option>
             </el-select>
           </template>
-        </el-form-item> -->
+        </el-form-item> 
         <el-form-item label="广告内容" prop="poster" required>
           <el-upload
             class="avatar-uploader"
@@ -107,13 +107,13 @@
             <div slot="tip" class="el-upload__tip">只能上传jpg图片文件，且不超过2M</div>
           </el-upload>
         </el-form-item>
-        <!-- <el-form-item label="链接方式" prop="linkType" required>
+         <el-form-item label="链接方式" prop="linkType" required>
           <el-radio-group v-model="ruleForm.linkType">
             <el-radio label="1">不跳转链接</el-radio>
             <el-radio label="2">完整地址链接</el-radio>
             <el-radio label="3">系统内部链接</el-radio>
           </el-radio-group>
-        </el-form-item> -->
+        </el-form-item> 
         <el-form-item label="链接地址" prop="link">
           <el-input v-model="ruleForm.link" placeholder="请输入对应ID"></el-input>
         </el-form-item>
@@ -286,7 +286,7 @@ export default {
         this.imageURL = file.url
         this.ruleForm.poster = response.data[0]
       }
-      console.log(this.ruleForm.poster)
+      // console.log(this.ruleForm.poster)
     },
     onUploadError (error, file) {
       this.$message.error(error)
@@ -319,8 +319,8 @@ export default {
         if (valid) {
           var sendURL
           var obj = {}
-          // obj.typeId = Number(this.value)
-          obj.typeId = 1
+          obj.typeId = Number(this.value)
+          // obj.typeId = 1
           obj.link = this.ruleForm.link
           obj.linkType = Number(this.ruleForm.linkType)
           obj.content = this.ruleForm.content

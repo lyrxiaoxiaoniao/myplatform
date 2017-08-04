@@ -107,12 +107,17 @@ import SCTeam from './components/views/team/Team.vue'
 import SCTeamDetail from './components/views/team/TeamDetail.vue'
 
 import SCNewcmsColumn from './components/views/cms/newcms/Column.vue'
+import SCNewcmsJurisdiction from './components/views/cms/newcms/Jurisdiction.vue'
 import SCNewcmsContent from './components/views/cms/newcms/Content.vue'
 import SCNewcmsSpecial from './components/views/cms/newcms/Special.vue'
 import SCSysConfig from './components/views/cms/newcms/SystemConfig.vue'
 import SCInteraction from './components/views/cms/newcms/Interaction.vue'
 import SCHotWords from './components/views/cms/newcms/word/HootWords.vue'
 import SCWordSource from './components/views/cms/newcms/word/Source.vue'
+
+import SCAwardsClass from './components/views/awards/awardClass.vue'
+import SCAwards from './components/views/awards/awards.vue'
+import SCAwardsAdd from './components/views/awards/awardsAdd.vue'
 
 const routes = [
   {
@@ -693,6 +698,11 @@ const routes = [
           name: '栏目管理',
           meta: {description: '列表'}
         }, {
+          path: 'jurisdict',
+          component: SCNewcmsJurisdiction,
+          name: '栏目权限管理',
+          meta: {description: '列表'}
+        }, {
           path: 'content',
           component: SCNewcmsContent,
           name: '内容管理',
@@ -803,6 +813,28 @@ const routes = [
           component: SCTutorialEdit,
           name: '修改课程信息',
           meta: {description: '修改课程的详细信息'}
+        }]
+      }, {
+        path: 'awards',
+        component: DashMainView,
+        redirect: '/admin/awards/index',
+        name: '奖品管理',
+        meta: {description: '列表'},
+        children: [{
+          path: 'index',
+          component: SCAwardsClass,
+          name: '奖品分类管理',
+          meta: {description: '列表'}
+        }, {
+          path: 'product',
+          component: SCAwards,
+          name: '奖品信息管理',
+          meta: {description: '展示'}
+        }, {
+          path: 'add',
+          component: SCAwardsAdd,
+          name: '奖品新增',
+          meta: {description: '展示'}
         }]
       }
     ]

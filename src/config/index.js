@@ -10,7 +10,8 @@ export default {
     refresh: '/sys/user'
   },
   report: {
-    detail: '/cmplnt/content/show'
+    detail: '/cmplnt/content/show',
+    toggleActive: '/cmplnt/content/active/update'
   },
   cms: {
   },
@@ -97,6 +98,11 @@ export default {
     detail: '/activity/info/show',
     delete: '/activity/tutorial/info/delete',
     stages: '/activity/category/stage',
+    counter: '/activity/tutorial/info/showcounter',
+    rankAvg: '/activity/tutorial/info/showcomment',
+    trashList: '/activity/tutorial/info/recycle/index',
+    trashRecover: '/activity/tutorial/info/recycle/recover',
+    trashDel: '/activity/tutorial/info/recycle/delete',
     category: '/activity/ac/index',
     categoryAdd: '/activity/ac/create',
     categoryActiveUpdate: '/activity/ac/active/update',
@@ -104,12 +110,12 @@ export default {
     categoryDelete: '/activity/ac/delete',
     categoryMove: '/activity/ac/remove',
     attendee: '/activity/tutorial/attendee/index',
-    favor: '/activity/tutorial/favor/index',
+    favor: '/activity/tutorial/info/favor/index',
     attendeeDel: '/activity/tutorial/attendee/delete',
     user: '',
-    toggleActive: '/activity/tutorial/active/update',
+    toggleActive: '/activity/tutorial/info/active/update',
     class: '/activity/tutorial/info/index',
-    commentList: '/activity/tutorial/comment/index',
+    commentList: '/activity/tutorial/info/comment/index',
     clickBoard: '/activity/tutorial/click/index',
     commentBoard: '/activity/tutorial/actcom/content/index',
     rankBoard: '/activity/tutorial/actcom/score/index',
@@ -259,7 +265,8 @@ export default {
   detailTeamAPI: '/activity/team/show',
   memberTeamAPI: '/activity/team/member',
   auditTeamAPI: '/activity/team/audit',
-  /* 积分商城 */
+  /* 奖品管理 */
+  /* 奖品分类 */
   mallOrderAPI: '/mall/Order/index',
   categoryTreeAPI: '/award/category/tree',
   categoryIndexAPI: '/award/category/index',
@@ -268,8 +275,14 @@ export default {
   activeCategoryAPI: '/award/category/active',
   showCategoryAPI: '/award/category/show',
   updateCategoryAPI: '/award/category/update',
+  moveCategoryAPI: '/award/category/move',
+  /* 奖品列表 */
+  goodsListAPI: '/award/goods/index',
   /* 商品管理 */
   showGoodsListAPI: '/award/goods/index',
+  /* 订单管理 */
+  showOrderAPI: '/award/order/index',
+  removeOrderAPI: '/award/order/delete',
   /* NewCMS接口 */
   /* 热词管理 */
   showHotWordListAPI: '/cms/hotword/index',

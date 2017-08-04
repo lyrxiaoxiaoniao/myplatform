@@ -282,6 +282,7 @@ export default {
         Object.keys(this.selected).forEach(key => {
           this.selected[key] = ''
         })
+        this.selected.name = 'input'
       }
       this.showDialog = true
     },
