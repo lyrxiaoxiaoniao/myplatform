@@ -265,7 +265,8 @@ export default {
   detailTeamAPI: '/activity/team/show',
   memberTeamAPI: '/activity/team/member',
   auditTeamAPI: '/activity/team/audit',
-  /* 积分商城 */
+  /* 奖品管理 */
+  /* 奖品分类 */
   mallOrderAPI: '/mall/Order/index',
   categoryTreeAPI: '/award/category/tree',
   categoryIndexAPI: '/award/category/index',
@@ -274,8 +275,14 @@ export default {
   activeCategoryAPI: '/award/category/active',
   showCategoryAPI: '/award/category/show',
   updateCategoryAPI: '/award/category/update',
+  moveCategoryAPI: '/award/category/move',
+  /* 奖品列表 */
+  goodsListAPI: '/award/goods/index',
   /* 商品管理 */
   showGoodsListAPI: '/award/goods/index',
+  /* 订单管理 */
+  showOrderAPI: '/award/order/index',
+  removeOrderAPI: '/award/order/delete',
   /* NewCMS接口 */
   /* 热词管理 */
   showHotWordListAPI: '/cms/hotword/index',

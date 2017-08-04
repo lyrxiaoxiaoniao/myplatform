@@ -17,6 +17,7 @@ export default {
   },
   methods: {
     updateData (data) {
+      console.log(data)
       this.form.content = data
     }
   }

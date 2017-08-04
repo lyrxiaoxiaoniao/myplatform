@@ -5,10 +5,14 @@
             <el-row type="flex" justify="end">
             <el-col :span="14">
                 <el-button type="primary">刷新</el-button>
-                <el-select v-model="classData.region" placeholder="更多操作">
-                    <el-option label="批量" value="1"></el-option>
-                    <el-option label="删除" value="2"></el-option>
-                </el-select>
+                <el-dropdown @command="handleCommand" style="margin-left:10px;">
+                  <el-button type="primary">
+                    更多操作<i class="el-icon-caret-bottom el-icon--right"></i>
+                  </el-button>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item command="批量删除">批量删除</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
             </el-col>
             <el-select v-model="form.logistics" placeholder="全部物流" style="width:130px;">
                 <el-option
@@ -50,9 +54,9 @@
                 <el-table-column prop="goodsName" label="商品" width="150"></el-table-column>
                 <el-table-column prop="phone" label="买家手机号"></el-table-column>
                 <el-table-column prop="price" label="成交金额" width="100"></el-table-column>
-                <el-table-column prop="payWay" label="成交方式" width="100"></el-table-column>
+                <el-table-column prop="payway" label="成交方式" width="100"></el-table-column>
                 <el-table-column prop="createdAt" label="订单时间" width="100"></el-table-column>
-                <el-table-column prop="payWay" label="支付方式" width="100"></el-table-column>
+                <el-table-column prop="payway" label="支付方式" width="100"></el-table-column>
                 <el-table-column prop="freightWay" label="物流方式" width="100"></el-table-column>
                 <el-table-column prop="buyerName" label="收货人" width="100"></el-table-column>
                 <el-table-column prop="address" label="收货地址"></el-table-column>
@@ -228,6 +232,7 @@ export default {
         date1: '',
         date2: ''
       },
+      ids: [],
       searchDialog: false,
       stepsSelection: [],
       tableData: null,
@@ -240,6 +245,11 @@ export default {
     }
   },
   methods: {
+    handleCommand (command) {
+      if (command === '批量删除') {
+        this.deleteType()
+      }
+    },
     open () {
       this.searchDialog = true
       console.log(this.searchDialog)
@@ -260,6 +270,10 @@ export default {
     handleSelectionChange (val) {
       this.multipleSelection = val
       console.log(this.multipleSelection)
+      this.ids = []
+      this.multipleSelection.forEach(v => {
+        this.ids.push(v.id)
+      })
     },
     // 双击行调用函数
     rowDbclick (row, e) {
@@ -273,21 +287,37 @@ export default {
     },
     // 删除表单
     deleteType (id) {
+      if (id) {
+        this.ids = []
+        this.ids.push(id)
+      }
+      if (this.ids.length === 0) {
+        this.$confirm('请进行正确操作，请先勾选表单？', '错误', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'error'
+        }).then(() => {
+          return
+        }).catch(() => {
+          return
+        })
+        return
+      }
       this.$confirm('是否确认删除该表单', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // api.POST(config.removeActivityFieldAPI, {
-        //   id: id
-        // })
-        // .then(response => {
-        //   if (response.data.errcode === '0000') {
-        //     this.onSuccess('删除成功')
-        //   } else {
-        //     this.$message.error('发生错误，请重试')
-        //   }
-        // })
+        api.POST(config.removeOrderAPI, {
+          ids: this.ids
+        })
+        .then(response => {
+          if (response.data.errcode === '0000') {
+            this.onSuccess('删除成功')
+          } else {
+            this.$message.error('发生错误，请重试')
+          }
+        })
       })
     },
     handleSizeChange (value) {
@@ -318,7 +348,7 @@ export default {
     },
     getList (data = {}) {
     //   mallOrderAPI
-      api.GET(config.mallOrderAPI, data)
+      api.GET(config.showOrderAPI, data)
       .then(response => {
         this.response = response.data.data
         console.log(this.response)
