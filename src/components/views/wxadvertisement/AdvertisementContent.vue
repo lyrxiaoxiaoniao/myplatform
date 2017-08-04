@@ -526,7 +526,7 @@ export default {
     searchKeyword () {
       if (this.value1 === '0') {
         this.updateList({
-          title: this.keyword
+          keyword: this.keyword
         })
       }
       if (this.value1 === '1') {
