@@ -14,7 +14,7 @@
               <el-row type="flex">
                 <el-col :span="8">
                   <div class="img-upload-container">
-                    <img v-if="info.cover" :src="info.cover" alt="cover">
+                    <img v-if="info.cover" :src="info.cover" alt="cover" class="avatar">
                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                   </div>
                   <el-form-item label="课程类型">
@@ -84,7 +84,7 @@
       <el-tab-pane label="报名情况" name="1">
         <el-row type="flex">
           <el-col :span="19">
-            <el-button type="primary">刷新</el-button>
+            <el-button @click="onSignRefresh" type="primary">刷新</el-button>
             <el-button type="primary">删除</el-button>
           </el-col>
           <el-col :span="5">
@@ -102,18 +102,17 @@
             >
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="ID" width="80"></el-table-column>
-            <el-table-column prop="id" label="课程名称"></el-table-column>
-            <el-table-column prop="id" label="用户"></el-table-column>
+            <el-table-column prop="nickname" label="用户"></el-table-column>
             <el-table-column prop="mobile" label="手机"></el-table-column>
-            <el-table-column prop="mobile" label="真实姓名"></el-table-column>
-            <el-table-column prop="mobile" label="支付方式"></el-table-column>
-            <el-table-column prop="mobile" label="积分"></el-table-column>
-            <el-table-column prop="mobile" label="现金"></el-table-column>
-            <el-table-column label="报名时间">
-              <template scoped="scoped">
-                {{ scoped.row.created_at | toDateTime }}
-              </template>
-            </el-table-column>
+            <el-table-column prop="realname" label="真实姓名"></el-table-column>
+            <el-table-column prop="pay.pay_way" label="支付方式"></el-table-column>
+            <el-table-column prop="pay.credit_price" label="积分"></el-table-column>
+            <el-table-column prop="pay.price" label="现金"></el-table-column>
+            <!-- <el-table-column label="报名时间"> -->
+            <!--   <template scope="scope"> -->
+            <!--     {{ scope.row.created_at | toDateTime }} -->
+            <!--   </template> -->
+            <!-- </el-table-column> -->
             <el-table-column
               width="80"
               label="操作"
@@ -161,13 +160,12 @@
             >
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="ID" width="80"></el-table-column>
-            <el-table-column prop="id" label="课程名称"></el-table-column>
-            <el-table-column prop="id" label="用户"></el-table-column>
+            <el-table-column prop="nickname" label="用户"></el-table-column>
             <el-table-column prop="mobile" label="手机"></el-table-column>
-            <el-table-column prop="mobile" label="真实姓名"></el-table-column>
+            <el-table-column prop="realname" label="真实姓名"></el-table-column>
             <el-table-column label="收藏时间">
-              <template scoped="scoped">
-                {{ scoped.row.created_at | toDateTime }}
+              <template scope="scope">
+                {{ scope.row.created_at | toDateTime }}
               </template>
             </el-table-column>
             <el-table-column
@@ -217,14 +215,13 @@
             >
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="ID" width="80"></el-table-column>
-            <el-table-column prop="id" label="课程名称"></el-table-column>
-            <el-table-column prop="id" label="用户"></el-table-column>
+            <el-table-column prop="nickname" label="用户"></el-table-column>
             <el-table-column prop="mobile" label="手机"></el-table-column>
-            <el-table-column prop="mobile" label="真实姓名"></el-table-column>
+            <el-table-column prop="realname" label="真实姓名"></el-table-column>
             <el-table-column prop="content" label="评论内容"></el-table-column>
             <el-table-column label="评论时间">
-              <template scoped="scoped">
-                {{ scoped.row.created_at | toDateTime }}
+              <template scope="scope">
+                {{ scope.row.created_at | toDateTime }}
               </template>
             </el-table-column>
             <el-table-column
@@ -265,6 +262,34 @@
             </el-input>
           </el-col>
         </el-row>
+        <div>
+          <el-table
+            border
+            stripe
+            v-if="rankList"
+            :data="rankList.data"
+            >
+            <el-table-column type="selection" width="55"></el-table-column>
+            <el-table-column prop="id" label="ID" width="80"></el-table-column>
+            <el-table-column prop="nickname" label="用户"></el-table-column>
+            <el-table-column prop="mobile" label="手机"></el-table-column>
+            <el-table-column prop="realname" label="真实姓名"></el-table-column>
+            <el-table-column prop="content" label="评论内容"></el-table-column>
+            <el-table-column label="评论时间">
+              <template scope="scope">
+                {{ scope.row.created_at | toDateTime }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              width="80"
+              label="操作"
+              >
+              <template scope="scope">
+                <el-button size="small" icon="delete2"></el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
       </el-tab-pane>
 
       <el-tab-pane label="奖励情况" name="5">
@@ -299,8 +324,9 @@ export default {
       signinList: null,
       collectList: null,
       commentList: null,
+      rankList: null,
       categories: null,
-      selectedCategory: null,
+      selectedCategory: [],
       clickCount: '',
       commentCount: '',
       signCount: '',
@@ -334,10 +360,32 @@ export default {
       }
       this.getSigninList(data)
     },
+    onSignRefresh () {
+      this.getSigninList()
+    },
     getSigninList (data = null) {
-      api.GET(config.tutorial.attendee, data)
+      api.GET(config.tutorial.attendee, {
+        id: this.id,
+        ...data
+      })
       .then(response => {
         if (response.data.errcode === '0000') {
+          let data = response.data.data
+          data.data.forEach(item => {
+            if (item.pay) {
+              switch (item.pay.pay_way) {
+                case '1':
+                  item.pay.pay_way = '免费'
+                  break
+                case '2':
+                  item.pay.pay_way = '积分支付'
+                  break
+                case '3':
+                  item.pay.pay_way = '现金支付'
+                  break
+              }
+            }
+          })
           this.signinList = response.data.data
         }
       })
@@ -346,7 +394,10 @@ export default {
       })
     },
     getCollectionList (data = null) {
-      api.GET(config.tutorial.favor, data)
+      api.GET(config.tutorial.favor, {
+        id: this.id,
+        ...data
+      })
       .then(response => {
         if (response.data.errcode === '0000') {
           this.collectList = response.data.data
@@ -357,10 +408,27 @@ export default {
       })
     },
     getCommentList (data = null) {
-      api.GET(config.tutorial.commentList, data)
+      api.GET(config.tutorial.commentList, {
+        id: this.id,
+        ...data
+      })
       .then(response => {
         if (response.data.errcode === '0000') {
           this.commentList = response.data.data
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    getRankList (data = null) {
+      api.GET(config.tutorial.commentList, {
+        id: this.id,
+        ...data
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.rankList = response.data.data
         }
       })
       .catch(error => {
@@ -403,7 +471,7 @@ export default {
       .then(response => {
         if (response.data.errcode === '0000') {
           this.getCategoryList()
-          const data = response.data.data
+          let data = response.data.data
           data.category.stages.forEach(item => {
             if (item.attributes.length) {
               item.attributes.forEach(attr => {
@@ -421,10 +489,14 @@ export default {
                     this.info.digest = attr.attr_value
                     break
                   case 'activity_property_tutorial_category':
-                    this.info.category = attr.attr_value
+                    this.info.category = JSON.parse(attr.attr_value)
+                    this.selectedCategory = JSON.parse(attr.attr_value)
                     break
                   case 'activity_property_tutorial_type':
                     this.info.type = attr.attr_value
+                    break
+                  case 'activity_property_image_upload':
+                    this.info.cover = attr.attr_value
                     break
                 }
               })
@@ -482,6 +554,9 @@ export default {
     }
   },
   mounted () {
+    this.getCommentList()
+    this.getCollectionList()
+    this.getRankList()
     this.getClassDetail(this.id)
     this.counterDetail(this.id)
     this.getAvgRank(this.id)
@@ -496,6 +571,9 @@ export default {
   margin-top: 1rem;
   margin-bottom: 0;
   padding-bottom: 2rem;
+}
+.sc-tutorial-info .el-table {
+  margin-top: 1rem;
 }
 .sc-tutorial-info-basic {
   border-bottom: 1px solid lightgray;
