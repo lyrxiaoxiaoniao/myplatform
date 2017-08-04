@@ -111,7 +111,7 @@
             :closable="true"
             :close-transition="false"
             @close="handleClose(tag)"
-            type="danger"
+            type="primary"
             style="margin:0 5px"
           >
           {{tag}}
@@ -481,7 +481,7 @@
       searchKeyword () {
         if (this.value1 === '0') {
           this.updateList({
-            slug: this.keyword
+            keyword: this.keyword
           })
         }
         if (this.value1 === '1') {
