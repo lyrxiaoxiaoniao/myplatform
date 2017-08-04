@@ -45,6 +45,7 @@ import TutorialMaterial from 'components/kobe/tutorial/TutorialMaterial'
 import TutorialSignin from 'components/kobe/tutorial/TutorialSignin'
 import TutorialAward from 'components/kobe/tutorial/TutorialAward'
 import TutorialTest from 'components/kobe/tutorial/TutorialTest'
+import TutorialDate from 'components/kobe/tutorial/TutorialDate'
 
 const install = (Vue) => {
   Vue.component('kobe-login', Login)
@@ -89,6 +90,7 @@ const install = (Vue) => {
   Vue.component('kobe-tutorial-signin', TutorialSignin)
   Vue.component('kobe-tutorial-award', TutorialAward)
   Vue.component('kobe-tutorial-test', TutorialTest)
+  Vue.component('kobe-tutorial-date', TutorialDate)
 }
 
 export default install

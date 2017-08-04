@@ -34,7 +34,7 @@
           </div>
           <div>如果选择课程分类为文本内容,则只能上传pdf或者文本内容文件;如果选择了视频课程,则必须上传视频文件MP4</div>
           <kobe-upload-file
-            title="上传头图"
+            title="上传资源"
             :show="showUpload"
             @close="onClose"
             @confirm="onConfirm"

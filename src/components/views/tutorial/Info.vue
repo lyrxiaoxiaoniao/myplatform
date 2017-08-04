@@ -43,8 +43,8 @@
                     <el-input v-model="info.title"></el-input>
                   </el-form-item>
                   <el-form-item label="时间">
-                    <el-date-picker></el-date-picker>
-                    <el-date-picker></el-date-picker>
+                    <el-date-picker v-model="info.start"></el-date-picker>
+                    <el-date-picker v-model="info.end"></el-date-picker>
                   </el-form-item>
                   <el-form-item label="课程摘要">
                     <el-input autosize type="textarea" v-model="info.digest"></el-input>
@@ -85,11 +85,11 @@
         <el-row type="flex">
           <el-col :span="19">
             <el-button @click="onSignRefresh" type="primary">刷新</el-button>
-            <el-button type="primary">删除</el-button>
+            <el-button @click="onSignDel(signSelection)" type="primary">删除</el-button>
           </el-col>
           <el-col :span="5">
-            <el-input>
-              <el-button slot="append" icon="search"></el-button>
+            <el-input v-model="signinKeyword">
+              <el-button @click="onSigninSearch" slot="append" icon="search"></el-button>
             </el-input>
           </el-col>
         </el-row>
@@ -99,6 +99,7 @@
             stripe
             v-if="signinList"
             :data="signinList.data"
+            @selection-change="handleSigninSelection"
             >
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="ID" width="80"></el-table-column>
@@ -108,17 +109,17 @@
             <el-table-column prop="pay.pay_way" label="支付方式"></el-table-column>
             <el-table-column prop="pay.credit_price" label="积分"></el-table-column>
             <el-table-column prop="pay.price" label="现金"></el-table-column>
-            <!-- <el-table-column label="报名时间"> -->
-            <!--   <template scope="scope"> -->
-            <!--     {{ scope.row.created_at | toDateTime }} -->
-            <!--   </template> -->
-            <!-- </el-table-column> -->
+            <el-table-column label="报名时间">
+              <template scope="scope">
+                {{ scope.row.create_at | toDateTime }}
+              </template>
+            </el-table-column>
             <el-table-column
               width="80"
               label="操作"
               >
               <template scope="scope">
-                <el-button size="small" icon="delete2"></el-button>
+                <el-button @click="onSignDel(scope.row.id)" size="small" icon="delete2"></el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -142,12 +143,12 @@
       <el-tab-pane label="收藏情况" name="2">
         <el-row type="flex">
           <el-col :span="19">
-            <el-button type="primary">刷新</el-button>
-            <el-button type="primary">删除</el-button>
+            <el-button @click="onCollectionRefresh" type="primary">刷新</el-button>
+            <el-button @click="onCollectionDel(collectionSelection)" type="primary">删除</el-button>
           </el-col>
           <el-col :span="5">
-            <el-input>
-              <el-button slot="append" icon="search"></el-button>
+            <el-input v-model="collectionKeyword">
+              <el-button @click="onCollectionSearch" slot="append" icon="search"></el-button>
             </el-input>
           </el-col>
         </el-row>
@@ -157,6 +158,7 @@
             stripe
             v-if="collectList"
             :data="collectList.data"
+            @selection-change="handleCollectionSelection"
             >
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="ID" width="80"></el-table-column>
@@ -173,7 +175,7 @@
               label="操作"
               >
               <template scope="scope">
-                <el-button size="small" icon="delete2"></el-button>
+                <el-button @click="onCollectionDel(scope.row.id)" size="small" icon="delete2"></el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -197,12 +199,12 @@
       <el-tab-pane label="评论情况" name="3">
         <el-row type="flex">
           <el-col :span="19">
-            <el-button type="primary">刷新</el-button>
-            <el-button type="primary">删除</el-button>
+            <el-button @click="onCommentRefresh" type="primary">刷新</el-button>
+            <el-button @click="onCommentDel(commentSelection)" type="primary">删除</el-button>
           </el-col>
           <el-col :span="5">
-            <el-input>
-              <el-button slot="append" icon="search"></el-button>
+            <el-input v-model="commentKeyword">
+              <el-button @click="onCommentSearch" slot="append" icon="search"></el-button>
             </el-input>
           </el-col>
         </el-row>
@@ -212,6 +214,7 @@
             stripe
             v-if="commentList"
             :data="commentList.data"
+            @selection-change="handleCommentSelection"
             >
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="ID" width="80"></el-table-column>
@@ -229,7 +232,7 @@
               label="操作"
               >
               <template scope="scope">
-                <el-button size="small" icon="delete2"></el-button>
+                <el-button @click="onCommentDel(scope.row.id)" size="small" icon="delete2"></el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -253,12 +256,12 @@
       <el-tab-pane label="课程评价" name="4">
         <el-row type="flex">
           <el-col :span="19">
-            <el-button type="primary">刷新</el-button>
-            <el-button type="primary">删除</el-button>
+            <el-button @click="onRankRefresh" type="primary">刷新</el-button>
+            <el-button @click="onRankDel(rankSelection)" type="primary">删除</el-button>
           </el-col>
           <el-col :span="5">
-            <el-input>
-              <el-button slot="append" icon="search"></el-button>
+            <el-input v-model="rankKeyword">
+              <el-button @click="onRankSearch" slot="append" icon="search"></el-button>
             </el-input>
           </el-col>
         </el-row>
@@ -268,6 +271,7 @@
             stripe
             v-if="rankList"
             :data="rankList.data"
+            @selection-change="handleRankSelection"
             >
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="ID" width="80"></el-table-column>
@@ -275,6 +279,16 @@
             <el-table-column prop="mobile" label="手机"></el-table-column>
             <el-table-column prop="realname" label="真实姓名"></el-table-column>
             <el-table-column prop="content" label="评论内容"></el-table-column>
+            <el-table-column label="评分">
+              <template scope="scope">
+                <el-rate
+                  v-model="scope.row.score"
+                  disabled
+                  text-template="{scope.row.score}"
+                  >
+                </el-rate>
+              </template>
+            </el-table-column>
             <el-table-column label="评论时间">
               <template scope="scope">
                 {{ scope.row.created_at | toDateTime }}
@@ -285,10 +299,24 @@
               label="操作"
               >
               <template scope="scope">
-                <el-button size="small" icon="delete2"></el-button>
+                <el-button @click="onRankDel(scope.row.id)" size="small" icon="delete2"></el-button>
               </template>
             </el-table-column>
           </el-table>
+          <el-row type="flex" justify="center">
+            <el-col :span="12">
+              <el-pagination
+                v-if="rankList"
+                @size-change="rankListSizeChange"
+                @current-change="rankCurrentChange"
+                :current-page="rankList.currentPage"
+                :page-sizes="[10, 20, 50, 100]"
+                :page-size="rankList.pageSize"
+                :total="rankList.count"
+                layout="total, sizes, prev, pager, next, jumper">
+              </el-pagination>
+            </el-col>
+          </el-row>
         </div>
       </el-tab-pane>
 
@@ -319,6 +347,10 @@ export default {
     return {
       id: this.$route.query.id,
       info: {},
+      signinKeyword: '',
+      collectionKeyword: '',
+      commentKeyword: '',
+      rankKeyword: '',
       selectedTab: '',
       cover: '',
       signinList: null,
@@ -327,6 +359,10 @@ export default {
       rankList: null,
       categories: null,
       selectedCategory: [],
+      signSelection: [],
+      collectionSelection: [],
+      commentSelection: [],
+      rankSelection: [],
       clickCount: '',
       commentCount: '',
       signCount: '',
@@ -338,30 +374,285 @@ export default {
     back () {
       this.$router.go(-1)
     },
-    commentSizeChange (value) {
-    },
-    commentCurrentChange (value) {
-    },
-    collectionSizeChange (value) {
-    },
-    collectionCurrentChange (value) {
-    },
     signinSizeChange (value) {
       const data = {
         currentPage: this.signinList.currentPage,
+        keyword: this.signinKeyword,
         pageSize: value
       }
       this.getSigninList(data)
     },
     signinCurrentChange (value) {
       const data = {
+        keyword: this.signinKeyword,
         currentPage: value,
         pageSize: this.signinList.pageSize
       }
       this.getSigninList(data)
     },
+    collectionSizeChange (value) {
+      const data = {
+        keyword: this.collectionKeyword,
+        currentPage: this.collectList.currentPage,
+        pageSize: value
+      }
+      this.getCollectionList(data)
+    },
+    collectionCurrentChange (value) {
+      const data = {
+        keyword: this.collectionKeyword,
+        currentPage: value,
+        pageSize: this.collectList.pageSize
+      }
+      this.getCollectionList(data)
+    },
+    commentSizeChange (value) {
+      const data = {
+        keyword: this.commentKeyword,
+        currentPage: this.commentList.currentPage,
+        pageSize: value
+      }
+      this.getCommentList(data)
+    },
+    commentCurrentChange (value) {
+      const data = {
+        keyword: this.commentKeyword,
+        currentPage: value,
+        pageSize: this.commentList.pageSize
+      }
+      this.getCommentList(data)
+    },
+    rankListSizeChange (value) {
+    },
+    rankCurrentChange (value) {
+    },
     onSignRefresh () {
       this.getSigninList()
+    },
+    onCollectionRefresh () {
+      this.getCollectionList()
+    },
+    onCommentRefresh () {
+      this.getCommentList()
+    },
+    onRankRefresh () {
+      this.getRankList()
+    },
+    onSigninSearch () {
+      const data = {
+        keyword: this.signinKeyword,
+        pageSize: this.signinList.pageSize,
+        currentPage: this.signinList.currentPage
+      }
+      this.getSigninList(data)
+    },
+    onCollectionSearch () {
+      const data = {
+        keyword: this.collectionKeyword,
+        pageSize: this.collectList.pageSize,
+        currentPage: this.collectList.currentPage
+      }
+      this.getCollectionList(data)
+    },
+    onCommentSearch () {
+      const data = {
+        keyword: this.commentKeyword,
+        pageSize: this.commentList.pageSize,
+        currentPage: this.commentList.currentPage
+      }
+      this.getCommentList(data)
+    },
+    onRankSearch () {
+      const data = {
+        keyword: this.rankKeyword,
+        pageSize: this.rankList.pageSize,
+        currentPage: this.rankList.currentPage
+      }
+      this.getRankList(data)
+    },
+    handleSigninSelection (val) {
+      this.signSelection = val
+    },
+    handleCollectionSelection (val) {
+      this.collectionSelection = val
+    },
+    handleCommentSelection (val) {
+      this.commentSelection = val
+    },
+    handleRankSelection (val) {
+      this.rankSelection = val
+    },
+    onRankDel (value) {
+      let arr = []
+      if (Array.isArray(value) && value.length === 0) {
+        this.$message.info('请选择需要操作的数据')
+        return
+      }
+      if (!Array.isArray(value)) {
+        arr = [value]
+      } else {
+        value.forEach(item => {
+          arr.push(item.id)
+        })
+      }
+      this.$confirm('是否要确认删除', '删除', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        api.POST(config.tutorial.commentDel, {
+          ids: arr
+        })
+        .then(response => {
+          if (response.data.errcode === '0000') {
+            this.$message({
+              type: 'success',
+              message: '删除成功'
+            })
+            const data = {
+              keyword: this.rankKeyword,
+              pageSize: this.rankList.pageSize,
+              currentPage: this.rankList.currentPage
+            }
+            const obj = {
+              keyword: this.commentKeyword,
+              pageSize: this.commentList.pageSize,
+              currentPage: this.commentList.currentPage
+            }
+            this.getRankList(data)
+            this.getCommentList(obj)
+          }
+        })
+      })
+      .catch(_ => {
+        this.$message.error('取消')
+      })
+    },
+    onCommentDel (value) {
+      let arr = []
+      if (Array.isArray(value) && value.length === 0) {
+        this.$message.info('请选择需要操作的数据')
+        return
+      }
+      if (!Array.isArray(value)) {
+        arr = [value]
+      } else {
+        value.forEach(item => {
+          arr.push(item.id)
+        })
+      }
+      this.$confirm('是否要确认删除', '删除', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        api.POST(config.tutorial.commentDel, {
+          ids: arr
+        })
+        .then(response => {
+          if (response.data.errcode === '0000') {
+            this.$message({
+              type: 'success',
+              message: '删除成功'
+            })
+            const obj = {
+              keyword: this.commentKeyword,
+              pageSize: this.commentList.pageSize,
+              currentPage: this.commentList.currentPage
+            }
+            const data = {
+              keyword: this.rankKeyword,
+              pageSize: this.rankList.pageSize,
+              currentPage: this.rankList.currentPage
+            }
+            this.getCommentList(obj)
+            this.getRankList(data)
+          }
+        })
+      })
+      .catch(_ => {
+        this.$message.error('取消')
+      })
+    },
+    onCollectionDel (value) {
+      let arr = []
+      if (Array.isArray(value) && value.length === 0) {
+        this.$message.info('请选择需要操作的数据')
+        return
+      }
+      if (!Array.isArray(value)) {
+        arr = [value]
+      } else {
+        value.forEach(item => {
+          arr.push(item.id)
+        })
+      }
+      this.$confirm('是否要确认删除', '删除', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        api.POST(config.tutorial.favorDel, {
+          ids: arr
+        })
+        .then(response => {
+          if (response.data.errcode === '0000') {
+            this.$message({
+              type: 'success',
+              message: '删除成功'
+            })
+            const data = {
+              keyword: this.collectionKeyword,
+              pageSize: this.collectList.pageSize,
+              currentPage: this.collectList.currentPage
+            }
+            this.getCollectionList(data)
+          }
+        })
+      })
+      .catch(_ => {
+        this.$message.error('取消')
+      })
+    },
+    onSignDel (value) {
+      let arr = []
+      if (Array.isArray(value) && value.length === 0) {
+        this.$message.info('请选择需要操作的数据')
+        return
+      }
+      if (!Array.isArray(value)) {
+        arr = [value]
+      } else {
+        value.forEach(item => {
+          arr.push(item.id)
+        })
+      }
+      this.$confirm('是否要确认删除', '删除', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        api.POST(config.tutorial.attendeeDel, {
+          ids: arr
+        })
+        .then(response => {
+          if (response.data.errcode === '0000') {
+            this.$message({
+              type: 'success',
+              message: '删除成功'
+            })
+            const data = {
+              keyword: this.signinKeyword,
+              pageSize: this.signinList.pageSize,
+              currentPage: this.signinList.currentPage
+            }
+            this.getSigninList(data)
+          }
+        })
+      })
+      .catch(_ => {
+        this.$message.error('取消')
+      })
     },
     getSigninList (data = null) {
       api.GET(config.tutorial.attendee, {
@@ -498,6 +789,12 @@ export default {
                   case 'activity_property_image_upload':
                     this.info.cover = attr.attr_value
                     break
+                  case 'activity_property_tutorial_start_time':
+                    this.info.start = JSON.parse(attr.attr_value)
+                    break
+                  case 'activity_property_tutorial_end_time':
+                    this.info.end = JSON.parse(attr.attr_value)
+                    break
                 }
               })
             }
@@ -554,13 +851,13 @@ export default {
     }
   },
   mounted () {
+    this.getSigninList()
     this.getCommentList()
     this.getCollectionList()
     this.getRankList()
     this.getClassDetail(this.id)
     this.counterDetail(this.id)
     this.getAvgRank(this.id)
-    this.getSigninList()
   }
 }
 </script>

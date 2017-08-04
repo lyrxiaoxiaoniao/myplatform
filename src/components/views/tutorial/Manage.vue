@@ -57,7 +57,7 @@
                   {{ scope.row.created_at | toDateTime }}
                 </template>
               </el-table-column>
-              <el-table-column prop="click" label="点击"></el-table-column>
+              <el-table-column prop="click_count" label="点击"></el-table-column>
               <el-table-column prop="speaker" label="主讲"></el-table-column>
               <el-table-column label="状态">
                 <template scope="scope">
@@ -81,6 +81,24 @@
                 </template>
               </el-table-column>
             </el-table>
+            <el-dialog title="移动课程" v-model="moveDialogVisiable">
+              <el-form :model="moveForm" label-width="120px">
+                <el-form-item label="上级分类">
+                  <el-cascader
+                    clearable
+                    change-on-select
+                    expand-trigger="hover"
+                    :options="categories"
+                    v-model="moveForm.id"
+                    >
+                  </el-cascader>
+                </el-form-item>
+              </el-form>
+              <div slot="footer">
+                <el-button @click="closeMoveForm">取消</el-button>
+                <el-button @click="onMoveTutorial">确定</el-button>
+              </div>
+            </el-dialog>
             <el-dialog title="高级搜索" v-model="searchDialogVisiable">
               <el-form :model="advancedForm" label-width="120px">
                 <el-form-item label="关键字">
@@ -158,9 +176,13 @@ export default {
       response: null,
       tableSelection: [],
       searchDialogVisiable: false,
+      moveDialogVisiable: false,
       categoryID: 14,
       categories: null,
       selectedNode: 0,
+      moveForm: {
+        id: []
+      },
       advancedForm: {
       }
     }
@@ -174,8 +196,48 @@ export default {
     closeSearchForm () {
       this.searchDialogVisiable = false
     },
+    closeMoveForm () {
+      this.moveDialogVisiable = false
+    },
     onRefresh () {
       this.getClassList()
+    },
+    onMoveTutorial () {
+      if (this.moveForm.id.length === 0) {
+        this.$message.info('请选择需要移动到的分类')
+        return
+      }
+      let arr = []
+      this.tableSelection.forEach(item => {
+        arr.push(item.id)
+      })
+      this.moveForm.id.shift()
+      this.moveDialogVisiable = false
+      api.POST(config.tutorial.move, {
+        ids: arr,
+        p_ids: this.moveForm.id
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.$notify({
+            title: '成功',
+            message: '移动成功',
+            type: 'success'
+          })
+          const data = {
+            id: this.selectedNode,
+            pageSize: this.response.pageSize,
+            currentPage: this.response.currentPage,
+            ...this.advancedForm
+          }
+          this.getClassList(data)
+        } else {
+          this.$message.error(response.data.errmsg)
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     },
     onChangeSwitch (data) {
       api.POST(config.tutorial.toggleActive, {
@@ -191,6 +253,7 @@ export default {
           })
         }
         const data = {
+          id: this.selectedNode,
           pageSize: this.response.pageSize,
           currentPage: this.response.currentPage,
           ...this.advancedForm
@@ -204,9 +267,68 @@ export default {
     handleSelectionChange (val) {
       this.tableSelection = val
     },
+    multiOnLine () {
+      let arr = []
+      this.tableSelection.forEach(item => {
+        arr.push(item.id)
+      })
+      api.POST(config.tutorial.toggleActive, {
+        ids: arr,
+        active: 1
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.$notify({
+            title: '成功',
+            message: '修改成功',
+            type: 'success'
+          })
+        }
+        const data = {
+          id: this.selectedNode,
+          pageSize: this.response.pageSize,
+          currentPage: this.response.currentPage,
+          ...this.advancedForm
+        }
+        this.getClassList(data)
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    multiOffLine () {
+      let arr = []
+      this.tableSelection.forEach(item => {
+        arr.push(item.id)
+      })
+      api.POST(config.tutorial.toggleActive, {
+        ids: arr,
+        active: 0
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.$notify({
+            title: '成功',
+            message: '修改成功',
+            type: 'success'
+          })
+        }
+        const data = {
+          id: this.selectedNode,
+          pageSize: this.response.pageSize,
+          currentPage: this.response.currentPage,
+          ...this.advancedForm
+        }
+        this.getClassList(data)
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
     handleDropDown (val) {
       if (!this.tableSelection.length) {
         this.$message.info('请选择需要操作的数据')
+        return
       }
       switch (val) {
         case 'delete':
@@ -217,14 +339,17 @@ export default {
           this.onDelete(arr)
           break
         case 'move':
+          this.moveDialogVisiable = true
           break
         case 'recommand':
           break
         case 'uppermost':
           break
         case 'online':
+          this.multiOnLine()
           break
         case 'offline':
+          this.multiOffLine()
           break
       }
     },
@@ -258,6 +383,7 @@ export default {
               message: '删除成功'
             })
             const data = {
+              id: this.selectedNode,
               pageSize: this.response.pageSize,
               currentPage: this.response.currentPage,
               ...this.advancedForm
@@ -277,6 +403,7 @@ export default {
     },
     handleSizeChange (value) {
       const data = {
+        id: this.selectedNode,
         pageSize: value,
         currentPage: this.response.currentPage,
         ...this.advancedForm
@@ -285,6 +412,7 @@ export default {
     },
     handleCurrentChange (value) {
       const data = {
+        id: this.selectedNode,
         pageSize: this.response.pageSize,
         currentPage: value,
         ...this.advancedForm
