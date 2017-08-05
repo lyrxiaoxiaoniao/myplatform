@@ -61,7 +61,7 @@
             <el-table-column prop="sort" label="库存" width="80"></el-table-column>
             <el-table-column prop="sort" label="销量" width="80"></el-table-column>
             <el-table-column prop="created_at" label="创建时间" width="220"></el-table-column>
-            <el-table-column label="上架" width="95">
+            <!-- <el-table-column label="上架" width="95">
               <template scope="scope">
                 <el-switch
                   v-model="scope.row.sell"
@@ -70,7 +70,7 @@
                   @change="toswitch(scope.row.sell,scope.row.id)">
                 </el-switch>
               </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column 
               width="120"
               label="操作"

@@ -106,8 +106,7 @@
               <ul class="dropdown-menu user-setting-menu">
                 <li class="user-header">
                   <img :src="user.avatar" alt="user-image" class="img-circle">
-                  <!-- <p>深传互动政务新媒体平台</p> -->
-                  <p>安全光明政务新媒体平台</p>
+                  <p>{{ appInfo ? appInfo.appName : '深传互动政务新媒体平台' }}</p>
                 </li>
                 <li class="user-setting-menu-content user-footer">
                   <div class="pull-left">

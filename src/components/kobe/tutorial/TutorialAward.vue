@@ -162,7 +162,7 @@ export default {
     init () {
       if (this.data.data && this.data.data.length) {
         this.data.data.forEach((item, index) => {
-          if (!item.values) return
+          if (!item.values || !item.values[0]) return
           let data
           switch (item.type_key) {
             case 'activity_property_tutorial_reward':
