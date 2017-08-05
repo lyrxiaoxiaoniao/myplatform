@@ -28,19 +28,18 @@
           <div>外部视频链接仅支持腾讯视频链接;其他文本内容链接支持pdf或者jpg/png等图片文件。</div>
         </div>
         <div v-if="item.type === 'upload'">
-          <div class="img-upload-container">
-            <img v-if="url" :src="url" alt="cover">
-            <i v-else @click="openUpload(index)" class="el-icon-plus avatar-uploader-icon"></i>
+          <div class="file-upload-container">
+            <el-upload
+              :action="uploadURL"
+              :on-preview="handlePreview"
+              :on-remove="handleRemove"
+              :on-success="onUploadSuccess"
+              :on-change="onUploadChange"
+              :file-list="fileList">
+              <el-button size="small" type="primary">点击上传</el-button>
+            </el-upload>
           </div>
-          <div>如果选择课程分类为文本内容,则只能上传pdf或者文本内容文件;如果选择了视频课程,则必须上传视频文件MP4</div>
-          <kobe-upload-file
-            title="上传头图"
-            :show="showUpload"
-            @close="onClose"
-            @confirm="onConfirm"
-            :multiselect="false"
-            >
-          </kobe-upload-file>
+          <div>如果选择课程分类为文本内容,则只能上传pdf或者文本内容文件;如果选择了视频课程,则必须上传视频文件MP4(最大只能为10MB)</div>
         </div>
       </template>
     </div>
@@ -48,6 +47,8 @@
 </template>
 
 <script>
+import config from 'src/config'
+
 export default {
   name: 'kobe-tutorial-material',
   props: {
@@ -63,9 +64,10 @@ export default {
   },
   data () {
     return {
-      showUpload: false,
-      uploadIndex: '',
-      url: '',
+      uploadURL: config.serverURI + config.uploadFilesAPI,
+      fileList: [],
+      files: [],
+      uploadIndex: 3,
       link: '',
       radio: '',
       form: []
@@ -82,29 +84,59 @@ export default {
     }
   },
   methods: {
-    openUpload (index) {
-      this.uploadIndex = index
-      this.showUpload = true
-    },
-    onClose () {
-      this.showUpload = false
-    },
-    onConfirm (value) {
-      this.url = value[0]
+    handleRemove(file, fileList) {
+      const url = file.response.data[0]
+      let num = -1
+      this.files.forEach((file, index) => {
+        if (url === file.url) {
+          num = index
+        }
+      })
+      if (num !== -1) {
+        this.files.splice(num, 1)
+      }
+
       const data = this.data.data[this.uploadIndex]
       let item = {
-        index: data.uploadIndex,
+        index: data.index,
         data: {
           id: data.id,
           type_key: data.type_key,
           options: [{
-            title: this.url
+            title: this.files
           }]
         }
       }
       this.form[this.uploadIndex] = item
-      this.showUpload = false
       this.$emit('material', this.form)
+    },
+    handlePreview(file) {
+    },
+    onUploadChange (file, fileList) {
+      const data = this.data.data[this.uploadIndex]
+      let item = {
+        index: data.index,
+        data: {
+          id: data.id,
+          type_key: data.type_key,
+          options: [{
+            title: this.files
+          }]
+        }
+      }
+      this.form[this.uploadIndex] = item
+      this.$emit('material', this.form)
+    },
+    onUploadSuccess (response, file, fileList) {
+      if (response.errcode === '0000') {
+        let obj = {
+          name: file.name,
+          url: response.data[0]
+        }
+        this.files.push(obj)
+      } else {
+        this.$message.error('上传错误，请重试')
+      }
     },
     onRadioChange (index) {
       const selected = index === this.radio
@@ -186,15 +218,16 @@ export default {
               }
               break
             case 'activity_property_tutorial_server_url':
-              const url = item.values[0].value
-              this.url = url
+              const files = item.values[0].value
+              this.files = JSON.parse(files)
+              this.fileList = JSON.parse(files)
               data = {
                 index: item.index,
                 data: {
                   id: item.id,
                   type_key: item.type_key,
                   options: [{
-                    title: this.url
+                    title: this.files
                   }]
                 }
               }
@@ -227,5 +260,8 @@ export default {
 }
 .kobe-tutorial-material .el-radio__label {
   font-size: 12px;
+}
+.kobe-tutorial-material .file-upload-container {
+  margin: 2rem;
 }
 </style>

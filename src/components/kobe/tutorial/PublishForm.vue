@@ -27,6 +27,13 @@
           @time="onChange"
           >
         </kobe-tutorial-time>
+        <kobe-tutorial-date
+          v-if="item.type === 'datetime'"
+          :data="item"
+          :index="index"
+          @time="onChange"
+          >
+        </kobe-tutorial-date>
         <kobe-active-textarea
           v-if="item.type === 'textarea'"
           :data="item"

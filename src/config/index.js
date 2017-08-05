@@ -99,6 +99,7 @@ export default {
     delete: '/activity/tutorial/info/delete',
     stages: '/activity/category/stage',
     counter: '/activity/tutorial/info/showcounter',
+    move: '/activity/tutorial/info/file/move',
     rankAvg: '/activity/tutorial/info/showcomment',
     trashList: '/activity/tutorial/info/recycle/index',
     trashRecover: '/activity/tutorial/info/recycle/recover',
@@ -111,11 +112,13 @@ export default {
     categoryMove: '/activity/ac/remove',
     attendee: '/activity/tutorial/attendee/index',
     favor: '/activity/tutorial/info/favor/index',
+    favorDel: '/activity/tutorial/info/favor/delete',
     attendeeDel: '/activity/tutorial/attendee/delete',
     user: '',
     toggleActive: '/activity/tutorial/info/active/update',
     class: '/activity/tutorial/info/index',
     commentList: '/activity/tutorial/info/comment/index',
+    commentDel: '/activity/tutorial/info/comment/delete',
     clickBoard: '/activity/tutorial/click/index',
     commentBoard: '/activity/tutorial/actcom/content/index',
     rankBoard: '/activity/tutorial/actcom/score/index',
@@ -201,7 +204,7 @@ export default {
   getPointCountAPI: '/advspace/querycount',
   getCountAPI: '/adv/querycount',
   pointToAdvAPI: '/gm/ad/createspace',
-  advToPointAPI: '/gm/ad//createadv',
+  advToPointAPI: '/gm/ad/createadv',
   removepointToAdvAPI: '/gm/ad/delete',
   stateChangeAPI: '/gm/ad/updatestate',
   dictListAPI: '/com/dictionary/option/index',
@@ -278,6 +281,7 @@ export default {
   moveCategoryAPI: '/award/category/move',
   /* 奖品列表 */
   goodsListAPI: '/award/goods/index',
+  cpAwardShowAPI: '/award/cp/show',
   /* 商品管理 */
   showGoodsListAPI: '/award/goods/index',
   /* 订单管理 */

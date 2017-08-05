@@ -25,7 +25,6 @@
                   <el-dropdown-item command="移动">移动</el-dropdown-item>
                   <el-dropdown-item command="上架">上架</el-dropdown-item>
                   <el-dropdown-item command="下架">下架</el-dropdown-item>
-                  <el-dropdown-item command="运费模板">运费模板</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
               <el-button type="primary">刷新</el-button>
@@ -62,7 +61,7 @@
             <el-table-column prop="sort" label="库存" width="80"></el-table-column>
             <el-table-column prop="sort" label="销量" width="80"></el-table-column>
             <el-table-column prop="created_at" label="创建时间" width="220"></el-table-column>
-            <el-table-column label="上架" width="95">
+            <!-- <el-table-column label="上架" width="95">
               <template scope="scope">
                 <el-switch
                   v-model="scope.row.sell"
@@ -71,7 +70,7 @@
                   @change="toswitch(scope.row.sell,scope.row.id)">
                 </el-switch>
               </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column 
               width="120"
               label="操作"
@@ -127,6 +126,29 @@
             <el-button type="primary" @click="confirmMove">确 定</el-button>
         </span>
     </el-dialog>
+    <!-- <el-dialog title="移动" v-model="dialogVisibleMove" size="tiny">
+        <div style="width:100%">
+            <el-row type="flex" justify="center">
+                <el-col :span="4">
+                  <p class="FS-moveName">移动到</p>
+                </el-col>
+                <el-col :span="20">
+                    <el-cascader
+                      style="width:100%;"
+                      change-on-select
+                      :options="cascaderData"
+                      :props="props"
+                      v-model="selectedOptions"
+                      @change="handleChangeMove">
+                  </el-cascader>
+                </el-col>
+            </el-row>
+        </div>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisibleMove = false">取 消</el-button>
+            <el-button type="primary" @click="confirmMove">确 定</el-button>
+        </span>
+    </el-dialog> -->
   </div>
 </template>
 <script>

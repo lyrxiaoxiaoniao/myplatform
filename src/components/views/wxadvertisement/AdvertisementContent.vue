@@ -1,32 +1,26 @@
 <template> 
   <div class="sc-advertisement">
-		<el-row class="sc-top-header">
-		  <el-col :span="12">
+		<el-row class="sc-top-header" type="flex">
+		  <el-col :span="14">
         <el-button type="primary" class="sc-top-btn" @click="addData">新增</el-button>
       </el-col>
-		  <el-col :span="3">
-         <template>
-          <el-select v-model="value1" placeholder="请选择" style="float:right;margin-right:10px;width:110px;">
-            <el-option
-              v-for="item in option"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-        </template>
-      </el-col>
-		  <el-col :span="6">
+      <el-select v-model="value1" placeholder="请选择" style="float:right;margin-right:10px;width:110px;">
+        <el-option
+          v-for="item in option"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
+		  <el-col :span="8">
         <div class="grid-content">
           <el-input placeholder="请输入内容" v-model="keyword">
             <el-button slot="append" icon="search" class="hover-search" @click="searchKeyword()"></el-button>
           </el-input>
         </div>
       </el-col>
-		  <el-col :span="3">
-        <el-button icon="upload2" type="primary" style="margin-left:20px;"></el-button>
-        <el-button icon="setting" type="primary"></el-button>
-      </el-col>
+        <el-button class="sc-top-font" icon="upload2" type="primary"></el-button>
+        <el-button class="sc-top-font" icon="setting" type="primary"></el-button>
 		</el-row>
 	  	<div class="sc-article-table-content">
 	      <el-table :data="data.data" border stripe
@@ -526,7 +520,7 @@ export default {
     searchKeyword () {
       if (this.value1 === '0') {
         this.updateList({
-          title: this.keyword
+          keyword: this.keyword
         })
       }
       if (this.value1 === '1') {
@@ -577,8 +571,10 @@ export default {
     padding:2rem 1rem;
   }
   .sc-top-header {
-	margin-bottom: 1rem;
-	padding: 0 2rem;
+	margin: 1rem 2rem;
+  }
+  .sc-top-font {
+    height: 36px;
   }
   .hover-search:hover {
 	color: #108ce8;
