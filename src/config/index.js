@@ -201,7 +201,7 @@ export default {
   getPointCountAPI: '/advspace/querycount',
   getCountAPI: '/adv/querycount',
   pointToAdvAPI: '/gm/ad/createspace',
-  advToPointAPI: '/gm/ad//createadv',
+  advToPointAPI: '/gm/ad/createadv',
   removepointToAdvAPI: '/gm/ad/delete',
   stateChangeAPI: '/gm/ad/updatestate',
   dictListAPI: '/com/dictionary/option/index',
@@ -278,6 +278,7 @@ export default {
   moveCategoryAPI: '/award/category/move',
   /* 奖品列表 */
   goodsListAPI: '/award/goods/index',
+  cpAwardShowAPI: '/award/cp/show',
   /* 商品管理 */
   showGoodsListAPI: '/award/goods/index',
   /* 订单管理 */

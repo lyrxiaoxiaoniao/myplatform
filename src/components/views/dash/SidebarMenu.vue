@@ -75,6 +75,7 @@ export default {
     height: 100%;
     width: 100%;
     font-size: 12px;
+    margin-left: 5px;
   }
 
   .sidebar-menu > .pageLink > ul {
