@@ -106,12 +106,16 @@
               <ul class="dropdown-menu user-setting-menu">
                 <li class="user-header">
                   <img :src="user.avatar" alt="user-image" class="img-circle">
-                  <p>{{ appInfo ? appInfo.appName : '深传互动政务新媒体平台' }}</p>
+                  <el-row type="flex">
+                    <p>姓名：{{ userInfo.username }}</p>
+                    <p>手机号：{{ userInfo.companyTelephone ? userInfo.mobile : ''}}</p>
+                  </el-row>
+                  <p>时间：{{ userInfo.createdAt ? userInfo.createdAt : ''}}</p>
                 </li>
                 <li class="user-setting-menu-content user-footer">
-                  <div class="pull-left">
-                    <el-button size="small">资料</el-button>
-                  </div>
+                  <!-- <div class="pull-left">
+                     <el-button size="small">资料</el-button> 
+                  </div> -->
                   <div class="pull-right">
                     <el-button @click="onLogout" size="small">退出</el-button>
                   </div>
@@ -221,6 +225,7 @@ export default {
   },
   created () {
     this.setAppInfo()
+    console.log(this.userInfo)
   }
 }
 </script>

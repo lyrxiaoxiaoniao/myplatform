@@ -108,14 +108,14 @@
               <el-row class="el-row-class" style="margin-top: 15px;">
                 <el-col :span="24">
                   <el-form-item label="价值">
-                    <!-- <el-input placeholder="请输入" v-model="formData.parentName" style="width:150px;">
+                     <el-input placeholder="请输入" v-model="formData.parentName" style="width:150px;">
                         <template slot="prepend">￥</template>
-                    </el-input>&nbsp;&nbsp;&nbsp;元 -->
-                    <div>
+                    </el-input>&nbsp;&nbsp;&nbsp;元 
+                    <!-- <div>
                       <el-input placeholder="请输入内容" v-model="input3">
                         <template slot="prepend">Http://</template>
                       </el-input>
-                    </div>
+                    </div> -->
                   </el-form-item>
                 </el-col>
                 <el-col :span="24">
