@@ -81,6 +81,18 @@ export default {
       this.$router.go(-1)
     },
     onSubmit (active, msg) {
+      let canSubmit = true
+      this.form.stages.forEach((stage, index) => {
+        if (index === 1 && stage.properties.length !== 7) {
+          this.$message.error('请填写完整信息')
+          canSubmit = false
+        }
+      })
+
+      if (!canSubmit) {
+        return
+      }
+
       const data = {
         catgr_id: this.categoryID,
         active: active,
@@ -104,8 +116,6 @@ export default {
       })
     },
     onFormChange (value) {
-      console.log('form change')
-      console.log(value)
       this.form.stages[value.index] = value
     },
     onPrevTab () {
