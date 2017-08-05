@@ -33,6 +33,9 @@
         </form>
       </slot>
     </div>
+    <div class="cover">
+      <img :src="cover" alt="">
+    </div>
   </div>
 </template>
 
@@ -54,7 +57,8 @@ export default {
       mailTimer: null,
       mailCode: '',
       loginSended: false,
-      response: ''
+      response: '',
+      cover: ''
     }
   },
   computed: {
@@ -122,22 +126,22 @@ export default {
         // mail code
         code: this.mailCode
       })
-      .then(response => {
-        if (response.data.errcode === '0000') {
-          this.$store.commit('SET_USER_INFO', response.data.data)
-          this.$store.commit('SET_TOKEN', response.data.data.token)
-          this.$router.push('/admin')
-        } else if (response.data.errcode === '0') {
-          this.$message.error(response.data.errmsg)
+        .then(response => {
+          if (response.data.errcode === '0000') {
+            this.$store.commit('SET_USER_INFO', response.data.data)
+            this.$store.commit('SET_TOKEN', response.data.data.token)
+            this.$router.push('/admin')
+          } else if (response.data.errcode === '0') {
+            this.$message.error(response.data.errmsg)
+            this.loginSended = false
+          } else {
+            this.$message.error(response.data.errmsg)
+          }
+        })
+        .catch(error => {
           this.loginSended = false
-        } else {
-          this.$message.error(response.data.errmsg)
-        }
-      })
-      .catch(error => {
-        this.loginSended = false
-        this.$message.error(error)
-      })
+          this.$message.error(error)
+        })
     },
     encrypt(string) {
       const pubkey = config.basic.key
@@ -157,9 +161,25 @@ export default {
         return true
       }
       return false
+    },
+    getAppInfo() {
+      api.GET(config.appInfoAPI).then(res => {
+        if (res.status === 200 && res.data.errcode === '0000') {
+          console.log(res)
+        }
+      })
     }
   },
   mounted() {
+    const title = document.getElementsByTagName('title')[0]
+    const host = window.location.hostname
+    this.getAppInfo()
+    console.log(title, host)
+    title.innerHTML = '安全光明'
+    switch (host) {
+      default:
+        this.cover = 'static/img/BG2.png'
+    }
   },
   components: {
   }
@@ -169,5 +189,22 @@ export default {
 <style>
 .error {
   color: red;
+}
+
+.cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+}
+
+.cover img {
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
 }
 </style>
