@@ -83,7 +83,7 @@ export default {
         logo: '',
         valueList: [],
         parentName: '',
-        active: ''
+        active: 1
       },
       rules: {
         valueList: [
