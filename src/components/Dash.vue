@@ -225,7 +225,6 @@ export default {
   },
   created () {
     this.setAppInfo()
-    console.log(this.userInfo)
   }
 }
 </script>
@@ -271,8 +270,13 @@ export default {
 
 .user-panel {
   height: 4em;
+  box-sizing: content-box;
 }
-
+.user-panel>.image>img {
+    width: 100%;
+    max-width: 38px;
+    height: auto;
+}
 hr.visible-xs-block {
   width: 100%;
   background-color: rgba(0, 0, 0, 0.17);
@@ -311,5 +315,4 @@ hr.visible-xs-block {
 .main-header .logo {
   background-color: #3c8dbc;
 }
-
 </style>
