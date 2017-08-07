@@ -124,6 +124,7 @@ export default {
       this.isEditing = true
       if (Array.isArray(node.parent.data)) {
         this.formData.parentName = '根级目录'
+        this.formData.catlgId = '0'
       } else {
         this.formData.parentName = node.parent.data.name
         this.formData.catlgId = node.parent.data.id
