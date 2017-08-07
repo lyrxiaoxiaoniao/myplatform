@@ -106,11 +106,11 @@
               <ul class="dropdown-menu user-setting-menu">
                 <li class="user-header">
                   <img :src="user.avatar" alt="user-image" class="img-circle">
-                  <el-row type="flex">
+                  <el-row type="flex" justify="center">
                     <p>姓名：{{ userInfo.username }}</p>
                     <p>手机号：{{ userInfo.companyTelephone ? userInfo.mobile : ''}}</p>
                   </el-row>
-                  <p>时间：{{ userInfo.createdAt ? userInfo.createdAt : ''}}</p>
+                  <p>创建时间：{{ userInfo.createdAt ? userInfo.createdAt : 1502071132803 | toDate}}</p>
                 </li>
                 <li class="user-setting-menu-content user-footer">
                   <!-- <div class="pull-left">
