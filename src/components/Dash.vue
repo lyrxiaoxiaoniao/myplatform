@@ -106,12 +106,16 @@
               <ul class="dropdown-menu user-setting-menu">
                 <li class="user-header">
                   <img :src="user.avatar" alt="user-image" class="img-circle">
-                  <p>{{ appInfo ? appInfo.appName : '深传互动政务新媒体平台' }}</p>
+                  <el-row type="flex" justify="center">
+                    <p>姓名：{{ userInfo.username }}</p>
+                    <p>手机号：{{ userInfo.companyTelephone ? userInfo.mobile : ''}}</p>
+                  </el-row>
+                  <p>创建时间：{{ userInfo.createdAt ? userInfo.createdAt : 1502071132803 | toDate}}</p>
                 </li>
                 <li class="user-setting-menu-content user-footer">
-                  <div class="pull-left">
-                    <el-button size="small">资料</el-button>
-                  </div>
+                  <!-- <div class="pull-left">
+                     <el-button size="small">资料</el-button> 
+                  </div> -->
                   <div class="pull-right">
                     <el-button @click="onLogout" size="small">退出</el-button>
                   </div>
@@ -266,8 +270,13 @@ export default {
 
 .user-panel {
   height: 4em;
+  box-sizing: content-box;
 }
-
+.user-panel>.image>img {
+    width: 100%;
+    max-width: 38px;
+    height: auto;
+}
 hr.visible-xs-block {
   width: 100%;
   background-color: rgba(0, 0, 0, 0.17);
@@ -306,5 +315,4 @@ hr.visible-xs-block {
 .main-header .logo {
   background-color: #3c8dbc;
 }
-
 </style>
