@@ -1,12 +1,7 @@
 <template>
   <div class="sc-firm-component" v-if="response">
     <div class="sc-firm-header">
-      <el-popover
-        ref="advancedSearch"
-        width="400"
-        trigger="click"
-        placement="bottom-end"
-        >
+      <el-popover ref="advancedSearch" width="400" trigger="click" placement="bottom-end">
         <el-form class="search-form" :model="form">
           <el-form-item class="advance-form-item" label="企业名称">
             <el-input v-model="form.companyName"></el-input>
@@ -37,15 +32,11 @@
       </el-row>
     </div>
     <div class="sc-firm-content">
-      <el-table
-        class="sc-firm-table"
-        border
-        stripe
-        :data="response.data">
+      <el-table class="sc-firm-table" border stripe :data="response.data">
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
         <el-table-column prop="companyName" label="企业名称"></el-table-column>
         <el-table-column prop="name" label="姓名" width="120"></el-table-column>
-        <el-table-column prop="duty" label="职位名称"></el-table-column>
+        <el-table-column prop="dutyInfo" label="职位名称"></el-table-column>
         <el-table-column prop="phone" label="联系电话"></el-table-column>
         <el-table-column prop="status" label="状态" width="120"></el-table-column>
         <el-table-column label="登记时间" width="180">
@@ -64,14 +55,7 @@
     <div class="sc-firm-footer">
       <el-row type="flex" justify="center">
         <el-col :span="12">
-          <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="response.currentPage"
-            :page-sizes="[10, 20, 50, 100]"
-            :page-size="response.pageSize"
-            :total="response.count"
-            layout="total, sizes, prev, pager, next, jumper">
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="response.currentPage" :page-sizes="[10, 20, 50, 100]" :page-size="response.pageSize" :total="response.count" layout="total, sizes, prev, pager, next, jumper">
           </el-pagination>
         </el-col>
       </el-row>
@@ -85,7 +69,7 @@ import config from 'src/config'
 
 export default {
   name: 'sc-firm',
-  data () {
+  data() {
     return {
       response: null,
       error: null,
@@ -99,7 +83,7 @@ export default {
     }
   },
   methods: {
-    onAdvancedSearch () {
+    onAdvancedSearch() {
       const data = {
         pageSize: this.response.pageSize,
         currentPage: this.response.currentPage,
@@ -107,7 +91,7 @@ export default {
       }
       this.updateList(data)
     },
-    handleSizeChange (value) {
+    handleSizeChange(value) {
       const data = {
         currentPage: this.response.currentPage,
         pageSize: value,
@@ -115,7 +99,7 @@ export default {
       }
       this.updateList(data)
     },
-    handleCurrentChange (value) {
+    handleCurrentChange(value) {
       const data = {
         currentPage: value,
         pageSize: this.response.pageSize,
@@ -123,7 +107,7 @@ export default {
       }
       this.updateList(data)
     },
-    onEditFirmDetail (id) {
+    onEditFirmDetail(id) {
       this.$router.push({
         path: '/admin/personal/detail',
         query: {
@@ -131,26 +115,26 @@ export default {
         }
       })
     },
-    onKeywordSearch () {
+    onKeywordSearch() {
       const data = {
         ...this.form
       }
       api.GET(config.personalListAPI, data)
-      .then(response => {
-        if (response.status !== 200) {
-          this.error = response.statusText
-          this.$message.error(this.error)
-          return
-        }
-        if (response.data.errcode === '0000') {
-          this.response = this.transformData(response.data.data)
-        }
-      })
-      .catch(error => {
-        this.$message.error(error)
-      })
+        .then(response => {
+          if (response.status !== 200) {
+            this.error = response.statusText
+            this.$message.error(this.error)
+            return
+          }
+          if (response.data.errcode === '0000') {
+            this.response = this.transformData(response.data.data)
+          }
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
     },
-    onDeleteFirm (id) {
+    onDeleteFirm(id) {
       this.$confirm('是否确认删除该上报？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -159,29 +143,29 @@ export default {
         api.POST(config.personalDeleteAPI, {
           id: id
         })
-        .then(response => {
-          if (response.data.errcode === '0000') {
-            this.$notify({
-              title: '成功',
-              message: '删除成功',
-              type: 'success'
-            })
-            const data = {
-              pageSize: this.response.pageSize,
-              currentPage: this.response.currentPage,
-              ...this.form
+          .then(response => {
+            if (response.data.errcode === '0000') {
+              this.$notify({
+                title: '成功',
+                message: '删除成功',
+                type: 'success'
+              })
+              const data = {
+                pageSize: this.response.pageSize,
+                currentPage: this.response.currentPage,
+                ...this.form
+              }
+              this.updateList(data)
+            } else {
+              this.$notify.error({
+                title: '失败',
+                message: '删除失败'
+              })
             }
-            this.updateList(data)
-          } else {
-            this.$notify.error({
-              title: '失败',
-              message: '删除失败'
-            })
-          }
-        })
+          })
       })
     },
-    updateList (data) {
+    updateList(data) {
       if (!data) {
         return
       }
@@ -200,7 +184,7 @@ export default {
           this.$message.error(error)
         })
     },
-    transformData (res) {
+    transformData(res) {
       if (!res) {
         return null
       }
@@ -217,10 +201,18 @@ export default {
             break
         }
       })
-
+      if (res.dutyType === 'system') {
+        if (res.subdistrictName) {
+          res.dutyInfo = res.dutyName + '/' + res.communityName + '/' + res.subdistrictName
+        } else {
+          res.dutyInfo = res.dutyName + '/' + res.communityName
+        }
+      } else if (res.dutyType === 'enterprise') {
+        res.dutyInfo = res.dutyName
+      }
       return res
     },
-    getFirmList () {
+    getFirmList() {
       api.GET(config.personalListAPI)
         .then(response => {
           if (response.status !== 200) {
@@ -236,7 +228,7 @@ export default {
         })
     }
   },
-  mounted () {
+  mounted() {
     this.getFirmList()
   }
 }
@@ -247,11 +239,13 @@ export default {
   margin: 1rem 2rem;
   padding-bottom: 1rem;
 }
+
 .sc-firm-content {
   margin-left: 2rem;
   margin-right: 2rem;
   padding-bottom: 1rem;
 }
+
 .sc-firm-input-search .el-input {
   width: 8rem;
 }

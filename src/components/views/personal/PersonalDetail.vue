@@ -11,30 +11,45 @@
             <span class="sc-firm-card-title">企业登记信息</span>
           </div>
           <div class="sc-firm-detail">
-            <div>企业名称: <span>{{ response.companyName }}</span></div>
-            <div>姓名: <span>{{ response.name }}</span></div>
-            <div>职位名称: <span>{{ response.duty }}</span></div>
-            <div>联系方式: <span>{{ response.phone }}</span></div>
-            <div>提交时间: <span>{{ response.createdAt | toDateTime }}</span> </div>
+            <div>企业名称:
+              <span>{{ response.companyName }}</span>
+            </div>
+            <div>姓名:
+              <span>{{ response.name }}</span>
+            </div>
+            <div>职位名称:
+              <span>{{ response.dutyInfo }}</span>
+            </div>
+            <div>联系方式:
+              <span>{{ response.phone }}</span>
+            </div>
+            <div>提交时间:
+              <span>{{ response.createdAt | toDateTime }}</span>
+            </div>
           </div>
         </el-card>
-
+  
         <el-card class="sc-firm-card" v-if="response.status !== 0">
           <div slot="header">
             <span class="sc-firm-card-title">受理信息</span>
           </div>
           <div class="sc-firm-detail">
-            <div>受理时间: <span>{{ response.updatedAt | toDateTime }}</span></div>
-            <div>受理状态: <span>{{ response.status | statusCodeToMsg }}</span></div>
-            <div>受理意见: <span>{{ response.remark }}</span></div>
+            <div>受理时间:
+              <span>{{ response.updatedAt | toDateTime }}</span>
+            </div>
+            <div>受理状态:
+              <span>{{ response.status | statusCodeToMsg }}</span>
+            </div>
+            <div>受理意见:
+              <span>{{ response.remark }}</span>
+            </div>
           </div>
         </el-card>
       </el-col>
-
+  
       <el-col :span="6" class="sc-firm-image-content" v-if="response.photoUrl">
         <div class="sc-firm-detail-safecert">
-          <img @click="openImage('个人任职证明', response.photoUrl)" class="img-responsive" :src="response.photoUrl">
-          个人任职证明
+          <img @click="openImage('个人任职证明', response.photoUrl)" class="img-responsive" :src="response.photoUrl"> 个人任职证明
         </div>
       </el-col>
     </el-row>
@@ -69,7 +84,7 @@ import config from 'src/config'
 
 export default {
   name: 'sc-firm-detail',
-  data () {
+  data() {
     return {
       showDialog: false,
       showPicDialog: false,
@@ -84,21 +99,21 @@ export default {
     }
   },
   computed: {
-    id () {
+    id() {
       return this.$route.query.id
     }
   },
   methods: {
-    back () {
+    back() {
       this.$router.go(-1)
     },
-    dealCase () {
+    dealCase() {
       this.showDialog = true
     },
-    closeDialog () {
+    closeDialog() {
       this.showDialog = false
     },
-    getFirmDetail (id) {
+    getFirmDetail(id) {
       api.GET(config.personalDetailAPI, {
         id
       })
@@ -108,6 +123,15 @@ export default {
             return
           }
           if (response.data.errcode === '0000') {
+            if (response.dutyType === 'system') {
+              if (response.subdistrictName) {
+                response.dutyInfo = response.dutyName + '/' + response.communityName + '/' + response.subdistrictName
+              } else {
+                response.dutyInfo = response.dutyName + '/' + response.communityName
+              }
+            } else if (response.dutyType === 'enterprise') {
+              response.dutyInfo = response.dutyName
+            }
             this.response = response.data.data
           }
         })
@@ -115,12 +139,12 @@ export default {
           this.$message.error(error)
         })
     },
-    openImage (title, image) {
+    openImage(title, image) {
       this.showPicDialog = true
       this.picDialogTitle = title
       this.showImage = image
     },
-    updateFirmDeatil (id) {
+    updateFirmDeatil(id) {
       if (this.form.status === '' | this.form.remark === '') {
         this.$message({
           message: '请填写正确的信息'
@@ -154,7 +178,7 @@ export default {
         })
     }
   },
-  mounted () {
+  mounted() {
     this.getFirmDetail(this.id)
   }
 }
@@ -165,35 +189,42 @@ export default {
   font-size: 18px;
   line-height: 36px;
 }
+
 .sc-firm-card {
   margin-top: 1rem;
   margin-left: 1rem;
 }
+
 .sc-firm-detail div {
   border-bottom: 1px solid lightgray;
   margin-bottom: 1rem;
 }
+
 .sc-firm-image-content {
   margin-left: 1rem;
   margin-top: 1rem;
 }
+
 .sc-firm-detail-action {
   margin-left: 1rem;
   margin-top: 10px;
   margin-right: 30rem;
   padding-bottom: 10px;
 }
+
 .sc-firm-detail-safecert {
   cursor: pointer;
   max-width: 20rem;
   text-align: center;
 }
+
 .sc-firm-detail-organphoto {
   cursor: pointer;
   margin-top: 2rem;
   max-width: 20rem;
   text-align: center;
 }
+
 .img-preview {
   max-height: 50rem;
 }

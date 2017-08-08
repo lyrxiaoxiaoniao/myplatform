@@ -541,12 +541,16 @@ export default {
     getCategoryList (data = null, isRefresh) {
       api.GET(config.tutorial.category, {
         catgr_id: this.categoryID,
-        p_id: 0,
+        // p_id: 0,
+        id: 0,
         ...data
       })
       .then(response => {
         if (response.data.errcode === '0000') {
+          console.log(response, '111')
           this.response = this.transformListData(response.data.data)
+          // this.response = response.data.data
+          console.log(response)
           if (isRefresh) {
             return
           }

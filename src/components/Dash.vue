@@ -106,11 +106,11 @@
               <ul class="dropdown-menu user-setting-menu">
                 <li class="user-header">
                   <img :src="user.avatar" alt="user-image" class="img-circle">
-                  <el-row type="flex">
-                    <p>姓名：{{ userInfo.username }}</p>
-                    <p>手机号：{{ userInfo.companyTelephone ? userInfo.mobile : ''}}</p>
-                  </el-row>
-                  <p>时间：{{ userInfo.createdAt ? userInfo.createdAt : ''}}</p>
+                  <!-- <el-row type="flex" justify="center"> -->
+                    <p>姓名：{{ userInfo.nickname ? userInfo.nickname : '暂无'}} -- 手机号：{{ userInfo.phone ? userInfo.phone : '13437140378'}}</p>
+                    <!-- <p>手机号：{{ userInfo.companyTelephone ? userInfo.mobile : ''}}</p> -->
+                  <!-- </el-row> -->
+                  <p>创建时间：{{ userInfo.createdAt ? userInfo.createdAt : 1502071132803 | toDate}}</p>
                 </li>
                 <li class="user-setting-menu-content user-footer">
                   <!-- <div class="pull-left">
@@ -182,7 +182,7 @@ export default {
     ]),
     user () {
       return {
-        displayName: this.userInfo.username,
+        displayName: this.userInfo.nickname,
         avatar: this.userInfo.avatar
       }
     }
@@ -209,7 +209,8 @@ export default {
     },
     setAppInfo () {
       const URI = config.appInfoAPI
-      api.GET(URI, {id: 1})
+      // api.GET(URI, {id: 1})
+      api.GET(URI)
         .then(response => {
           if (response.status !== 200) {
             this.error = response.statusText
@@ -261,21 +262,37 @@ export default {
   }
 }
 
+.navbar-nav>.user-menu>.dropdown-menu>li.user-header>p {
+  font-size: 14px;
+}
 .logo-lg {
   img {
     display: -webkit-inline-box;
     width: 25%;
   }
 }
-
+/* test */
+.sidebar-collapse .user-panel {
+  height: 20px;
+  width: 20px !important;
+  .image {
+    width: 100%;
+    height: 100%;
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+/* test */
 .user-panel {
   height: 4em;
   box-sizing: content-box;
 }
 .user-panel>.image>img {
     width: 100%;
-    max-width: 38px;
-    height: auto;
+    height: 45px;
+    max-width: 45px;
 }
 hr.visible-xs-block {
   width: 100%;

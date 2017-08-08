@@ -104,6 +104,7 @@ export default {
       }
     },
     article (newVal, oldVal) {
+      console.log(newVal, oldVal)
       if (!newVal) {
         return
       }
