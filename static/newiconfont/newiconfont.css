@@ -1,0 +1,101 @@
+.newicon {
+    display: inline-block;
+    vertical-align: text-bottom;
+    background-size: 100% 100%;
+    width: 14px;
+    height:14px;
+}
+.newicon-safety-danger { background: url('safety_danger.png') no-repeat center/cover; }
+.newicon-new-media { background: url('./01 新媒体管理应用.png') no-repeat center/cover; }
+.newicon-wechat-manage { background: url('./01-1 微信管理平台.png') no-repeat center/cover; }
+.newicon-account-manage { background: url('./01-1-1 账号与公众号管理.png') no-repeat center/cover; }
+.newicon-fans-manage { background: url('./01-1-2 粉丝管理.png') no-repeat center/cover; }
+.newicon-source-manage { background: url('./01-1-3 素材库管理.png') no-repeat center/cover; }
+.newicon-menu-manage { background: url('./01-1-4 菜单管理.png') no-repeat center/cover; }
+.newicon-keyword-manage { background: url('./01-1-5 关键字管理.png') no-repeat center/cover; }
+.newicon-template-message { background: url('./01-1-6 模板消息管理.png') no-repeat center/cover; }
+.newicon-QRcode-manage { background: url('./01-1-7 二维码管理.png') no-repeat center/cover; }
+.newicon-dev-setting { background: url('./01-1-8 开发授权设置.png') no-repeat center/cover; }
+.newicon-wechat-redpacket { background: url('./01-1-9 微信红包管理理.png') no-repeat center/cover; }
+.newicon-cms-manage { background: url('./02 CMS信息管理.png') no-repeat center/cover; }
+.newicon-cms-application { background: url('./02-1 CMS信息管理应用.png') no-repeat center/cover; }
+.newicon-column-manage { background: url('./02-1-1 栏目管理.png') no-repeat center/cover; }
+.newicon-column-jurisdiction { background: url('./02-1-1-1 栏目权限管理.png') no-repeat center/cover; }
+.newicon-content-manage { background: url('./02-1-2 内容管理.png') no-repeat center/cover; }
+.newicon-important-message { background: url('./02-1-3 重要消息通知.png') no-repeat center/cover; }
+.newicon-special-manage { background: url('./02-1-4 专题管理.png') no-repeat center/cover; }
+.newicon-words-manage { background: url('./02-1-5 词汇管理.png') no-repeat center/cover; }
+.newicon-label-manage { background: url('./02-1-5-1 标签管理.png') no-repeat center/cover; }
+.newicon-sensitive-manage { background: url('./02-1-5-2 敏感词管理.png') no-repeat center/cover; }
+.newicon-root-source { background: url('./02-1-5-3 来源管理.png') no-repeat center/cover; }
+.newicon-hotword-manage { background: url('./02-1-5-4 热词管理.png') no-repeat center/cover; }
+.newicon-interact-manage { background: url('./02-1-6 互动管理.png') no-repeat center/cover; }
+.newicon-statistical-analysis { background: url('./02-1-7 统计分析.png') no-repeat center/cover; }
+.newicon-column-content { background: url('./02-1-7-1 栏目内容统计.png') no-repeat center/cover; }
+.newicon-author-count { background: url('./02-1-7-2 作者统计.png') no-repeat center/cover; }
+.newicon-comment-count { background: url('./02-1-7-3 评论统计.png') no-repeat center/cover; }
+.newicon-column-visit { background: url('./02-1-7-4 栏目访问量.png') no-repeat center/cover; }
+.newicon-root-analysis { background: url('./02-1-7-5 来源分析.png') no-repeat center/cover; }
+.newicon-click-rank { background: url('./02-1-7-6 点击排行榜.png') no-repeat center/cover; }
+.newicon-comment-rank { background: url('./02-1-7-7 评论排行榜.png') no-repeat center/cover; }
+.newicon-fighting-rank { background: url('./02-1-7-8 点赞排行榜.png') no-repeat center/cover; }
+.newicon-system-configure { background: url('./02-1-8 系统配置.png') no-repeat center/cover; }
+.newicon-content-recycle { background: url('./02-1-9 内容回收站.png') no-repeat center/cover; }
+.newicon-shopping-mall { background: url('./03 商城应用系统.png') no-repeat center/cover; }
+.newicon-integral-shopping { background: url('./03-1 积分商城系统.png') no-repeat center/cover; }
+.newicon-commodity-class { background: url('./03-1-1 商品分类管理.png') no-repeat center/cover; }
+.newicon-commodity-manage { background: url('./03-1-2 商品管理.png') no-repeat center/cover; }
+.newicon-commodity-recycle { background: url('./03-1-3 商品回收站.png') no-repeat center/cover; }
+.newicon-order-manage { background: url('./03-1-4 订单管理.png') no-repeat center/cover; }
+.newicon-statistical-analysis3 { background: url('./03-1-5 统计分析.png') no-repeat center/cover; }
+.newicon-sale-rank { background: url('./03-1-5-1 商品销售排行 .png') no-repeat center/cover; }
+.newicon-commodity-evaluate { background: url('./03-1-5-2 商品评价排行.png') no-repeat center/cover; }
+.newicon-product-class { background: url('./03-1-5-3 品类产品数统计.png') no-repeat center/cover; }
+.newicon-system-configure3 { background: url('./03-1-6 系统配置.png') no-repeat center/cover; }
+.newicon-commodity-system { background: url('./03-1-6-1 商城系统配置.png') no-repeat center/cover; }
+.newicon-order-setting { background: url('./03-1-6-2 订单设置.png') no-repeat center/cover; }
+.newicon-interact-center { background: url('./04 互动中心应用.png') no-repeat center/cover; }
+.newicon-dynamic-form { background: url('./04-1 动态表单管理.png') no-repeat center/cover; }
+.newicon-form-manage { background: url('./04-1-1 表单管理.png') no-repeat center/cover; }
+.newicon-tag-manage { background: url('./04-1-2 标签管理.png') no-repeat center/cover; }
+.newicon-mobile-gov { background: url('./05 移动政务应用.png') no-repeat center/cover; }
+.newicon-train-manage { background: url('./05-1 培训管理功能.png') no-repeat center/cover; }
+.newicon-activity-manage { background: url('./05-1-1 活动管理.png') no-repeat center/cover; }
+.newicon-class-manage1 { background: url('./05-1-2 分类管理.png') no-repeat center/cover; }
+.newicon-interact-manage1 { background: url('./05-1-3 互动管理.png') no-repeat center/cover; }
+.newicon-online-class { background: url('./05-2 线上课堂管理.png') no-repeat center/cover; }
+.newicon-class-manage2 { background: url('./05-2-1 分类管理.png') no-repeat center/cover; }
+.newicon-course-center { background: url('./05-2-2 课程中心.png') no-repeat center/cover; }
+.newicon-course-recycle { background: url('./05-2-3 课程回收站.png') no-repeat center/cover; }
+.newicon-enroll-manage { background: url('./05-2-4 报名管理.png') no-repeat center/cover; }
+.newicon-interact-manage2 { background: url('./05-2-5 互动管理.png') no-repeat center/cover; }
+.newicon-safety-danger { background: url('./05-2-5-1 留言管理.png') no-repeat center/cover; }
+.newicon-safety-danger { background: url('./05-2-5-2 评价管理.png') no-repeat center/cover; }
+.newicon-safety-danger { background: url('./05-2-6 统计分析.png') no-repeat center/cover; }
+.newicon-safety-danger { background: url('./05-2-6-1 课程报名统计.png') no-repeat center/cover; }
+.newicon-click-rank1 { background: url('./05-2-6-2 点击排行榜.png') no-repeat center/cover; }
+.newicon-comment-rank1 { background: url('./05-2-6-3 评论排行榜.png') no-repeat center/cover; }
+.newicon-score-rank { background: url('./05-2-6-4 评分排行榜.png') no-repeat center/cover; }
+.newicon-system-configure5 { background: url('./05-2-7 系统配置.png') no-repeat center/cover; }
+.newicon-safety-danger { background: url('./05-3-1 案件管理.png') no-repeat center/cover; }
+.newicon-class-manage3 { background: url('./05-3-2 分类管理.png') no-repeat center/cover; }
+.newicon-safety-message { background: url('./05-4 安全信息管理.png') no-repeat center/cover; }
+.newicon-business-manage { background: url('./05-4-1 企业信息管理.png') no-repeat center/cover; }
+.newicon-personal-manage { background: url('./05-4-2 个人信息管理.png') no-repeat center/cover; }
+.newicon-platform-manage { background: url('./06 平台基础管理.png') no-repeat center/cover; }
+.newicon-system-manage { background: url('./06-1 系统管理.png') no-repeat center/cover; }
+.newicon-power-manage { background: url('./06-1-1 权限管理.png') no-repeat center/cover; }
+.newicon-role-manage { background: url('./06-1-2 角色管理.png') no-repeat center/cover; }
+.newicon-user-manage { background: url('./06-1-3 用户管理.png') no-repeat center/cover; }
+.newicon-menu-manage1 { background: url('./06-1-4 菜单管理.png') no-repeat center/cover; }
+.newicon-dictionary-manage { background: url('./06-1-5 字典管理.png') no-repeat center/cover; }
+.newicon-organize-manage { background: url('./06-2 组织结构管理.png') no-repeat center/cover; }
+.newicon-organize-structure { background: url('./06-2-1 组织结构.png') no-repeat center/cover; }
+.newicon-job-manage { background: url('./06-2-2 职位管理.png') no-repeat center/cover; }
+.newicon-province-manage { background: url('./06-2-3 省市结构管理.png') no-repeat center/cover; }
+.newicon-source-manage1 { background: url('./06-3 资源管理.png') no-repeat center/cover; }
+.newicon-files-source { background: url('./06-3-1 文件资源管理.png') no-repeat center/cover; }
+.newicon-adv-manage { background: url('./06-4 广告管理功能.png') no-repeat center/cover; }
+.newicon-point-manage { background: url('./06-4-1 点位管理.png') no-repeat center/cover; }
+.newicon-advcontent-manage { background: url('./06-4-2 内容管理.png') no-repeat center/cover; }
+.newicon-count-report { background: url('./06-4-3 统计报表.png') no-repeat center/cover; }

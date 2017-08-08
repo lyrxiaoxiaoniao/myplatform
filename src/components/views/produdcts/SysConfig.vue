@@ -1,6 +1,6 @@
 <template>
   <kobe-table>
-    <div slot="kobe-table-header" class="kobe-table-header">  
+    <div slot="kobe-table-header" class="kobe-table-header">
     </div>
 
     <div slot="kobe-table-content" class="kobe-table">

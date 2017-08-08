@@ -121,18 +121,18 @@
         <el-button type="primary" @click="postDetail">确 定</el-button>
       </div>
     </el-dialog>
-    <div class="mapDialog" v-if="dialogMapVisible">
+     <div class="mapDialog" v-if="dialogMapVisible">
       <div class="mapMask" @click="closeMap"></div>
-      <div class="mapDialogWrapper">
-        <div class="mapDialogHeader">地图显示</div>
+       <div class="mapDialogWrapper">
+        <div class="mapDialogHeader">地图显示 <i class="pull-right el-dialog__close el-icon el-icon-close" @click="closeMap"></i></div>
         <div id="mapWrapper"></div>
-        <div class="mapDialogFooter">
+        <!-- <div class="mapDialogFooter">
           <el-row type="flex" justify="end">
             <el-button @click="closeMap">关闭</el-button>
           </el-row>
-        </div>
-      </div>
-    </div>
+        </div> -->
+      </div> 
+    </div> 
     <el-dialog title="现场照片" v-model="dialogImgVisible" size="small">
       <el-carousel
         indicator-position="outside"
@@ -455,7 +455,6 @@ export default {
     height: 60%;
     padding: 1rem;
     z-index: 20;
-
     background-color: white;
   }
   .mapDialogHeader {
@@ -468,7 +467,7 @@ export default {
   }
   #mapWrapper {
     width: 95%;
-    height: 80%;
+    height: 90%;
     margin: 0 auto;
   }
 </style>

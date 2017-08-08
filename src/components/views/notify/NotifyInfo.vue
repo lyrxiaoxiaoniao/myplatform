@@ -30,7 +30,7 @@
               >
             </el-option>
           </el-select>
-          <el-input v-model="form.keyword" placeholder="请输入关键字">
+          <el-input v-model="form.keyword" placeholder="请输入关键字" style="width:150px;">
             <el-button slot="append" @click="onSearch" icon="search"></el-button>
           </el-input>
         </el-col>

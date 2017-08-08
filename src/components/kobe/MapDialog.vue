@@ -4,6 +4,7 @@
     v-model="show"
     @close="onClose"
     >
+    <slot name="map-header">
     <el-row type="flex" justify="end">
       <el-col :span="12">
         <el-input
@@ -20,16 +21,17 @@
         </el-input>
       </el-col>
     </el-row>
+    </slot>
     <div
       id="bmap"
       v-loading.body="loading"
       element-loading-text="定位中...">
     </div>
-    <div slot="footer">
+    <slot name="map-footer">
       <el-row type="flex" justify="end">
         <el-button @click="onConfirm">确定</el-button>
       </el-row>
-    </div>
+    </slot>
   </el-dialog>
 </template>
 

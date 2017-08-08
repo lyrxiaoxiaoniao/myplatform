@@ -250,6 +250,7 @@ export default {
         return
       }
       */
+      this.active = 2
       api.GET(this.templateGetURL, {
         templateId: this.notifyForm.templateId
       })
@@ -271,6 +272,7 @@ export default {
     },
     updateActiveForm (value) {
       this.notifyForm.model = value
+      console.log(this.notifyForm.model)
     },
     getTemplateTypes () {
       api.GET(this.templateTypeURL)
