@@ -226,9 +226,6 @@ export default {
   },
   created () {
     this.setAppInfo()
-  },
-  mounted () {
-    console.log(this.userInfo)
   }
 }
 </script>
@@ -274,15 +271,28 @@ export default {
     width: 25%;
   }
 }
-
+/* test */
+.sidebar-collapse .user-panel {
+  height: 20px;
+  width: 20px !important;
+  .image {
+    width: 100%;
+    height: 100%;
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+/* test */
 .user-panel {
   height: 4em;
   box-sizing: content-box;
 }
 .user-panel>.image>img {
     width: 100%;
-    max-width: 38px;
-    height: auto;
+    height: 45px;
+    max-width: 45px;
 }
 hr.visible-xs-block {
   width: 100%;

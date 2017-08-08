@@ -95,11 +95,11 @@ export default {
   }
 
   .sidebar-menu .treeview-menu {
-    padding-left: 0;
+    padding-left: 10px;
   }
 
   .sidebar-menu .treeview-menu > li :hover>a {
-    color: white;
+     color: white;
   }
 
   .siderbar-menu-item {
@@ -107,7 +107,7 @@ export default {
   }
 
   li.siderbar-menu-item:hover {
-    color: white;
+     color: #fff; 
   }
 
   .siderbar-menu-item span {
@@ -158,4 +158,9 @@ export default {
     color: #000;
   }
 
+  .skin-blue-light .sidebar-menu>li:hover>a, .skin-blue-light .sidebar-menu>li.active>a {
+    color: #000;
+    /* background: #f4f4f5; */
+    background: #e1e1e8;
+  }
 </style>
