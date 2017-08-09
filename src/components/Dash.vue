@@ -208,19 +208,19 @@ export default {
       this.appInfo = this.$store.state.appInfo
     },
     setAppInfo () {
-      // const URI = config.appInfoAPI
-      // api.GET(URI)
-      //   .then(response => {
-      //     if (response.status !== 200) {
-      //       this.error = response.statusText
-      //       return
-      //     }
-      //     console.log(this.appInfo)
-      //     this.appInfo = response.data.data
-      //   })
-      //   .catch(error => {
-      //     this.$message.error(error)
-      //   })
+      const URI = config.appInfoAPI
+      api.GET(URI)
+        .then(response => {
+          if (response.status !== 200) {
+            this.error = response.statusText
+            return
+          }
+          console.log(this.appInfo)
+          this.appInfo = response.data.data
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
     }
   },
   created () {
