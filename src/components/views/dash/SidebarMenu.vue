@@ -122,7 +122,9 @@ export default {
   .pull-right-container i.fa.pull-right {
     margin-right: 1rem;
   }
-
+  .pull-right-container {
+    height: 45px;
+  }
   /*.sidebar-menu li.active > a > .fa-angle-left, .sidebar-menu li.active > a > .pull-right-container > .fa-angle-left {*/
   .sidebar-menu li.active>a>.fa-angle-left, .sidebar-menu li.active>a>.pull-right-container>.fa-angle-left {
     animation-name: rotate;

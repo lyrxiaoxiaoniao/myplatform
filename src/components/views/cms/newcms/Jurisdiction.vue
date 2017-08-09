@@ -119,56 +119,52 @@ export default {
         checked: [true, true, true, true, true],
         children: []
       }]
-    },
-    remove(store, data) {
-      console.log(data)
-    //   store.remove(data)
-    },
-    renderContent(h, { node, data, store }) {
-      if (!this.data1) return (<span></span>)
-      let num
-      this.data1.forEach((item, index) => {
-        if (item.id === node.data.id) {
-          num = index
-        }
-      })
-      let isAll = this.data1[num].checked[0]
-      let isAdd = this.data1[num].checked[1]
-      let isEdit = this.data1[num].checked[2]
-      let isDel = this.data1[num].checked[3]
-      let isDone = this.data1[num].checked[4]
-
-      let el = (
-        <span class="aaa">
-          <span>
-            <span>{node.label}</span>
-          </span>
-          <span style="float: right; margin-right: 20px;">
-            <el-checkbox checked={isAll} style="height= 35px; margin:0 5px 0;" on-change={(e) => {
-              this.$set(this.data1, '1', {
-                id: 2,
-                label: '222',
-                checked: [true, true, true, true, true],
-                children: []
-              })
-              isAll = true
-              isDone = true
-              console.log(this.data1)
-              // this.checkAll(node, e.target.checked)
-            }}>全部权限</el-checkbox>
-            <el-checkbox checked={isAdd} style=" height= 35px; margin:0 5px 0;" on-change={(e) => this.checkedbox(e, store, data)}>增加</el-checkbox>
-            <el-checkbox checked={isEdit} style=" height= 35px; margin:0 5px 0;" on-change={(e) => this.checkedbox(e, store, data)}>修改</el-checkbox>
-            <el-checkbox checked={isDel} style=" height= 35px; margin:0 5px 0;" on-change={(e) => this.checkedbox(e, store, data)}>删除</el-checkbox>
-            <el-checkbox checked={isDone} style=" height= 35px; margin:0 5px 0;" on-change={(e) => {
-              node.data.checked[4] = e.target.checked
-              console.log(node)
-            }}>审批</el-checkbox>
-          </span>
-        </span>
-      )
-      console.log(el)
-      return el
     }
+    // renderContent(h, { node, data, store }) {
+    //   if (!this.data1) return (<span></span>)
+    //   let num
+    //   this.data1.forEach((item, index) => {
+    //     if (item.id === node.data.id) {
+    //       num = index
+    //     }
+    //   })
+    //   let isAll = this.data1[num].checked[0]
+    //   let isAdd = this.data1[num].checked[1]
+    //   let isEdit = this.data1[num].checked[2]
+    //   let isDel = this.data1[num].checked[3]
+    //   let isDone = this.data1[num].checked[4]
+
+    //   let el = (
+    //     <span class="aaa">
+    //       <span>
+    //         <span>{node.label}</span>
+    //       </span>
+    //       <span style="float: right; margin-right: 20px;">
+    //         <el-checkbox checked={isAll} style="height= 35px; margin:0 5px 0;" on-change={(e) => {
+    //           this.$set(this.data1, '1', {
+    //             id: 2,
+    //             label: '222',
+    //             checked: [true, true, true, true, true],
+    //             children: []
+    //           })
+    //           isAll = true
+    //           isDone = true
+    //           console.log(this.data1)
+    //           // this.checkAll(node, e.target.checked)
+    //         }}>全部权限</el-checkbox>
+    //         <el-checkbox checked={isAdd} style=" height= 35px; margin:0 5px 0;" on-change={(e) => this.checkedbox(e, store, data)}>增加</el-checkbox>
+    //         <el-checkbox checked={isEdit} style=" height= 35px; margin:0 5px 0;" on-change={(e) => this.checkedbox(e, store, data)}>修改</el-checkbox>
+    //         <el-checkbox checked={isDel} style=" height= 35px; margin:0 5px 0;" on-change={(e) => this.checkedbox(e, store, data)}>删除</el-checkbox>
+    //         <el-checkbox checked={isDone} style=" height= 35px; margin:0 5px 0;" on-change={(e) => {
+    //           node.data.checked[4] = e.target.checked
+    //           console.log(node)
+    //         }}>审批</el-checkbox>
+    //       </span>
+    //     </span>
+    //   )
+    //   console.log(el)
+    //   return el
+    // }
   },
   mounted () {
     this.data1 = this.getData()

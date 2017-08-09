@@ -208,20 +208,19 @@ export default {
       this.appInfo = this.$store.state.appInfo
     },
     setAppInfo () {
-      const URI = config.appInfoAPI
-      // api.GET(URI, {id: 1})
-      api.GET(URI)
-        .then(response => {
-          if (response.status !== 200) {
-            this.error = response.statusText
-            return
-          }
-
-          this.appInfo = response.data.data
-        })
-        .catch(error => {
-          this.$message.error(error)
-        })
+      // const URI = config.appInfoAPI
+      // api.GET(URI)
+      //   .then(response => {
+      //     if (response.status !== 200) {
+      //       this.error = response.statusText
+      //       return
+      //     }
+      //     console.log(this.appInfo)
+      //     this.appInfo = response.data.data
+      //   })
+      //   .catch(error => {
+      //     this.$message.error(error)
+      //   })
     }
   },
   created () {
@@ -275,6 +274,7 @@ export default {
 .sidebar-collapse .user-panel {
   height: 20px;
   width: 20px !important;
+  padding-left: 14px;
   .image {
     width: 100%;
     height: 100%;
