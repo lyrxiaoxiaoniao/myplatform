@@ -11,7 +11,7 @@
         </div>
         <div class="FS-right clearfix">
             <div class="FS-right-header">
-                <el-button @click="uploadDialod = true">点击上传</el-button>
+                <el-button @click="clickUpload">点击上传</el-button>
                 <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange" style="margin-left:10px;">选择全部图片</el-checkbox>
                 <div class="FS-right-search">
                     <el-input placeholder="按照图片名称搜索" v-model="form.name">
@@ -59,7 +59,8 @@
                     list-type="picture-card"
                     :on-preview="handlePictureCardPreview"
                     :on-remove="handleRemove"
-                    :on-success="uploadSuccess">
+                    :on-success="uploadSuccess"
+                    :file-list="fileList2">
                     <i class="el-icon-plus"></i>
                 </el-upload>
                 <div slot="footer" class="dialog-footer">
@@ -96,10 +97,11 @@ export default {
   },
   data () {
     return {
+      fileList2: [],
       uploadURL: config.serverURI + config.uploadFilesAPI,
       localImgs: [],
       type: 0,
-      parentId: 704,
+      parentId: 0,
       treeOpenval: [],
       treeKey: null,
       uploadDialod: false,
@@ -146,6 +148,11 @@ export default {
       })
       return urls
     },
+    // 点击文件上传函数
+    clickUpload () {
+      this.fileList2 = []
+      this.uploadDialod = true
+    },
     // 本地图片上传
     saveURL () {
       var obj = {}
@@ -162,6 +169,7 @@ export default {
             message: '文件上传成功',
             type: 'success'
           })
+          this.fileList2 = []
         }
       })
     },

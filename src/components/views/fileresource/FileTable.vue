@@ -1,6 +1,7 @@
 <template>
     <div class="FS-container">
-        <div class="FS-left">
+      <el-row tpye="flex">
+        <el-col :span="4" style="padding-right:10px;">
             <!--<el-checkbox v-model="checked">包括子文件夹内容</el-checkbox>-->
             <p>文件目录结构</p>
             <el-tree :data="data" :props="defaultProps"
@@ -9,10 +10,9 @@
                     node-key="id"
                     :current-node-key="treeKey"
                     :default-expanded-keys="treeOpen"
-                    @node-click="handleNodeClick"
-                    style="max-height:600px;overflow:auto;">
+                    @node-click="handleNodeClick">
             </el-tree>
-        </div>
+        </el-col>
         <!--批量移动弹出框-->
         <el-dialog title="移动" v-model="dialogVisibleMove" size="tiny">
             <div style="width:100%">
@@ -37,7 +37,7 @@
                 <el-button type="primary" @click="confirmMove">确 定</el-button>
             </span>
         </el-dialog>
-        <div class="FS-right clearfix">
+        <el-col :span="20">
             <div class="FS-right-header">
                 <el-button @click="filesUpdate">文件上传</el-button>
                 <el-button @click="createFiles">新建文件夹</el-button>
@@ -50,7 +50,7 @@
                     :value="item.value">
                     </el-option>
                 </el-select>
-                <el-button style="margin-left:10px;" @click="showFileList({id: parentId})">刷新</el-button>
+                <el-button style="margin-left:10px;" @click="showFileList({id: 0})">刷新</el-button>
                 <div class="FS-right-search">
                     <el-input placeholder="按照文件夹或者文件/图片名称搜索" v-model="form.name">
                         <el-button slot="append" icon="search" @click="onSearch"></el-button>
@@ -137,7 +137,8 @@
                     </el-row>
                 </div>
             </div>
-        </div>
+         </el-col>
+      </el-row>
         <!--t图片弹出框-->
         <el-dialog v-model="dialogVisible">
             <img width="100%" :src="dialogImageUrl" alt="">
@@ -169,7 +170,8 @@
                         list-type="picture-card"
                         :on-preview="handlePictureCardPreview"
                         :on-remove="handleRemove"
-                        :on-success="uploadSuccess">
+                        :on-success="uploadSuccess"
+                        :file-list="fileList2">
                         <i class="el-icon-plus"></i>
                     </el-upload>
                 </div>
@@ -194,6 +196,7 @@ import config from 'src/config'
 export default {
   data () {
     return {
+      fileList2: [],
       inputNameId: null,
       change: false,
       props: {
@@ -205,7 +208,7 @@ export default {
       selectedOptions: [],
       dialogVisibleMove: false,
       treeKey: null,
-      parentId: 704,
+      parentId: 0,
       treeOpenval: [],
       localImgs: [],
       uploadURL: config.serverURI + config.uploadFilesAPI,
@@ -308,6 +311,7 @@ export default {
               type: 'success'
             })
             this.showFileList({id: this.parentId})
+            this.getTreeData()
           }
           if (response.data.errcode === '5000') {
             this.$notify.info({
@@ -392,6 +396,7 @@ export default {
             message: '文件上传成功',
             type: 'success'
           })
+          this.fileList2 = []
         }
       })
     },
@@ -432,6 +437,16 @@ export default {
     batchOperate() {
       let obj = {}
       obj.ids = this.checkedCities
+      if (this.selectval !== '1') {
+        if (this.checkedCities.length === 0) {
+          this.$notify.info({
+            title: '没有选择文件',
+            message: '请先选择文件'
+          })
+          this.selectval = '1'
+          return
+        }
+      }
       if (this.selectval === '2') {
         this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -442,6 +457,7 @@ export default {
           api.POST(config.deleteFilesAPI, obj)
           .then(response => {
             if (response.data.errcode === '0000') {
+              this.checkedCities = []
               this.getTreeData()
               this.showFileList({id: this.parentId})
               this.selectval = '1'
@@ -449,6 +465,13 @@ export default {
                 title: '成功',
                 message: '文件删除成功',
                 type: 'success'
+              })
+            } else {
+              this.checkedCities = []
+              this.selectval = '1'
+              this.$notify.info({
+                title: '删除',
+                message: '删除文件存在子目录文件，无法删除！'
               })
             }
           }).catch(error => {
@@ -478,8 +501,14 @@ export default {
       .then(response => {
         if (response.data.errcode === '0000') {
           this.dialogVisibleMove = false
+          this.checkedCities = []
           this.getTreeData()
           this.showFileList({id: this.parentId})
+        } else {
+          this.$notify.info({
+            title: '操作有误',
+            message: '选择文件不能移动到子目录里！！'
+          })
         }
       }).catch(error => {
         this.$message.error(error)
@@ -575,7 +604,7 @@ export default {
 }
 .FS-right-search{
     position: absolute;
-    top: 1rem;
+    top: 0; 
     right: 1rem;
     width: 350px;
 }
