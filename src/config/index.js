@@ -130,7 +130,7 @@ export default {
   updateMenuAPI: '/admin/menu/update',
   reatedMenuAPI: '/admin/mp/show/permission/related',
   unreatedMenuAPI: '/admin/mp/show/permission/relate',
-  appInfoAPI: '/admin/sysinfo/current',
+  appInfoAPI: '/admin/appinfo/current',
   userListAPI: '/admin/user/index',
   removeUserAPI: '/admin/user/delete',
   caseListAPI: '/cmplnt/content/index',

@@ -5,6 +5,8 @@ import router from './router'
 axios.defaults.timeout = 5000
 
 axios.interceptors.request.use(config => {
+  // config.headers.common['X-Requested-With'] = 'XMLHttpRequest'
+  // config.headers.common['appid'] = 'shencom'
   return config
 }, error => {
   return Promise.reject(error)
