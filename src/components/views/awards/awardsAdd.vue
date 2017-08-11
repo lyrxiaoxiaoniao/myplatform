@@ -3,7 +3,7 @@
     <div>
       <el-button @click="goBack" type="primary">返回列表</el-button>  
       <el-button type="primary">商品预览</el-button>
-      <el-button type="primary">提交发布</el-button> 
+      <el-button @click="addAward" type="primary">提交发布</el-button> 
     </div>
     <div class="ap-content">
       <el-row :gutter="20">
@@ -17,20 +17,20 @@
                   :show-file-list="false"
                   :on-success="handleAvatarSuccess"
                   :before-upload="beforeAvatarUpload">
-                  <img v-if="formData.imageUrl" :src="formData.imageUrl" class="avatar">
+                  <img v-if="ruleForm.first_figure" :src="ruleForm.first_figure" class="avatar">
                   <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                 </el-upload>
             </div>
             <el-form :model="ruleForm" ref="ruleForm" label-width="80px" class="demo-ruleForm" style="padding:0 10px;">
                 <el-form-item label="商品类型">
-                    <el-select v-model="ruleForm.region" placeholder="商品类型" style="width:100%;">
-                    <el-option label="实物商品（物流发货）" value="1"></el-option>
-                    <el-option label="虚拟商品（无须物流）" value="2"></el-option>
-                    <el-option label="电子卡券（无须物流）" value="3"></el-option>
+                    <el-select v-model="ruleForm.goods_type_id" placeholder="商品类型" style="width:100%;">
+                    <el-option label="实物商品（物流发货）" value="0"></el-option>
+                    <el-option label="虚拟商品（无须物流）" value="1"></el-option>
+                    <el-option label="电子卡券（无须物流）" value="2"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="商品摘要">
-                    <el-input type="textarea" v-model="ruleForm.desc"></el-input>
+                    <el-input type="textarea" v-model="ruleForm.brief" placeholder="请输入商品摘要"></el-input>
                 </el-form-item>
             </el-form>
           </div>
@@ -47,7 +47,7 @@
                       change-on-select
                       :props="props"
                       @change="handleChange"
-                      v-model="formData.valueList"
+                      v-model="categryId"
                     ></el-cascader>
                   </el-form-item>
                 </el-col>
@@ -58,7 +58,7 @@
                 </el-col>
                 <el-col :span="24">
                   <el-form-item label="计量单位">
-                    <el-input v-model="formData.name" placeholder="请输入名称"></el-input>
+                    <el-input v-model="formData.unit" placeholder="请输入计量单位"></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :span="24">
@@ -101,6 +101,7 @@
                       :on-remove="handleRemove"
                       :on-success="handleSuccess">
                       <i class="el-icon-plus"></i>
+                      <div class="el-upload__tip" slot="tip">建议尺寸：800*800PX，单张大小不超过2M，最多可上传10张</div>
                     </el-upload>
                   </el-form-item>
                 </el-col>
@@ -108,32 +109,30 @@
               <el-row class="el-row-class" style="margin-top: 15px;">
                 <el-col :span="24">
                   <el-form-item label="价值">
-                     <el-input placeholder="请输入" v-model="formData.parentName" style="width:150px;">
-                        <template slot="prepend">￥</template>
-                    </el-input>&nbsp;&nbsp;&nbsp;元
-                    <!-- <div>
-                      <el-input placeholder="请输入内容" v-model="input3">
-                        <template slot="prepend">Http://</template>
-                      </el-input>
-                    </div> -->
+                      <template>
+                         <el-input-number v-model="formData.credit_sell_price" :step="5" :min="0"></el-input-number>
+                      </template>
+                      <!-- <el-input placeholder="请输入" v-model="formData.credit_sell_price" style="width:150px;">
+                          <template slot="prepend">￥</template>
+                      </el-input>&nbsp;&nbsp;&nbsp;元 -->
                   </el-form-item>
                 </el-col>
                 <el-col :span="24">
-                  <el-form-item label="上架">
-                    <el-radio-group v-model="formData.resource" style="display:block;padding:8px 0;font-size: 14px;"> 
+                  <el-form-item label="启用">
+                    <el-radio-group v-model="formData.active" style="display:block;padding:8px 0;font-size: 14px;"> 
                         <el-row style="margin-bottom:20px;">
                             <el-col :span="5">
-                                <el-radio label="立即上架"></el-radio>
+                                <el-radio label="1">立即启用</el-radio>
                             </el-col>
                         </el-row>
                         <el-row>
                             <el-col :span="5">
-                                <el-radio label="指定时间"></el-radio>
+                                <el-radio label="0">指定时间</el-radio>
                             </el-col>
                             <el-col :span="8" style="margin-top:-9px;">
                                 <el-date-picker
                                     style="width:224px;"
-                                    v-model="formData.value1"
+                                    v-model="formData.sell_at"
                                     type="datetime"
                                     placeholder="选择日期时间">
                                 </el-date-picker>
@@ -150,13 +149,14 @@
                       <el-button class="button-new-tag" @click="openDialog">添加规格项目</el-button>
                     </div>
                     <el-table
-                        :data="formData.tableData"
+                        :data="formData.skus"
                         border
                         style="width: 100%">
-                        <el-table-column prop="name" label="规格名"></el-table-column>
-                        <el-table-column prop="attr" label="规格属性"></el-table-column>
+                        <el-table-column prop="attributes.pro_id" label="规格ID"></el-table-column>
+                        <el-table-column prop="attributes.attr_key" label="规格名"></el-table-column>
+                        <el-table-column prop="attributes.attr_value" label="规格属性"></el-table-column>
                         <el-table-column prop="price" label="价格"></el-table-column>
-                        <el-table-column prop="stock" label="库存"></el-table-column>
+                        <el-table-column prop="inventory" label="库存"></el-table-column>
                         <el-table-column prop="code" label="商家编码"></el-table-column>
                         <el-table-column prop="sale" label="销量"></el-table-column>
                     </el-table>
@@ -165,16 +165,16 @@
                 <el-col :span="24">
                   <el-form-item label="总库存">
                     <template>
-                        <el-input-number v-model="formData.num1" :min="0"></el-input-number>
+                        <el-input-number v-model="formData.total_inventory" :min="0" :disabled="true"></el-input-number>
                     </template>
                     <p>总库存为0的时候，商品会上架到售罄分类，无法进行销售</p>
                   </el-form-item>
                 </el-col>
-                <el-col :span="24">
+                 <!-- <el-col :span="24">
                   <el-form-item label="商家编码">
                     <el-input v-model="formData.name" placeholder="请输入商家编码"></el-input>
                   </el-form-item>
-                </el-col>
+                </el-col>  -->
               </el-row>
               <el-row class="el-row-class" style="margin-top: 15px;">
                 <el-col :span="24">
@@ -191,7 +191,7 @@
     <el-dialog title="添加规格项目" v-model="showDialog">
       <el-form :model="selected" label-width="80px">
         <el-form-item label="规格">
-            <el-select v-model="selected.name" placeholder="规格:比如内存大小/颜色/等等">
+            <el-select v-model="selected.attributes.pro_id" placeholder="规格:比如内存大小/颜色/等等" style="width:100%;">
               <el-option
                 v-for="item in option"
                 :key="item.id"
@@ -201,7 +201,7 @@
             </el-select>
         </el-form-item>
         <el-form-item label="规格属性">
-            <el-input placeholder="示例:红色" v-model="selected.attr"></el-input>
+            <el-input placeholder="示例:红色" v-model="selected.attributes.attr_value"></el-input>
         </el-form-item>
         <el-form-item label="商家编码">
             <el-input placeholder="示例:DSG99-0890432423" v-model="selected.code"></el-input>
@@ -209,7 +209,10 @@
         <el-row>
           <el-col :span="11">
             <el-form-item label="价格">
-                <el-input placeholder="示例:500" v-model="selected.price"></el-input>
+                <template>
+                  <el-input-number v-model="selected.price" :step="5" :min="0" style="width:100%;"></el-input-number>
+                </template>
+                <!-- <el-input placeholder="示例:500" v-model="selected.price"></el-input> -->
             </el-form-item>
           </el-col>
           <el-col :span="2">
@@ -217,7 +220,9 @@
           </el-col>
           <el-col :span="11">
             <el-form-item label="库存">
-                <el-input placeholder="示例:10" v-model="selected.stock"></el-input>
+                <template>
+                  <el-input-number v-model="selected.inventory" :min="0" style="width:100%;"></el-input-number>
+                </template>
             </el-form-item>
             </el-col>
         </el-row>
@@ -265,10 +270,20 @@ export default {
       dialogImageUrl: '',
       showDialog: false,
       selected: {
-        name: ''
+        attributes: {
+          pro_id: null,
+          attr_key: '',
+          attr_value: ''
+        },
+        code: '',
+        price: null,
+        inventory: null,
+        icon: ''
       },
-      ruleForm: {
-        region: ''
+      ruleForm: { // 头图与属性
+        goods_type_id: '',
+        brief: '',
+        first_figure: ''
       },
       options: [],
       props: {
@@ -277,32 +292,34 @@ export default {
         value: 'id'
       },
       formData: {
-        id: '',
         name: '',
-        description: '',
-        parentId: 0,
-        imageUrl: '',
+        category_id: [],
+        unit: null,
         url: '',
-        icon: '',
-        valueList: [],
-        resource: '',
-        parentName: '',
-        value1: '',
+        tags: [],
+        images: [],
+        credit_sell_price: '',
+        active: null, // 0 不启用 1 启用
+        sell_at: null,
         content: '',
-        num1: '',
-        tableData: []
+        total_inventory: null,
+        skus: []
       },
+      categryId: [],
       dynamicTags: [],
       inputVisible: false,
       inputValue: ''
     }
   },
   methods: {
+    /* 分类选择函数 */
+    handleChange (val) {
+      console.log(val)
+    },
     /* 上传图片函数 */
     handleAvatarSuccess (res, file) {
       // console.log(res, file)
-      this.formData.imageUrl = res.data[0]
-      // this.formData.imageUrl = window.URL.createObjectURL(file.raw)
+      this.ruleForm.first_figure = res.data[0]
     },
     beforeAvatarUpload (file) {
       const isJPG = file.type === 'image/jpeg'
@@ -341,9 +358,12 @@ export default {
         path: '/admin/awards/product'
       })
     },
-    handleSuccess (file, fileList) {
+    handleSuccess (response, file, fileList) {
       this.fileList2 = []
       this.removeImg(fileList)
+    },
+    iconHandleAvatarSuccess (res, file) {
+      this.selected.icon = res.data[0]
     },
     removeImg (obj) {
       for (var v of obj) {
@@ -357,13 +377,40 @@ export default {
       this.dialogImageUrl = file.url
       this.dialogVisible = true
     },
+    /* 计算总库存函数 */
+    getTotalInventory (data) {
+      let all = 0
+      data.forEach(v => {
+        all += v.inventory
+      })
+      this.formData.total_inventory = all
+    },
+    /* 获取 attr_key 的值 */
+    getAttrkey (data, id) {
+      let res = ''
+      data.forEach(v => {
+        if (v.id === id) {
+          res = v.value_type
+        }
+      })
+      return res
+    },
     addSetting () {
       this.showDialog = false
-      console.log(this.selected)
-      this.formData.tableData.push(this.selected)
+      this.selected.attributes.attr_key = this.getAttrkey(this.option, this.selected.attributes.pro_id)
+      const newSelected = JSON.parse(JSON.stringify(this.selected)) // 深拷贝
+      this.formData.skus.push(newSelected)
+      this.getTotalInventory(this.formData.skus)
     },
     /* 添加项目规格弹出框 */
     openDialog () {
+      Object.keys(this.selected).forEach(v => {
+        if (this.selected[v] instanceof Object) {
+          Object.keys(this.selected[v]).forEach(k => {
+            this.selected[v][k] = null
+          })
+        } else this.selected[v] = ''
+      })
       this.showDialog = true
       this.getOption({cat_id: 1})
     },
@@ -381,6 +428,24 @@ export default {
       })
       .catch(error => {
         this.$message.error(error)
+      })
+    },
+    addAward () {
+      this.formData.category_id = this.categryId.pop()
+      this.formData.images = this.fileList2
+      this.formData.tags = this.dynamicTags.join(',')
+      this.formData.active = Number(this.formData.active)
+      this.formData.sell_at = Date.parse(new Date(this.formData.sell_at))
+      console.log(this.ruleForm, '头图及属性')
+      console.log(this.formData, '奖品详情')
+      let obj = {
+        ...this.formData,
+        ...this.ruleForm
+      }
+      console.log(obj)
+      api.POST(config.addGoodsAPI, obj)
+      .then(res => {
+        console.log(res)
       })
     },
     /* 分类数据获取 */
@@ -403,13 +468,15 @@ export default {
         var newData = response.data.data
         this.iteration(newData)
         newData.push({ id: 0, display_name: '根级分类', label: '根级分类', value: 0 })
-        this.data = newData
-        this.cascaderData = newData
+        this.options = newData
       })
       .catch(error => {
         this.$message.error(error)
       })
     }
+  },
+  mounted () {
+    this.getTree()
   }
 }
 </script>
