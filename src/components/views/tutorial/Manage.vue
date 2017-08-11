@@ -485,7 +485,7 @@ export default {
       })
       .then(response => {
         if (response.data.errcode === '0000') {
-          const data = this.transformTreeData(response.data.data)
+          const data = this.transformTreeData(response.data.data.data)
           const root = [{
             value: '0',
             label: '根级分类',

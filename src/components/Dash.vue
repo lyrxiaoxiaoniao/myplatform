@@ -100,7 +100,7 @@
             <!-- </li> -->
             <li class="dropdown user user-menu">
               <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
-                <img v-bind:src="user.avatar" class="user-image" alt="User Image">
+                <img v-bind:src="user.avatar ? user.avatar : 'static/img/defimg1.png'" class="user-image" alt="User Image">
                 <span class="hidden-xs">{{ user.displayName }}</span>
               </a>
               <ul class="dropdown-menu user-setting-menu">
@@ -129,7 +129,7 @@
       </nav>
     </header>
     <sidebar :display-name="user.displayName"
-             :picture-url="user.avatar"/>
+             :picture-url="user.avatar ? user.avatar : 'static/img/defimg1.png'"/>
 
     <div class="content-wrapper">
       <section class="content-header">
@@ -289,10 +289,14 @@ export default {
   height: 4em;
   box-sizing: content-box;
 }
+.user-panel>.image {
+  width: 45px;
+  height: 45px;
+}
 .user-panel>.image>img {
-    width: 100%;
-    height: 45px;
-    max-width: 45px;
+  width: 100%;
+  height: 45px;
+  max-width: 45px;
 }
 hr.visible-xs-block {
   width: 100%;
