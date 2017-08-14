@@ -200,16 +200,25 @@ export default {
             item.status = '审核未通过'
             break
         }
-      })
-      if (res.dutyType === 'system') {
-        if (res.subdistrictName) {
-          res.dutyInfo = res.dutyName + '/' + res.communityName + '/' + res.subdistrictName
-        } else {
-          res.dutyInfo = res.dutyName + '/' + res.communityName
+        if (item.dutyType === 'system') {
+          if (item.subdistrictName) {
+            item.dutyInfo = item.dutyName + '/' + item.communityName + '/' + item.subdistrictName
+          } else {
+            item.dutyInfo = item.dutyName + '/' + item.communityName
+          }
+        } else if (item.dutyType === 'enterprise') {
+          item.dutyInfo = item.dutyName
         }
-      } else if (res.dutyType === 'enterprise') {
-        res.dutyInfo = res.dutyName
-      }
+      })
+      // if (res.dutyType === 'system') {
+      //   if (res.subdistrictName) {
+      //     res.dutyInfo = res.dutyName + '/' + res.communityName + '/' + res.subdistrictName
+      //   } else {
+      //     res.dutyInfo = res.dutyName + '/' + res.communityName
+      //   }
+      // } else if (res.dutyType === 'enterprise') {
+      //   res.dutyInfo = res.dutyName
+      // }
       return res
     },
     getFirmList() {
