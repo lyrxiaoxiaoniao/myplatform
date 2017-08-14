@@ -82,6 +82,7 @@ export default {
     },
     onSubmit (active, msg) {
       let canSubmit = true
+      console.log(this.form)
       this.form.stages.forEach((stage, index) => {
         if (index === 1 && stage.properties.length !== 7) {
           this.$message.error('请填写完整信息')
@@ -142,6 +143,7 @@ export default {
             }
             this.form.stages.push(obj)
           })
+          console.log(this.form.stages, '456')
         }
       })
       .catch(error => {

@@ -547,7 +547,7 @@ export default {
       })
       .then(response => {
         if (response.data.errcode === '0000') {
-          this.response = this.transformListData(response.data)
+          this.response = this.transformListData(response.data.data)
           // this.response = response.data.data
           if (isRefresh) {
             return

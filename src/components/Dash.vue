@@ -105,7 +105,7 @@
               </a>
               <ul class="dropdown-menu user-setting-menu">
                 <li class="user-header">
-                  <img :src="user.avatar" alt="user-image" class="img-circle">
+                  <img :src="user.avatar ? user.avatar : 'static/img/defimg1.png'" alt="user-image" class="img-circle">
                   <!-- <el-row type="flex" justify="center"> -->
                     <p>姓名：{{ userInfo.nickname ? userInfo.nickname : '暂无'}} -- 手机号：{{ userInfo.phone ? userInfo.phone : '13437140378'}}</p>
                     <!-- <p>手机号：{{ userInfo.companyTelephone ? userInfo.mobile : ''}}</p> -->
