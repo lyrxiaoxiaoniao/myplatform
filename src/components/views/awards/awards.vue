@@ -76,8 +76,8 @@
               label="操作"
               >
               <template scope="scope"> 
-                  <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button>
-                  <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
+                  <el-button @click="openDialog(scope.row.id, 'edit')" size="small" icon="edit"></el-button>
+                  <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button> 
               </template>
             </el-table-column>
           </el-table>
@@ -276,23 +276,14 @@ export default {
       console.log(this.multipleSelection)
     },
     // 模态框显示
-    openDialog (e, data = null, type = null) {
-      if (data !== null && type === 'edit') {
-        this.dialogType = 'edit'
-        this.dialogTitle = '修改分类'
-        // this.selected = {
-        //   ...this.selected,
-        //   ...data
-        // }
-        // this.getString(this.selected)
-      } else {
-        this.dialogType = 'add'
-        this.dialogTitle = '新增分类'
-        // Object.keys(this.selected).forEach(key => {
-        //   this.selected[key] = ''
-        // })
-      }
-      this.showDialog = true
+    openDialog (id, type) {
+      console.log(this.$router)
+      this.$router.push({
+        path: '/admin/awards/edit',
+        query: {
+          id: id
+        }
+      })
     },
     // 删除表单
     deleteType (id) {

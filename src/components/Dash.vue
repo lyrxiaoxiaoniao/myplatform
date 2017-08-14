@@ -215,7 +215,6 @@ export default {
             this.error = response.statusText
             return
           }
-          console.log(this.appInfo)
           this.appInfo = response.data.data
         })
         .catch(error => {

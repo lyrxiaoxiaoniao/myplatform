@@ -118,6 +118,7 @@ import SCWordSource from 'components/views/cms/newcms/word/Source.vue'
 import SCAwardsClass from 'components/views/awards/awardClass.vue'
 import SCAwards from 'components/views/awards/awards.vue'
 import SCAwardsAdd from 'components/views/awards/awardsAdd.vue'
+import SCAwardsEdit from 'components/views/awards/awardsEdit.vue'
 
 const routes = [
   {
@@ -834,6 +835,11 @@ const routes = [
           path: 'add',
           component: SCAwardsAdd,
           name: '奖品新增',
+          meta: {description: '展示'}
+        }, {
+          path: 'edit',
+          component: SCAwardsEdit,
+          name: '奖品修改',
           meta: {description: '展示'}
         }]
       }

@@ -253,6 +253,7 @@ import api from 'src/api'
 export default {
   data () {
     return {
+      id: this.$route.query.id,
       fileList2: [],
       option: [{
         id: '0',
@@ -472,10 +473,19 @@ export default {
       .catch(error => {
         this.$message.error(error)
       })
+    },
+    getGoodsData () {
+      api.GET(config.showGoodsAPI, {id: this.id})
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          console.log(response, '1111')
+        }
+      })
     }
   },
   mounted () {
     this.getTree()
+    this.getGoodsData()
   }
 }
 </script>
