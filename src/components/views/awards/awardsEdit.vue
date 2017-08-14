@@ -1,8 +1,7 @@
 <template>
   <div class="ap-container">
     <div>
-      <el-button @click="goBack" type="primary">返回列表</el-button>  
-      <el-button type="primary">商品预览</el-button>
+      <el-button @click="goBack" type="primary">返回列表</el-button>
       <el-button @click="addAward" type="primary">提交发布</el-button> 
     </div>
     <div class="ap-content">

@@ -100,12 +100,12 @@
             <!-- </li> -->
             <li class="dropdown user user-menu">
               <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
-                <img v-bind:src="user.avatar" class="user-image" alt="User Image">
+                <img v-bind:src="user.avatar ? user.avatar : 'static/img/defimg1.png'" class="user-image" alt="User Image">
                 <span class="hidden-xs">{{ user.displayName }}</span>
               </a>
               <ul class="dropdown-menu user-setting-menu">
                 <li class="user-header">
-                  <img :src="user.avatar" alt="user-image" class="img-circle">
+                  <img :src="user.avatar ? user.avatar : 'static/img/defimg1.png'" alt="user-image" class="img-circle">
                   <!-- <el-row type="flex" justify="center"> -->
                     <p>姓名：{{ userInfo.nickname ? userInfo.nickname : '暂无'}} -- 手机号：{{ userInfo.phone ? userInfo.phone : '13437140378'}}</p>
                     <!-- <p>手机号：{{ userInfo.companyTelephone ? userInfo.mobile : ''}}</p> -->
@@ -129,7 +129,7 @@
       </nav>
     </header>
     <sidebar :display-name="user.displayName"
-             :picture-url="user.avatar"/>
+             :picture-url="user.avatar ? user.avatar : 'static/img/defimg1.png'"/>
 
     <div class="content-wrapper">
       <section class="content-header">
@@ -289,10 +289,14 @@ export default {
   height: 4em;
   box-sizing: content-box;
 }
+.user-panel>.image {
+  width: 45px;
+  height: 45px;
+}
 .user-panel>.image>img {
-    width: 100%;
-    height: 45px;
-    max-width: 45px;
+  width: 100%;
+  height: 45px;
+  max-width: 45px;
 }
 hr.visible-xs-block {
   width: 100%;

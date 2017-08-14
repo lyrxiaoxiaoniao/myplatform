@@ -58,8 +58,8 @@
             <el-table-column prop="name" label="商品"></el-table-column>
             <el-table-column prop="credit_sell_price" label="价格" width="130"></el-table-column>
             <el-table-column prop="sort" label="顺序" width="80"></el-table-column>
-            <el-table-column prop="sort" label="库存" width="80"></el-table-column>
-            <el-table-column prop="sort" label="销量" width="80"></el-table-column>
+            <el-table-column prop="total_inventory" label="库存" width="80"></el-table-column>
+            <el-table-column prop="total_use" label="用量" width="80"></el-table-column>
             <el-table-column prop="created_at" label="创建时间" width="220"></el-table-column>
             <!-- <el-table-column label="上架" width="95">
               <template scope="scope">
@@ -75,9 +75,9 @@
               width="120"
               label="操作"
               >
-              <template scope="scope">
-                <!-- <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button> -->
-                <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button> 
+              <template scope="scope"> 
+                  <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button>
+                  <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
               </template>
             </el-table-column>
           </el-table>
