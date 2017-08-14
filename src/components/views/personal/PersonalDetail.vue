@@ -123,16 +123,17 @@ export default {
             return
           }
           if (response.data.errcode === '0000') {
-            if (response.dutyType === 'system') {
-              if (response.subdistrictName) {
-                response.dutyInfo = response.dutyName + '/' + response.communityName + '/' + response.subdistrictName
+            let responseData = response.data.data
+            if (responseData.dutyType === 'system') {
+              if (responseData.subdistrictName) {
+                responseData.dutyInfo = responseData.dutyName + '/' + responseData.communityName + '/' + responseData.subdistrictName
               } else {
-                response.dutyInfo = response.dutyName + '/' + response.communityName
+                responseData.dutyInfo = responseData.dutyName + '/' + responseData.communityName
               }
-            } else if (response.dutyType === 'enterprise') {
-              response.dutyInfo = response.dutyName
+            } else if (responseData.dutyType === 'enterprise') {
+              responseData.dutyInfo = responseData.dutyName
             }
-            this.response = response.data.data
+            this.response = responseData
           }
         })
         .catch(error => {
