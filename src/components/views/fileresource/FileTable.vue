@@ -41,7 +41,7 @@
             <div class="FS-right-header">
                 <el-button @click="filesUpdate">文件上传</el-button>
                 <el-button @click="createFiles">新建文件夹</el-button>
-                <el-button @click="showDialog">选择文件</el-button>
+                <!-- <el-button @click="showDialog">选择文件</el-button> -->
                 <el-select v-model="selectval" style="width:80px; margin-left:10px;" placeholder="批量" @change="batchOperate">
                     <el-option
                     v-for="item in options"
@@ -163,7 +163,7 @@
                     </div>
                 </div>
                 <div class="FS-load-local">
-                    <span class="FS-load-font">本地图片</span>
+                    <span class="FS-load-font">本地资源</span>
                     <el-upload
                         style="margin-left:80px;"
                         :action="uploadURL"

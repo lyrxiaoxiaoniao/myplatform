@@ -76,8 +76,8 @@
               label="操作"
               >
               <template scope="scope">
-                <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
                 <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button>
+                <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
               </template>
             </el-table-column>
           </el-table>

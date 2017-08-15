@@ -164,7 +164,7 @@
               <el-table-column prop="sort" label="顺序" width="80"></el-table-column>
               <el-table-column label="启用" width="120">
                 <template scope="scope">
-                  <el-switch v-model="scope.row.status" @change="toggleSwicth(scope.row)"></el-switch>
+                  <el-switch v-model="scope.row.status" @change="toggleSwicth(scope.row)" on-text="开" off-text="关"></el-switch>
                 </template>
               </el-table-column>
               <el-table-column
@@ -308,6 +308,7 @@ export default {
               ...this.searchForm
             }
             this.getCategoryList(data)
+            this.getTreeList()
           } else {
             this.$message.error(response.data.errmsg)
           }
@@ -348,7 +349,7 @@ export default {
         })
         return
       }
-      const id = this.moveCategory[this.moveCategory.length - 1]
+      const id = Number(this.moveCategory[this.moveCategory.length - 1])
       let ids = []
       this.tableSelection.forEach(item => {
         ids.push(item.id)
@@ -371,6 +372,7 @@ export default {
             ...this.searchForm
           }
           this.getCategoryList(data)
+          this.getTreeList()
         }
       })
       this.moveDialogVisiable = false
@@ -412,6 +414,7 @@ export default {
             ...this.searchForm
           }
           this.getCategoryList(data)
+          this.getTreeList()
         }
       })
       .catch(error => {
@@ -439,6 +442,7 @@ export default {
             ...this.searchForm
           }
           this.getCategoryList(data, true)
+          this.getTreeList()
         } else {
           this.$message.error(response.data.errmsg)
         }
@@ -498,6 +502,7 @@ export default {
     },
     onRefresh () {
       this.getCategoryList()
+      this.getTreeList()
     },
     handleSizeChange (value) {
       const data = {
@@ -541,8 +546,8 @@ export default {
     getCategoryList (data = null, isRefresh) {
       api.GET(config.tutorial.category, {
         catgr_id: this.categoryID,
-        // p_id: 0,
-        id: 0,
+        p_id: 0,
+        // id: 0,
         ...data
       })
       .then(response => {
@@ -552,7 +557,27 @@ export default {
           if (isRefresh) {
             return
           }
-          const data = this.transformTreeData(this.response.data)
+          // const data = this.transformTreeData(this.response.data)
+          // const root = [{
+          //   value: '0',
+          //   label: '根级分类',
+          //   children: data
+          // }]
+          // this.categories = [...root]
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    getTreeList () {
+      api.GET(config.tutorial.categoryTree, {
+        catgr_id: this.categoryID,
+        p_id: 0
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          const data = this.transformTreeData(response.data.data)
           const root = [{
             value: '0',
             label: '根级分类',
@@ -567,6 +592,7 @@ export default {
     }
   },
   mounted () {
+    this.getTreeList()
     this.getCategoryList()
   }
 }

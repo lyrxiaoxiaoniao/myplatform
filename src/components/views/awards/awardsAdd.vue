@@ -96,7 +96,6 @@
                     <el-upload
                       :action="uploadURL"
                       list-type="picture-card"
-                      :file-list="fileList2"
                       :on-preview="handlePictureCardPreview"
                       :on-remove="handleRemove"
                       :on-success="handleSuccess">
@@ -119,7 +118,7 @@
                 </el-col>
                 <el-col :span="24">
                   <el-form-item label="启用">
-                    <el-radio-group v-model="formData.active" style="display:block;padding:8px 0;font-size: 14px;"> 
+                    <el-radio-group @change="radioChange" v-model="formData.active" style="display:block;padding:8px 0;font-size: 14px;"> 
                         <el-row style="margin-bottom:20px;">
                             <el-col :span="5">
                                 <el-radio label="1">立即启用</el-radio>
@@ -131,6 +130,7 @@
                             </el-col>
                             <el-col :span="8" style="margin-top:-9px;">
                                 <el-date-picker
+                                    v-show="activeShow"
                                     style="width:224px;"
                                     v-model="formData.sell_at"
                                     type="datetime"
@@ -254,7 +254,6 @@ import api from 'src/api'
 export default {
   data () {
     return {
-      fileList2: [],
       option: [{
         id: '0',
         title: '全部'
@@ -291,6 +290,7 @@ export default {
         label: 'display_name',
         value: 'id'
       },
+      activeShow: false,
       formData: {
         name: '',
         category_id: [],
@@ -308,13 +308,15 @@ export default {
       categryId: [],
       dynamicTags: [],
       inputVisible: false,
-      inputValue: ''
+      inputValue: '',
+      cat_id: null
     }
   },
   methods: {
     /* 分类选择函数 */
     handleChange (val) {
-      console.log(val)
+      this.categryId = val
+      this.cat_id = JSON.parse(JSON.stringify(val)).pop()
     },
     /* 上传图片函数 */
     handleAvatarSuccess (res, file) {
@@ -359,19 +361,23 @@ export default {
       })
     },
     handleSuccess (response, file, fileList) {
-      this.fileList2 = []
+      this.formData.images = []
       this.removeImg(fileList)
     },
     iconHandleAvatarSuccess (res, file) {
       this.selected.icon = res.data[0]
     },
     removeImg (obj) {
-      for (var v of obj) {
-        this.fileList2.push(v.response.data[0])
-      }
+      obj.forEach(v => {
+        this.formData.images.push(v.response.data[0])
+      })
     },
     handleRemove (file, fileList) {
-      console.log(file, fileList)
+      this.formData.images.forEach((v, i) => {
+        if (v === file.response.data[0]) {
+          this.formData.images.splice(i, 1)
+        }
+      })
     },
     handlePictureCardPreview (file) {
       this.dialogImageUrl = file.url
@@ -412,7 +418,8 @@ export default {
         } else this.selected[v] = ''
       })
       this.showDialog = true
-      this.getOption({cat_id: 1})
+      this.getOption({cat_id: this.cat_id})
+      // this.getOption({cat_id: 1})
     },
     /* 规格数据获取 */
     getOption (obj = {}) {
@@ -430,22 +437,47 @@ export default {
         this.$message.error(error)
       })
     },
+    radioChange (val) {
+      if (this.formData.active === '1') {
+        this.formData.sell_at = Date.now()
+        this.activeShow = false
+      } else {
+        this.activeShow = true
+        this.formData.sell_at = Date.parse(new Date(this.formData.sell_at))
+      }
+    },
     addAward () {
-      this.formData.category_id = this.categryId.pop()
-      this.formData.images = this.fileList2
-      this.formData.tags = this.dynamicTags.join(',')
-      this.formData.active = Number(this.formData.active)
-      this.formData.sell_at = Date.parse(new Date(this.formData.sell_at))
-      console.log(this.ruleForm, '头图及属性')
-      console.log(this.formData, '奖品详情')
+      this.formData.category_id = this.cat_id
+      this.formData.cids = this.categryId.join(',')
+      this.formData.tags = this.dynamicTags
+      // this.formData.active = Number(this.formData.active)
+      // console.log(this.ruleForm, '头图及属性')
+      // console.log(this.formData, '奖品详情')
       let obj = {
         ...this.formData,
         ...this.ruleForm
       }
-      console.log(obj)
+      obj.active = Number(obj.active)
+      obj.goods_type_id = Number(obj.goods_type_id)
       api.POST(config.addGoodsAPI, obj)
-      .then(res => {
-        console.log(res)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.$notify({
+            title: '成功',
+            message: '添加商品成功！！！',
+            type: 'success'
+          })
+          this.goBack()
+        } else {
+          this.$notify({
+            title: '错误',
+            message: response.data.errmsg,
+            type: 'info'
+          })
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
       })
     },
     /* 分类数据获取 */

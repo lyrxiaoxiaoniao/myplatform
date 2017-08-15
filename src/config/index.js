@@ -112,6 +112,7 @@ export default {
     categoryUpdate: '/activity/ac/update',
     categoryDelete: '/activity/ac/delete',
     categoryMove: '/activity/ac/remove',
+    categoryTree: '/activity/ac/leftindex',
     attendee: '/activity/tutorial/attendee/index',
     favor: '/activity/tutorial/info/favor/index',
     favorDel: '/activity/tutorial/info/favor/delete',
@@ -284,6 +285,8 @@ export default {
   /* 奖品列表 */
   goodsListAPI: '/award/goods/index',
   addGoodsAPI: '/award/goods/create',
+  editGoodsAPI: '/award/goods/update',
+  showGoodsAPI: '/award/goods/show',
   cpAwardShowAPI: '/award/cp/show',
   /* 商品管理 */
   showGoodsListAPI: '/award/goods/index',
