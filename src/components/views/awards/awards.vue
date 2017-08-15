@@ -157,6 +157,7 @@ import api from 'src/api'
 export default {
   data () {
     return {
+      parentId: null,
       moveVal: null,
       dialogVisibleMove: false,
       data: [],
@@ -260,7 +261,7 @@ export default {
     // 树形目录点击事件
     handleNodeClick (data, node) {
       this.parentId = data.id
-      this.showFileList({id: this.parentId})
+      this.getList({id: this.parentId})
     },
     toggleSelection (rows) {
       if (rows) {
