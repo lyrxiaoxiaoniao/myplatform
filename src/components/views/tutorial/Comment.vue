@@ -4,12 +4,19 @@
       <div slot="kobe-table-header" class="kobe-table-header">
         <el-row type="flex" justify="space-between">
           <el-col :span="16">
-            <el-button @click="onRefresh">刷新</el-button>
-            <el-button>批量删除</el-button>
+            <el-button @click="onRefresh" type="primary">刷新</el-button>
+            <el-button type="primary">批量删除</el-button>
           </el-col>
-          <el-select></el-select>  
-          <el-col :span="4">
-            <el-input></el-input>
+          <el-select v-model="form.keyword" placeholder="请选择" style="width:120px;">
+            <el-option label="所有信息" value="0"></el-option>
+            <el-option label="课程标题" value="1"></el-option>
+            <el-option label="评论内容" value="2"></el-option>
+            <el-option label="用户信息" value="3"></el-option>
+          </el-select>
+          <el-col :span="8">
+            <el-input v-model="form.keyword" placeholder="请输入分类名称">
+              <el-button slot="append" icon="search"  @keyup.enter="onSearch" @click="onSearch"></el-button>
+            </el-input>
           </el-col>
         </el-row>
       </div>
@@ -23,18 +30,23 @@
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column prop="id" label="ID" width="80"></el-table-column>
           <el-table-column prop="title" label="课程标题"></el-table-column>
-          <el-table-column prop="comment" label="评论内容"></el-table-column>
+          <el-table-column prop="content" label="评论内容"></el-table-column>
           <el-table-column prop="user" label="用户"></el-table-column>
           <el-table-column prop="mobile" label="手机"></el-table-column>
           <el-table-column prop="realname" label="真实姓名"></el-table-column>
           <el-table-column label="评价时间">
             <template scope="scope">
-              {{ scope.row.created_at }}
+              {{ scope.row.created_at | toDateTime}}
             </template>
           </el-table-column>
-          <el-table-column label="状态">
+          <el-table-column label="状态" width="100">
             <template scope="scope">
-              <el-switch></el-switch>
+              <el-switch
+                v-model="scope.row.sell"
+                on-text="开"
+                off-text="关"
+                @change="toswitch(scope.row.sell,scope.row.id)">
+              </el-switch>
             </template>
           </el-table-column>
           <el-table-column 
@@ -42,7 +54,7 @@
             label="操作"
             >
             <template scope="scope">
-              <el-button @click="onEdit(scope.row)" size="small" icon="edit"></el-button>
+               <el-button @click="onEdit(scope.row)" size="small" icon="edit"></el-button> 
               <el-button @click="onDelete(scope.row.id)" size="small" icon="delete2"></el-button>
             </template>
           </el-table-column>
@@ -140,6 +152,14 @@ export default {
     },
     onRefresh () {
       this.getList()
+    },
+    onSearch () {
+      const data = {
+        pageSize: this.response.pageSize,
+        currentPage: 1,
+        ...this.form
+      }
+      this.getList(data)
     },
     handleSizeChange (value) {
       const data = {

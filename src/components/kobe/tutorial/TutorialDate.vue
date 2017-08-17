@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="display: inline-block;width: 49.5%;">
     <el-form-item :label="data.title">
       <el-date-picker
         v-model="time"

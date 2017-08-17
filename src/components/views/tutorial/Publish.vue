@@ -78,7 +78,9 @@ export default {
   },
   methods: {
     toTutorialList () {
-      this.$router.go(-1)
+      this.$router.push({
+        path: '/admin/tutorial/index'
+      })
     },
     onSubmit (active, msg) {
       let canSubmit = true

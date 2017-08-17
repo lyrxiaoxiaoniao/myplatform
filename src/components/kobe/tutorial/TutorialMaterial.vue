@@ -39,7 +39,7 @@
               <el-button size="small" type="primary">点击上传</el-button>
             </el-upload>
           </div>
-          <div>如果选择课程分类为文本内容,则只能上传pdf或者文本内容文件;如果选择了视频课程,则必须上传视频文件MP4(最大只能为10MB)</div>
+          <div>如果选择课程分类为文本内容,则只能上传pdf或者文本内容文件;如果选择了视频课程,则必须上传视频文件MP4</div>
         </div>
       </template>
     </div>

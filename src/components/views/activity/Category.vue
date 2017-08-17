@@ -32,7 +32,7 @@
           </template>
         </el-table-column>
         <el-table-column 
-          width="220"
+          width="230"
           label="操作"
           >
           <template scope="scope">

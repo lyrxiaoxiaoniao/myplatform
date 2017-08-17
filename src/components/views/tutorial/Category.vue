@@ -153,11 +153,18 @@
               <el-table-column prop="name" label="分类名称"></el-table-column>
               <el-table-column label="图片">
                 <template scope="scope">
+<<<<<<< HEAD
                   <img class="user-img-avatar" :src="scope.row.lb_img" @click="bigImg(scope.row.poster)" alt="">
                   <el-dialog v-model="dialogVisible" size="tiny">
                     <img width="100%" :src="dialogImageUrl" alt="">
                   </el-dialog>
+=======
+                  <img class="user-img-avatar" :src="scope.row.lb_img" @click="bigImg(scope.row.lb_img)" alt="">
+>>>>>>> test
                 </template>
+                <el-dialog v-model="dialogVisible" size="tiny">
+                  <img width="100%" :src="dialogImageUrl" alt="">
+                </el-dialog>
               </el-table-column>
               <el-table-column label="创建时间" width="150">
                 <template scope="scope">
@@ -409,15 +416,15 @@ export default {
             message: '添加成功',
             type: 'success'
           })
-          this.addForm = {
-            catgr_id: 14,
-            p_id: '',
-            name: '',
-            brief: '',
-            sort: '',
-            status: true,
-            lb_img: ''
-          }
+          // this.addForm = {
+          //   catgr_id: 14,
+          //   p_id: '',
+          //   name: '',
+          //   brief: '',
+          //   sort: '',
+          //   status: true,
+          //   lb_img: ''
+          // }
           const data = {
             pageSize: this.response.pageSize,
             currentPage: this.response.currentPage,
@@ -488,6 +495,16 @@ export default {
     },
     showAddDialog () {
       this.addDialogVisiable = true
+      this.imageUrl = ''
+      this.addForm = {
+        catgr_id: 14,
+        p_id: '',
+        name: '',
+        brief: '',
+        sort: '',
+        status: true,
+        lb_img: ''
+      }
     },
     closeAddDialog () {
       this.addDialogVisiable = false

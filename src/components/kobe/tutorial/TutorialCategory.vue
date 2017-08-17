@@ -3,6 +3,7 @@
     <el-form-item
       :label="data.title">
       <el-cascader
+        style="width:100%;"
         v-if="categories"
         clearable
         change-on-select

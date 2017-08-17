@@ -119,6 +119,7 @@ import SCAwardsClass from 'components/views/awards/awardClass.vue'
 import SCAwards from 'components/views/awards/awards.vue'
 import SCAwardsAdd from 'components/views/awards/awardsAdd.vue'
 import SCAwardsEdit from 'components/views/awards/awardsEdit.vue'
+import SCAwardsSpec from 'components/views/awards/awardsSpec.vue'
 
 const routes = [
   {
@@ -830,6 +831,11 @@ const routes = [
           path: 'product',
           component: SCAwards,
           name: '奖品信息管理',
+          meta: {description: '展示'}
+        }, {
+          path: 'spec',
+          component: SCAwardsSpec,
+          name: '奖品规格管理',
           meta: {description: '展示'}
         }, {
           path: 'add',
