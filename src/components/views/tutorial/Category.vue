@@ -153,7 +153,10 @@
               <el-table-column prop="name" label="分类名称"></el-table-column>
               <el-table-column label="图片">
                 <template scope="scope">
-                  <img class="user-img-avatar" :src="scope.row.lb_img" alt="">
+                  <img class="user-img-avatar" :src="scope.row.lb_img" @click="bigImg(scope.row.poster)" alt="">
+                  <el-dialog v-model="dialogVisible" size="tiny">
+                    <img width="100%" :src="dialogImageUrl" alt="">
+                  </el-dialog>
                 </template>
               </el-table-column>
               <el-table-column label="创建时间" width="150">
@@ -249,10 +252,16 @@ export default {
       tableSelection: [],
       moveCategory: [],
       editedCategory: [],
-      selectedCategory: []
+      selectedCategory: [],
+      dialogImageUrl: '',
+      dialogVisible: false
     }
   },
   methods: {
+    bigImg (url) {
+      this.dialogImageUrl = url
+      this.dialogVisible = true
+    },
     handleDropDown (val) {
       if (!this.tableSelection.length) {
         this.$message.info('请选择需要操作的数据')
@@ -271,6 +280,7 @@ export default {
     handleAvatarSuccess(res, file) {
       if (res.errcode === '0000') {
         this.addForm.lb_img = res.data[0]
+        this.editForm.lb_img = res.data[0]
         this.imageUrl = res.data[0]
       }
     },
