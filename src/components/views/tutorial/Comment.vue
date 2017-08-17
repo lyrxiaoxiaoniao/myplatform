@@ -54,7 +54,7 @@
             label="操作"
             >
             <template scope="scope">
-               <el-button @click="onEdit(scope.row)" size="small" icon="edit"></el-button> 
+               <!-- <el-button @click="onEdit(scope.row)" size="small" icon="edit"></el-button>  -->
               <el-button @click="onDelete(scope.row.id)" size="small" icon="delete2"></el-button>
             </template>
           </el-table-column>

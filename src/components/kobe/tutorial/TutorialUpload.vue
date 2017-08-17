@@ -1,7 +1,7 @@
 <template>
   <div class="kobe-tutorial-upload">
     <div class="img-upload-container">
-      <img v-if="url" :src="url" alt="cover" class="avatar">
+      <img v-if="url" :src="url" alt="cover" class="avatar" @click="openDialog">
       <i v-else @click="openDialog" class="el-icon-plus avatar-uploader-icon"></i>
     </div>
     <kobe-upload-file

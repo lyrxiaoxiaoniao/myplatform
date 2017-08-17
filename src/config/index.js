@@ -286,8 +286,17 @@ export default {
   goodsListAPI: '/award/goods/index',
   addGoodsAPI: '/award/goods/create',
   editGoodsAPI: '/award/goods/update',
+  removeGoodsAPI: '/award/goods/delete',
   showGoodsAPI: '/award/goods/show',
   cpAwardShowAPI: '/award/cp/show',
+  /* 奖品规格列表 */
+  awardsProperty: '/award/property/index',
+  removeAawardsProperty: '/award/property/delete',
+  checkAawardsProperty: '/award/property/check',
+  addAawardsProperty: '/award/property/create',
+  editAwardsProperty: '/award/property/update',
+  showAwardsProperty: '/award/property/show',
+  activeAwardsProperty: '/award/property/active',
   /* 商品管理 */
   showGoodsListAPI: '/award/goods/index',
   /* 订单管理 */

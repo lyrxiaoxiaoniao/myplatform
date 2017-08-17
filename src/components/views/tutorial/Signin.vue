@@ -68,7 +68,7 @@
           <el-table-column prop="pay.price" label="现金"></el-table-column>
           <el-table-column label="报名时间" width="150">
             <template scope="scope">
-              {{ scope.row.create_at | toDateTime }}
+              {{ scope.row.created_at | toDateTime }}
             </template>
           </el-table-column>
           <el-table-column prop="pay.status" label="支付状态"></el-table-column>
@@ -262,6 +262,7 @@ export default {
       .then(response => {
         if (response.data.errcode === '0000') {
           this.response = this.transformData(response.data.data)
+          console.log(this.response)
         }
       })
       .catch(error => {

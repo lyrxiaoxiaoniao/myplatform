@@ -24,7 +24,7 @@
                   </el-button>
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item command="delete">删除</el-dropdown-item>
-                    <el-dropdown-item command="move">移动</el-dropdown-item>
+                    <!-- <el-dropdown-item command="move">移动</el-dropdown-item> -->
                     <el-dropdown-item command="recommand">设置为推荐课程</el-dropdown-item>
                     <el-dropdown-item command="uppermost">设置为置顶课程</el-dropdown-item>
                     <el-dropdown-item command="online">上线</el-dropdown-item>
@@ -33,12 +33,12 @@
                 </el-dropdown>
                 <el-button type="primary" @click="onRefresh">刷新</el-button>
               </el-col>
-              <el-col :span="6">
-                <el-input>
-                  <el-button slot="append" icon="search"></el-button>
+              <el-col :span="7">
+                <el-input v-model="keyword">
+                  <el-button @click="onSearch" slot="append" icon="search"></el-button>
                 </el-input>
               </el-col>
-              <el-button @click="openSearchDialog" icon="search">高级</el-button>
+               <!-- <el-button @click="openSearchDialog" icon="search">高级</el-button>  -->
             </el-row>
           </div>
           <div slot="kobe-table-content" class="kobe-table">
@@ -85,6 +85,7 @@
               <el-form :model="moveForm" label-width="120px">
                 <el-form-item label="上级分类">
                   <el-cascader
+                    style="width:100%;"
                     clearable
                     change-on-select
                     expand-trigger="hover"
@@ -96,7 +97,7 @@
               </el-form>
               <div slot="footer">
                 <el-button @click="closeMoveForm">取消</el-button>
-                <el-button @click="onMoveTutorial">确定</el-button>
+                <el-button type="primary" @click="onMoveTutorial">确定</el-button>
               </div>
             </el-dialog>
             <el-dialog title="高级搜索" v-model="searchDialogVisiable">
@@ -184,7 +185,8 @@ export default {
         id: []
       },
       advancedForm: {
-      }
+      },
+      keyword: ''
     }
   },
   methods: {
@@ -215,7 +217,7 @@ export default {
       this.moveDialogVisiable = false
       api.POST(config.tutorial.move, {
         ids: arr,
-        p_ids: this.moveForm.id
+        p_ids: Number(this.moveForm.id)
       })
       .then(response => {
         if (response.data.errcode === '0000') {
@@ -400,6 +402,15 @@ export default {
           id: id
         }
       })
+    },
+    onSearch () {
+      const data = {
+        id: this.selectedNode,
+        pageSize: this.response.pageSize,
+        currentPage: 1,
+        keyword: this.keyword
+      }
+      this.getClassList(data)
     },
     handleSizeChange (value) {
       const data = {

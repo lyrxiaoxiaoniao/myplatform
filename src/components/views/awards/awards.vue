@@ -203,7 +203,8 @@ export default {
       form: {
         keyword: '',
         value: ''
-      }
+      },
+      ids: []
     }
   },
   methods: {
@@ -214,7 +215,7 @@ export default {
     },
     handleCommand (command) {
       if (command === '删除') {
-        this.onTips(command)
+        this.deleteType()
       }
       if (command === '移动') {
         this.confirmMove()
@@ -274,11 +275,14 @@ export default {
     },
     handleSelectionChange (val) {
       this.multipleSelection = val
-      console.log(this.multipleSelection)
+      // console.log(this.multipleSelection)
+      this.ids = []
+      this.multipleSelection.forEach(v => {
+        this.ids.push(v.id)
+      })
     },
     // 模态框显示
     openDialog (id, type) {
-      console.log(this.$router)
       this.$router.push({
         path: '/admin/awards/edit',
         query: {
@@ -288,21 +292,38 @@ export default {
     },
     // 删除表单
     deleteType (id) {
+      if (id) {
+        this.ids = []
+        this.ids.push(id)
+      }
+      if (this.ids.length === 0) {
+        this.$confirm('请进行正确操作，请先勾选表单？', '错误', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'error'
+        }).then(() => {
+          return
+        }).catch(() => {
+          return
+        })
+        return
+      }
       this.$confirm('是否确认删除该表单', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // api.POST(config.removeActivityFieldAPI, {
-        //   id: id
-        // })
-        // .then(response => {
-        //   if (response.data.errcode === '0000') {
-        //     this.onSuccess('删除成功')
-        //   } else {
-        //     this.$message.error('发生错误，请重试')
-        //   }
-        // })
+        api.POST(config.removeAawardsProperty, {
+          ids: this.ids
+        })
+        .then(response => {
+          if (response.data.errcode === '0000') {
+            this.onSuccess('删除成功')
+            this.getList()
+          } else {
+            this.$message.error('发生错误，请重试')
+          }
+        })
       })
     },
     handleChangeMove (value) {
@@ -394,26 +415,6 @@ export default {
         title: '成功',
         message: string,
         type: 'success'
-      })
-    },
-    // 菜单选择提示
-    onTips(tip) {
-      this.$confirm('此操作将' + tip + '文件, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$notify({
-          title: '成功',
-          type: 'success',
-          message: '操作成功!'
-        })
-      }).catch(() => {
-        this.$notify({
-          type: 'info',
-          title: '消息',
-          message: '已取消操作'
-        })
       })
     }
   },

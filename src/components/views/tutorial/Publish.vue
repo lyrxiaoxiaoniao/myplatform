@@ -1,10 +1,10 @@
 <template>
   <div class="sc-tutorial-publish">
     <el-row type="flex">
-      <el-button @click="toTutorialList">返回列表</el-button>
-      <el-button>课程预览</el-button>
-      <el-button @click="onSubmit(0, '保存成功')">保存草稿</el-button>
-      <el-button @click="onSubmit(1, '创建活动成功')">提交发布</el-button>
+      <el-button type="primary" @click="toTutorialList">返回列表</el-button>
+      <!-- <el-button>课程预览</el-button>
+      <el-button @click="onSubmit(0, '保存成功')">保存草稿</el-button> -->
+      <el-button type="primary" @click="onSubmit(1, '创建活动成功')">提交发布</el-button>
     </el-row>
 
     <el-row type="flex" class="sc-tutorial-publish-content">

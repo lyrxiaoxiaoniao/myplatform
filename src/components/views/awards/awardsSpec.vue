@@ -1,11 +1,11 @@
 <template>
-<div>
+  <div>
     <kobe-table>
         <div slot="kobe-table-header" class="kobe-table-header">
             <el-row type="flex" justify="end">
             <el-col :span="16">
-                <el-button type="primary">新增规格</el-button>
-                <el-button type="primary">刷新</el-button>
+                <el-button @click="opendialog('add')" type="primary">新增规格</el-button>
+                <el-button @click="resFresh" type="primary">刷新</el-button>
                 <el-dropdown @command="handleCommand" style="margin-left:10px;">
                   <el-button type="primary">
                     更多操作<i class="el-icon-caret-bottom el-icon--right"></i>
@@ -34,17 +34,30 @@
                 @row-dblclick="rowDbclick">
                 <el-table-column type="selection" width="55"></el-table-column>
                 <el-table-column prop="id" label="ID" width="50"></el-table-column>
-                <el-table-column prop="orderNumber" label="订单编号"></el-table-column>
-                <el-table-column prop="goodsName" label="商品" width="150"></el-table-column>
-                <el-table-column prop="phone" label="买家手机号"></el-table-column>
-                <el-table-column prop="price" label="成交金额" width="100"></el-table-column>
-                <el-table-column prop="payway" label="成交方式" width="100"></el-table-column>
-                <el-table-column prop="createdAt" label="订单时间" width="100"></el-table-column>
-                <el-table-column prop="payway" label="支付方式" width="100"></el-table-column>
-                <el-table-column prop="freightWay" label="物流方式" width="100"></el-table-column>
-                <el-table-column prop="buyerName" label="收货人" width="100"></el-table-column>
-                <el-table-column prop="address" label="收货地址"></el-table-column>
-                <el-table-column prop="status" label="状态" width="80"></el-table-column>
+                <el-table-column prop="value_type" label="value_type"></el-table-column>
+                <el-table-column prop="title" label="title"></el-table-column>
+                <el-table-column prop="created_at" label="创建时间">
+                  <template scope="scope">
+                    {{ scope.row.created_at | toDateTime }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="content" label="内容"></el-table-column>
+                <el-table-column label="启用" width="100">
+                  <template scope="scope">
+                    <el-switch
+                      v-model="scope.row.active"
+                      on-text="开"
+                      off-text="关"
+                      @change="toswitch(scope.row.active, scope.row.id)">
+                    </el-switch>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="status" label="操作" width="120">
+                  <template scope="scope"> 
+                      <el-button @click="opendialog('edit', scope.row)" size="small" icon="edit"></el-button>
+                      <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button> 
+                  </template>
+                </el-table-column>
             </el-table>
         </div>
         <div slot="kobe-table-footer" class="kobe-table-footer">
@@ -63,26 +76,84 @@
             </el-row>
         </div>
     </kobe-table>
-</div>
+    <el-dialog :title="dialogTitle" v-model="dialogVisible" size="tiny" @close="onClose">
+      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+          <el-form-item label="value_type" prop="value_type">
+            <el-input v-model="ruleForm.value_type"></el-input>
+          </el-form-item>
+          <el-form-item label="title" prop="title">
+            <el-input v-model="ruleForm.title"></el-input>
+          </el-form-item>
+          <el-form-item label="content" prop="content">
+            <el-input v-model="ruleForm.content"></el-input>
+          </el-form-item>
+          <el-form-item label="启用" prop="active">
+            <el-switch on-text="开" off-text="关" v-model="ruleForm.active" style="width:80px;"></el-switch>
+          </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm('ruleForm')">确认</el-button>
+        <el-button @click="onClose">取消</el-button>
+      </div>
+    </el-dialog>
+  </div>
 </template>
 <script>
 import config from 'src/config'
 import api from 'src/api'
 export default {
   data () {
+    var checkVal = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error('不能为空'))
+      }
+      api.GET(config.checkAawardsProperty, {value_type: value})
+      .then(response => {
+        if (response.data.errcode === '60000') {
+          return callback(new Error('有重名，请重新输入！'))
+        } else {
+          callback()
+        }
+      })
+    }
+    var checkTitle = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error('不能为空'))
+      }
+      api.GET(config.checkAawardsProperty, {title: value})
+      .then(response => {
+        if (response.data.errcode === '60000') {
+          return callback(new Error('有重名，请重新输入！'))
+        } else {
+          callback()
+        }
+      })
+    }
     return {
       multipleSelection: [],
+      dialogVisible: false,
       response: {
-        data: [{
-          sort: 1
-        }]
+        data: []
       },
       ids: [],
-      stepsSelection: [],
-      tableData: null,
+      dialogTitle: '',
       dialogType: '',
       form: {
         keyword: ''
+      },
+      ruleForm: {
+        value_type: '',
+        content: '',
+        title: '',
+        active: null
+      },
+      rules: {
+        value_type: [
+          { validator: checkVal, trigger: 'blur' }
+        ],
+        title: [
+          { validator: checkTitle, trigger: 'blur' }
+        ]
       }
     }
   },
@@ -91,10 +162,6 @@ export default {
       if (command === '批量删除') {
         this.deleteType()
       }
-    },
-    // 树形结构选择
-    handleChange (value) {
-      console.log(value)
     },
     toggleSelection (rows) {
       if (rows) {
@@ -107,21 +174,100 @@ export default {
     },
     handleSelectionChange (val) {
       this.multipleSelection = val
-      console.log(this.multipleSelection)
+      // console.log(this.multipleSelection)
       this.ids = []
       this.multipleSelection.forEach(v => {
         this.ids.push(v.id)
       })
     },
-    // 双击行调用函数
-    rowDbclick (row, e) {
-      console.log(row)
-      this.$router.push({
-        path: '/admin/goods/order/detail',
-        query: {
-          id: row
+    changeNum (val) {
+      if (val) {
+        val = 1
+      } else {
+        val = 0
+      }
+      return val
+    },
+    toswitch (active, id) {
+      let ids = []
+      ids.push(id)
+      var obj = {
+        ids: ids,
+        active: this.changeNum(active)
+      }
+      api.POST(config.activeAwardsProperty, obj)
+      .then(response => {
+        if (response.status !== 200) {
+          this.error = response.statusText
+          return
+        }
+        if (response.data.errcode === '0000') {
+          this.getList()
+          this.$notify({
+            title: '成功',
+            message: '修改状态成功！！！',
+            type: 'success'
+          })
         }
       })
+    },
+    opendialog (type, data = {}) {
+      this.dialogVisible = true
+      console.log(type, data)
+      if (type === 'add') {
+        this.dialogType = type
+        this.dialogTitle = '新增规格'
+      } else if (type === 'edit' && data) {
+        const newData = JSON.parse(JSON.stringify(data))
+        this.dialogType = type
+        this.dialogTitle = '修改规格'
+        this.ruleForm = newData
+      }
+    },
+    onClose () {
+      this.dialogVisible = false
+      this.ruleForm = {
+        value_type: '',
+        content: '',
+        title: '',
+        active: null
+      }
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          let url = ''
+          if (this.dialogType === 'add') {
+            url = config.addAawardsProperty
+          } else if (this.dialogType === 'edit') {
+            url = config.editAwardsProperty
+          }
+          if (this.ruleForm.active === true) {
+            this.ruleForm.active = 1
+          } else {
+            this.ruleForm.active = 0
+          }
+          api.POST(url, this.ruleForm)
+          .then(response => {
+            if (response.data.errcode === '0000') {
+              this.onSuccess(this.dialogTitle + '成功!')
+              this.dialogVisible = false
+              this.getList()
+            } else {
+              this.$message.error(response.data.errmsg)
+            }
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
+        } else {
+          return false
+        }
+      })
+    },
+    // 双击行调用函数
+    rowDbclick (data, type) {
+      this.opendialog(type = 'edit', data)
     },
     // 删除表单
     deleteType (id) {
@@ -146,17 +292,21 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.POST(config.removeOrderAPI, {
+        api.POST(config.removeGoodsAPI, {
           ids: this.ids
         })
         .then(response => {
           if (response.data.errcode === '0000') {
             this.onSuccess('删除成功')
+            this.getList()
           } else {
             this.$message.error('发生错误，请重试')
           }
         })
       })
+    },
+    resFresh () {
+      this.getList()
     },
     handleSizeChange (value) {
       const data = {
@@ -164,7 +314,6 @@ export default {
         pageSize: value,
         ...this.form
       }
-
       this.getList(data)
     },
     handleCurrentChange (value) {
@@ -177,6 +326,7 @@ export default {
       this.getList(data)
     },
     onSearch () {
+      window.alert(1)
       const data = {
         currentPage: 1,
         pageSize: this.response.pageSize,
@@ -184,11 +334,20 @@ export default {
       }
       this.getList(data)
     },
+    changeActive (res) {
+      res.data.forEach(v => {
+        if (v.active === 1) {
+          v.active = true
+        } else if (v.active === 0) {
+          v.active = false
+        }
+      })
+      return res
+    },
     getList (data = {}) {
-    //   mallOrderAPI
-      api.GET(config.showOrderAPI, data)
+      api.GET(config.awardsProperty, data)
       .then(response => {
-        this.response = response.data.data
+        this.response = this.changeActive(response.data.data)
         console.log(this.response)
       })
       .catch(error => {

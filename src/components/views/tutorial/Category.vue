@@ -125,6 +125,7 @@
               <el-form :model="moveForm" label-width="120px">
                 <el-form-item label="移动到">
                   <el-cascader
+                    style="width:100%;"
                     clearable
                     change-on-select
                     expand-trigger="hover"
@@ -153,18 +154,11 @@
               <el-table-column prop="name" label="分类名称"></el-table-column>
               <el-table-column label="图片">
                 <template scope="scope">
-<<<<<<< HEAD
-                  <img class="user-img-avatar" :src="scope.row.lb_img" @click="bigImg(scope.row.poster)" alt="">
+                  <img class="user-img-avatar" :src="scope.row.lb_img" @click="bigImg(scope.row.lb_img)" alt="">
                   <el-dialog v-model="dialogVisible" size="tiny">
                     <img width="100%" :src="dialogImageUrl" alt="">
                   </el-dialog>
-=======
-                  <img class="user-img-avatar" :src="scope.row.lb_img" @click="bigImg(scope.row.lb_img)" alt="">
->>>>>>> test
                 </template>
-                <el-dialog v-model="dialogVisible" size="tiny">
-                  <img width="100%" :src="dialogImageUrl" alt="">
-                </el-dialog>
               </el-table-column>
               <el-table-column label="创建时间" width="150">
                 <template scope="scope">
@@ -266,6 +260,7 @@ export default {
   },
   methods: {
     bigImg (url) {
+      console.log(url)
       this.dialogImageUrl = url
       this.dialogVisible = true
     },

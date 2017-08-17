@@ -89,7 +89,7 @@
           </el-col>
           <el-col :span="5">
             <el-input v-model="signinKeyword">
-              <el-button @click="onSigninSearch" slot="append" icon="search"></el-button>
+               <el-button @click="onSigninSearch" slot="append" icon="search"></el-button> 
             </el-input>
           </el-col>
         </el-row>
@@ -105,13 +105,13 @@
             <el-table-column prop="id" label="ID" width="80"></el-table-column>
             <el-table-column prop="nickname" label="用户"></el-table-column>
             <el-table-column prop="mobile" label="手机"></el-table-column>
-            <el-table-column prop="realname" label="真实姓名"></el-table-column>
+            <el-table-column prop="name" label="真实姓名"></el-table-column>
             <el-table-column prop="pay.pay_way" label="支付方式"></el-table-column>
             <el-table-column prop="pay.credit_price" label="积分"></el-table-column>
             <el-table-column prop="pay.price" label="现金"></el-table-column>
             <el-table-column label="报名时间">
               <template scope="scope">
-                {{ scope.row.create_at | toDateTime }}
+                {{ scope.row.created_at | toDateTime }}
               </template>
             </el-table-column>
             <el-table-column
@@ -320,7 +320,7 @@
         </div>
       </el-tab-pane>
 
-      <el-tab-pane label="奖励情况" name="5">
+       <!-- <el-tab-pane label="奖励情况" name="5">
         <el-row type="flex">
           <el-col :span="19">
             <el-button type="primary">刷新</el-button>
@@ -332,7 +332,7 @@
             </el-input>
           </el-col>
         </el-row>
-      </el-tab-pane>
+      </el-tab-pane>  -->
     </el-tabs>
   </div>
 </template>
@@ -678,6 +678,7 @@ export default {
             }
           })
           this.signinList = response.data.data
+          console.log(this.signinList)
         }
       })
       .catch(error => {
