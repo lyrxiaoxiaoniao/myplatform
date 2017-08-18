@@ -25,8 +25,8 @@
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item command="delete">删除</el-dropdown-item>
                     <!-- <el-dropdown-item command="move">移动</el-dropdown-item> -->
-                    <el-dropdown-item command="recommand">设置为推荐课程</el-dropdown-item>
-                    <el-dropdown-item command="uppermost">设置为置顶课程</el-dropdown-item>
+                    <!-- <el-dropdown-item command="recommand">设置为推荐课程</el-dropdown-item> -->
+                    <!-- <el-dropdown-item command="uppermost">设置为置顶课程</el-dropdown-item> -->
                     <el-dropdown-item command="online">上线</el-dropdown-item>
                     <el-dropdown-item command="offline">下线</el-dropdown-item>
                   </el-dropdown-menu>

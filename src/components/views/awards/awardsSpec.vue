@@ -54,7 +54,7 @@
                 </el-table-column>
                 <el-table-column prop="status" label="操作" width="120">
                   <template scope="scope"> 
-                      <el-button @click="opendialog('edit', scope.row)" size="small" icon="edit"></el-button>
+                      <el-button @click="openEditdialog('edit', scope.row)" size="small" icon="edit"></el-button>
                       <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button> 
                   </template>
                 </el-table-column>
@@ -76,7 +76,7 @@
             </el-row>
         </div>
     </kobe-table>
-    <el-dialog :title="dialogTitle" v-model="dialogVisible" size="tiny" @close="onClose">
+    <el-dialog title="新增规格" v-model="dialogVisible" size="tiny" @close="onClose">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
           <el-form-item label="value_type" prop="value_type">
             <el-input v-model="ruleForm.value_type"></el-input>
@@ -94,6 +94,26 @@
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm('ruleForm')">确认</el-button>
         <el-button @click="onClose">取消</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="修改规格" v-model="dialogEditVisible" size="tiny" @close="onEditClose">
+      <el-form :model="editForm" ref="editForm" label-width="100px" class="demo-ruleForm">
+          <el-form-item label="value_type">
+            <el-input v-model="editForm.value_type"></el-input>
+          </el-form-item>
+          <el-form-item label="title">
+            <el-input v-model="editForm.title"></el-input>
+          </el-form-item>
+          <el-form-item label="content">
+            <el-input v-model="editForm.content"></el-input>
+          </el-form-item>
+          <el-form-item label="启用" prop="active">
+            <el-switch on-text="开" off-text="关" v-model="editForm.active" style="width:80px;"></el-switch>
+          </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="updateForm">确认</el-button>
+        <el-button @click="onEditClose">取消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -132,6 +152,7 @@ export default {
     return {
       multipleSelection: [],
       dialogVisible: false,
+      dialogEditVisible: false,
       response: {
         data: []
       },
@@ -142,6 +163,12 @@ export default {
         keyword: ''
       },
       ruleForm: {
+        value_type: '',
+        content: '',
+        title: '',
+        active: null
+      },
+      editForm: {
         value_type: '',
         content: '',
         title: '',
@@ -213,16 +240,14 @@ export default {
     },
     opendialog (type, data = {}) {
       this.dialogVisible = true
-      console.log(type, data)
-      if (type === 'add') {
-        this.dialogType = type
-        this.dialogTitle = '新增规格'
-      } else if (type === 'edit' && data) {
-        const newData = JSON.parse(JSON.stringify(data))
-        this.dialogType = type
-        this.dialogTitle = '修改规格'
-        this.ruleForm = newData
-      }
+      this.dialogType = type
+      this.dialogTitle = '新增规格'
+    },
+    openEditdialog (type, data = {}) {
+      this.dialogEditVisible = true
+      const newData = JSON.parse(JSON.stringify(data))
+      this.dialogType = type
+      this.editForm = newData
     },
     onClose () {
       this.dialogVisible = false
@@ -233,24 +258,47 @@ export default {
         active: null
       }
     },
+    onEditClose () {
+      this.dialogEditVisible = false
+      this.editForm = {
+        value_type: '',
+        content: '',
+        title: '',
+        active: null
+      }
+    },
+    updateForm() {
+      if (this.editForm.active === true) {
+        this.editForm.active = 1
+      } else {
+        this.editForm.active = 0
+      }
+      api.POST(config.editAwardsProperty, this.editForm)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.onSuccess('修改规格成功!')
+          this.dialogEditVisible = false
+          this.getList()
+        } else {
+          this.$message.error(response.data.errmsg)
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          let url = ''
-          if (this.dialogType === 'add') {
-            url = config.addAawardsProperty
-          } else if (this.dialogType === 'edit') {
-            url = config.editAwardsProperty
-          }
           if (this.ruleForm.active === true) {
             this.ruleForm.active = 1
           } else {
             this.ruleForm.active = 0
           }
-          api.POST(url, this.ruleForm)
+          api.POST(config.addAawardsProperty, this.ruleForm)
           .then(response => {
             if (response.data.errcode === '0000') {
-              this.onSuccess(this.dialogTitle + '成功!')
+              this.onSuccess('新增规格成功!')
               this.dialogVisible = false
               this.getList()
             } else {

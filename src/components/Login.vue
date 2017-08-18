@@ -172,12 +172,16 @@ export default {
   },
   mounted() {
     const title = document.getElementsByTagName('title')[0]
-    const host = window.location.hostname
+    const appid = this.$route.query.appid
     this.getAppInfo()
-    console.log(title, host)
-    title.innerHTML = '安全光明'
-    switch (host) {
+    console.log(title, appid)
+    switch (appid) {
+      case 'gmsafety':
+        title.innerHTML = '安全光明'
+        this.cover = 'static/img/BG2.png'
+        break
       default:
+        title.innerHTML = '深传互动政务新媒体平台'
         this.cover = 'static/img/BG2.png'
     }
   },

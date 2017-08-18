@@ -92,6 +92,19 @@ import api from 'src/api'
 export default {
   name: 'sc-user-add-form',
   data () {
+    var checkName = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error('用户名不能为空'))
+      }
+      api.GET(config.users.userCheck, {username: value})
+      .then(response => {
+        if (response.data.errcode === '60000') {
+          return callback(new Error('有重名，请重新输入！'))
+        } else {
+          callback()
+        }
+      })
+    }
     return {
       uploadUrl: config.serverURI + config.uploadImgAPI,
       dataForm: {
@@ -109,7 +122,7 @@ export default {
       imageURL: '',
       rules: {
         username: [
-          {required: true, message: '请输入用户名', trigger: 'blur'}
+          {validator: checkName, trigger: 'blur'}
         ],
         password: [
           {required: true, message: '请输入密码', trigger: 'blur'}

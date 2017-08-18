@@ -35,10 +35,7 @@
                   <el-table-column prop="title" label="广告内容名称" ></el-table-column>
                   <el-table-column prop="poster" label="素材" width="120">
                     <template scope="scope">
-                      <img width="100%" :src="scope.row.poster" @click="bigImg(scope.row.poster)" alt="">
-                      <el-dialog v-model="dialogVisible">
-                        <img width="100%" :src="dialogImageUrl" alt="">
-                      </el-dialog>
+                      <img style="width:58px;height:58px;" :src="scope.row.poster" @click="bigImg(scope.row.poster)" alt="">
                     </template>
                   </el-table-column>
                   <el-table-column prop="beginTime" label="上画时间" width="140"></el-table-column>
@@ -88,7 +85,7 @@
                   <el-table-column prop="title" label="广告内容名称" ></el-table-column>
                   <el-table-column prop="poster" label="素材" width="120">
                     <template scope="scope">
-                      <img width="100%" :src="scope.row.poster" @click="bigImg(scope.row.poster)" alt="">
+                      <img style="width:58px;height:58px;" :src="scope.row.poster" @click="bigImg(scope.row.poster)" alt="">
                     </template>
                   </el-table-column>
                   <el-table-column prop="beginTime" label="上画时间" width="140"></el-table-column>
@@ -145,6 +142,9 @@
           </el-tab-pane>
       </el-tabs>
       <!--弹出框-->
+      <el-dialog v-model="dialogVisible">
+        <img width="100%" :src="dialogImageUrl" alt="">
+      </el-dialog>
       <el-dialog title="选择广告内容" v-model="dialogTableVisible">
           <div>
               <el-form :inline="true" :model="formInline" class="demo-form-inline">
@@ -190,7 +190,7 @@
                       <el-table-column prop="title" label="内容名称" width="120"></el-table-column>
                       <el-table-column prop="poster" label="内容素材" width="120">
                       <template scope="scope">
-                        <img width="100%" :src="scope.row.poster" @click="bigImg(scope.row.poster)" alt="">
+                        <img style="width:58px;height:58px;" :src="scope.row.poster" @click="bigImg(scope.row.poster)" alt="">
                       </template>
                       </el-table-column>
                       <el-table-column prop="memo" label="内容说明" show-overflow-tooltip></el-table-column>

@@ -29,14 +29,14 @@
               </el-dropdown>
               <el-button type="primary">刷新</el-button>
             </el-col>
-            <el-select v-model="form.value" placeholder="所有信息" style="width:120px;">
+            <!-- <el-select v-model="form.value" placeholder="所有信息" style="width:120px;">
               <el-option
                 v-for="item in option"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value">
               </el-option>
-            </el-select>
+            </el-select> -->
             <el-col :span="8">
               <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
                 <el-button slot="append" @click="onSearch" icon="search"></el-button>

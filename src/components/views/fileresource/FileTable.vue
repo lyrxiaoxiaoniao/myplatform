@@ -564,7 +564,8 @@ export default {
 }
 </script>
 <style scoped>
-/* .FS-folder {
+/* 资源文件放在 static/img/filetable.css
+ .FS-folder {
   width: 100%;
   height: 100%;
   background: url('/static/img/folder.png') no-repeat center center;
