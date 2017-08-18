@@ -37,7 +37,8 @@
             <el-dialog title="新增分类" v-model="addDialogVisiable">
               <el-form :model="addForm" label-width="120px" :rules="rules">
                 <el-form-item label="上级分类">
-                  <el-cascader
+                  <el-cascader 
+                    style="width:100%;"
                     clearable
                     change-on-select
                     expand-trigger="hover"

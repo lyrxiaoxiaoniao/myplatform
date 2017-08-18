@@ -43,7 +43,6 @@
           </el-tab-pane>
         </el-tabs>
 
-
         <div class="tutorial-action" v-if="response">
           <el-row type="flex" justify="center">
             <el-button @click="onPrevTab" v-if="selectedTab !== '1'" type="primary">上一步</el-button>

@@ -564,7 +564,7 @@ export default {
 }
 </script>
 <style scoped>
-.FS-folder {
+/* .FS-folder {
   width: 100%;
   height: 100%;
   background: url('/static/img/folder.png') no-repeat center center;
@@ -582,7 +582,7 @@ export default {
 }
 .FS-zip {
   background: url('/static/img/zip.png') no-repeat center center;
-}
+} */
 .FS-container{
     height: 100%;
     margin-top: 1.5rem;

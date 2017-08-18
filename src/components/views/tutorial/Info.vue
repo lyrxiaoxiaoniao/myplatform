@@ -1,7 +1,7 @@
 <template>
   <div class="sc-tutorial-info">
     <el-row type="flex">
-      <el-button @click="back">返回列表</el-button>
+      <el-button type="primary" @click="back">返回列表</el-button>
     </el-row>
     <el-tabs v-model="selectedTab">
       <el-tab-pane label="课程信息" name="0">
