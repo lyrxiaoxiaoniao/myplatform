@@ -88,7 +88,7 @@
             <el-button @click="onSignDel(signSelection)" type="primary">删除</el-button>
           </el-col>
           <el-col :span="5">
-            <el-input v-model="signinKeyword">
+            <el-input v-model="signinKeyword" placeholder="请输入">
                <el-button @click="onSigninSearch" slot="append" icon="search"></el-button> 
             </el-input>
           </el-col>
@@ -147,7 +147,7 @@
             <el-button @click="onCollectionDel(collectionSelection)" type="primary">删除</el-button>
           </el-col>
           <el-col :span="5">
-            <el-input v-model="collectionKeyword">
+            <el-input v-model="collectionKeyword" placeholder="请输入">
               <el-button @click="onCollectionSearch" slot="append" icon="search"></el-button>
             </el-input>
           </el-col>
@@ -203,7 +203,7 @@
             <el-button @click="onCommentDel(commentSelection)" type="primary">删除</el-button>
           </el-col>
           <el-col :span="5">
-            <el-input v-model="commentKeyword">
+            <el-input v-model="commentKeyword" placeholder="请输入">
               <el-button @click="onCommentSearch" slot="append" icon="search"></el-button>
             </el-input>
           </el-col>
@@ -260,7 +260,7 @@
             <el-button @click="onRankDel(rankSelection)" type="primary">删除</el-button>
           </el-col>
           <el-col :span="5">
-            <el-input v-model="rankKeyword">
+            <el-input v-model="rankKeyword"  placeholder="请输入">
               <el-button @click="onRankSearch" slot="append" icon="search"></el-button>
             </el-input>
           </el-col>
@@ -516,13 +516,13 @@ export default {
               pageSize: this.rankList.pageSize,
               currentPage: this.rankList.currentPage
             }
-            const obj = {
-              keyword: this.commentKeyword,
-              pageSize: this.commentList.pageSize,
-              currentPage: this.commentList.currentPage
-            }
+            // const obj = {
+            //   keyword: this.commentKeyword,
+            //   pageSize: this.commentList.pageSize,
+            //   currentPage: this.commentList.currentPage
+            // }
             this.getRankList(data)
-            this.getCommentList(obj)
+            // this.getCommentList(obj)
           }
         })
       })
@@ -548,7 +548,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.POST(config.tutorial.commentDel, {
+        api.POST(config.tutorial.RankDel, {
           ids: arr
         })
         .then(response => {
@@ -562,13 +562,13 @@ export default {
               pageSize: this.commentList.pageSize,
               currentPage: this.commentList.currentPage
             }
-            const data = {
-              keyword: this.rankKeyword,
-              pageSize: this.rankList.pageSize,
-              currentPage: this.rankList.currentPage
-            }
+            // const data = {
+            //   keyword: this.rankKeyword,
+            //   pageSize: this.rankList.pageSize,
+            //   currentPage: this.rankList.currentPage
+            // }
             this.getCommentList(obj)
-            this.getRankList(data)
+            // this.getRankList(data)
           }
         })
       })
@@ -702,7 +702,7 @@ export default {
       })
     },
     getCommentList (data = null) {
-      api.GET(config.tutorial.commentList, {
+      api.GET(config.tutorial.RankList, {
         id: this.id,
         ...data
       })

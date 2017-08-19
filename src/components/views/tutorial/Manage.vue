@@ -34,7 +34,7 @@
                 <el-button type="primary" @click="onRefresh">刷新</el-button>
               </el-col>
               <el-col :span="7">
-                <el-input v-model="keyword">
+                <el-input v-model="keyword"  placeholder="请输入课程">
                   <el-button @click="onSearch" slot="append" icon="search"></el-button>
                 </el-input>
               </el-col>

@@ -14,7 +14,7 @@
         <div slot="kobe-table-header" class="kobe-table-header">
           <el-row type="flex" justify="end">
             <el-col :span="14">
-              <el-button @click="openDialog" type="primary">添加分类规格</el-button>
+              <el-button @click="relateDialog" type="primary">关联规格</el-button>
               <el-button @click="getList" type="primary">刷新</el-button>
               <el-dropdown @command="handleCommand" style="margin-left:10px;">
                 <el-button type="primary">
@@ -22,18 +22,9 @@
                 </el-button>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="批量删除">批量删除</el-dropdown-item>
-                  <el-dropdown-item command="移动">移动</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </el-col>
-            <el-select v-model="form.value" placeholder="所有信息" style="width:140px;">
-              <el-option
-                v-for="item in option"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
             <el-col :span="8">
               <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
                 <el-button slot="append" @click="onSearch" icon="search"></el-button>
@@ -76,7 +67,7 @@
               label="操作"
               >
               <template scope="scope">
-                <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button>
+                <!-- <el-button size="small" icon="edit"></el-button> -->
                 <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
               </template>
             </el-table-column>
@@ -100,103 +91,34 @@
       </kobe-table>
      </el-col>
     </el-row>
-    <el-dialog v-model="dialogVisible" size="tiny">
-      <img width="100%" :src="dialogImageUrl" alt="">
-    </el-dialog>
-    <el-dialog title="移动" v-model="dialogVisibleMove" size="tiny">
-        <div style="width:100%">
-            <el-row type="flex" justify="center">
-                <el-col :span="4">
-                  <p class="FS-moveName">移动到</p>
-                </el-col>
-                <el-col :span="20">
-                    <el-cascader
-                      style="width:100%;"
-                      change-on-select
-                      :options="cascaderData"
-                      :props="props"
-                      v-model="selectedOptions"
-                      @change="handleChangeMove">
-                  </el-cascader>
-                </el-col>
-            </el-row>
+    <el-dialog title="关联分类规格" v-model="dialogVisible">
+      <div class="kobe-table-component">
+        <div solt="kobe-table-header" class="kobe-table-header">
+          <el-row type="flex" justify="end">
+            <el-col :span="7">
+              <el-input v-model="keyword" placeholder="请输入">
+                <el-button slot="append" icon="search"></el-button>
+              </el-input>
+            </el-col>
+          </el-row>
         </div>
-        <span slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisibleMove = false">取 消</el-button>
-            <el-button type="primary" @click="confirmMove">确 定</el-button>
-        </span>
-    </el-dialog>
-    <el-dialog :title="dialogTitle" v-model="showDialog" size="tiny">
-      <el-form :model="classData" :rules="rules" ref="classData" label-width="80px">
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="上级分类">
-              <el-cascader
-                :options="cascaderData"
-                :props="props"
-                :change-on-select="true"
-                v-model="stepsSelection"
-                @change="handleChange"
-                style="width:100%;">
-              </el-cascader>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="分类名称" prop="display_name" require>
-              <el-input v-model="classData.display_name"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="分类排序">
-              <el-input-number v-model="classData.sort" style="width:120px;"></el-input-number>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="是否启用">
-              <el-switch
-                v-model="classData.active"
-                on-text="开"
-                off-text="关">
-              </el-switch>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="分类说明" prop="description" require>
-              <el-input type="textarea" v-model="classData.description"></el-input>
-            </el-form-item>
-          </el-col>
-           <el-col :span="12">
-            <el-form-item label="分类icon">
-              <el-upload
-                class="avatar-uploader"
-                :action="uploadURL"
-                :show-file-list="false"
-                :on-success="iconHandleAvatarSuccess"
-                :before-upload="beforeAvatarUpload">
-                <img v-if="classData.icon" :src="classData.icon" class="avatar">
-                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-              </el-upload>
-            </el-form-item>
-          </el-col> 
-          <el-col :span="12">
-            <el-form-item label="分类图片">
-              <el-upload
-                class="avatar-uploader"
-                :action="uploadURL"
-                :show-file-list="false"
-                :on-success="handleAvatarSuccess"
-                :before-upload="beforeAvatarUpload">
-                <img v-if="classData.logo" :src="classData.logo" class="avatar">
-                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-              </el-upload>
-            </el-form-item>
-          </el-col>
-        </el-row> 
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-          <el-button @click="showDialog = false">取消</el-button>
-          <el-button @click="submitForm('classData')" v-if="dialogType === 'add'">确定</el-button>
-          <el-button @click="editForm()" v-if="dialogType === 'edit'">确定</el-button>
+
+        <div solt="kobe-table-content" class="kobe-table">
+          <el-table
+            :data="tableData"
+            border
+            stripe>
+            <el-table-column type="selection" width="40"></el-table-column>
+            <el-table-column prop="id" label="ID" sortable width="80"></el-table-column>
+          </el-table>
+        </div>
+
+        <div solt="kobe-table-footer" class="kobe-table-footer">
+          <el-row type="flex" justify="end">
+            <el-button>取消</el-button>
+            <el-button type="primary">确定</el-button>
+          </el-row>
+        </div>
       </div>
     </el-dialog>
   </div>
@@ -214,61 +136,18 @@ export default {
         children: 'children',
         label: 'display_name'
       },
-      cascaderData: [],
-      props: {
-        children: 'children',
-        label: 'display_name',
-        value: 'id'
-      },
-      uploadURL: config.serverURI + config.uploadFilesAPI,
       multipleSelection: [],
-      option: [{
-        value: '0',
-        label: '全部'
-      }, {
-        value: '1',
-        label: '栏目名称'
-      }, {
-        value: '2',
-        label: '访问路径'
-      }],
       response: {
         data: null
       },
-      icon: '',
-      logo: '',
-      classData: {
-        parent_id: [],
-        display_name: '',
-        sort: null,
-        active: 1,
-        description: '',
-        logo: '',
-        icon: ''
-      },
-      selectedOptions: [],
-      showDialog: false,
-      dialogVisible: false,
-      dialogImageUrl: '',
-      dialogTitle: '',
-      stepsSelection: [],
       tableData: null,
-      dialogType: '',
+      dialogVisible: false,
       form: {
-        keyword: '',
-        value: ''
+        keyword: ''
       },
+      keyword: '',
       parentId: null,
-      ids: [],
-      rules: {
-        display_name: [
-          { required: true, message: '请输入分类名称', trigger: 'blur' }
-        ],
-        description: [
-          { required: true, message: '分类说明50字以内', trigger: 'blur' },
-          { min: 0, max: 50, message: '分类说明长度在50字以内', trigger: 'blur' }
-        ]
-      }
+      ids: []
     }
   },
   methods: {
@@ -276,16 +155,10 @@ export default {
       if (command === '批量删除') {
         this.deleteType()
       }
-      if (command === '移动') {
-        this.confirmMove()
-      }
     },
     // 将数据中所有的时间转换成 yyyy-mm-dd hh:mm:ss  state 状态值
     transformDate (res) {
       res.data.forEach(v => {
-        if (v.created_at) {
-          v.created_at = this.formatDate(v.created_at)
-        }
         if (v.active === 1) {
           v.active = true
         }
@@ -295,20 +168,8 @@ export default {
       })
       return res
     },
-    // 时间转换 毫秒转换成 yyyy-mm-dd hh:mm:ss
-    formatDate (value) {
-      let date = new Date(value)
-      let M = date.getMonth() + 1
-      M = M < 10 ? ('0' + M) : M
-      let d = date.getDate()
-      d = d < 10 ? ('0' + d) : d
-      // let h = date.getHours()
-      let m = date.getMinutes()
-      m = m < 10 ? ('0' + m) : m
-      let s = date.getSeconds()
-      s = s < 10 ? ('0' + s) : s
-      value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
-      return value
+    relateDialog () {
+      this.dialogVisible = true
     },
     iconHandleAvatarSuccess(res, file) {
       this.icon = window.URL.createObjectURL(file.raw)
@@ -333,7 +194,7 @@ export default {
       api.POST(config.activeCategoryAPI, {id: id, active: Number(active)})
       .then(response => {
         this.getList()
-        this.onSuccess('启用操作成功！')
+        this.onSuccess('操作成功！')
       })
       .catch(error => {
         this.$message.error(error)
@@ -366,101 +227,6 @@ export default {
       this.ids = []
       this.multipleSelection.forEach(v => {
         this.ids.push(v.id)
-      })
-    },
-    // 模态框显示
-    openDialog (e, data = null, type = null) {
-      if (data !== null && type === 'edit') {
-        this.dialogType = 'edit'
-        this.dialogTitle = '修改分类'
-        this.classData = {
-          ...this.classData,
-          ...data
-        }
-        this.stepsSelection = []
-        if (data.parent) {
-          this.stepsSelection.push(data.parent.id)
-        } else {
-          this.stepsSelection.push(data.id)
-        }
-      } else {
-        this.dialogType = 'add'
-        this.dialogTitle = '新增分类'
-        this.classData = {
-          parent_id: [],
-          display_name: '',
-          sort: null,
-          active: 1,
-          description: '',
-          logo: '',
-          icon: ''
-        }
-      }
-      this.showDialog = true
-    },
-    submitForm (formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          this.classData.active = Number(this.classData.active)
-          var obj = this.classData
-          var pid = this.stepsSelection
-          obj.parent_id = pid.shift()
-          console.log(obj)
-          api.POST(config.createCategoryAPI, obj)
-            .then(response => {
-              if (response.status !== 200) {
-                this.error = response.statusText
-                return
-              }
-              if (response.data.errcode === '0000') {
-                this.onSuccess('创建成功')
-                this.getList()
-                this.getTree()
-                this.showDialog = false
-              }
-            })
-        } else {
-          return false
-        }
-      })
-    },
-    editForm () {
-      this.classData.active = Number(this.classData.active)
-      var obj = this.classData
-      var pid = this.stepsSelection
-      obj.parent_id = pid.shift()
-      obj.created_at = this.classData.created_at
-      api.POST(config.updateCategoryAPI, obj)
-      .then(response => {
-        if (response.status !== 200) {
-          this.error = response.statusText
-          return
-        }
-        if (response.data.errcode === '0000') {
-          this.onSuccess('修改成功')
-          this.getList()
-          this.getTree()
-          this.showDialog = false
-        }
-      })
-    },
-    // 批量移动
-    confirmMove () {
-      this.dialogVisibleMove = true
-      this.parentId = null
-      this.parentId = this.moveVal.shift()
-      var obj = {}
-      obj.ids = this.ids
-      obj.id = this.parentId
-      api.POST(config.moveCategoryAPI, obj)
-      .then(response => {
-        if (response.data.errcode === '0000') {
-          this.getList()
-          this.getTree()
-          this.dialogVisibleMove = false
-        }
-      }).catch(error => {
-        this.$message.error(error)
       })
     },
     // 删除表单

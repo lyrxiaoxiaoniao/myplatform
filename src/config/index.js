@@ -2,7 +2,7 @@
 export default {
   // serverURI: 'https://admin.gov.shencom.cn',
   serverURI: 'https://tst.admin.gov.shencom.cn',
-  // serverURI: 'http://192.168.1.23:8080',
+  // serverURI: 'http://192.168.1.27:8080',
   basic: {
     key: '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArromvW2N\/rg0ADw9zpTL\ncGdO0wNazPcp+SepPrv1dicCamEVPfvPKlWMuYszt\/tE6lNjMT8pphmatPvgjAFy\nKfE1fEpcvHqRSZTUtlo\/fGJzh2nss6mxyDXlqi+sGitjwaGj6\/MXO6zLQcMQmZ\/U\nvliOhECvuLBsAqqLY8ik63Ah7ylWAap3jDD0OvgSy+glqebwfacy9WPYOy4K75n\/\nDQRw9FJBYFg1BtfbVn55Oji3AZ0E3lY96b0JhJGtFM6vjF0bhVDkmP\/XZINPcVZy\nxydRFvxjgA6we\/KmxXDD\/JdZmvGmrZ2XCAhGS3vuk3XJnkMquGYO4GAI13JIs8Z1\nrwIDAQAB\n-----END PUBLIC KEY-----',
     sendMail: '/sys/sendMsgVerify',
@@ -123,6 +123,8 @@ export default {
     class: '/activity/tutorial/info/index',
     commentList: '/activity/tutorial/info/comment/index',
     commentDel: '/activity/tutorial/info/comment/delete',
+    RankList: '/activity/tutorial/info/evalte/index',
+    RankDel: '/activity/tutorial/info/evalte/delete',
     clickBoard: '/activity/tutorial/click/index',
     commentBoard: '/activity/tutorial/actcom/content/index',
     rankBoard: '/activity/tutorial/actcom/score/index',

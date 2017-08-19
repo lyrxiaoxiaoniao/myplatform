@@ -177,24 +177,24 @@
                   </el-input>
               </div>
               <template>
-                  <el-table
-                      class="dialog-table"
-                      ref="multipleTable"
-                      :data="tableData3"
-                      border
-                      tooltip-effect="dark"
-                      style="width: 100%"
-                      @selection-change="handleSelectionChange">
-                      <el-table-column type="selection" width="55"></el-table-column>
-                      <el-table-column type="index" label="ID" width="50"></el-table-column>
-                      <el-table-column prop="title" label="内容名称" width="120"></el-table-column>
-                      <el-table-column prop="poster" label="内容素材" width="120">
-                      <template scope="scope">
-                        <img style="width:58px;height:58px;" :src="scope.row.poster" @click="bigImg(scope.row.poster)" alt="">
-                      </template>
-                      </el-table-column>
-                      <el-table-column prop="memo" label="内容说明" show-overflow-tooltip></el-table-column>
-                  </el-table>
+                <el-table
+                    class="dialog-table"
+                    ref="multipleTable"
+                    :data="tableData3"
+                    border
+                    tooltip-effect="dark"
+                    style="width: 100%"
+                    @selection-change="handleSelectionChange">
+                    <el-table-column type="selection" width="55"></el-table-column>
+                    <el-table-column type="index" label="ID" width="50"></el-table-column>
+                    <el-table-column prop="title" label="内容名称" width="120"></el-table-column>
+                    <el-table-column prop="poster" label="内容素材" width="120">
+                    <template scope="scope">
+                      <img style="width:58px;height:58px;" :src="scope.row.poster" @click="bigImg(scope.row.poster)" alt="">
+                    </template>
+                    </el-table-column>
+                    <el-table-column prop="memo" label="内容说明" show-overflow-tooltip></el-table-column>
+                </el-table>
               </template>
           </div>
           <div class="up-dialog-footer">
