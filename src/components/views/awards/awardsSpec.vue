@@ -34,8 +34,8 @@
                 @row-dblclick="rowDbclick">
                 <el-table-column type="selection" width="55"></el-table-column>
                 <el-table-column prop="id" label="ID" width="50"></el-table-column>
-                <el-table-column prop="value_type" label="value_type"></el-table-column>
-                <el-table-column prop="title" label="title"></el-table-column>
+                <el-table-column prop="value_type" label="规格类型"></el-table-column>
+                <el-table-column prop="title" label="规格命"></el-table-column>
                 <el-table-column prop="created_at" label="创建时间">
                   <template scope="scope">
                     {{ scope.row.created_at | toDateTime }}
@@ -78,13 +78,13 @@
     </kobe-table>
     <el-dialog title="新增规格" v-model="dialogVisible" size="tiny" @close="onClose">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-          <el-form-item label="value_type" prop="value_type">
+          <el-form-item label="规格类型" prop="value_type">
             <el-input v-model="ruleForm.value_type"></el-input>
           </el-form-item>
-          <el-form-item label="title" prop="title">
+          <el-form-item label="规格名" prop="title">
             <el-input v-model="ruleForm.title"></el-input>
           </el-form-item>
-          <el-form-item label="content" prop="content">
+          <el-form-item label="规格描述" prop="content">
             <el-input v-model="ruleForm.content"></el-input>
           </el-form-item>
           <el-form-item label="启用" prop="active">

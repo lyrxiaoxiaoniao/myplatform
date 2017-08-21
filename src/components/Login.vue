@@ -2,7 +2,7 @@
   <div class="login-box">
     <slot name="logo">
       <div class="login-logo">
-        <a @click.prevent="">
+        <a>
           <h2>{{ title }}</h2>
         </a>
       </div>
@@ -178,10 +178,12 @@ export default {
     switch (appid) {
       case 'gmsafety':
         title.innerHTML = '安全光明'
+        this.title = '安全光明'
         this.cover = 'static/img/BG2.png'
         break
       default:
         title.innerHTML = '深传互动政务新媒体平台'
+        this.title = '深传互动政务新媒体平台'
         this.cover = 'static/img/BG2.png'
     }
   },

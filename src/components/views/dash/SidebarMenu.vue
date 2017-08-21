@@ -74,7 +74,7 @@ export default {
     z-index: 1;
     height: 100%;
     width: 100%;
-    font-size: 12px;
+    font-size: 13px;
     margin-left: 5px;
   }
 

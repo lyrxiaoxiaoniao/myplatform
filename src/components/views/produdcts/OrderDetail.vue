@@ -65,7 +65,7 @@ export default {
 .OD-container{
     padding: 1rem;
     min-width: 800px;
-    max-width: 1200px
+    max-width: 1200px 
 }
 .sendHeader{
     background-color: #fff;

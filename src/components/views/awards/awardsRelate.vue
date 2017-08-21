@@ -43,14 +43,13 @@
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="ID" width="50"></el-table-column>
-            <el-table-column prop="display_name" label="分类名称"></el-table-column>
-            <el-table-column prop="logo" label="图片" width="95">
+            <el-table-column prop="title" label="关联规格"></el-table-column>
+            <el-table-column prop="value_type" label="规格类型"></el-table-column>
+            <el-table-column prop="created_at" label="创建时间">
               <template scope="scope">
-                <img style="width:58px;height:58px;" :src="scope.row.logo" @click="bigImg(scope.row.logo)" alt="">
+                {{scope.row.created_at | toDateTime}}
               </template>
             </el-table-column>
-            <el-table-column prop="created_at" label="创建时间"></el-table-column>
-            <el-table-column prop="sort" label="顺序" width="80"></el-table-column>
             <el-table-column label="启用" width="90">
               <template scope="scope">
                 <el-switch
@@ -92,7 +91,7 @@
      </el-col>
     </el-row>
     <el-dialog title="关联分类规格" v-model="dialogVisible">
-      <div class="kobe-table-component">
+      <div class="kobe-table-component" style="margin-top: -30px;">
         <div solt="kobe-table-header" class="kobe-table-header">
           <el-row type="flex" justify="end">
             <el-col :span="7">
@@ -105,18 +104,26 @@
 
         <div solt="kobe-table-content" class="kobe-table">
           <el-table
-            :data="tableData"
+            :data="tableData.data"
             border
-            stripe>
-            <el-table-column type="selection" width="40"></el-table-column>
-            <el-table-column prop="id" label="ID" sortable width="80"></el-table-column>
+            stripe
+            @selection-change="handleSelectionChange">
+            <el-table-column type="selection" width="55"></el-table-column>
+            <el-table-column prop="id" label="ID" width="50"></el-table-column>
+            <el-table-column prop="title" label="关联规格"></el-table-column>
+            <el-table-column prop="value_type" label="规格类型"></el-table-column>
+            <el-table-column prop="created_at" label="创建时间">
+              <template scope="scope">
+                {{scope.row.created_at | toDateTime}}
+              </template>
+            </el-table-column>
           </el-table>
         </div>
 
         <div solt="kobe-table-footer" class="kobe-table-footer">
           <el-row type="flex" justify="end">
+            <el-button @click="relateNow" type="primary">关联</el-button>
             <el-button>取消</el-button>
-            <el-button type="primary">确定</el-button>
           </el-row>
         </div>
       </div>
@@ -129,8 +136,6 @@ import api from 'src/api'
 export default {
   data () {
     return {
-      moveVal: null,
-      dialogVisibleMove: false,
       data: [],
       defaultProps: {
         children: 'children',
@@ -140,13 +145,16 @@ export default {
       response: {
         data: null
       },
-      tableData: null,
+      tableData: {
+        data: null
+      },
       dialogVisible: false,
       form: {
         keyword: ''
       },
       keyword: '',
       parentId: null,
+      category_id: 0,
       ids: []
     }
   },
@@ -170,6 +178,9 @@ export default {
     },
     relateDialog () {
       this.dialogVisible = true
+      this.getNotList({
+        category_id: this.category_id
+      })
     },
     iconHandleAvatarSuccess(res, file) {
       this.icon = window.URL.createObjectURL(file.raw)
@@ -186,10 +197,6 @@ export default {
       }
       return isLt2M
     },
-    bigImg (url) {
-      this.dialogImageUrl = url
-      this.dialogVisible = true
-    },
     toswitch (active, id) {
       api.POST(config.activeCategoryAPI, {id: id, active: Number(active)})
       .then(response => {
@@ -200,18 +207,10 @@ export default {
         this.$message.error(error)
       })
     },
-    // 树形结构选择
-    handleChange (value) {
-      console.log(value)
-    },
-    handleChangeMove (value) {
-      console.log(value)
-      this.moveVal = value
-    },
     // 树形目录点击事件
     handleNodeClick (data, node) {
-      this.parentId = data.id
-      this.getList({parent_id: this.parentId})
+      this.category_id = data.id
+      this.getList({category_id: this.category_id})
     },
     toggleSelection (rows) {
       if (rows) {
@@ -252,7 +251,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.POST(config.deleteCategoryAPI, {
+        api.POST(config.removeAawardsProperty, {
           ids: this.ids
         })
         .then(response => {
@@ -292,6 +291,24 @@ export default {
       }
       this.getList(data)
     },
+    relateNow () {
+      let categories = []
+      categories.push(this.category_id)
+      this.relateData({
+        categories: categories,
+        properties: this.ids
+      })
+    },
+    // 关联规格
+    relateData (data) {
+      api.POST(config.relateAwards, data)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.onSuccess('关联成功')
+          this.dialogVisible = false
+        }
+      })
+    },
     iteration (obj) {
       for (let key in obj) {
         if (obj.hasOwnProperty(key)) {
@@ -319,9 +336,23 @@ export default {
       })
     },
     getList (data = {}) {
-      api.GET(config.categoryIndexAPI, data)
+      api.GET(config.relateAwardsList, data)
       .then(response => {
         this.response = this.transformDate(response.data.data)
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    getNotList (data = {}) {
+      let obj = {
+        currentPage: 1,
+        pageSize: 100,
+        ...data
+      }
+      api.GET(config.norelateAwardsList, obj)
+      .then(response => {
+        this.tableData = this.transformDate(response.data.data)
       })
       .catch(error => {
         this.$message.error(error)

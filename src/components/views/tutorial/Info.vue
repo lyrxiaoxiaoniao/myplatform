@@ -30,6 +30,7 @@
                 <el-col :span="16">
                   <el-form-item label="分类">
                     <el-cascader
+                      style="width:100%;"
                       v-if="categories"
                       clearable
                       change-on-select
@@ -88,7 +89,7 @@
             <el-button @click="onSignDel(signSelection)" type="primary">删除</el-button>
           </el-col>
           <el-col :span="5">
-            <el-input v-model="signinKeyword" placeholder="请输入">
+            <el-input v-model="signinKeyword" placeholder="请输入用户/手机/真实姓名">
                <el-button @click="onSigninSearch" slot="append" icon="search"></el-button> 
             </el-input>
           </el-col>
@@ -147,7 +148,7 @@
             <el-button @click="onCollectionDel(collectionSelection)" type="primary">删除</el-button>
           </el-col>
           <el-col :span="5">
-            <el-input v-model="collectionKeyword" placeholder="请输入">
+            <el-input v-model="collectionKeyword" placeholder="请输入用户">
               <el-button @click="onCollectionSearch" slot="append" icon="search"></el-button>
             </el-input>
           </el-col>
@@ -203,7 +204,7 @@
             <el-button @click="onCommentDel(commentSelection)" type="primary">删除</el-button>
           </el-col>
           <el-col :span="5">
-            <el-input v-model="commentKeyword" placeholder="请输入">
+            <el-input v-model="commentKeyword" placeholder="请输入评论内容">
               <el-button @click="onCommentSearch" slot="append" icon="search"></el-button>
             </el-input>
           </el-col>
@@ -260,7 +261,7 @@
             <el-button @click="onRankDel(rankSelection)" type="primary">删除</el-button>
           </el-col>
           <el-col :span="5">
-            <el-input v-model="rankKeyword"  placeholder="请输入">
+            <el-input v-model="rankKeyword"  placeholder="请输入评论内容">
               <el-button @click="onRankSearch" slot="append" icon="search"></el-button>
             </el-input>
           </el-col>
@@ -747,7 +748,7 @@ export default {
               case 'favor':
                 this.favorCount = item.count
                 break
-              case 'sign':
+              case 'attendee':
                 this.signCount = item.count
                 break
             }
