@@ -23,11 +23,11 @@
                   <!-- <el-dropdown-item command="复制">复制</el-dropdown-item> -->
                   <el-dropdown-item command="删除">删除</el-dropdown-item>
                   <el-dropdown-item command="移动">移动</el-dropdown-item>
-                  <el-dropdown-item command="上架">上架</el-dropdown-item>
-                  <el-dropdown-item command="下架">下架</el-dropdown-item>
+                  <!-- <el-dropdown-item command="上架">上架</el-dropdown-item>
+                  <el-dropdown-item command="下架">下架</el-dropdown-item> -->
                 </el-dropdown-menu>
               </el-dropdown>
-              <el-button type="primary">刷新</el-button>
+              <el-button @click="reFresh" type="primary">刷新</el-button>
             </el-col>
             <!-- <el-select v-model="form.value" placeholder="所有信息" style="width:120px;">
               <el-option
@@ -259,10 +259,13 @@ export default {
     handleChange (value) {
       console.log(value)
     },
+    reFresh () {
+      this.getList()
+    },
     // 树形目录点击事件
     handleNodeClick (data, node) {
       this.parentId = data.id
-      this.getList({id: this.parentId})
+      this.getList({category_id: this.parentId})
     },
     toggleSelection (rows) {
       if (rows) {
@@ -313,7 +316,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.POST(config.removeAawardsProperty, {
+        api.POST(config.removeGoodsAPI, {
           ids: this.ids
         })
         .then(response => {
@@ -337,11 +340,11 @@ export default {
       this.parentId = this.moveVal.shift()
       var obj = {}
       obj.ids = this.ids
-      obj.id = this.parentId
-      api.POST(config.moveCategoryAPI, obj)
+      obj.category_id = this.parentId
+      api.POST(config.moveGoodsAPI, obj)
       .then(response => {
         if (response.data.errcode === '0000') {
-          this.getList()
+          this.getList({category_id: obj.category_id})
           this.getTree()
           this.dialogVisibleMove = false
         }

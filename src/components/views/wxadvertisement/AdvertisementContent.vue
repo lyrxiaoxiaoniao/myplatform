@@ -567,8 +567,8 @@ export default {
 </script>
 <style scoped>
   .sc-advertisement {
-    margin-top: 2rem;
-    padding:2rem 1rem;
+    /* margin-top: 2rem; */
+    padding:1rem;
   }
   .sc-top-header {
 	margin: 1rem 2rem;

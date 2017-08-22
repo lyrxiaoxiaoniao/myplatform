@@ -135,6 +135,32 @@
   import api from 'src/api'
   export default {
     data () {
+      var checkSlug = (rule, value, callback) => {
+        if (!value) {
+          return callback(new Error('不能为空'))
+        }
+        api.GET(config.checkAdvPointAPI, {slug: value})
+        .then(response => {
+          if (response.data.errcode === '5000') {
+            return callback(new Error('有重名，请重新输入！'))
+          } else {
+            callback()
+          }
+        })
+      }
+      var checkName = (rule, value, callback) => {
+        if (!value) {
+          return callback(new Error('不能为空'))
+        }
+        api.GET(config.checkAdvPointAPI, {name: value})
+        .then(response => {
+          if (response.data.errcode === '5000') {
+            return callback(new Error('有重名，请重新输入！'))
+          } else {
+            callback()
+          }
+        })
+      }
       return {
         id: null,
         isEdit: false,
@@ -169,10 +195,10 @@
         },
         rules: {
           spacename: [
-            { required: true, message: '请输入点位名称', trigger: 'blur' }
+            { validator: checkName, trigger: 'blur' }
           ],
           slug: [
-            { required: true, message: '请输入点位标识', trigger: 'blur' }
+            { validator: checkSlug, trigger: 'blur' }
           ],
           typename: [
             { required: true, message: '请选择一个点位类型', trigger: 'change' }
@@ -522,8 +548,8 @@
 </script>
 <style scoped>
   .sc-advertisement {
-    margin-top: 2rem;
-    padding:2rem 1rem;
+    /* margin-top: 2rem; */
+    padding:1rem;
   }
   .sc-top-btn {
   	margin-bottom: 1rem;

@@ -290,8 +290,13 @@ export default {
   addGoodsAPI: '/award/goods/create',
   editGoodsAPI: '/award/goods/update',
   removeGoodsAPI: '/award/goods/delete',
+  moveGoodsAPI: '/award/goods/move',
   showGoodsAPI: '/award/goods/show',
   cpAwardShowAPI: '/award/cp/show',
+  /* 奖品回收站 */
+  recycleAwardListAPI: '/award/goods/waste/index',
+  removeRecycleAwardListAPI: '/award/goods/waste/delete',
+  recoverRecycleAwardAPI: '/award/goods/waste/recover',
   /* 奖品规格列表 */
   awardsProperty: '/award/property/index',
   removeAawardsProperty: '/award/property/delete',

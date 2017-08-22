@@ -121,6 +121,7 @@ import SCAwardsAdd from 'components/views/awards/awardsAdd.vue'
 import SCAwardsEdit from 'components/views/awards/awardsEdit.vue'
 import SCAwardsSpec from 'components/views/awards/awardsSpec.vue'
 import SCAwardsRelate from 'components/views/awards/awardsRelate.vue'
+import SCAwardsRecycle from 'components/views/awards/awardRecycle.vue'
 
 const routes = [
   {
@@ -852,6 +853,11 @@ const routes = [
           path: 'edit',
           component: SCAwardsEdit,
           name: '奖品修改',
+          meta: {description: '展示'}
+        }, {
+          path: 'recycle',
+          component: SCAwardsRecycle,
+          name: '奖品回收站',
           meta: {description: '展示'}
         }]
       }
