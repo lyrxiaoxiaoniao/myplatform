@@ -1,15 +1,15 @@
 <template>
   <div class="GD-container">
-    <div class="GD-left">
+      <el-row tpye="flex">
+      <el-col :span="4">
       <el-tree :data="data" :props="defaultProps"
               accordion
               :highlight-current="true"
               node-key="id"
-              @node-click="handleNodeClick"
-              style="max-height:600px;overflow:auto;">
+              @node-click="handleNodeClick">
       </el-tree>
-    </div>
-    <div class="GD-right">
+    </el-col>
+    <el-col :span="20">
       <kobe-table>
         <div slot="kobe-table-header" class="kobe-table-header">
           <el-row type="flex" justify="end">
@@ -44,23 +44,27 @@
             :data="response.data"
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="id" label="ID" width="50"></el-table-column>
-            <el-table-column prop="title" label="栏目名称" width="120"></el-table-column>
-            <el-table-column prop="type_key" label="访问路径" width="130"></el-table-column>
-            <el-table-column prop="brief" label="创建时间"></el-table-column>
+            <el-table-column prop="id" label="ID" width="60"></el-table-column>
+            <el-table-column prop="display_name" label="栏目名称"></el-table-column>
+            <el-table-column prop="name" label="访问路径"></el-table-column>
+            <el-table-column prop="created_at" label="创建时间" width="130">
+              <template scope="scope">
+                {{scope.row.created_at | toDateTime}}
+              </template>
+            </el-table-column>
             <el-table-column prop="sort" label="顺序" width="80"></el-table-column>
-            <el-table-column label="显示" width="80">
+            <el-table-column label="显示" width="100">
               <template scope="scope">
                 <el-switch
-                  v-model="scope.row.state"
+                  v-model="scope.row.active"
                   on-text="开"
                   off-text="关"
-                  @change="toswitch(scope.row.state,scope.row.id)">
+                  @change="toswitch(scope.row.active,scope.row.id)">
                 </el-switch>
               </template>
             </el-table-column>
             <el-table-column 
-              width="100"
+              width="120"
               label="操作"
               >
               <template scope="scope">
@@ -86,7 +90,8 @@
           </el-row>
         </div>
       </kobe-table>
-    </div>
+      </el-col>
+    </el-row>
     <el-dialog v-model="dialogVisible" size="tiny">
       <img width="100%" :src="dialogImageUrl" alt="">
     </el-dialog>
@@ -137,6 +142,8 @@
   </div>
 </template>
 <script>
+import config from 'src/config'
+import api from 'src/api'
 export default {
   data () {
     return {
@@ -271,13 +278,39 @@ export default {
     },
     getList (data = {}) {
       console.log(1)
-      // api.GET(config.activity.typeList, data)
-      // .then(response => {
-      //   this.response = response.data.data
-      // })
-      // .catch(error => {
-      //   this.$message.error(error)
-      // })
+      api.GET(config.newcms.ncmsCategotyListAPI, data)
+      .then(response => {
+        this.response = response.data.data
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    iteration (obj) {
+      for (let key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          if (obj[key] instanceof Object) {
+            if (obj[key].length === 0) {
+              obj[key] = null
+            } else {
+              this.iteration(obj[key])
+            }
+          }
+        }
+      }
+    },
+    getTree () {
+      api.GET(config.newcms.ncmsCategotyAPI)
+      .then(response => {
+        var newData = response.data.data
+        this.iteration(newData)
+        newData.push({ id: 0, display_name: '根级分类', label: '根级分类', value: 0 })
+        this.data = newData
+        // this.cascaderData = newData
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     },
     onSuccess (string) {
       this.$notify({
@@ -289,6 +322,7 @@ export default {
   },
   mounted () {
     this.getList()
+    this.getTree()
   }
 }
 </script>

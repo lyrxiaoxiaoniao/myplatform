@@ -139,6 +139,9 @@
         if (!value) {
           return callback(new Error('不能为空'))
         }
+        if (this.isEdit) {
+          callback()
+        }
         api.GET(config.checkAdvPointAPI, {slug: value})
         .then(response => {
           if (response.data.errcode === '5000') {
@@ -152,7 +155,10 @@
         if (!value) {
           return callback(new Error('不能为空'))
         }
-        api.GET(config.checkAdvPointAPI, {name: value})
+        if (this.isEdit) {
+          callback()
+        }
+        api.GET(config.checkAdvPointAPI, {spacename: value})
         .then(response => {
           if (response.data.errcode === '5000') {
             return callback(new Error('有重名，请重新输入！'))

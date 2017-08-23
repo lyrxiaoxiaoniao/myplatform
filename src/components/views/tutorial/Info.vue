@@ -279,7 +279,7 @@
             <el-table-column prop="nickname" label="用户"></el-table-column>
             <el-table-column prop="mobile" label="手机"></el-table-column>
             <el-table-column prop="realname" label="真实姓名"></el-table-column>
-            <el-table-column prop="content" label="评论内容"></el-table-column>
+            <el-table-column prop="advice" label="评论内容"></el-table-column>
             <el-table-column label="评分">
               <template scope="scope">
                 <el-rate

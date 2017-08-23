@@ -39,7 +39,7 @@
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="ID" width="50"></el-table-column>
             <el-table-column prop="name" label="来源名称"></el-table-column>
-            <el-table-column prop="wordnum" label="文档数量"></el-table-column>
+            <el-table-column prop="count" label="文档数量"></el-table-column>
             <el-table-column prop="created_at" label="创建时间"></el-table-column>
             <el-table-column label="是否推荐" width="120">
               <template scope="scope">
@@ -133,7 +133,7 @@ export default {
       },
       selected: {
         name: '',
-        wordnum: '',
+        count: '',
         created_at: '',
         active: null
       },
