@@ -16,6 +16,7 @@
         :data="response.data"
         >
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
+        <!-- <el-table-column prop="title" label="培训标题"></el-table-column> -->
         <el-table-column prop="title" label="培训标题"></el-table-column>
         <el-table-column prop="address" label="培训地址"></el-table-column>
         <el-table-column label="举办时间" width="150px">
