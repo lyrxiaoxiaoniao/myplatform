@@ -123,10 +123,14 @@ import SCAwardsSpec from 'components/views/awards/awardsSpec.vue'
 import SCAwardsRelate from 'components/views/awards/awardsRelate.vue'
 import SCAwardsRecycle from 'components/views/awards/awardRecycle.vue'
 
+import NewLoginView from './components/newLogin.vue'
 const routes = [
   {
-    path: '/login',
+    path: '/newlogin',
     component: LoginView
+  }, {
+    path: '/login',
+    component: NewLoginView
   }, {
     path: '/forgot',
     component: ForgetView
