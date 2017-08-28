@@ -1,5 +1,5 @@
 <template>
-  <div class="sc-reservation-foundation-list">
+  <div class="sc-reservation-banned-list">
     <kobe-table>
       <div class="kobe-table-header" slot="kobe-table-header">
         <el-row type="flex" justify="space-between">
