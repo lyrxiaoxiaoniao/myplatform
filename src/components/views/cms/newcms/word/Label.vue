@@ -131,6 +131,7 @@ export default {
         accept_charset: '',
         enctype: ''
       },
+      multipleSelection: [],
       rules: {
         name: [
           { validator: checkName, trigger: 'blur' }
