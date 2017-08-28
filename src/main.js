@@ -125,7 +125,10 @@ Vue.use(VueHtml5Editor, {
 })
 
 router.beforeEach((to, from, next) => {
+<<<<<<< HEAD
   next()
+=======
+>>>>>>> 5ee95dc8366a101155b0c8b2408fa3ec36e3b0d4
   // if (store.state.token === null) {
   //   if (to.path === '/login') {
   //     next()
@@ -141,6 +144,10 @@ router.beforeEach((to, from, next) => {
   // } else {
   //   next()
   // }
+<<<<<<< HEAD
+=======
+  next()
+>>>>>>> 5ee95dc8366a101155b0c8b2408fa3ec36e3b0d4
 })
 
 Vue.config.productionTip = false

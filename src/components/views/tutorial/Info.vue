@@ -742,7 +742,7 @@ export default {
               case 'click':
                 this.clickCount = item.count
                 break
-              case 'comment':
+              case 'review':
                 this.commentCount = item.count
                 break
               case 'favor':

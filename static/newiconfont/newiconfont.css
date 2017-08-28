@@ -99,3 +99,7 @@
 .newicon-point-manage { background: url('./06-4-1-point-manage.png') no-repeat center/cover; }
 .newicon-advcontent-manage { background: url('./06-4-2-advcontent-manage.png') no-repeat center/cover; }
 .newicon-count-report { background: url('./06-4-3-count-report.png') no-repeat center/cover; }
+
+.newicon-login-user { background: url('./loginIcon/icon-user.png') no-repeat center/cover; }
+.newicon-login-password { background: url('./loginIcon/icon-password.png') no-repeat center/cover; }
+.newicon-login-sure { background: url('./loginIcon/icon-sure.png') no-repeat center/cover; }
