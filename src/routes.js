@@ -115,6 +115,9 @@ import SCInteraction from 'components/views/cms/newcms/Interaction.vue'
 import SCHotWords from 'components/views/cms/newcms/word/HootWords.vue'
 import SCWordSource from 'components/views/cms/newcms/word/Source.vue'
 
+import SCSubjectView from 'components/views/cms/newcms/Subject.vue'
+import SCMyContentView from 'components/views/cms/newcms/MyContent.vue'
+
 import SCAwardsClass from 'components/views/awards/awardClass.vue'
 import SCAwards from 'components/views/awards/awards.vue'
 import SCAwardsAdd from 'components/views/awards/awardsAdd.vue'
@@ -743,6 +746,16 @@ const routes = [
             name: '来源管理',
             meta: {description: '列表'}
           }]
+        }, {
+          path: 'subject',
+          component: SCSubjectView,
+          name: '专题管理',
+          meta: {description: '列表'}
+        }, {
+          path: 'mycontent',
+          component: SCMyContentView,
+          name: '内容管理',
+          meta: {description: '列表'}
         }]
       }, {
         path: 'team',
@@ -860,8 +873,7 @@ const routes = [
           name: '奖品回收站',
           meta: {description: '展示'}
         }]
-      }
-    ]
+      }]
   }, {
     // not found handler
     path: '*',

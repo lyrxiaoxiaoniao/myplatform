@@ -6,7 +6,7 @@
             <el-col :span="16">
                 <el-button type="primary" @click="openDialog">添加敏感词</el-button>
                 <el-button type="primary">刷新</el-button>
-                 <el-select v-model="operation" placeholder="批量" style="width:150px;" @change="open3">
+                <el-select v-model="operation" placeholder="批量" style="width:150px;" @change="open3">
                     <el-option label="批量" value="批量"></el-option>
                     <el-option label="删除" value="删除"></el-option>
                 </el-select>
@@ -134,6 +134,7 @@ export default {
         accept_charset: '',
         enctype: ''
       },
+      multipleSelection: [],
       rules: {
         name: [
           { validator: checkName, trigger: 'blur' }

@@ -11,7 +11,9 @@
     "unit": "karma start test/unit/karma.conf.js --single-run",
     "e2e": "node test/e2e/runner.js",
     "test": "npm run unit && npm run e2e",
-    "deploy": "netlify deploy dist"
+    "deploy": "netlify deploy dist",
+    "mock": "json-server --watch mock/db.json",
+    "mockdev": "npm run mock & npm run dev"
   },
   "dependencies": {
     "axios": "^0.15.3",
