@@ -124,6 +124,9 @@ import SCAwardsRelate from 'components/views/awards/awardsRelate.vue'
 import SCAwardsRecycle from 'components/views/awards/awardRecycle.vue'
 
 import NewLoginView from './components/newLogin.vue'
+
+import SCReservationList from 'components/views/reservation/List.vue'
+
 const routes = [
   {
     path: '/newlogin',
@@ -863,6 +866,19 @@ const routes = [
           component: SCAwardsRecycle,
           name: '奖品回收站',
           meta: {description: '展示'}
+        }]
+      },
+      {
+        path: 'reservation',
+        component: DashMainView,
+        redirect: '/admin/reservation/index',
+        name: '预约管理',
+        meta: {description: '列表'},
+        children: [{
+          path: 'index',
+          component: SCReservationList,
+          name: '基地预约管理',
+          meta: {description: '列表'}
         }]
       }
     ]
