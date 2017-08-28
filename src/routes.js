@@ -128,7 +128,7 @@ import SCAwardsRecycle from 'components/views/awards/awardRecycle.vue'
 
 import NewLoginView from './components/newLogin.vue'
 
-import SCReservationList from 'components/views/reservation/List.vue'
+import SCReservationList from 'components/views/reservation/fundationManagement/List.vue'
 
 const routes = [
   {
@@ -880,9 +880,6 @@ const routes = [
           name: '奖品回收站',
           meta: {description: '展示'}
         }]
-<<<<<<< HEAD
-      }]
-=======
       },
       {
         path: 'reservation',
@@ -898,7 +895,6 @@ const routes = [
         }]
       }
     ]
->>>>>>> 5ee95dc8366a101155b0c8b2408fa3ec36e3b0d4
   }, {
     // not found handler
     path: '*',
