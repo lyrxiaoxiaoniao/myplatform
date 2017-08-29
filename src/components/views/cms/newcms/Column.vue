@@ -457,10 +457,6 @@ export default {
         this.$message.error(error)
       })
     },
-    reFresh () {
-      this.getList()
-      this.getTree()
-    },
     iteration (obj) {
       for (let key in obj) {
         if (obj.hasOwnProperty(key)) {
@@ -493,6 +489,10 @@ export default {
         message: string,
         type: 'success'
       })
+    },
+    reFresh () {
+      this.getList()
+      this.getTree()
     }
   },
   mounted () {
