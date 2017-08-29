@@ -116,6 +116,9 @@ import SCInteraction from 'components/views/cms/newcms/Interaction.vue'
 import SCHotWords from 'components/views/cms/newcms/word/HootWords.vue'
 import SCWordSource from 'components/views/cms/newcms/word/Source.vue'
 
+import SCSubjectView from 'components/views/cms/newcms/Subject.vue'
+import SCMyContentView from 'components/views/cms/newcms/MyContent.vue'
+
 import SCAwardsClass from 'components/views/awards/awardClass.vue'
 import SCAwards from 'components/views/awards/awards.vue'
 import SCAwardsAdd from 'components/views/awards/awardsAdd.vue'
@@ -125,6 +128,9 @@ import SCAwardsRelate from 'components/views/awards/awardsRelate.vue'
 import SCAwardsRecycle from 'components/views/awards/awardRecycle.vue'
 
 import NewLoginView from './components/newLogin.vue'
+
+import SCReservationList from 'components/views/reservation/fundationManagement/List.vue'
+
 const routes = [
   {
     path: '/newlogin',
@@ -760,6 +766,16 @@ const routes = [
             name: '来源管理',
             meta: {description: '列表'}
           }]
+        }, {
+          path: 'subject',
+          component: SCSubjectView,
+          name: '专题管理',
+          meta: {description: '列表'}
+        }, {
+          path: 'mycontent',
+          component: SCMyContentView,
+          name: '内容管理',
+          meta: {description: '列表'}
         }]
       }, {
         path: 'team',
@@ -876,6 +892,19 @@ const routes = [
           component: SCAwardsRecycle,
           name: '奖品回收站',
           meta: {description: '展示'}
+        }]
+      },
+      {
+        path: 'reservation',
+        component: DashMainView,
+        redirect: '/admin/reservation/index',
+        name: '预约管理',
+        meta: {description: '列表'},
+        children: [{
+          path: 'index',
+          component: SCReservationList,
+          name: '基地预约管理',
+          meta: {description: '列表'}
         }]
       }
     ]

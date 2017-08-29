@@ -339,6 +339,14 @@ export default {
   removeWordSourceListAPI: '/cms/wordsource/delete',
   selectByNameWordSourceListAPI: '/cms/wordsource/selectByName',
   updateActiveWordSourceAPI: '/cms/hotword/updateActive',
+  /* 专题管理 */
+  subject: {
+    list: '/ncms/subject/index',
+    add: '/ncms/subject/create',
+    detail: '/ncms/subject/show',
+    delete: '/ncms/subject/delete',
+    update: '/ncms/subject/update'
+  },
   fixedLayout: false,
   hideLogoOnMobile: false,
   reportsStatusCatlg: [
