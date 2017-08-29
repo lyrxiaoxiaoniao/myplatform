@@ -3,7 +3,7 @@
     <div class="login-logo">
       <a href="javascript:;">
         <!-- <h2>{{ title }}</h2> -->
-        <img src="/static/img/login/logo@2x.png" alt="深传互动">
+        <img src="../../static/img/login/logo@2x.png" alt="深传互动">
       </a>
     </div>
 
@@ -43,7 +43,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="login-footer">
         <p>
             <a href="javascript:;">版权声明</a>
@@ -233,7 +233,7 @@ export default {
         position: absolute;
         top: 0;
         text-align: left;
-        background: url('/static/img/login/top.png') no-repeat center/cover;
+        background: url('../../static/img/login/top.png') no-repeat center/cover;
         background-size: 100% 100%;
         a {
             display: block;
@@ -275,7 +275,7 @@ export default {
                 width: 330px;
                 height: 400px;
                 padding: 0 25px;
-                background: url('/static/img/login/denglu.png') no-repeat center/cover;
+                background: url('../../static/img/login/denglu.png') no-repeat center/cover;
                 background-size: 100% 100%;
                 z-index: 1;
                 .userLogin {
@@ -342,7 +342,7 @@ export default {
         padding-top: 30px;
         position: absolute;
         bottom: 0;
-        background: url('/static/img/login/footer.png') no-repeat center/cover;
+        background: url('../../static/img/login/footer.png') no-repeat center/cover;
         background-size: 100% 100%;
         p {
             margin: 0;
