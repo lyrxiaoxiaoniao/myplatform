@@ -128,7 +128,10 @@ import SCAwardsRecycle from 'components/views/awards/awardRecycle.vue'
 
 import NewLoginView from './components/newLogin.vue'
 
-import SCReservationList from 'components/views/reservation/fundationManagement/List.vue'
+import SCFundationList from 'components/views/reservation/fundationManagement/List.vue'
+import SCReservationList from 'components/views/reservation/reservationManagement/List.vue'
+import SCCommentList from 'components/views/reservation/commentManagement/List.vue'
+import SCBannedList from 'components/views/reservation/bannedListManagement/List.vue'
 
 const routes = [
   {
@@ -889,8 +892,23 @@ const routes = [
         meta: {description: '列表'},
         children: [{
           path: 'index',
-          component: SCReservationList,
+          component: SCFundationList,
           name: '基地预约管理',
+          meta: {description: '列表'}
+        }, {
+          path: 'reserve',
+          component: SCReservationList,
+          name: '预约单管理',
+          meta: {description: '列表'}
+        }, {
+          path: 'comment',
+          component: SCCommentList,
+          name: '评价管理',
+          meta: {description: '列表'}
+        }, {
+          path: 'banned',
+          component: SCBannedList,
+          name: '黑名单管理',
           meta: {description: '列表'}
         }]
       }
