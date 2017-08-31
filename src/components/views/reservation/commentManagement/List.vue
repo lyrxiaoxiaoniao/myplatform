@@ -7,7 +7,7 @@
             <el-button type="primary">刷新</el-button>
             <el-button type="primary">批量删除</el-button>
           </el-col>
-          <el-select v-model="value" placeholder="请选择">
+          <el-select v-model="value1" placeholder="请选择">
             <el-option v-for="item in options" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
