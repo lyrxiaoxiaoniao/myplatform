@@ -57,4 +57,30 @@ body {
   margin: 0 auto;
   padding-top: 7%;
 }
+
+/* .sc-reservation-foundation-list .infoDialog .el-input {
+  min-width: 200px;
+}
+.sc-reservation-foundation-list .infoDialog .el-textarea {
+  min-width: 550px;
+} */
+.sc-reservation-foundation-list .infoForm .el-form-item {
+  width: 47%;
+}
+.sc-reservation-foundation-list .infoForm .formTextarea{
+  width: 94%;
+}
+
+.sc-reservation-foundation-list .infoForm .el-form-item .el-form-item__content {
+  width: 70%;
+}
+.sc-reservation-foundation-list .infoForm .el-form-item .el-form-item__content .el-select{
+  width: 100%;
+}
+.sc-reservation-foundation-list .infoForm .el-form-item .el-form-item__label {
+  width: 30%;
+}
+.sc-reservation-foundation-list .infoForm .formTextarea .el-form-item__label{
+  width: 15%;
+}
 </style>
