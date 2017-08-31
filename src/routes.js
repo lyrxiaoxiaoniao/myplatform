@@ -108,7 +108,6 @@ import SCTeamDetail from 'components/views/team/TeamDetail.vue'
 
 import SCNewcmsColumn from 'components/views/cms/newcms/Column.vue'
 import SCNewcmsJurisdiction from 'components/views/cms/newcms/Jurisdiction.vue'
-import SCNewcmsContent from 'components/views/cms/newcms/Content.vue'
 import SCNewcmsContentAdd from 'components/views/cms/newcms/ContentAdd.vue'
 import SCNewcmsContentRecycle from 'components/views/cms/newcms/ContentRecycle.vue'
 import SCNewcmsContentEdit from 'components/views/cms/newcms/ContentEdit.vue'
@@ -134,6 +133,7 @@ import SCAwardsRecycle from 'components/views/awards/awardRecycle.vue'
 import NewLoginView from './components/newLogin.vue'
 
 import SCFundationList from 'components/views/reservation/fundationManagement/List.vue'
+import SCFundationConfigList from 'components/views/reservation/fundationManagement/Config.vue'
 import SCReservationList from 'components/views/reservation/reservationManagement/List.vue'
 import SCCommentList from 'components/views/reservation/commentManagement/List.vue'
 import SCBannedList from 'components/views/reservation/bannedListManagement/List.vue'
@@ -736,8 +736,8 @@ const routes = [
           meta: {description: '列表'},
           children: [{
             path: 'index',
-            component: SCNewcmsContent,
-            name: 'CMS内容管理',
+            component: SCMyContentView,
+            name: '内容管理',
             meta: {description: '列表'}
           }, {
             path: 'add',
@@ -796,11 +796,6 @@ const routes = [
           path: 'subject',
           component: SCSubjectView,
           name: '专题管理',
-          meta: {description: '列表'}
-        }, {
-          path: 'mycontent',
-          component: SCMyContentView,
-          name: '内容管理',
           meta: {description: '列表'}
         }]
       }, {
@@ -945,6 +940,11 @@ const routes = [
           path: 'banned',
           component: SCBannedList,
           name: '黑名单管理',
+          meta: {description: '列表'}
+        }, {
+          path: 'config',
+          component: SCFundationConfigList,
+          name: '基地配置',
           meta: {description: '列表'}
         }]
       },

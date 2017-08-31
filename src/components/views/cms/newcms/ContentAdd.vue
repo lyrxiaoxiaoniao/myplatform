@@ -1,8 +1,7 @@
 <template>
     <div class="ca-container">
         <div>
-            <el-button @click="goBack" type="primary">返回列表</el-button>  
-            <el-button type="primary">文章预览</el-button>
+            <el-button @click="goBack" type="primary">返回列表</el-button>
             <el-button @click="addContent" type="primary">提交发布</el-button> 
         </div>
         <div class="ca-cpntent">
@@ -37,9 +36,9 @@
                             </el-form-item>
                         </el-form>
                         <el-row style="text-align: center;">
-                            <el-checkbox :model="is_original">本文属于原创</el-checkbox>
-                            <el-checkbox :model="is_recommend">推荐本文</el-checkbox>
-                            <el-checkbox :model="is_topped">本文固顶</el-checkbox>
+                            <el-checkbox v-model="is_original">本文属于原创</el-checkbox>
+                            <el-checkbox v-model="is_recommend">推荐本文</el-checkbox>
+                            <el-checkbox v-model="is_topped">本文固顶</el-checkbox>
                         </el-row>
                     </div>
                 </el-col>
@@ -94,11 +93,10 @@
                             <el-form-item label="附件">
                                 <el-upload
                                     class="upload-demo"
+                                    list-type="picture"
                                     :action= "uploadURL"
-                                    :on-preview="handlePreview"
                                     :on-remove="handleRemove"
-                                    :on-success="handlefileSuccess"
-                                    :file-list="fileList">
+                                    :on-success="handlefileSuccess">
                                     <el-button size="small" type="primary">点击上传</el-button>
                                     <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
                                 </el-upload>
@@ -119,16 +117,16 @@ export default {
       fileList: [],
       option: [],
       uploadURL: config.serverURI + config.uploadFilesAPI,
-      is_original: null,
-      is_topped: null,
-      is_recommend: null,
+      is_original: false,
+      is_topped: false,
+      is_recommend: false,
       ruleForm: { // 头图与属性
         source_id: '',
         author: '',
         picture: '',
-        is_original: null,
-        is_topped: null,
-        is_recommend: null
+        is_original: false,
+        is_topped: false,
+        is_recommend: false
       },
       formData: {
         category_id: null,
@@ -159,18 +157,26 @@ export default {
     },
     /* 上传附件 */
     handleRemove (file, fileList) {
-      console.log(file, fileList)
+      this.formData.files.forEach((v, i) => {
+        if (v === file.response.data[0]) {
+          this.formData.files.splice(i, 1)
+        }
+      })
     },
-    handlePreview (file) {
-      console.log(file)
+    handlefileSuccess (res, file, fileList) {
+      this.formData.files = []
+      this.removeImg(fileList)
     },
-    handlefileSuccess (res, file) {
-      // console.log(res, file)
-      this.ruleForm.files = res.data[0]
+    removeImg (obj) {
+      obj.forEach(v => {
+        this.formData.files.push({
+          file_name: v.name,
+          file_url: v.response.data[0]
+        })
+      })
     },
     /* 上传图片函数 */
     handleAvatarSuccess (res, file) {
-      // console.log(res, file)
       this.ruleForm.picture = res.data[0]
     },
     beforeAvatarUpload (file) {
@@ -224,12 +230,28 @@ export default {
       this.ruleForm.is_original = this.getNumber(this.is_original)
       this.ruleForm.is_topped = this.getNumber(this.is_topped)
       this.ruleForm.is_recommend = this.getNumber(this.is_recommend)
-      console.log(this.formData, this.ruleForm)
+      this.formData.tags = this.dynamicTags
+      const data = {
+        ...this.ruleForm,
+        ...this.formData
+      }
+      data.cids = data.cids.join(',')
+      api.POST(config.content.add, data)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.onSuccess('新增文章内容')
+          this.goBack()
+        } else {
+          this.$message.error(response.data.errmsg)
+        }
+      })
     },
     getSource (data = {}) {
       api.GET(config.showWordSourceListAPI, data)
       .then(response => {
-        this.option = response.data.data
+        if (response.data.errcode === '0000') {
+          this.option = response.data.data
+        }
       })
       .catch(error => {
         this.$message.error(error)
@@ -259,6 +281,13 @@ export default {
           }
         }
       }
+    },
+    onSuccess (string) {
+      this.$notify({
+        title: '成功',
+        message: string,
+        type: 'success'
+      })
     }
   },
   mounted () {

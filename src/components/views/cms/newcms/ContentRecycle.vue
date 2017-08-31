@@ -273,7 +273,6 @@ export default {
         pageSize: this.response.pageSize,
         ...this.selected
       }
-      console.log(data)
       this.getList(data)
     },
     // 双击行调用函数
@@ -383,7 +382,6 @@ export default {
         this.iteration(newData)
         newData.push({ id: 0, display_name: '根级分类', label: '根级分类', value: 0 })
         this.data = newData
-        console.log(this.data, '11111')
       })
       .catch(error => {
         this.$message.error(error)
