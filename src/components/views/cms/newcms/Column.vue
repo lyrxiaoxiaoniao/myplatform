@@ -16,7 +16,15 @@
             <el-col :span="14">
               <el-button @click="openDialog" type="primary">添加栏目</el-button>
               <!-- <el-button type="primary">权限分配</el-button> -->
-              <!-- <el-button type="primary">更多操作</el-button> -->
+              <el-dropdown @command="handleCommand">
+                <el-button type="primary">
+                  更多操作<i class="el-icon-caret-bottom el-icon--right"></i>
+                </el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="删除">删除</el-dropdown-item>
+                  <!-- <el-dropdown-item command="移动">移动</el-dropdown-item> -->
+                </el-dropdown-menu>
+              </el-dropdown>
               <el-button @click="reFresh" type="primary">刷新</el-button>
             </el-col>
             <!-- <el-select v-model="form.value" placeholder="所有信息" style="width:140px;">
@@ -275,13 +283,15 @@ export default {
         keyword: '',
         value: ''
       },
-      parent_id: 0
+      parent_id: 0,
+      ids: []
     }
   },
   methods: {
-    bigImg (url) {
-      this.dialogImageUrl = url
-      this.dialogVisible = true
+    handleCommand (command) {
+      if (command === '删除') {
+        this.deleteType()
+      }
     },
     // 树形结构选择
     handleChange (val) {
@@ -305,7 +315,11 @@ export default {
     },
     handleSelectionChange (val) {
       this.multipleSelection = val
-      console.log(this.multipleSelection)
+      // console.log(this.multipleSelection)
+      this.ids = []
+      this.multipleSelection.forEach(v => {
+        this.ids.push(v.id)
+      })
     },
     /* 上传图片函数 */
     handleAvatarSuccess (res, file) {
@@ -382,13 +396,29 @@ export default {
     },
     // 删除表单
     deleteType (id) {
+      if (id) {
+        this.ids = []
+        this.ids.push(id)
+      }
+      if (this.ids.length === 0) {
+        this.$confirm('请进行正确操作，请先勾选栏目？', '错误', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'error'
+        }).then(() => {
+          return
+        }).catch(() => {
+          return
+        })
+        return
+      }
       this.$confirm('此操作将删除该栏目，栏目删除后，数据将无法恢复。如栏目下属有子栏目，或者文章，将无法被删除。是否继续删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         api.POST(config.newcms.removeNcmsCategotyAPI, {
-          id: id
+          ids: this.ids
         })
         .then(response => {
           if (response.data.errcode === '0000') {

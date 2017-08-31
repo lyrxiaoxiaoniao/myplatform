@@ -3,7 +3,7 @@
         <div>
             <el-button @click="goBack" type="primary">返回列表</el-button>  
             <el-button type="primary">文章预览</el-button>
-            <el-button @click="addContent" type="primary">提交发布</el-button> 
+            <el-button @click="addAward" type="primary">提交发布</el-button> 
         </div>
         <div class="ca-cpntent">
             <el-row :gutter="20">
@@ -17,30 +17,30 @@
                                 :show-file-list="false"
                                 :on-success="handleAvatarSuccess"
                                 :before-upload="beforeAvatarUpload">
-                                <img v-if="ruleForm.picture" :src="ruleForm.picture" class="avatar">
+                                <img v-if="ruleForm.first_figure" :src="ruleForm.first_figure" class="avatar">
                                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                             </el-upload>
                         </div>
                         <el-form :model="ruleForm" ref="ruleForm" label-width="50px" class="demo-ruleForm" style="padding:0 10px;">
                             <el-form-item label="来源">
-                                <el-select v-model="ruleForm.source_id" placeholder="来源列表" style="width:100%;">
+                                <el-select v-model="ruleForm.goods_type_id" placeholder="来源列表" style="width:100%;">
                                     <el-option
-                                        v-for="item in option.data"
+                                        v-for="item in option"
                                         :key="item.id"
-                                        :label="item.name"
+                                        :label="item.title"
                                         :value="item.id">
                                     </el-option>
                                 </el-select>
                             </el-form-item>
                             <el-form-item label="作者">
-                                <el-input v-model="ruleForm.author" placeholder="作者名称"></el-input>
+                                <el-input v-model="ruleForm.brief" placeholder="作者名称"></el-input>
                             </el-form-item>
                         </el-form>
-                        <el-row style="text-align: center;">
-                            <el-checkbox :model="is_original">本文属于原创</el-checkbox>
-                            <el-checkbox :model="is_recommend">推荐本文</el-checkbox>
-                            <el-checkbox :model="is_topped">本文固顶</el-checkbox>
-                        </el-row>
+                        <el-checkbox-group v-model="ruleForm.checkList" style="text-align: center;">
+                            <el-checkbox label="本文属于原创"></el-checkbox>
+                            <el-checkbox label="推荐本文"></el-checkbox>
+                            <el-checkbox label="本文固顶"></el-checkbox>
+                        </el-checkbox-group>
                     </div>
                 </el-col>
                 <el-col :span="18">
@@ -53,20 +53,20 @@
                                 change-on-select
                                 :props="props"
                                 @change="handleChange"
-                                v-model="formData.cids"
+                                v-model="categryId"
                                 ></el-cascader>
                             </el-form-item>
                             <el-form-item label="标题">
-                                <el-input placeholder="请输入标题" v-model="formData.title"></el-input>
+                                <el-input placeholder="请输入标题" v-model="formData.attr_value"></el-input>
                             </el-form-item>
                             <el-form-item label="摘要">
-                                <el-input type="textarea" placeholder="请输入摘要" v-model="formData.digest"></el-input>
+                                <el-input type="textarea" placeholder="请输入摘要" v-model="formData.attr_value"></el-input>
                             </el-form-item>
                             <el-form-item label="正文">
                                 <vue-html5-editor :content="formData.content" @change="updateData"></vue-html5-editor>
                             </el-form-item>
                             <el-form-item label="链接">
-                                <el-input placeholder="请输入完整的url地址链接，如果没有，请留空" v-model="formData.refer_url"></el-input>
+                                <el-input placeholder="请输入完整的url地址链接，如果没有，请留空" v-model="formData.attr_value"></el-input>
                             </el-form-item>
                             <el-form-item label="标签">
                                 <el-tag
@@ -97,7 +97,6 @@
                                     :action= "uploadURL"
                                     :on-preview="handlePreview"
                                     :on-remove="handleRemove"
-                                    :on-success="handlefileSuccess"
                                     :file-list="fileList">
                                     <el-button size="small" type="primary">点击上传</el-button>
                                     <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
@@ -112,34 +111,32 @@
 </template>
 <script>
 import config from 'src/config'
-import api from 'src/api'
+// import api from 'src/api'
 export default {
   data () {
     return {
       fileList: [],
-      option: [],
+      option: [{
+        id: '0',
+        title: '全部'
+      }, {
+        id: '1',
+        title: '点位标识'
+      }, {
+        id: '2',
+        title: '点位名称'
+      }],
       uploadURL: config.serverURI + config.uploadFilesAPI,
-      is_original: null,
-      is_topped: null,
-      is_recommend: null,
       ruleForm: { // 头图与属性
-        source_id: '',
-        author: '',
-        picture: '',
-        is_original: null,
-        is_topped: null,
-        is_recommend: null
+        goods_type_id: '',
+        brief: '',
+        first_figure: '',
+        checkList: []
       },
       formData: {
-        category_id: null,
-        title: '',
-        digest: '',
-        content: '',
-        refer_url: '',
-        tags: [],
-        files: [],
-        cids: []
+        category_id: []
       },
+      categryId: [],
       options: [],
       props: {
         children: 'children',
@@ -154,8 +151,8 @@ export default {
   methods: {
     /* 分类选择函数 */
     handleChange (val) {
-      this.formData.cids = val
-      this.formData.category_id = JSON.parse(JSON.stringify(val)).pop()
+      this.categryId = val
+      this.cat_id = JSON.parse(JSON.stringify(val)).pop()
     },
     /* 上传附件 */
     handleRemove (file, fileList) {
@@ -164,14 +161,10 @@ export default {
     handlePreview (file) {
       console.log(file)
     },
-    handlefileSuccess (res, file) {
-      // console.log(res, file)
-      this.ruleForm.files = res.data[0]
-    },
     /* 上传图片函数 */
     handleAvatarSuccess (res, file) {
       // console.log(res, file)
-      this.ruleForm.picture = res.data[0]
+      this.ruleForm.first_figure = res.data[0]
     },
     beforeAvatarUpload (file) {
       const isJPG = file.type === 'image/jpeg'
@@ -207,66 +200,14 @@ export default {
       this.inputValue = ''
     },
     goBack () {
-      this.$router.push({
-        path: '/admin/newcms/content/index'
-      })
-    },
-    getNumber (val) {
-      let res
-      if (val) {
-        res = 1
-      } else {
-        res = 0
-      }
-      return res
+      console.log('返回列表')
     },
     addContent () {
-      this.ruleForm.is_original = this.getNumber(this.is_original)
-      this.ruleForm.is_topped = this.getNumber(this.is_topped)
-      this.ruleForm.is_recommend = this.getNumber(this.is_recommend)
-      console.log(this.formData, this.ruleForm)
-    },
-    getSource (data = {}) {
-      api.GET(config.showWordSourceListAPI, data)
-      .then(response => {
-        this.option = response.data.data
-      })
-      .catch(error => {
-        this.$message.error(error)
-      })
-    },
-    getTree () {
-      api.GET(config.newcms.ncmsCategotyAPI)
-      .then(response => {
-        var newData = response.data.data
-        this.iteration(newData)
-        newData.push({ id: 0, display_name: '根级分类', label: '根级分类', value: 0 })
-        this.options = newData
-      })
-      .catch(error => {
-        this.$message.error(error)
-      })
-    },
-    iteration (obj) {
-      for (let key in obj) {
-        if (obj.hasOwnProperty(key)) {
-          if (obj[key] instanceof Object) {
-            if (obj[key].length === 0) {
-              obj[key] = null
-            } else {
-              this.iteration(obj[key])
-            }
-          }
-        }
-      }
+      console.log('提交发布')
     }
   },
   mounted () {
-    this.getTree()
-    this.getSource({
-      currentPage: 1,
-      pageSize: 100
-    })
+    console.log('111')
   }
 }
 </script>
