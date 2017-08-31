@@ -4,7 +4,7 @@
       <div class="kobe-table-header" slot="kobe-table-header">
         <el-row type="flex" justify="space-between">
           <el-col>
-            <el-button type="primary" icon="plus">新增</el-button>
+            <el-button type="primary" icon="plus" @click="openDialog('新增用户')">新增</el-button>
             <el-button type="primary">删除</el-button>
           </el-col>
           <el-select v-model="value" placeholder="请选择">
@@ -16,9 +16,9 @@
               <el-button slot="append" class="sc-table-search-btn" icon="search"></el-button>
             </el-input>
           </el-col>
-          <el-button type="primary" @click="openDialog">高级</el-button>
+          <el-button type="primary" @click="openDialog('高级搜索')">高级</el-button>
           <el-button type="primary" icon="upload2"></el-button>
-          <el-button type="primary" icon="minus"></el-button>
+          <el-button type="primary" icon="setting"></el-button>
         </el-row>
       </div>
       <div slot="kobe-table-content" class="kobe-table">
@@ -35,9 +35,9 @@
           <el-table-column label="状态"></el-table-column>
           <el-table-column label="操作">
             <template scope="scope">
-              <el-button icon="edit"></el-button>
+              <el-button icon="edit" @click="openDialog('详情/编辑')"></el-button>
               <el-button icon="delete2"></el-button>
-              <el-button icon="setting"></el-button>
+              <el-button icon="minus"></el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -51,58 +51,79 @@
         </el-row>
       </div>
     </kobe-table>
-    <el-dialog title="高级搜索" v-model="dialogVisible" size="tiny">
-      <el-form :model="advanceSearchForm" label-position="right" label-width="100px">
-        <el-form-item label="关键字">
-          <el-input v-model="advanceSearchForm.keyword"></el-input>
-        </el-form-item>
-        <el-form-item label="姓名">
-          <el-input v-model="advanceSearchForm.name"></el-input>
-        </el-form-item>
-        <el-form-item label="手机号">
-          <el-input v-model="advanceSearchForm.mobile"></el-input>
-        </el-form-item>
-        <el-form-item label="入库时间">
-          <el-date-picker
-            v-model="advanceSearchForm.time"
-            type="datetime"
-            placeholder="选择开始时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="黑名单原因">
-          <el-input type="textarea" v-model="advanceSearchForm.address"></el-input>
-        </el-form-item>
-      </el-form>
-      <div class="dialog-footer" slot="footer">
-        <el-button type="danger" @click="hideDialog">取消</el-button>
-        <el-button type="primary" @click="advanceSearch">搜索</el-button>
+    <el-dialog :title="dialogTitle" v-model="dialogVisible" size="tiny">
+      <div class="advanceSearch-dialog" v-show="dialogTitle==='高级搜索'">
+        <el-form :model="advanceSearchForm" label-position="right" label-width="100px">
+          <el-form-item label="关键字">
+            <el-input v-model="advanceSearchForm.keyword"></el-input>
+          </el-form-item>
+          <el-form-item label="姓名">
+            <el-input v-model="advanceSearchForm.name"></el-input>
+          </el-form-item>
+          <el-form-item label="手机号">
+            <el-input v-model="advanceSearchForm.mobile"></el-input>
+          </el-form-item>
+          <el-form-item label="入库时间">
+            <el-date-picker
+              v-model="advanceSearchForm.time"
+              type="datetime"
+              placeholder="选择开始时间">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="黑名单原因">
+            <el-input type="textarea" :rows="4" v-model="advanceSearchForm.address"></el-input>
+          </el-form-item>
+        </el-form>
+        <div class="dialog-footer" slot="footer">
+          <el-row type="flex" justify="end">
+            <el-button type="danger" @click="hideDialog">取消</el-button>
+            <el-button type="primary" @click="advanceSearch">搜索</el-button>
+          </el-row>
+        </div>
       </div>
-    </el-dialog>
-    <el-dialog title="新增用户" v-model="dialogVisible" size="tiny">
-      <el-form :model="advanceSearchForm" label-position="right" label-width="100px">
-        <el-form-item label="关键字">
-          <el-input v-model="advanceSearchForm.keyword"></el-input>
-        </el-form-item>
-        <el-form-item label="姓名">
-          <el-input v-model="advanceSearchForm.name"></el-input>
-        </el-form-item>
-        <el-form-item label="手机号">
-          <el-input v-model="advanceSearchForm.mobile"></el-input>
-        </el-form-item>
-        <el-form-item label="入库时间">
-          <el-date-picker
-            v-model="advanceSearchForm.time"
-            type="datetime"
-            placeholder="选择开始时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="黑名单原因">
-          <el-input type="textarea" v-model="advanceSearchForm.address"></el-input>
-        </el-form-item>
-      </el-form>
-      <div class="dialog-footer" slot="footer">
-        <el-button type="danger" @click="hideDialog">取消</el-button>
-        <el-button type="primary" @click="advanceSearch">搜索</el-button>
+      <div class="add-dialog" v-show="dialogTitle==='新增用户'">
+        <el-form :model="addForm" label-position="right" label-width="100px">
+          <el-form-item label="姓名">
+            <el-input v-model="addForm.keyword"></el-input>
+          </el-form-item>
+          <el-form-item label="手机号">
+            <el-input v-model="addForm.name"></el-input>
+          </el-form-item>
+          <el-form-item label="黑名单原因">
+            <el-input type="textarea" :rows="4" v-model="addForm.mobile"></el-input>
+          </el-form-item>
+          <el-form-item label="黑名单说明">
+            <el-input type="textarea" :rows="5" v-model="addForm.address"></el-input>
+          </el-form-item>
+        </el-form>
+        <div class="dialog-footer" slot="footer">
+          <el-row type="flex" justify="end">
+            <el-button type="danger" @click="hideDialog">取消</el-button>
+            <el-button type="primary" @click="advanceSearch">保存</el-button>
+          </el-row>
+        </div>
+      </div>
+      <div class="edit-dialog" v-show="dialogTitle==='详情/编辑'">
+        <el-form :model="editForm" label-position="right" label-width="100px">
+          <el-form-item label="姓名">
+            <el-input v-model="editForm.keyword"></el-input>
+          </el-form-item>
+          <el-form-item label="手机号">
+            <el-input v-model="editForm.name"></el-input>
+          </el-form-item>
+          <el-form-item label="黑名单原因">
+            <el-input type="textarea" :rows="4" v-model="editForm.mobile"></el-input>
+          </el-form-item>
+          <el-form-item label="黑名单说明">
+            <el-input type="textarea" :rows="5" v-model="editForm.address"></el-input>
+          </el-form-item>
+        </el-form>
+        <div class="dialog-footer" slot="footer">
+          <el-row type="flex" justify="end">
+            <el-button type="danger" @click="hideDialog">取消</el-button>
+            <el-button type="primary" @click="advanceSearch">保存</el-button>
+          </el-row>
+        </div>
       </div>
     </el-dialog>
   </div>
@@ -124,17 +145,21 @@ export default {
         label: '福田区'
       }],
       dialogVisible: false,
+      dialogTitle: '',
       advanceSearchForm: {
         keyword: '',
         name: '',
         mobile: '',
         person: '',
         address: ''
-      }
+      },
+      addForm: {},
+      editForm: {}
     }
   },
   methods: {
-    openDialog() {
+    openDialog(titleName) {
+      this.dialogTitle = titleName
       this.dialogVisible = true
     },
     hideDialog() {

@@ -64,7 +64,7 @@
               :data="response.data"
               @selection-change="handleSelectionChange">
               <el-table-column type="selection" width="55"></el-table-column>
-              <el-table-column prop="account_id" label="ID" width="50"></el-table-column>
+              <el-table-column prop="id" label="ID" width="80"></el-table-column>
               <el-table-column prop="title" label="内容标题" width="250"></el-table-column>
               <el-table-column prop="slug" label="类型"></el-table-column>
               <el-table-column prop="created_at" label="创建时间" width="150"></el-table-column>
@@ -72,12 +72,11 @@
               <el-table-column prop="author" label="作者" width="100"></el-table-column>
               <el-table-column prop="status" label="状态" width="100"></el-table-column>
               <el-table-column 
-                width="180"
+                width="120"
                 label="操作"
                 >
                 <template scope="scope">
                   <el-button @click="toEdit(scope.row.id)" size="small" icon="edit"></el-button>
-                  <el-button size="small" icon="share"></el-button>
                   <el-button @click="deleteId(scope.row.id)" size="small" icon="delete2"></el-button>
                 </template>
               </el-table-column>
@@ -180,7 +179,7 @@
         <el-row type="flex" justify="center">
           <el-button type="text" style="color: #48576a; padding:5px 10px;">移动到</el-button>
           <el-cascader
-            :options="treeData"
+            :options="cascaderData"
             v-model="moveToValue"
             @change="getMoveToTarget"
             :props="moveDefaultProps">
@@ -310,7 +309,6 @@ export default {
       dynamicTags: [],
       ids: [],
       multipleSelection: [],
-      moveToOptions: [],
       moveToValue: [],
       selectedSubject: '',
       subjectOptions: [],
@@ -469,10 +467,9 @@ export default {
       .then(response => {
         var newData = response.data.data
         this.iteration(newData)
+        this.cascaderData = newData
         newData.push({ id: 0, display_name: '根级分类', label: '根级分类', value: 0 })
         this.treeData = newData
-        this.cascaderData = newData
-        this.moveToOptions = newData
       })
       .catch(error => {
         this.$message.error(error)
@@ -845,6 +842,13 @@ export default {
 </script>
 
 <style scoped>
+  .GD-container{
+      height: 100%;
+      margin-top: 1.5rem;
+      padding: 1rem 2rem;
+      position: relative;
+  }
+
   .sc-report-table {
     margin-left: 2rem;
     margin-right: 2rem;
