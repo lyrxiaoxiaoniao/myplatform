@@ -943,6 +943,14 @@ const routes = [
           name: '黑名单管理',
           meta: {description: '列表'}
         }]
+      },
+      {
+        path: 'recycle',
+        component: DashMainView,
+        redirect: '/admin/recycle/index',
+        name: '罗湖城管垃圾分类',
+        meta: {description: '列表'},
+        children:[]
       }
     ]
   }, {

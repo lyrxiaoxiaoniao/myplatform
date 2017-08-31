@@ -164,9 +164,14 @@ export default {
     handlePreview (file) {
       console.log(file)
     },
-    handlefileSuccess (res, file) {
-      // console.log(res, file)
-      this.ruleForm.files = res.data[0]
+    handlefileSuccess (res, file, fileList) {
+      this.ruleForm.files = []
+      this.removeImg(fileList)
+    },
+    removeImg (obj) {
+      obj.forEach(v => {
+        this.ruleForm.files.push(v.response.data[0])
+      })
     },
     /* 上传图片函数 */
     handleAvatarSuccess (res, file) {
@@ -224,6 +229,7 @@ export default {
       this.ruleForm.is_original = this.getNumber(this.is_original)
       this.ruleForm.is_topped = this.getNumber(this.is_topped)
       this.ruleForm.is_recommend = this.getNumber(this.is_recommend)
+      this.formData.tags = this.dynamicTags
       console.log(this.formData, this.ruleForm)
     },
     getSource (data = {}) {
