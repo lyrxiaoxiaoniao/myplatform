@@ -372,7 +372,21 @@ export default {
     add: '/ncms/subject/create',
     detail: '/ncms/subject/show',
     delete: '/ncms/subject/delete',
-    update: '/ncms/subject/update'
+    update: '/ncms/subject/update',
+    checkName: '/ncms/subject/check'
+  },
+  /* 内容管理 */
+  content: {
+    list: '/ncms/article/index',
+    add: '/ncms/article/create',
+    detail: '/ncms/article/show',
+    delete: '/ncms/article/delete', // 放入回收站
+    changeState: '/ncms/article/state',
+    move: '/ncms/article/move',
+    top: '/ncms/article/top',
+    subject: '/ncms/article/subject',
+    recycleList: '/ncms/article/recycle/index',
+    recycleDelete: '/ncms/article/recycle/delete'// 从回收站删除
   },
   fixedLayout: false,
   hideLogoOnMobile: false,
