@@ -138,6 +138,10 @@ import SCReservationList from 'components/views/reservation/reservationManagemen
 import SCCommentList from 'components/views/reservation/commentManagement/List.vue'
 import SCBannedList from 'components/views/reservation/bannedListManagement/List.vue'
 
+// recycle
+import RecycleClass from 'components/views/recycle/village/recycleClass.vue'
+import RecycleAdd from 'components/views/recycle/village/recycleAdd.vue'
+
 const routes = [
   {
     path: '/newlogin',
@@ -947,10 +951,27 @@ const routes = [
       {
         path: 'recycle',
         component: DashMainView,
-        redirect: '/admin/recycle/index',
+        redirect: '/admin/recycle/village',
         name: '罗湖城管垃圾分类',
         meta: {description: '列表'},
-        children:[]
+        children: [{
+          path: 'village',
+          component: DashMainView,
+          redirect: '/admin/recycle/village/index',
+          name: '小区管理',
+          meta: {description: '列表'},
+          children: [{
+            path: 'index',
+            component: RecycleClass,
+            name: '小区信息管理',
+            meta: {description: '列表'}
+          }]
+        }, {
+          path: 'server',
+          component: RecycleAdd,
+          name: '物业管理',
+          meta: {description: '列表'}
+        }]
       }
     ]
   }, {
