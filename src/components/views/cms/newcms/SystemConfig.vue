@@ -166,6 +166,8 @@ export default {
     onUploadSuccess () {
       console.log(1)
     }
+  },
+  mounted () {
   }
 }
 </script>

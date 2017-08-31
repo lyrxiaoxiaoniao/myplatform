@@ -141,6 +141,8 @@ import SCBannedList from 'components/views/reservation/bannedListManagement/List
 // recycle
 import RecycleClass from 'components/views/recycle/village/recycleClass.vue'
 import RecycleAdd from 'components/views/recycle/village/recycleAdd.vue'
+// 回收公司管理
+import RecycleRecoveryList from './components/views/recycle/recovery/base.vue'
 
 const routes = [
   {
@@ -971,6 +973,18 @@ const routes = [
           component: RecycleAdd,
           name: '物业管理',
           meta: {description: '列表'}
+        }, {
+          path: 'recovery',
+          component: DashMainView,
+          redirect: '/admin/recycle/recovery/index',
+          name: '收运公司管理',
+          meta: {description: '列表'},
+          children: [{
+            path: 'index',
+            component: RecycleRecoveryList,
+            name: '回收公司管理',
+            meta: {description: '列表'}
+          }]
         }]
       }
     ]
