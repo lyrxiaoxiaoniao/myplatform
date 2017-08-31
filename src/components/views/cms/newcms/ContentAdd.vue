@@ -165,10 +165,8 @@ export default {
       console.log(file)
     },
     handlefileSuccess (res, file, fileList) {
-      // console.log(res, file)
       this.ruleForm.files = []
       this.removeImg(fileList)
-      // this.ruleForm.files = res.data[0]
     },
     removeImg (obj) {
       obj.forEach(v => {
