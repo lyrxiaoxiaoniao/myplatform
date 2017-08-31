@@ -5,16 +5,21 @@
             <el-row type="flex" justify="end">
             <el-col :span="16">
                 <el-button type="primary" @click="openDialog">添加标签</el-button>
-                <el-button type="primary">刷新</el-button>
-                 <el-select v-model="operation" placeholder="批量" style="width:150px;" @change="open3">
-                    <el-option label="批量" value="批量"></el-option>
-                    <el-option label="删除" value="删除"></el-option>
-                </el-select>
+                <el-dropdown @command="handleCommand">
+                  <el-button type="primary">
+                    更多操作<i class="el-icon-caret-bottom el-icon--right"></i>
+                  </el-button>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item command="删除">删除</el-dropdown-item>
+                    <!-- <el-dropdown-item command="移动">移动</el-dropdown-item> -->
+                  </el-dropdown-menu>
+                </el-dropdown>
+                <el-button @click="reFresh" type="primary">刷新</el-button>
             </el-col>
-            <el-select v-model="operation" placeholder="所有" style="width:150px;" @change="open3">
+            <!-- <el-select v-model="operation" placeholder="所有" style="width:150px;" @change="open3">
                 <el-option label="所有" value="所有"></el-option>
-                <el-option label="专题名称" value="专题名称"></el-option>
-            </el-select>
+                <el-option label="敏感词" value="敏感词"></el-option>
+            </el-select> -->
             <el-col :span="8">
                 <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
                 <el-button slot="append" @click="onSearch" icon="search"></el-button>
@@ -32,28 +37,35 @@
             :data="response.data"
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column type="index" label="ID" width="50"></el-table-column>
-            <el-table-column prop="name" label="标签名称"></el-table-column>
-            <el-table-column prop="method" label="文档数量"></el-table-column>
-            <el-table-column prop="action" label="创建时间"></el-table-column>
-            <!-- <el-table-column prop="accept_charset" label="是否推荐"></el-table-column> -->
+            <el-table-column prop="id" label="ID" width="60"></el-table-column>
+            <el-table-column prop="name" label="标签名字"></el-table-column>
+            <el-table-column prop="count" label="文档数量">
+              <template scope="scope">
+                {{scope.row.count ? scope.row.count : 0}}
+              </template>
+            </el-table-column>
+            <el-table-column prop="created_at" label="创建时间">
+              <template scope="scope">
+                {{scope.row.created_at | toDateTime}}
+              </template>
+            </el-table-column>
             <el-table-column label="是否有效" width="120">
               <template scope="scope">
                 <el-switch
-                  v-model="scope.row.state"
+                  v-model="scope.row.active"
                   on-text="开"
                   off-text="关"
-                  @change="toswitch(scope.row.state,scope.row.id)">
+                  @change="toswitch(scope.row.active,scope.row.id)">
                 </el-switch>
               </template>
             </el-table-column>
             <el-table-column 
-                width="170"
+                width="120"
                 label="操作"
                 >
                 <template scope="scope">
                 <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2" title="删除"></el-button>
-                <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit" title="修改"></el-button>
+                <el-button @click="openEditDialog(scope.row, 'edit')" size="small" icon="edit" title="修改"></el-button>
                 </template>
             </el-table-column>
             </el-table>
@@ -74,19 +86,38 @@
             </el-row>
         </div>
     </kobe-table>
-    <el-dialog :title="dialogTitle" v-model="showDialog">
+    <el-dialog title="新增标签名字" v-model="showDialog">
         <el-form :model="selected" label-width="120px" :rules="rules" ref="selected">
-          <el-form-item label="标签名称" prop="name" required>
-              <el-input placeholder="示例:专题名称" v-model="selected.name"></el-input>
+          <el-form-item label="标签名字" prop="name" required>
+              <el-input placeholder="请输入标签名" v-model="selected.name"></el-input>
           </el-form-item>
-          <el-form-item label="是否有效" prop="accept_charset">
-              <el-switch on-text="开" off-text="关" v-model="selected.accept_charset"></el-switch>
+          <el-form-item label="文档数量" prop="count" required>
+              <el-input-number v-model="selected.count" :step="1" :min="0"></el-input-number>
+          </el-form-item>
+          <el-form-item label="是否有效">
+              <el-switch on-text="开" off-text="关" v-model="selected.active"></el-switch>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button @click="closeDialog">取消</el-button>
-            <el-button @click="createType('selected')" type="primary" v-if="dialogType === 'add'">确定</el-button>
-            <el-button @click="editType('selected')" type="primary" v-if="dialogType === 'edit'">确定</el-button>
+            <el-button @click="createType('selected')" type="primary">确定</el-button>
+        </div>
+    </el-dialog>
+    <el-dialog title="修改标签名字" v-model="showEditDialog">
+        <el-form :model="selectedEdit" label-width="120px">
+          <el-form-item label="标签名字">
+              <el-input placeholder="请输入标签名" v-model="selectedEdit.name"></el-input>
+          </el-form-item>
+          <el-form-item label="文档数量">
+             <el-input-number v-model="selected.count" :step="1" :min="0"></el-input-number>
+          </el-form-item>
+          <el-form-item label="是否有效">
+              <el-switch on-text="开" off-text="关" v-model="selectedEdit.active"></el-switch>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="closeEditDialog">取消</el-button>
+            <el-button @click="editType" type="primary">确定</el-button>
         </div>
     </el-dialog>
 </div>
@@ -100,52 +131,51 @@ export default {
       if (!value) {
         return callback(new Error('不能为空'))
       }
-      api.GET(config.checknameFormAPI, {name: value})
-      .then(response => {
-        if (response.data.errcode === '5000') {
-          return callback(new Error('有重名，请重新输入！'))
-        } else {
-          callback()
-        }
-      })
+      callback()
+      // api.GET(config.newcms.checkNcmstagAPI, {badword: value})
+      // .then(response => {
+      //   if (response.data.errcode === '60000') {
+      //     return callback(new Error('有重名，请重新输入！'))
+      //   } else {
+      //     callback()
+      //   }
+      // })
     }
     return {
       operation: '',
       response: {
         data: null
       },
-      npm: [],
-      error: null,
       showDialog: false,
-      dialogTitle: '',
-      stepsSelection: [],
-      tableData: null,
-      dialogType: '',
+      showEditDialog: false,
       form: {
         keyword: ''
       },
       selected: {
-        method: '',
         name: '',
-        action: '',
-        accept_charset: '',
-        enctype: ''
+        active: null,
+        count: null
+      },
+      selectedEdit: {
+        name: '',
+        active: null,
+        count: null
       },
       multipleSelection: [],
       rules: {
         name: [
           { validator: checkName, trigger: 'blur' }
-        ],
-        method: [
-          { required: true, message: '不能为空，示例:post/get', trigger: 'blur' }
-        ],
-        action: [
-          { required: true, message: '不能为空，示例:https://www.example.com', trigger: 'blur' }
         ]
-      }
+      },
+      ids: []
     }
   },
   methods: {
+    handleCommand (command) {
+      if (command === '删除') {
+        this.deleteType()
+      }
+    },
     toggleSelection (rows) {
       if (rows) {
         rows.forEach(row => {
@@ -157,65 +187,95 @@ export default {
     },
     handleSelectionChange (val) {
       this.multipleSelection = val
+      this.ids = []
+      this.multipleSelection.forEach(v => {
+        this.ids.push(v.id)
+      })
+    },
+    /* 切换状态 */
+    toswitch (active, id) {
+      api.POST(config.newcms.activeNcmstagAPI, {id: id, active: Number(active)})
+      .then(response => {
+        this.getList()
+        this.onSuccess('状态操作成功！')
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     },
     // 删除表单
     deleteType (id) {
-      this.$confirm('是否确认删除该表单', '提示', {
+      if (id) {
+        this.ids = []
+        this.ids.push(id)
+      }
+      if (this.ids.length === 0) {
+        this.$confirm('请进行正确操作，请先勾选标签信息？', '错误', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'error'
+        }).then(() => {
+          return
+        }).catch(() => {
+          return
+        })
+        return
+      }
+      this.$confirm('此操作将删除该标签。是否继续删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.POST(config.removeActivityFormAPI, {
-          id: id
+        api.POST(config.newcms.removeNcmstagAPI, {
+          ids: this.ids
         })
         .then(response => {
           if (response.data.errcode === '0000') {
             this.onSuccess('删除成功')
           } else {
-            this.$message.error('发生错误，请重试')
+            this.$message.error(response.data.errmsg)
           }
         })
       })
     },
     // 模态框显示
-    openDialog (e, data = null, type = null) {
-      if (data !== null && type === 'edit') {
-        this.dialogType = 'edit'
-        this.dialogTitle = '修改表单'
-        this.selected = {
-          ...this.selected,
-          ...data
-        }
-      } else {
-        this.dialogType = 'add'
-        this.dialogTitle = '新增表单'
-        this.selected = {
-          method: '',
-          name: '',
-          action: '',
-          accept_charset: 'utf-8',
-          enctype: 'application/x-www-form-urlencoded'
-        }
+    openDialog () {
+      this.selected = {
+        name: '',
+        active: null,
+        count: null
       }
       this.showDialog = true
     },
+    openEditDialog (data) {
+      this.selectedEdit = {
+        ...this.selectedEdit,
+        ...data
+      }
+      this.showEditDialog = true
+    },
     closeDialog () {
       this.showDialog = false
+    },
+    closeEditDialog () {
+      this.showEditDialog = false
     },
     // 新增form确认
     createType (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-        //   api.POST(config.addActivityFormAPI, this.selected)
-        //   .then(response => {
-        //     if (response.data.errcode === '0000') {
-        //       this.onSuccess('添加成功')
-        //       this.showDialog = false
-        //     }
-        //   })
-        //   .catch(error => {
-        //     this.$message.error(error)
-        //   })
+          this.selected.active = Number(this.selected.active)
+          api.POST(config.newcms.addNcmstagAPI, this.selected)
+          .then(response => {
+            if (response.data.errcode === '0000') {
+              this.onSuccess('添加成功')
+              this.getList()
+              this.showDialog = false
+            }
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
         } else {
           console.log('error submit!!')
           return false
@@ -223,17 +283,19 @@ export default {
       })
     },
     // 修改form确认
-    editType (formName) {
-    //   api.POST(config.editActivityFormAPI, this.selected)
-    //   .then(response => {
-    //     if (response.data.errcode === '0000') {
-    //       this.onSuccess('修改成功')
-    //       this.showDialog = false
-    //     }
-    //   })
-    //   .catch(error => {
-    //     this.$message.error(error)
-    //   })
+    editType () {
+      this.selectedEdit.active = Number(this.selectedEdit.active)
+      api.POST(config.newcms.editNcmstagAPI, this.selectedEdit)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.onSuccess('修改成功')
+          this.getList()
+          this.showEditDialog = false
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     },
     onSuccess (string) {
       this.$notify({
@@ -274,14 +336,28 @@ export default {
       }
       this.getList(data)
     },
+    changeActive (res) {
+      res.data.forEach(v => {
+        if (v.active) {
+          v.active = Boolean(v.active)
+        }
+        if (v.is_audit) {
+          v.is_audit = Boolean(v.is_audit)
+        }
+      })
+      return res
+    },
     getList (data = {}) {
-    //   api.GET(config.showActivityFormAPI, data)
-    //   .then(response => {
-    //     this.response = response.data.data
-    //   })
-    //   .catch(error => {
-    //     this.$message.error(error)
-    //   })
+      api.GET(config.newcms.ncmstagListAPI, data)
+      .then(response => {
+        this.response = this.changeActive(response.data.data)
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    reFresh () {
+      this.getList()
     }
   },
   mounted () {

@@ -1,8 +1,8 @@
 /* eslint no-useless-escape: "off" */
 export default {
   // serverURI: 'https://admin.gov.shencom.cn',
-  // serverURI: 'https://tst.admin.gov.shencom.cn',
-  serverURI: 'http://192.168.1.23:8080',
+  serverURI: 'https://tst.admin.gov.shencom.cn',
+  // serverURI: 'http://192.168.1.23:8080',
   basic: {
     key: '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArromvW2N\/rg0ADw9zpTL\ncGdO0wNazPcp+SepPrv1dicCamEVPfvPKlWMuYszt\/tE6lNjMT8pphmatPvgjAFy\nKfE1fEpcvHqRSZTUtlo\/fGJzh2nss6mxyDXlqi+sGitjwaGj6\/MXO6zLQcMQmZ\/U\nvliOhECvuLBsAqqLY8ik63Ah7ylWAap3jDD0OvgSy+glqebwfacy9WPYOy4K75n\/\nDQRw9FJBYFg1BtfbVn55Oji3AZ0E3lY96b0JhJGtFM6vjF0bhVDkmP\/XZINPcVZy\nxydRFvxjgA6we\/KmxXDD\/JdZmvGmrZ2XCAhGS3vuk3XJnkMquGYO4GAI13JIs8Z1\nrwIDAQAB\n-----END PUBLIC KEY-----',
     sendMail: '/sys/sendMsgVerify',
@@ -133,11 +133,39 @@ export default {
   newcms: {
     ncmsCategotyAPI: '/ncms/category/tree',
     ncmsCategotyListAPI: '/ncms/category/index',
-    addNcmsCategotyAPI: '/cms/category/create',
-    removeNcmsCategotyAPI: '/cms/category/delete',
-    editNcmsCategotyAPI: '/cms/category/update',
-    showNcmsCategotyAPI: '/cms/category/show',
-    activeNcmsCategotyAPI: '/ncms/category/active'
+    addNcmsCategotyAPI: '/ncms/category/create',
+    removeNcmsCategotyAPI: '/ncms/category/delete',
+    editNcmsCategotyAPI: '/ncms/category/update',
+    showNcmsCategotyAPI: '/ncms/category/show',
+    activeNcmsCategotyAPI: '/ncms/category/active',
+    addNcmsContentAPI: '/ncms/article/create',
+    /* 评论管理 */
+    ncmsCommentListAPI: '/ncms/comment/index',
+    showNcmsCommentAPI: '/ncms/comment/show',
+    removeNcmsCommentAPI: '/ncms/comment/delete',
+    editNcmsCommentAPI: '/ncms/comment/update',
+    auditNcmsCommentAPI: '/ncms/comment/audit',
+    addNcmsCommentAPI: '/ncms/comment/create',
+    /* 敏感词管理 */
+    ncmsSensitiveListAPI: '/ncms/sensitive/index',
+    showNcmsSensitiveAPI: '/ncms/sensitive/show',
+    removeNcmsSensitiveAPI: '/ncms/sensitive/delete',
+    addNcmsSensitiveAPI: '/ncms/sensitive/create',
+    editNcmsSensitiveAPI: '/ncms/sensitive/update',
+    checkNcmsSensitiveAPI: '/ncms/sensitive/check',
+    activeNcmsSensitiveAPI: '/ncms/sensitive/active',
+    /* 标签管理 */
+    ncmstagListAPI: '/ncms/tag/index',
+    showNcmstagAPI: '/ncms/tag/show',
+    removeNcmstagAPI: '/ncms/tag/delete',
+    addNcmstagAPI: '/ncms/tag/create',
+    editNcmstagAPI: '/ncms/tag/update',
+    checkNcmstagAPI: '/ncms/tag/check',
+    activeNcmstagAPI: '/ncms/tag/active',
+    /* 文章内容回收站 */
+    ncmRecycleListAPI: '/ncms/recycle/index',
+    replyNcmRecycleAPI: '/ncms/recycle/reply',
+    removeNcmRecycleAPI: '/ncms/recycle/delete' // 彻底删除
   },
   menuAPI: '/admin/menu/show_left',
   deleteMenuAPI: '/admin/menu/delete',
