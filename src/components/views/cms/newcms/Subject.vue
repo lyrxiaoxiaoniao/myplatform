@@ -24,9 +24,9 @@
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
         <el-table-column prop="display_name" label="专题名称"></el-table-column>
-        <el-table-column prop="reportName" label="文章数" width="120"></el-table-column>
+        <el-table-column prop="articleCount" label="文章数" width="120"></el-table-column>
         <el-table-column prop="sort" label="排序" width="120"></el-table-column>
-        <el-table-column label="是否推荐" width="120">
+        <el-table-column prop="is_recommend" label="是否推荐" width="120">
           <template scope="scope">
             <el-switch on-text="开" off-text="关" v-model="scope.row.is_recommend" @change="toggleSwicth(scope.row)"></el-switch>
           </template>
@@ -34,7 +34,7 @@
         <el-table-column label="操作" width="120px">
           <template scope="scope">
             <el-button size="small" icon="delete2" @click="deleteData(scope.row.id)" title="删除"></el-button>
-            <el-button size="small" icon="edit" @click="openDialog('修改专题')" title="修改"></el-button>
+            <el-button size="small" icon="edit" @click="openDialog('修改专题',scope.row.id)" title="修改"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -56,55 +56,70 @@
       </el-row>
       <el-dialog :title="dialogTitle" v-model="dialogFormVisible">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="top-ruleForm">
-          <el-form-item label="专题名称" prop="spacename">
-            <el-input v-model="ruleForm.spacename" placeholder="简单为宜"></el-input>
+          <el-form-item label="专题名称" prop="display_name" style="margin-bottom:30px;">
+            <el-input v-model="ruleForm.display_name" placeholder="简单为宜" @blur="checkSubjectName"></el-input>
           </el-form-item>
-          <el-form-item label="专题排序" prop="spacename">
-            <el-input-number v-model="ruleForm.spacename" :min="1" :max="10"></el-input-number>
+          <el-form-item label="专题排序" prop="sort">
+            <el-input-number v-model="ruleForm.sort" :min="1" :max="10"></el-input-number>
           </el-form-item>
           <el-form-item label="是否推荐" required>
             <el-switch
-              v-model="ruleForm.state"
+              v-model="ruleForm.is_recommend"
               on-text="开"
               off-text="关">
             </el-switch>
           </el-form-item>
-          <el-form-item label="专题说明" prop="spacename">
-            <el-input type="textarea" :rows="3" v-model="ruleForm.spacename"></el-input>
+          <el-form-item label="专题说明" prop="description">
+            <el-input type="textarea" :rows="3" v-model="ruleForm.description"></el-input>
           </el-form-item>
-          <el-form-item label="标题图" prop="spacename">
+          <el-form-item label="标题图" prop="logo">
             <el-upload
               class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
+              :action="uploadURL"
               :show-file-list="false"
-              :on-success="handleAvatarSuccess"
+              :on-success="iconHandleAvatarSuccess"
               :before-upload="beforeAvatarUpload">
-              <img v-if="imageUrl" :src="imageUrl" class="avatar">
+              <img v-if="ruleForm.logo" :src="ruleForm.logo" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </el-form-item>
-          <el-form-item label="内容图" prop="spacename">
+          <el-form-item label="内容图" prop="banners">
             <el-upload
-              action="https://jsonplaceholder.typicode.com/posts/"
+              :action="uploadURL"
               list-type="picture-card"
-              :on-preview="handlePictureCardPreview"
+              :on-success="bannersHandleAvatarSuccess"
               :on-remove="handleRemove">
               <i class="el-icon-plus"></i>
             </el-upload>
-            <el-dialog v-model="dialogVisible">
-              <img width="100%" v-for="value in contentImageUrls" :src="value" alt="">
+            <el-dialog v-model="bannersVisible">
+              <img width="100%" v-for="value in ruleForm.banners" :src="value" alt="">
             </el-dialog>
           </el-form-item>
-          <el-form-item prop="spacename" v-if="isEdit">
-            <el-button size="small" icon="delete2" @click="deleteData(scope.row.id)" title="删除"></el-button>
+          <el-form-item v-if="dialogTitle === '修改专题'">
+            <el-row type="flex" justify="end">
+              <el-button size="small" icon="delete2" title="删除" @click="deleteArticles"></el-button>
+            </el-row>
           </el-form-item>
-          <el-form-item prop="spacename" v-if="isEdit">
-            <el-table :data="response.data" style="width: 100%">
+          <el-form-item v-if="dialogTitle === '修改专题'">
+            <el-table
+              :data="articleData.data"
+              style="width: 100%"
+              @selection-change="handleArticleSelectionChange">
               <el-table-column type="selection" width="55"></el-table-column>
-              <el-table-column prop="id" label="日期" width="100"></el-table-column>
-              <el-table-column prop="acceptNo" label="作者" width="100"></el-table-column>
-              <el-table-column prop="reportName" label="标题"></el-table-column>
+              <el-table-column prop="created_at" label="日期" width="150"></el-table-column>
+              <el-table-column prop="author" label="作者" width="100"></el-table-column>
+              <el-table-column prop="title" label="标题"></el-table-column>
             </el-table>
+          </el-form-item>
+          <el-form-item v-if="dialogTitle === '修改专题'">
+            <el-row type="flex" justify="center">
+              <el-pagination
+                @current-change="handleArticleDataCurrentChange"
+                :current-page="articleData.currentPage"
+                :total="articleData.count"
+                layout="total, prev, pager, next, jumper">
+              </el-pagination>
+            </el-row>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -124,6 +139,18 @@ import api from 'src/api'
 export default {
   name: 'sc-subject-table',
   data () {
+    var validateSubjectName = (rule, value, callback) => {
+      api.GET(config.subject.checkName, {display_name: value})
+        .then(response => {
+          if (response.status !== 200) {
+            this.error = response.statusText
+            return
+          }
+          if (response.data.errcode === '60000') {
+            callback(new Error('专题重名'))
+          }
+        })
+    }
     return {
       selectedCatlg: '',
       caseCatlg: [],
@@ -136,19 +163,25 @@ export default {
       dialogTitle: '',
       dialogFormVisible: false,
       ruleForm: {
+        display_name: '',
+        sort: 0,
+        is_recommend: false,
         description: '',
-        slug: '',
-        spacename: '',
-        typename: null,
-        value: '',
-        tagList: [],
-        state: true
+        logo: '',
+        banners: []
       },
       multipleSelection: [],
-      dynamicTags: [],
-      titleImageUrl: '',
-      contentImageUrls: [],
-      ids: []
+      ids: [],
+      uploadURL: config.serverURI + config.uploadFilesAPI,
+      bannersVisible: false,
+      articleData: [],
+      multipleArticleSelection: [],
+      articleIds: [],
+      rules: {
+        display_name: [
+          { validator: validateSubjectName, trigger: 'blur' }
+        ]
+      }
     }
   },
   computed: {},
@@ -168,6 +201,24 @@ export default {
         ...this.searchForm
       }
       this.getList(data)
+    },
+    handleArticleDataCurrentChange (value) {
+      let data = {
+        currentPage: value
+      }
+      api.GET(config.content.list, data)
+      .then(response => {
+        if (response.status !== 200) {
+          this.error = response.statusText
+          return
+        }
+        if (response.data.errcode === '0000') {
+          this.articleData = this.transformData(response.data.data)
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     },
     onKeywordSearch () {
       const data = {
@@ -192,32 +243,61 @@ export default {
         this.$message.error(error)
       })
     },
+    getDetail (id) {
+      api.GET(config.subject.detail, {id})
+      .then(response => {
+        if (response.status !== 200) {
+          this.error = response.statusText
+          return
+        }
+        if (response.data.errcode === '0000') {
+          this.ruleForm = response.data.data
+          switch (this.ruleForm.is_recommend) {
+            case 0:
+              this.ruleForm.is_recommend = false
+              break
+            case 1:
+              this.ruleForm.is_recommend = true
+              break
+          }
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    getArticleData (id) {
+      api.GET(config.content.list, {subject_id: id})
+      .then(response => {
+        if (response.status !== 200) {
+          this.error = response.statusText
+          return
+        }
+        if (response.data.errcode === '0000') {
+          this.articleData = this.transformData(response.data.data)
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
     // Transform Response Data
     transformData (res) {
       res.data.forEach(v => {
         if (v.created_at) {
           v.created_at = this.formatDate(v.created_at)
         }
-        /*
-        if (v.status === 0) {
-          v.status = '未审核'
+        if (v.is_recommend === 0) {
+          v.is_recommend = false
         }
-        if (v.status === 1) {
-          v.status = '审核通过'
+        if (v.is_recommend === 1) {
+          v.is_recommend = true
         }
-        if (v.status === 2) {
-          v.status = '审核不通过'
+        if (v.counters.length) {
+          v.articleCount = v.counters[0].count
+        } else {
+          v.articleCount = 0
         }
-        if (v.status === 3) {
-          v.status = '申请认证中'
-        }
-        if (v.status === 4) {
-          v.status = '认证通过'
-        }
-        if (v.status === 5) {
-          v.status = '认证驳回'
-        }
-      */
       })
       return res
     },
@@ -258,8 +338,8 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.POST(config.deleteTeamAPI, {
-          id: id
+        api.POST(config.subject.delete, {
+          ids: this.ids
         })
         .then(response => {
           if (response.data.errcode === '0000') {
@@ -270,6 +350,37 @@ export default {
         })
       })
     },
+    deleteArticles () {
+      if (this.articleIds.length === 0) {
+        this.$confirm('请进行正确操作，请优先勾选专题？', '错误', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'error'
+        }).then(() => {
+          return
+        }).catch(() => {
+          return
+        })
+        return
+      }
+      this.$confirm('是否确认删除该条数据', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        api.POST(config.content.delete, {
+          ids: this.articleIds
+        })
+        .then(response => {
+          if (response.data.errcode === '0000') {
+            this.onSuccess('删除成功')
+          } else {
+            this.$message.error('发生错误，请重试')
+          }
+        })
+      })
+    },
+    // 专题列表选中记录
     handleSelectionChange (val) {
       this.multipleSelection = val
       this.ids = []
@@ -277,15 +388,30 @@ export default {
         this.ids.push(v.id)
       })
     },
+    // 修改专题对话框文章列表选中记录
+    handleArticleSelectionChange (val) {
+      this.multipleArticleSelection = val
+      this.articleIds = []
+      this.multipleArticleSelection.forEach(v => {
+        this.articleIds.push(v.id)
+      })
+    },
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.classData.active = Number(this.classData.active)
-          var obj = this.classData
-          var pid = this.stepsSelection
-          obj.parent_id = pid.shift()
+          this.ruleForm.active = 0
+          switch (this.ruleForm.is_recommend) {
+            case false:
+              this.ruleForm.is_recommend = 0
+              break
+            case true:
+              this.ruleForm.is_recommend = 1
+              break
+          }
+          // this.ruleForm.active = Number(this.ruleForm.active)
+          var obj = this.ruleForm
           console.log(obj)
-          api.POST(config.createCategoryAPI, obj)
+          api.POST(config.subject.add, obj)
             .then(response => {
               if (response.status !== 200) {
                 this.error = response.statusText
@@ -295,6 +421,14 @@ export default {
                 this.onSuccess('创建成功')
                 this.getList()
                 this.closeDialog()
+                this.ruleForm = {
+                  display_name: '',
+                  sort: 0,
+                  is_recommend: false,
+                  description: '',
+                  logo: '',
+                  banners: []
+                }
               }
             })
         } else {
@@ -303,11 +437,16 @@ export default {
       })
     },
     editForm () {
-      var obj = this.classData
-      var pid = this.stepsSelection
-      obj.parent_id = pid.shift()
-      obj.created_at = this.classData.created_at
-      api.POST(config.updateCategoryAPI, obj)
+      var obj = this.ruleForm
+      switch (obj.is_recommend) {
+        case false:
+          obj.is_recommend = 0
+          break
+        case true:
+          obj.is_recommend = 1
+          break
+      }
+      api.POST(config.subject.update, obj)
       .then(response => {
         if (response.status !== 200) {
           this.error = response.statusText
@@ -317,14 +456,27 @@ export default {
           this.onSuccess('修改成功')
           this.getList()
           this.closeDialog()
+          this.ruleForm = {
+            display_name: '',
+            sort: 0,
+            is_recommend: false,
+            description: '',
+            logo: '',
+            banners: []
+          }
         }
       })
     },
     toggleSwicth (value) {
-      api.POST(config.report.toggleActive, {
-        active: value.active ? 1 : 0,
-        id: value.id
-      })
+      switch (value.is_recommend) {
+        case false:
+          value.is_recommend = 0
+          break
+        case true:
+          value.is_recommend = 1
+          break
+      }
+      api.POST(config.subject.update, value)
       .then(response => {
         if (response.data.errcode === '0000') {
           this.$notify({
@@ -337,7 +489,7 @@ export default {
             currentPage: this.response.currentPage,
             ...this.searchForm
           }
-          this.updateCase(data)
+          this.getList(data)
         }
       })
       .catch(error => {
@@ -357,16 +509,38 @@ export default {
       }
       this.getList(data)
     },
-    openDialog (value) {
+    openDialog (value, id) {
       this.dialogTitle = value
       this.dialogFormVisible = true
+      if (value === '修改专题') {
+        this.getDetail(id)// 获取专题详情
+        this.getArticleData(id)// 获取该专题下所有文章
+      }
     },
     closeDialog () {
       this.dialogFormVisible = false
       this.dialogTitle = ''
     },
-    handlePictureCardPreview (file) {
-      this.contentImageUrls = file.url
+    checkSubjectName (formName) {
+    },
+    bannersHandleAvatarSuccess (res, file) {
+      this.ruleForm.banners.push(res.data[0])
+      this.bannersVisible = true
+    },
+    iconHandleAvatarSuccess(res, file) {
+      this.ruleForm.logo = res.data[0]
+      // this.saveImg(this.ruleForm.logo)
+    },
+    saveImg (url) {
+      let obj = {}
+      obj.urls = [].push(url)
+      obj.parentId = 0
+      api.POST(config.saveFilesAPI, obj)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.onSuccess('图片上传成功')
+        }
+      })
     }
   },
   components: {
