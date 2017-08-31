@@ -125,6 +125,8 @@ Vue.use(VueHtml5Editor, {
 })
 
 router.beforeEach((to, from, next) => {
+  next()
+  /*
   if (store.state.token === null) {
     if (to.path === '/login') {
       next()
@@ -140,6 +142,7 @@ router.beforeEach((to, from, next) => {
   } else {
     next()
   }
+  */
 })
 
 Vue.config.productionTip = false

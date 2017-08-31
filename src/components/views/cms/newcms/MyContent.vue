@@ -37,7 +37,7 @@
                 </el-dropdown>
               </el-col>
               <el-col :span="3">
-                <el-select placeholder="所有信息" style="width:105px;" @change="getCategoryId">
+                <el-select v-model="selectValue" placeholder="所有信息" style="width:105px;">
                   <el-option
                     v-for="item in selectCategoryOptions"
                     :key="item.value"
@@ -311,7 +311,7 @@ export default {
       ids: [],
       multipleSelection: [],
       moveToOptions: [],
-      moveToValue: '',
+      moveToValue: [],
       selectedSubject: '',
       subjectOptions: [],
       topOrder: 0,
@@ -326,7 +326,8 @@ export default {
       },
       parentId: 0,
       advancedCategoryOptions: [],
-      value: ''
+      value: '',
+      selectValue: ''
     }
   },
   computed: {
@@ -770,9 +771,6 @@ export default {
     // 获取移动路径
     getMoveToTarget (value) {
       this.moveToValue = value
-    },
-    getCategoryId (value) {
-      this.ruleForm.category_id = value
     },
     getSubjectOptions () {
       var arr = []
