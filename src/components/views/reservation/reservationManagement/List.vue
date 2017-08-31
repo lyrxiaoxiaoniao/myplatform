@@ -15,7 +15,7 @@
               <el-button slot="append" class="sc-table-search-btn" icon="search"></el-button>
             </el-input>
           </el-col>
-          <el-button type="primary" @click="openDialog">高级</el-button>
+          <el-button type="primary" @click="openDialog('dialogVisible')" icon="search">高级</el-button>
           <el-button type="primary" icon="upload2"></el-button>
           <el-button type="primary" icon="setting"></el-button>
         </el-row>
@@ -43,7 +43,7 @@
           </el-table-column>
           <el-table-column label="操作" width="200">
             <template scope="scope">
-              <el-button icon="edit" size="small"></el-button>
+              <el-button icon="information" size="small" @click="openDialog('infoVisible')"></el-button>
               <el-button icon="delete2" size="small" @click="deleteItem(scope.row.id)"></el-button>
               <el-button type="primary" size="small" @click="openDialog('dealVisible')">处理</el-button>
             </template>
@@ -60,7 +60,7 @@
       </div>
     </kobe-table>
     <el-dialog title="高级搜索" v-model="dialogVisible" size="tiny">
-      <el-form :model="advanceSearchForm" label-position="right" label-width="100px">
+      <el-form :model="advanceSearchForm" label-position="right" label-width="100px" class="infoForm">
         <el-form-item label="关键字">
           <el-input v-model="advanceSearchForm.keyword"></el-input>
         </el-form-item>
@@ -86,7 +86,7 @@
         </el-form-item>
       </el-form>
       <div class="dialog-footer" slot="footer">
-        <el-button type="danger" @click="hideDialog">取消</el-button>
+        <el-button type="danger" @click="hideDialog('dialogVisible')">取消</el-button>
         <el-button type="primary" @click="advanceSearch">搜索</el-button>
       </div>
     </el-dialog>
@@ -105,6 +105,71 @@
       <div class="dialog-footer" slot="footer">
         <el-button type="danger" @click="hideDialog('dealVisible')">取消</el-button>
         <el-button type="primary" @click="advanceSearch">搜索</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="查看" v-model="infoVisible" size="tiny">
+      <el-tabs type="border-card">
+        <el-tab-pane label="场馆信息">
+          <el-row class="infoItem">
+            <el-col :span="8" :offset="1">预约教育基地</el-col>
+            <el-col :span="15">test</el-col>
+          </el-row>
+          <el-row class="infoItem">
+            <el-col :span="8" :offset="1">参观时段</el-col>
+            <el-col :span="15">test</el-col>
+          </el-row>
+          <el-row class="infoItem">
+            <el-col :span="8" :offset="1">参观时间</el-col>
+            <el-col :span="15">test</el-col>
+          </el-row>
+          <el-row class="infoItem">
+            <el-col :span="8" :offset="1">申请时间</el-col>
+            <el-col :span="15">test</el-col>
+          </el-row>
+        </el-tab-pane>
+        <el-tab-pane label="预约信息">
+          <el-row class="infoItem">
+            <el-col :span="8" :offset="1">预约类型</el-col>
+            <el-col :span="15">test</el-col>
+          </el-row>
+          <el-row class="infoItem">
+            <el-col :span="8" :offset="1">团队类型</el-col>
+            <el-col :span="15">test</el-col>
+          </el-row>
+          <el-row class="infoItem">
+            <el-col :span="8" :offset="1">所属行业</el-col>
+            <el-col :span="15">test</el-col>
+          </el-row>
+          <el-row class="infoItem">
+            <el-col :span="8" :offset="1">参观人数</el-col>
+            <el-col :span="15">test</el-col>
+          </el-row>
+          <el-row class="infoItem">
+            <el-col :span="8" :offset="1">预约说明</el-col>
+            <el-col :span="15">test</el-col>
+          </el-row>
+        </el-tab-pane>
+        <el-tab-pane label="预约人信息">
+          <el-row class="infoItem">
+            <el-col :span="8" :offset="1">申请人</el-col>
+            <el-col :span="15">test</el-col>
+          </el-row>
+          <el-row class="infoItem">
+            <el-col :span="8" :offset="1">身份证</el-col>
+            <el-col :span="15">test</el-col>
+          </el-row>
+          <el-row class="infoItem">
+            <el-col :span="8" :offset="1">联系方式</el-col>
+            <el-col :span="15">test</el-col>
+          </el-row>
+          <el-row class="infoItem">
+            <el-col :span="8" :offset="1">工作单位</el-col>
+            <el-col :span="15">test</el-col>
+          </el-row>
+        </el-tab-pane>
+      </el-tabs>
+      <div class="dialog-footer" slot="footer">
+        <el-button type="danger" @click="hideDialog('infoVisible')">关闭</el-button>
       </div>
     </el-dialog>
   </div>
@@ -135,7 +200,8 @@ export default {
         applyTime: '',
         attendTime: ''
       },
-      dealVisible: false
+      dealVisible: false,
+      infoVisible: false
     }
   },
   methods: {
@@ -164,5 +230,8 @@ export default {
 </script>
 
 <style>
-
+.infoItem {
+  margin: 1rem 0;
+  font-size: 14px;
+} 
 </style>
