@@ -144,10 +144,8 @@ export default {
   name: 'sc-systemconfig',
   data () {
     return {
-      radio: 3,
-      checked1: true,
-      checked2: true,
       value1: true,
+      // uploadURL: config.serverURI + config.uploadFilesAPI,
       options: [{
         value: 1,
         label: '左上角'
