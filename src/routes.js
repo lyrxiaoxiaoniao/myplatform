@@ -108,8 +108,6 @@ import SCTeamDetail from 'components/views/team/TeamDetail.vue'
 
 import SCNewcmsColumn from 'components/views/cms/newcms/Column.vue'
 import SCNewcmsJurisdiction from 'components/views/cms/newcms/Jurisdiction.vue'
-import SCNewcmsContent from 'components/views/cms/newcms/Content.vue'
-import SCNewcmsSpecial from 'components/views/cms/newcms/Special.vue'
 import SCSysConfig from 'components/views/cms/newcms/SystemConfig.vue'
 import SCInteraction from 'components/views/cms/newcms/Interaction.vue'
 import SCHotWords from 'components/views/cms/newcms/word/HootWords.vue'
@@ -715,16 +713,6 @@ const routes = [
           path: 'jurisdict',
           component: SCNewcmsJurisdiction,
           name: '栏目权限管理',
-          meta: {description: '列表'}
-        }, {
-          path: 'content',
-          component: SCNewcmsContent,
-          name: '内容管理',
-          meta: {description: '列表'}
-        }, {
-          path: 'special',
-          component: SCNewcmsSpecial,
-          name: '专题管理',
           meta: {description: '列表'}
         }, {
           path: 'sysconfig',

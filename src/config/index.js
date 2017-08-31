@@ -2,7 +2,7 @@
 export default {
   // serverURI: 'https://admin.gov.shencom.cn',
   // serverURI: 'https://tst.admin.gov.shencom.cn',
-  serverURI: 'http://192.168.1.27:8080',
+  serverURI: 'http://192.168.1.23:8080',
   basic: {
     key: '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArromvW2N\/rg0ADw9zpTL\ncGdO0wNazPcp+SepPrv1dicCamEVPfvPKlWMuYszt\/tE6lNjMT8pphmatPvgjAFy\nKfE1fEpcvHqRSZTUtlo\/fGJzh2nss6mxyDXlqi+sGitjwaGj6\/MXO6zLQcMQmZ\/U\nvliOhECvuLBsAqqLY8ik63Ah7ylWAap3jDD0OvgSy+glqebwfacy9WPYOy4K75n\/\nDQRw9FJBYFg1BtfbVn55Oji3AZ0E3lY96b0JhJGtFM6vjF0bhVDkmP\/XZINPcVZy\nxydRFvxjgA6we\/KmxXDD\/JdZmvGmrZ2XCAhGS3vuk3XJnkMquGYO4GAI13JIs8Z1\nrwIDAQAB\n-----END PUBLIC KEY-----',
     sendMail: '/sys/sendMsgVerify',
@@ -344,7 +344,21 @@ export default {
     add: '/ncms/subject/create',
     detail: '/ncms/subject/show',
     delete: '/ncms/subject/delete',
-    update: '/ncms/subject/update'
+    update: '/ncms/subject/update',
+    checkName: '/ncms/subject/check'
+  },
+  /* 内容管理 */
+  content: {
+    list: '/ncms/article/index',
+    add: '/ncms/article/create',
+    detail: '/ncms/article/show',
+    delete: '/ncms/article/delete', // 放入回收站
+    changeState: '/ncms/article/state',
+    move: '/ncms/article/move',
+    top: '/ncms/article/top',
+    subject: '/ncms/article/subject',
+    recycleList: '/ncms/article/recycle/index',
+    recycleDelete: '/ncms/article/recycle/delete'// 从回收站删除
   },
   fixedLayout: false,
   hideLogoOnMobile: false,
