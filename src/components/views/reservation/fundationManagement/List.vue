@@ -21,8 +21,8 @@
         </el-row>
       </div>
       <div slot="kobe-table-content" class="kobe-table">
-        <el-table :data="listData">
-          <el-table-column label="ID"></el-table-column>
+        <el-table :data="listData" border>
+          <el-table-column label="ID" prop="id"></el-table-column>
           <el-table-column label="基地名称"></el-table-column>
           <el-table-column label="基地电话"></el-table-column>
           <el-table-column label="基地照片">
@@ -45,11 +45,11 @@
               <el-switch on-text="开" off-text="关"></el-switch>
             </template>
           </el-table-column>
-          <el-table-column label="操作">
+          <el-table-column label="操作" width="200">
             <template scope="scope">
-              <el-button icon="edit"></el-button>
-              <el-button icon="delete2" @click="deleteItem(scope.row.id)"></el-button>
-              <el-button icon="setting"></el-button>
+              <el-button icon="edit" size="small"></el-button>
+              <el-button icon="setting" size="small" @click="configItem(scope.row.id)"></el-button>
+              <el-button icon="delete2" type="danger" @click="deleteItem(scope.row.id)" size="small"></el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -81,7 +81,7 @@
           <el-input v-model="advanceSearchForm.address"></el-input>
         </el-form-item>
       </el-form>
-      <div class="dialog-footer" slot="footer"  width="150">
+      <div class="dialog-footer" slot="footer" width="150">
         <el-button type="danger" @click="hideDialog('advanceVisible')">取消</el-button>
         <el-button type="primary" @click="advanceSearch">搜索</el-button>
       </div>
@@ -141,7 +141,7 @@
 export default {
   data() {
     return {
-      listData: null,
+      listData: [{ id: 0 }],
       response: {},
       selectValue: '',
       options: [{
@@ -193,6 +193,9 @@ export default {
       }).catch(() => {
         console.log('取消')
       })
+    },
+    configItem(id) {
+      this.$router.push({path: '/admin/reservation/config', query: {id}})
     }
   }
 }

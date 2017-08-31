@@ -134,6 +134,7 @@ import SCAwardsRecycle from 'components/views/awards/awardRecycle.vue'
 import NewLoginView from './components/newLogin.vue'
 
 import SCFundationList from 'components/views/reservation/fundationManagement/List.vue'
+import SCFundationConfigList from 'components/views/reservation/fundationManagement/Config.vue'
 import SCReservationList from 'components/views/reservation/reservationManagement/List.vue'
 import SCCommentList from 'components/views/reservation/commentManagement/List.vue'
 import SCBannedList from 'components/views/reservation/bannedListManagement/List.vue'
@@ -941,6 +942,11 @@ const routes = [
           path: 'banned',
           component: SCBannedList,
           name: '黑名单管理',
+          meta: {description: '列表'}
+        }, {
+          path: 'config',
+          component: SCFundationConfigList,
+          name: '基地配置',
           meta: {description: '列表'}
         }]
       },

@@ -77,6 +77,10 @@ body {
 .sc-reservation-foundation-list .infoForm .el-form-item .el-form-item__content .el-select{
   width: 100%;
 }
+.sc-reservation-reserve-list .infoForm .el-form-item .el-form-item__content .el-select{
+  width: 100%;
+}
+
 .sc-reservation-foundation-list .infoForm .el-form-item .el-form-item__label {
   width: 30%;
 }
