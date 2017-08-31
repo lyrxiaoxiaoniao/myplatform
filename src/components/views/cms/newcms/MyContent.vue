@@ -2,7 +2,7 @@
   <div class="GD-container">
     <el-row>
       <el-col :span="4">
-        <el-tree :data="data" :props="defaultProps"
+        <el-tree :data="treeData" :props="defaultProps"
               accordion
               :highlight-current="true"
               node-key="id"
@@ -13,30 +13,40 @@
         <kobe-table>
           <div slot="kobe-table-header" class="kobe-table-header">
             <el-row type="flex" justify="end">
-              <el-col :span="16">
-                <el-button type="primary" @click="addData">发布内容</el-button>
-                <el-button type="primary" @click="getList">刷新</el-button>
+              <el-col :span="15">
+                <el-button type="primary" @click="toAdd">发布内容</el-button>
+                <el-button type="primary" @click="refresh">刷新</el-button>
                 <el-dropdown @command="handleCommand">
                   <el-button type="primary">
                     批量<i class="el-icon-caret-bottom el-icon--right"></i>
                   </el-button>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item command="移动">移动</el-dropdown-item>
                     <el-dropdown-item command="删除">删除</el-dropdown-item>
-                    <el-dropdown-item command="复制">复制</el-dropdown-item>
+                    <el-dropdown-item command="移动">移动</el-dropdown-item>
+                    <!--<el-dropdown-item command="复制">复制</el-dropdown-item>-->
                     <el-dropdown-item command="审核">审核</el-dropdown-item>
-                    <el-dropdown-item command="通知">通知</el-dropdown-item>
+                    <el-dropdown-item command="退回">退回</el-dropdown-item>
                     <el-dropdown-item command="提交">提交</el-dropdown-item>
                     <el-dropdown-item command="推送至专题">推送至专题</el-dropdown-item>
                     <el-dropdown-item command="保存固顶">保存固顶</el-dropdown-item>
-                    <el-dropdown-item command="推送到微信">推送到微信</el-dropdown-item>
-                    <el-dropdown-item command="群发微信通知">群发微信通知</el-dropdown-item>
+                    <!--<el-dropdown-item command="推送到微信">推送到微信</el-dropdown-item>
+                    <el-dropdown-item command="群发微信通知">群发微信通知</el-dropdown-item>-->
                     <el-dropdown-item command="归档">归档</el-dropdown-item>
                     <el-dropdown-item command="出档">出档</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-col>
-              <el-col :span="7">
+              <el-col :span="3">
+                <el-select v-model="selectValue" placeholder="所有信息" style="width:105px;">
+                  <el-option
+                    v-for="item in selectCategoryOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-col>
+              <el-col :span="5">
                 <el-input v-model="form.keyword" placeholder="请输入内容名称" class="sc-table-header-select">
                   <el-button slot="append" class="sc-table-search-btn" @click="onSearch" icon="search"></el-button>
                 </el-input>
@@ -54,17 +64,19 @@
               :data="response.data"
               @selection-change="handleSelectionChange">
               <el-table-column type="selection" width="55"></el-table-column>
-              <el-table-column type="index" label="ID" width="50"></el-table-column>
-              <el-table-column prop="spacename" label="名称"></el-table-column>
-              <el-table-column prop="slug" label="分类" width="250"></el-table-column>
-              <el-table-column prop="count" label="点击量" width="100"></el-table-column>
-              <el-table-column prop="createdAt" label="展示量" width="150"></el-table-column>
+              <el-table-column prop="account_id" label="ID" width="50"></el-table-column>
+              <el-table-column prop="title" label="内容标题" width="250"></el-table-column>
+              <el-table-column prop="slug" label="类型"></el-table-column>
+              <el-table-column prop="created_at" label="创建时间" width="150"></el-table-column>
+              <el-table-column prop="click" label="点击" width="70"></el-table-column>
+              <el-table-column prop="author" label="作者" width="100"></el-table-column>
+              <el-table-column prop="status" label="状态" width="100"></el-table-column>
               <el-table-column 
                 width="180"
                 label="操作"
                 >
                 <template scope="scope">
-                  <el-button @click="toDetail(scope.row.id)" size="small" icon="edit"></el-button>
+                  <el-button @click="toEdit(scope.row.id)" size="small" icon="edit"></el-button>
                   <el-button size="small" icon="share"></el-button>
                   <el-button @click="deleteId(scope.row.id)" size="small" icon="delete2"></el-button>
                 </template>
@@ -100,28 +112,31 @@
                 </el-col>
                 <el-col :span="24">
                     <el-form-item label="栏目">
-                        <el-select v-model="ruleForm.column" placeholder="请选择活动区域" style="width:100%;">
-                            <el-option label="区域一" value="shanghai"></el-option>
-                            <el-option label="区域二" value="beijing"></el-option>
+                        <el-select v-model="value" placeholder="栏目选择" style="width:100%;" @change="getAdvancedSearchColumn">
+                          <el-option
+                            v-for="item in advancedCategoryOptions"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
                         </el-select>
                     </el-form-item>
                 </el-col>
                 <el-col :span="24">
                     <el-form-item label="发布时间">
                         <el-col :span="11">
-                            <el-date-picker type="datetime" placeholder="选择开始时间" v-model="ruleForm.date1" style="width: 100%;"></el-date-picker>
+                            <el-date-picker type="datetime" placeholder="选择开始时间" v-model="ruleForm.start_time" style="width: 100%;"></el-date-picker>
                         </el-col>
                         <el-col class="line" :span="2">~~</el-col>
                         <el-col :span="11">
-                            <el-date-picker type="datetime" placeholder="选择结束时间" v-model="ruleForm.date2" style="width: 100%;"></el-date-picker>
+                            <el-date-picker type="datetime" placeholder="选择结束时间" v-model="ruleForm.end_time" style="width: 100%;"></el-date-picker>
                         </el-col>
                     </el-form-item>
                 </el-col>
                 <el-col :span="24">
                     <el-form-item label="文章状态">
-                        <el-select v-model="ruleForm.status" placeholder="请选择活动区域" multiple style="width:100%;">
+                        <el-select v-model="ruleForm.states" placeholder="请选择活动区域" multiple style="width:100%;">
                             <el-option
-                                v-for="item in options"
+                                v-for="item in statesOptions"
                                 :key="item.value"
                                 :label="item.label"
                                 :value="item.value">
@@ -131,9 +146,9 @@
                 </el-col>
                 <el-col :span="24">
                     <el-form-item label="文章类型">
-                        <el-select v-model="ruleForm.type" placeholder="请选择活动区域" multiple style="width:100%;">
+                        <el-select v-model="ruleForm.types" placeholder="请选择活动区域" multiple style="width:100%;">
                             <el-option
-                                v-for="item in options"
+                                v-for="item in typesOptions"
                                 :key="item.value"
                                 :label="item.label"
                                 :value="item.value">
@@ -142,12 +157,10 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="24">
-                    <el-form-item label="推荐固顶">
-                        <el-checkbox-group v-model="ruleForm.special">
-                            <el-checkbox label="固顶文章" name="type"></el-checkbox>
-                            <el-checkbox label="推荐文章" name="type"></el-checkbox>
-                        </el-checkbox-group>
-                    </el-form-item>
+                  <el-form-item label="推荐固顶">
+                    <el-checkbox label="固顶文章" name="type" v-model="ruleForm.is_topped"></el-checkbox>
+                    <el-checkbox label="推荐文章" name="type" v-model="ruleForm.is_recommend"></el-checkbox>
+                  </el-form-item>
                 </el-col>
                 <el-col :span="24">
                     <el-form-item label="作者">
@@ -157,17 +170,20 @@
             </el-row> 
         </el-form>
         <div slot="footer" class="dialog-footer">
+          <el-row type="flex" justify="end">
             <el-button @click="closeDialog">取消</el-button>
             <el-button type="primary" @click="onAdvancedSearch">搜索</el-button>
+          </el-row>
         </div>
       </div>
       <div class="dialog-moveContent" v-show="dialogTitle === '移动'">
         <el-row type="flex" justify="center">
           <el-button type="text" style="color: #48576a; padding:5px 10px;">移动到</el-button>
           <el-cascader
-            :options="moveToOptions"
+            :options="treeData"
             v-model="moveToValue"
-            @change="handleChange">
+            @change="getMoveToTarget"
+            :props="moveDefaultProps">
           </el-cascader>
         </el-row>
         <div slot="footer" class="dialog-space-footer">
@@ -181,9 +197,9 @@
       <div class="dialog-push" v-show="dialogTitle === '推送至专题'">
         <el-row type="flex" justify="center">
           <el-button type="text" style="color: #48576a; padding:5px 10px;">推送到专题</el-button>
-          <el-select v-model="selectedSubject" placeholder="请选择活动区域" multiple style="width:100%;" @change="getTargetSubject">
+          <el-select v-model="selectedSubject" multiple placeholder="请选择活动区域" style="width:100%;" @change="getTargetSubjects">
             <el-option
-                v-for="item in getSubjectOptions"
+                v-for="item in subjectOptions"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value">
@@ -200,7 +216,7 @@
       <div class="dialog-fixed" v-show="dialogTitle === '保存固顶'">
         <el-row type="flex" justify="center">
           <el-button type="text" style="color: #48576a; padding:5px 10px;">固顶顺序</el-button>
-          <el-input-number v-model="order" :min="1" :max="10"></el-input-number>
+          <el-input-number v-model="topOrder" :min="1"></el-input-number>
         </el-row>
         <div slot="footer" class="dialog-space-footer">
           <el-row type="flex" justify="end">
@@ -231,7 +247,7 @@ export default {
       response: {
         data: null
       },
-      data: [],
+      treeData: [],
       cascaderData: [],
       form: {
         keyword: ''
@@ -251,16 +267,14 @@ export default {
       isEdit: false,
       ruleForm: {
         keyword: '',
-        column: '',
-        date1: '',
-        date2: '',
-        status: '',
-        type: '',
-        special: [],
+        start_time: '',
+        end_time: '',
+        states: [],
+        types: [],
         author: ''
       },
       uploadUrl: config.serverURI + config.uploadImgAPI,
-      option: [{
+      selectCategoryOptions: [{
         value: '1',
         label: '所有信息'
       }, {
@@ -270,49 +284,56 @@ export default {
         value: '3',
         label: '访问路径'
       }],
-      options: [{
-        value: '1',
-        label: '草稿'
-      }, {
-        value: '2',
+      statesOptions: [{
+        value: '0',
         label: '待审核'
       }, {
-        value: '3',
+        value: '1',
         label: '已审核'
       }, {
-        value: '4',
+        value: '2',
         label: '退回'
+      }, {
+        value: '3',
+        label: '已归档'
+      }, {
+        value: '4',
+        label: '出档'
+      }],
+      typesOptions: [{
+        value: '1',
+        label: '普通'
+      }, {
+        value: '2',
+        label: '图文'
       }],
       dynamicTags: [],
       ids: [],
-      classData: {
-        selectedOptions: [],
-        state: false,
-        num1: '',
-        region: '',
-        date1: '',
-        date2: '',
-        type: []
-      },
       multipleSelection: [],
       moveToOptions: [],
-      moveToValue: '',
-      selectedSubject: [],
-      order: 0
+      moveToValue: [],
+      selectedSubject: '',
+      subjectOptions: [],
+      topOrder: 0,
+      defaultProps: {
+        children: 'children',
+        label: 'display_name'
+      },
+      moveDefaultProps: {
+        children: 'children',
+        label: 'display_name',
+        value: 'id'
+      },
+      parentId: 0,
+      advancedCategoryOptions: [],
+      value: '',
+      selectValue: ''
     }
   },
   computed: {
     getDialogTip () {
       const index = this.dialogMini.indexOf(this.dialogTitle)
       return this.dialogTipArr[index]
-    },
-    getSubjectOptions () {
-      let arr = []
-      api.GET(config.subjectAPI)
-      .then(response => {
-        arr = response.data.data
-      })
-      return arr
     }
   },
   methods: {
@@ -337,17 +358,10 @@ export default {
     // 树形目录点击事件
     handleNodeClick (data, node) {
       this.parentId = data.id
-      this.getList({id: this.parentId})
+      this.getList({category_id: this.parentId})
     },
+    // 关键词搜索
     onSearch () {
-      const data = {
-        currentPage: 1,
-        pageSize: this.response.pageSize,
-        ...this.ruleForm
-      }
-      this.getList(data)
-    },
-    onAdvancedSearch () {
       const data = {
         currentPage: 1,
         pageSize: this.response.pageSize,
@@ -355,37 +369,82 @@ export default {
       }
       this.getList(data)
     },
-    getList (data = {}) {
-      api.GET(config.advPointListAPI, data)
+    // 高级搜索
+    onAdvancedSearch () {
+      var obj = this.ruleForm
+      obj.is_recommend = this.changeState(obj.is_recommend)
+      obj.is_topped = this.changeState(obj.is_topped)
+      const data = {
+        currentPage: 1,
+        pageSize: this.response.pageSize,
+        ...obj
+      }
+      api.POST(config.content.list, data)
       .then(response => {
-        this.response = this.transformDate(response.data.data)
+        this.response = this.transformData(response.data.data)
+        this.closeDialog()
+        this.ruleForm = {
+          keyword: '',
+          start_time: '',
+          end_time: '',
+          states: [],
+          types: [],
+          author: ''
+        }
       })
       .catch(error => {
         this.$message.error(error)
       })
     },
-    transformDate (res) {
+    getAdvancedCategoryOptions () {
+      api.GET(config.newcms.ncmsCategotyAPI)
+      .then(response => {
+        var newData = []
+        var res = response.data.data[0].children
+        res.forEach(value => {
+          var obj = {}
+          obj.label = value.display_name
+          obj.value = value.id
+          newData.push(obj)
+        })
+        newData.unshift({label: '全部分类', value: ''})
+        this.advancedCategoryOptions = newData
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    getAdvancedSearchColumn (value) {
+      this.ruleForm.category_id = value
+    },
+    getList (data = {}) {
+      api.POST(config.content.list, data)
+      .then(response => {
+        this.response = this.transformData(response.data.data)
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    transformData (res) {
       res.data.forEach(v => {
         if (v.created_at) {
           v.created_at = this.formatDate(v.created_at)
         }
         if (v.status === 0) {
-          v.status = '未审核'
+          v.status = '待审核'
         }
         if (v.status === 1) {
-          v.status = '审核通过'
+          v.status = '已审核'
         }
         if (v.status === 2) {
-          v.status = '审核不通过'
+          v.status = '退回'
         }
         if (v.status === 3) {
-          v.status = '申请认证中'
+          v.status = '已归档'
         }
         if (v.status === 4) {
-          v.status = '认证通过'
-        }
-        if (v.status === 5) {
-          v.status = '认证驳回'
+          v.status = '出档'
         }
       })
       return res
@@ -406,12 +465,12 @@ export default {
       return value
     },
     getTree () {
-      api.GET(config.categoryTreeAPI)
+      api.GET(config.newcms.ncmsCategotyAPI)
       .then(response => {
         var newData = response.data.data
         this.iteration(newData)
         newData.push({ id: 0, display_name: '根级分类', label: '根级分类', value: 0 })
-        this.data = newData
+        this.treeData = newData
         this.cascaderData = newData
         this.moveToOptions = newData
       })
@@ -432,13 +491,17 @@ export default {
         }
       }
     },
+    refresh () {
+      this.getTree()
+      this.getList()
+    },
     deleteId (deleteid) {
       if (deleteid) {
         this.ids = []
         this.ids.push(deleteid)
       }
       this.confirmSelection()
-      api.POST(config.deleteContentAPI, {ids: this.ids})
+      api.POST(config.content.delete, {ids: this.ids})
         .then(response => {
           if (response.status !== 200) {
             this.error = response.statusText
@@ -472,7 +535,7 @@ export default {
     },
     reviewContent () {
       this.confirmSelection()
-      api.POST(config.reviewContentAPI, {ids: this.ids})
+      api.POST(config.content.changeState, {ids: this.ids, status: 1})
         .then(response => {
           if (response.status !== 200) {
             this.error = response.statusText
@@ -489,7 +552,7 @@ export default {
     },
     returnContent () {
       this.confirmSelection()
-      api.POST(config.returnContentAPI, {ids: this.ids})
+      api.POST(config.content.changeState, {ids: this.ids, status: 2})
         .then(response => {
           if (response.status !== 200) {
             this.error = response.statusText
@@ -506,7 +569,7 @@ export default {
     },
     submitContent () {
       this.confirmSelection()
-      api.POST(config.submitContentAPI, {ids: this.ids})
+      api.POST(config.content.changeState, {ids: this.ids, status: 0})
         .then(response => {
           if (response.status !== 200) {
             this.error = response.statusText
@@ -523,7 +586,7 @@ export default {
     },
     archiveContent () {
       this.confirmSelection()
-      api.POST(config.archiveContentAPI, {ids: this.ids})
+      api.POST(config.content.changeState, {ids: this.ids, status: 3})
         .then(response => {
           if (response.status !== 200) {
             this.error = response.statusText
@@ -540,7 +603,7 @@ export default {
     },
     removeFiles () {
       this.confirmSelection()
-      api.POST(config.removeFilesAPI, {ids: this.ids})
+      api.POST(config.content.changeState, {ids: this.ids, status: 4})
         .then(response => {
           if (response.status !== 200) {
             this.error = response.statusText
@@ -557,7 +620,7 @@ export default {
     },
     moveContent () {
       this.confirmSelection()
-      api.POST(config.moveContentAPI, {ids: this.ids})
+      api.POST(config.content.move, {articles: this.ids, category_id: this.moveToValue[this.moveToValue.length - 1]})
         .then(response => {
           if (response.status !== 200) {
             this.error = response.statusText
@@ -566,6 +629,7 @@ export default {
           if (response.data.errcode === '0000') {
             this.onSuccess('移动成功')
             this.getList()
+            this.closeDialog()
           }
         })
         .catch(error => {
@@ -574,7 +638,7 @@ export default {
     },
     pushContent () {
       this.confirmSelection()
-      api.POST(config.pushContentAPI, {ids: this.ids})
+      api.POST(config.content.subject, {articles: this.ids, subjects: this.selectedSubject})
         .then(response => {
           if (response.status !== 200) {
             this.error = response.statusText
@@ -583,6 +647,7 @@ export default {
           if (response.data.errcode === '0000') {
             this.onSuccess('推送成功')
             this.getList()
+            this.closeDialog()
           }
         })
         .catch(error => {
@@ -591,7 +656,7 @@ export default {
     },
     fixContent () {
       this.confirmSelection()
-      api.POST(config.fixContentAPI, {ids: this.ids})
+      api.POST(config.content.top, {articles: this.ids, is_topped: 1, sort: this.topOrder})
         .then(response => {
           if (response.status !== 200) {
             this.error = response.statusText
@@ -600,12 +665,14 @@ export default {
           if (response.data.errcode === '0000') {
             this.onSuccess('固顶成功')
             this.getList()
+            this.closeDialog()
           }
         })
         .catch(error => {
           this.$message.error(error)
         })
     },
+    // 对话框确定按钮绑定的事件，根据对话标题调用不同的函数
     confirmOperation () {
       switch (this.dialogTitle) {
         case '删除':
@@ -649,13 +716,7 @@ export default {
       })
       */
     },
-    handleSelectionChange (val) {
-      this.multipleSelection = val
-      this.ids = []
-      this.multipleSelection.forEach(v => {
-        this.ids.push(v.id)
-      })
-    },
+    // 确认是否已勾选
     confirmSelection () {
       if (this.ids.length === 0) {
         this.$confirm('请进行正确操作，请优先勾选？', '错误', {
@@ -669,6 +730,13 @@ export default {
         })
         return
       }
+    },
+    handleSelectionChange (val) {
+      this.multipleSelection = val
+      this.ids = []
+      this.multipleSelection.forEach(v => {
+        this.ids.push(v.id)
+      })
     },
     handleCommand(command) {
       this.openDialog(command)
@@ -700,23 +768,45 @@ export default {
       }
       */
     },
-    handleChange (value) {
+    // 获取移动路径
+    getMoveToTarget (value) {
       this.moveToValue = value
+    },
+    getSubjectOptions () {
+      var arr = []
+      api.GET(config.subject.list)
+      .then(response => {
+        arr = response.data.data.data
+        this.subjectOptions = arr.map(value => {
+          var obj = {}
+          obj.value = value.id
+          obj.label = value.display_name
+          return obj
+        })
+      })
     },
     openDialog (value) {
       this.dialogFormVisible = true
       this.dialogTitle = value
+      if (this.dialogTitle === '推送至专题') {
+        this.getSubjectOptions()
+      }
     },
     closeDialog () {
       this.dialogFormVisible = false
       this.dialogTitle = ''
     },
-    toDetail (id) {
+    toEdit (id) {
       this.$router.push({
-        path: '/admin/team/detail',
+        path: '/admin/newcms/content/edit',
         query: {
           id: id
         }
+      })
+    },
+    toAdd () {
+      this.$router.push({
+        path: '/admin/newcms/content/add'
       })
     },
     onSuccess (string) {
@@ -732,63 +822,16 @@ export default {
       }
       this.getList(data)
     },
-    submitForm (formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          var obj = {}
-          var sendURL
-          obj.typeId = Number(this.ruleForm.typename)
-          obj.description = this.ruleForm.description
-          obj.slug = this.ruleForm.slug
-          obj.spacename = this.ruleForm.spacename
-          obj.tagList = this.dynamicTags.join(',')
-          obj.state = this.changeState(this.ruleForm.state)
-          if (this.isEdit) {
-            obj.id = this.id
-            sendURL = config.editAdvePointAPI
-          } else {
-            sendURL = config.addAdvPointAPI
-          }
-          api.POST(sendURL, obj)
-            .then(response => {
-              if (response.status !== 200) {
-                this.error = response.statusText
-                return
-              }
-              if (response.data.errcode === '0000') {
-                this.$notify({
-                  title: '成功',
-                  message: '操作成功！！！',
-                  type: 'success'
-                })
-                this.getList()
-                this.dialogFormVisible = false
-              }
-            })
-        } else {
-          return false
-        }
-      })
-
-      this.ruleForm = {
-        description: '',
-        slug: '',
-        spacename: '',
-        typename: null,
-        value: '',
-        tagList: [],
-        state: true
+    changeState (fieldName) {
+      switch (fieldName) {
+        case false:
+          return 0
+        case true:
+          return 1
       }
     },
-    changeState (state) {
-      if (state) {
-        return 1
-      } else {
-        return 0
-      }
-    },
-    getTargetSubject (value) {
-      this.selectedSubject = value
+    getTargetSubjects (value) {
+      // this.selectedSubject = value
     }
   },
   components: {
@@ -796,6 +839,7 @@ export default {
   mounted () {
     this.getTree()
     this.getList()
+    this.getAdvancedCategoryOptions()
   }
 }
 </script>

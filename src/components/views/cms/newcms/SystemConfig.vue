@@ -2,7 +2,6 @@
   <kobe-table>
     <div slot="kobe-table-header" class="kobe-table-header">  
     </div>
-
     <div slot="kobe-table-content" class="kobe-table">
       <div class="sc-systemconfig-wrap" >
         <div class="sc-siteconfig">
@@ -88,7 +87,7 @@
                       <el-col :span="2"><el-form-item label="文字位置:"></el-form-item></el-col>
                       <el-col :span="6">
                         <el-form-item label="字体位置">
-                          <el-select v-model="value2" placeholder="请选择">
+                          <el-select v-model="value2" placeholder="请选择" style="width:100%;">
                             <el-option
                             v-for="item in options"
                             :key="item.value"

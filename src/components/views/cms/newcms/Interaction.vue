@@ -4,12 +4,21 @@
         <div slot="kobe-table-header" class="kobe-table-header">
             <el-row type="flex" justify="end">
             <el-col :span="16">
-                <el-button type="primary" @click="openDialog(e, 'edit')">刷新</el-button>
+                <el-button type="primary" @click="reFresh">刷新</el-button>
+                <el-dropdown @command="handleCommand">
+                  <el-button type="primary">
+                    更多操作<i class="el-icon-caret-bottom el-icon--right"></i>
+                  </el-button>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item command="删除">删除</el-dropdown-item>
+                    <!-- <el-dropdown-item command="移动">移动</el-dropdown-item> -->
+                  </el-dropdown-menu>
+                </el-dropdown>
             </el-col>
-            <el-select v-model="operation" placeholder="所有" style="width:150px;" @change="open3">
+            <!-- <el-select v-model="operation" placeholder="所有" style="width:150px;">
                 <el-option label="所有" value="所有"></el-option>
                 <el-option label="词汇名称" value="词汇名称"></el-option>
-            </el-select>
+            </el-select> -->
             <el-col :span="8">
                 <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
                 <el-button slot="append" @click="onSearch" icon="search"></el-button>
@@ -28,17 +37,21 @@
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column type="index" label="ID" width="50"></el-table-column>
-            <el-table-column prop="name" label="文档标题"></el-table-column>
-            <el-table-column prop="method" label="评论内容"></el-table-column>
-            <el-table-column prop="action" label="用户/IP地址"></el-table-column>
-            <el-table-column prop="accept_charset" label="评论时间"></el-table-column> 
+            <el-table-column prop="article.title" label="文档标题"></el-table-column>
+            <el-table-column prop="content" label="评论内容"></el-table-column>
+            <el-table-column prop="created_on" label="用户/IP地址"></el-table-column>
+            <el-table-column prop="created_at" label="评论时间">
+              <template scope="scope">
+                {{scope.row.created_at | toDateTime}}
+              </template>
+            </el-table-column> 
             <el-table-column label="审核通过" width="120">
               <template scope="scope">
                 <el-switch
-                  v-model="scope.row.state"
+                  v-model="scope.row.status"
                   on-text="开"
                   off-text="关"
-                  @change="toswitch(scope.row.state,scope.row.id)">
+                  @change="toswitch(scope.row.status,scope.row.id)">
                 </el-switch>
               </template>
             </el-table-column>
@@ -70,48 +83,51 @@
         </div>
     </kobe-table>
     <el-dialog title="评论修改" v-model="showDialog" size="tiny">
-         <el-form :model="selected" label-width="80px" :rules="rules" ref="selected">
+         <el-form :model="selected" label-width="80px" ref="selected">
             <el-row>
                 <el-col :span="24">
                     <el-form-item label="文档">
-                        <el-input v-model="selected.explain"></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item label="审核通过" prop="accept_charset">
-                        <el-switch on-text="开" off-text="关" v-model="selected.accept_charset" style="margin-left:25px;"></el-switch>
+                        <el-input v-model="selected.article.title"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
                     <el-form-item label="来源">
-                        <el-input v-model="selected.explain"></el-input>
+                        <el-input v-model="selected.created_on"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
+                    <el-form-item label="审核">
+                        <el-switch
+                          v-model="selected.status"
+                          on-text="开"
+                          off-text="关">
+                        </el-switch>
+                    </el-form-item>
+                </el-col>
+                <!-- <el-col :span="12">
                     <el-form-item label="会员">
                         <el-input v-model="selected.explain"></el-input>
                     </el-form-item>
-                </el-col>
-                <el-col :span="12">
+                </el-col> -->
+                <el-col :span="24">
                     <el-form-item label="时间">
-                        <el-input v-model="selected.explain"></el-input>
+                        <el-input v-model="selected.created_at"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="24">
                     <el-form-item label="评论">
-                        <el-input type="textarea" v-model="selected.explain"></el-input>
+                        <el-input type="textarea" v-model="selected.content"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="24">
                     <el-form-item label="回复">
-                        <el-input type="textarea" v-model="selected.explain"></el-input>
+                        <el-input type="textarea" v-model="selected.des"></el-input>
                     </el-form-item>
                 </el-col>
             </el-row> 
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button @click="closeDialog">取消</el-button>
-            <el-button @click="createType('selected')" type="primary" v-if="dialogType === 'add'">确定</el-button>
             <el-button @click="editType('selected')" type="primary" v-if="dialogType === 'edit'">确定</el-button>
         </div>
     </el-dialog>
@@ -122,19 +138,6 @@ import api from 'src/api'
 import config from 'src/config'
 export default {
   data () {
-    var checkName = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error('不能为空'))
-      }
-      api.GET(config.checknameFormAPI, {name: value})
-      .then(response => {
-        if (response.data.errcode === '5000') {
-          return callback(new Error('有重名，请重新输入！'))
-        } else {
-          callback()
-        }
-      })
-    }
     return {
       operation: '',
       response: {
@@ -150,26 +153,21 @@ export default {
         keyword: ''
       },
       selected: {
-        method: '',
-        name: '',
-        action: '',
-        accept_charset: '',
-        enctype: ''
+        status: null,
+        content: '',
+        article: {
+          title: '无'
+        }
       },
-      rules: {
-        name: [
-          { validator: checkName, trigger: 'blur' }
-        ],
-        method: [
-          { required: true, message: '不能为空，示例:post/get', trigger: 'blur' }
-        ],
-        action: [
-          { required: true, message: '不能为空，示例:https://www.example.com', trigger: 'blur' }
-        ]
-      }
+      ids: []
     }
   },
   methods: {
+    handleCommand (command) {
+      if (command === '删除') {
+        this.deleteType()
+      }
+    },
     toggleSelection (rows) {
       if (rows) {
         rows.forEach(row => {
@@ -181,16 +179,47 @@ export default {
     },
     handleSelectionChange (val) {
       this.multipleSelection = val
+      this.ids = []
+      this.multipleSelection.forEach(v => {
+        this.ids.push(v.id)
+      })
+    },
+    /* 切换状态 */
+    toswitch (active, id) {
+      api.POST(config.newcms.auditNcmsCommentAPI, {id: id, status: Number(active)})
+      .then(response => {
+        this.getList()
+        this.onSuccess('状态操作成功！')
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     },
     // 删除表单
     deleteType (id) {
-      this.$confirm('是否确认删除该表单', '提示', {
+      if (id) {
+        this.ids = []
+        this.ids.push(id)
+      }
+      if (this.ids.length === 0) {
+        this.$confirm('请进行正确操作，请先勾选评论信息？', '错误', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'error'
+        }).then(() => {
+          return
+        }).catch(() => {
+          return
+        })
+        return
+      }
+      this.$confirm('此操作将删除选定的评论信息，删除后无法恢复。是否继续删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.POST(config.removeActivityFormAPI, {
-          id: id
+        api.POST(config.newcms.removeNcmsCommentAPI, {
+          ids: this.ids
         })
         .then(response => {
           if (response.data.errcode === '0000') {
@@ -216,38 +245,20 @@ export default {
     closeDialog () {
       this.showDialog = false
     },
-    // 新增form确认
-    createType (formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-        //   api.POST(config.addActivityFormAPI, this.selected)
-        //   .then(response => {
-        //     if (response.data.errcode === '0000') {
-        //       this.onSuccess('添加成功')
-        //       this.showDialog = false
-        //     }
-        //   })
-        //   .catch(error => {
-        //     this.$message.error(error)
-        //   })
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
-    },
     // 修改form确认
     editType (formName) {
-    //   api.POST(config.editActivityFormAPI, this.selected)
-    //   .then(response => {
-    //     if (response.data.errcode === '0000') {
-    //       this.onSuccess('修改成功')
-    //       this.showDialog = false
-    //     }
-    //   })
-    //   .catch(error => {
-    //     this.$message.error(error)
-    //   })
+      this.selected.status = Number(this.selected.status)
+      // console.log(this.selected)
+      api.POST(config.newcms.editNcmsCommentAPI, this.selected)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.onSuccess('修改成功')
+          this.showDialog = false
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     },
     onSuccess (string) {
       this.$notify({
@@ -288,14 +299,24 @@ export default {
       }
       this.getList(data)
     },
+    getNumber (res) {
+      res.data.forEach(v => {
+        v.status = Boolean(v.status)
+      })
+      return res
+    },
     getList (data = {}) {
-    //   api.GET(config.showActivityFormAPI, data)
-    //   .then(response => {
-    //     this.response = response.data.data
-    //   })
-    //   .catch(error => {
-    //     this.$message.error(error)
-    //   })
+      api.GET(config.newcms.ncmsCommentListAPI, data)
+      .then(response => {
+        this.response = this.getNumber(response.data.data)
+        console.log(this.response)
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    reFresh () {
+      this.getList()
     }
   },
   mounted () {

@@ -110,11 +110,15 @@ import SCNewcmsColumn from 'components/views/cms/newcms/Column.vue'
 import SCNewcmsJurisdiction from 'components/views/cms/newcms/Jurisdiction.vue'
 import SCNewcmsContent from 'components/views/cms/newcms/Content.vue'
 import SCNewcmsContentAdd from 'components/views/cms/newcms/ContentAdd.vue'
-import SCNewcmsSpecial from 'components/views/cms/newcms/Special.vue'
+import SCNewcmsContentRecycle from 'components/views/cms/newcms/ContentRecycle.vue'
+import SCNewcmsContentEdit from 'components/views/cms/newcms/ContentEdit.vue'
+// import SCNewcmsSpecial from 'components/views/cms/newcms/Special.vue'
 import SCSysConfig from 'components/views/cms/newcms/SystemConfig.vue'
 import SCInteraction from 'components/views/cms/newcms/Interaction.vue'
 import SCHotWords from 'components/views/cms/newcms/word/HootWords.vue'
 import SCWordSource from 'components/views/cms/newcms/word/Source.vue'
+import SCWordLabel from 'components/views/cms/newcms/word/Label.vue'
+import SCWordSensitive from 'components/views/cms/newcms/word/Sensitive.vue'
 
 import SCSubjectView from 'components/views/cms/newcms/Subject.vue'
 import SCMyContentView from 'components/views/cms/newcms/MyContent.vue'
@@ -730,19 +734,24 @@ const routes = [
           children: [{
             path: 'index',
             component: SCNewcmsContent,
-            name: '内容新增',
+            name: 'CMS内容管理',
             meta: {description: '列表'}
           }, {
             path: 'add',
             component: SCNewcmsContentAdd,
             name: '内容新增',
             meta: {description: '列表'}
+          }, {
+            path: 'edit',
+            component: SCNewcmsContentEdit,
+            name: '内容修改',
+            meta: {description: '列表'}
+          }, {
+            path: 'recycle',
+            component: SCNewcmsContentRecycle,
+            name: '内容回收站',
+            meta: {description: '列表'}
           }]
-        }, {
-          path: 'special',
-          component: SCNewcmsSpecial,
-          name: '专题管理',
-          meta: {description: '列表'}
         }, {
           path: 'sysconfig',
           component: SCSysConfig,
@@ -768,6 +777,16 @@ const routes = [
             path: 'source',
             component: SCWordSource,
             name: '来源管理',
+            meta: {description: '列表'}
+          }, {
+            path: 'label',
+            component: SCWordLabel,
+            name: 'CMS标签管理',
+            meta: {description: '列表'}
+          }, {
+            path: 'sensitive',
+            component: SCWordSensitive,
+            name: '敏感词管理',
             meta: {description: '列表'}
           }]
         }, {
@@ -930,6 +949,14 @@ const routes = [
           name: '基地配置',
           meta: {description: '列表'}
         }]
+      },
+      {
+        path: 'recycle',
+        component: DashMainView,
+        redirect: '/admin/recycle/index',
+        name: '罗湖城管垃圾分类',
+        meta: {description: '列表'},
+        children: []
       }
     ]
   }, {
