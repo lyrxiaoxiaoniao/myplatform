@@ -138,7 +138,34 @@ export default {
     editNcmsCategotyAPI: '/ncms/category/update',
     showNcmsCategotyAPI: '/ncms/category/show',
     activeNcmsCategotyAPI: '/ncms/category/active',
-    addNcmsContentAPI: '/ncms/article/create'
+    addNcmsContentAPI: '/ncms/article/create',
+    /* 评论管理 */
+    ncmsCommentListAPI: '/ncms/comment/index',
+    showNcmsCommentAPI: '/ncms/comment/show',
+    removeNcmsCommentAPI: '/ncms/comment/delete',
+    editNcmsCommentAPI: '/ncms/comment/update',
+    auditNcmsCommentAPI: '/ncms/comment/audit',
+    addNcmsCommentAPI: '/ncms/comment/create',
+    /* 敏感词管理 */
+    ncmsSensitiveListAPI: '/ncms/sensitive/index',
+    showNcmsSensitiveAPI: '/ncms/sensitive/show',
+    removeNcmsSensitiveAPI: '/ncms/sensitive/delete',
+    addNcmsSensitiveAPI: '/ncms/sensitive/create',
+    editNcmsSensitiveAPI: '/ncms/sensitive/update',
+    checkNcmsSensitiveAPI: '/ncms/sensitive/check',
+    activeNcmsSensitiveAPI: '/ncms/sensitive/active',
+    /* 标签管理 */
+    ncmstagListAPI: '/ncms/tag/index',
+    showNcmstagAPI: '/ncms/tag/show',
+    removeNcmstagAPI: '/ncms/tag/delete',
+    addNcmstagAPI: '/ncms/tag/create',
+    editNcmstagAPI: '/ncms/tag/update',
+    checkNcmstagAPI: '/ncms/tag/check',
+    activeNcmstagAPI: '/ncms/tag/active',
+    /* 文章内容回收站 */
+    ncmRecycleListAPI: '/ncms/recycle/index',
+    replyNcmRecycleAPI: '/ncms/recycle/reply',
+    removeNcmRecycleAPI: '/ncms/recycle/delete' // 彻底删除
   },
   menuAPI: '/admin/menu/show_left',
   deleteMenuAPI: '/admin/menu/delete',

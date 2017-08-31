@@ -152,9 +152,6 @@ export default {
         if (v.created_at) {
           v.created_at = this.formatDate(v.created_at)
         }
-        // if (v.updated_at) {
-        //   v.updated_at = this.formatDate(v.updated_at)
-        // }
         if (v.active === 1) {
           v.active = true
         }
