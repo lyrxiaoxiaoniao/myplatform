@@ -108,7 +108,6 @@ import SCTeamDetail from 'components/views/team/TeamDetail.vue'
 
 import SCNewcmsColumn from 'components/views/cms/newcms/Column.vue'
 import SCNewcmsJurisdiction from 'components/views/cms/newcms/Jurisdiction.vue'
-import SCNewcmsContent from 'components/views/cms/newcms/Content.vue'
 import SCNewcmsContentAdd from 'components/views/cms/newcms/ContentAdd.vue'
 import SCNewcmsContentRecycle from 'components/views/cms/newcms/ContentRecycle.vue'
 import SCNewcmsContentEdit from 'components/views/cms/newcms/ContentEdit.vue'
@@ -732,7 +731,7 @@ const routes = [
           meta: {description: '列表'},
           children: [{
             path: 'index',
-            component: SCNewcmsContent,
+            component: SCMyContentView,
             name: 'CMS内容管理',
             meta: {description: '列表'}
           }, {
@@ -792,11 +791,6 @@ const routes = [
           path: 'subject',
           component: SCSubjectView,
           name: '专题管理',
-          meta: {description: '列表'}
-        }, {
-          path: 'mycontent',
-          component: SCMyContentView,
-          name: '内容管理',
           meta: {description: '列表'}
         }]
       }, {
@@ -950,7 +944,12 @@ const routes = [
         redirect: '/admin/recycle/index',
         name: '罗湖城管垃圾分类',
         meta: {description: '列表'},
-        children:[]
+        children: [{
+          path: 'index',
+          component: SCAwardsClass,
+          name: '垃圾管理',
+          meta: {description: '列表'}
+        }]
       }
     ]
   }, {
