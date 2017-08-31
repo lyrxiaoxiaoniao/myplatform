@@ -44,8 +44,9 @@ export default {
       labelPosition: 'right',
       formLabelAlign: {
         name: '',
-        region: '',
-        type: ''
+        region111: '',
+        type: '',
+        modify: ''
       }
     }
   }
