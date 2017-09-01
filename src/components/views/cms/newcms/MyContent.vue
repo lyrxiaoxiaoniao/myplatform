@@ -224,6 +224,7 @@
           </el-row>
         </div>
       </div>
+      <!--
       <div class="dialog-mini" v-show="dialogTitle === '删除'||dialogTitle === '复制'||dialogTitle === '审核'||dialogTitle === '退回'||dialogTitle === '提交'||dialogTitle === '归档'||dialogTitle === '出档'">
         <p v-for="item in getDialogTip">{{item}}</p>
         <el-row type="flex" justify="end">
@@ -231,6 +232,7 @@
           <el-button type="primary" @click="confirmOperation">确定</el-button>
         </el-row>
       </div>
+      -->
     </el-dialog>
   </div>
 </template>
@@ -497,7 +499,6 @@ export default {
         this.ids = []
         this.ids.push(deleteid)
       }
-      this.confirmSelection()
       api.POST(config.content.delete, {ids: this.ids})
         .then(response => {
           if (response.status !== 200) {
@@ -514,7 +515,6 @@ export default {
         })
     },
     copyContent () {
-      this.confirmSelection()
       api.POST(config.copyContentAPI, {ids: this.ids})
         .then(response => {
           if (response.status !== 200) {
@@ -531,7 +531,6 @@ export default {
         })
     },
     reviewContent () {
-      this.confirmSelection()
       api.POST(config.content.changeState, {ids: this.ids, status: 1})
         .then(response => {
           if (response.status !== 200) {
@@ -548,7 +547,6 @@ export default {
         })
     },
     returnContent () {
-      this.confirmSelection()
       api.POST(config.content.changeState, {ids: this.ids, status: 2})
         .then(response => {
           if (response.status !== 200) {
@@ -565,7 +563,6 @@ export default {
         })
     },
     submitContent () {
-      this.confirmSelection()
       api.POST(config.content.changeState, {ids: this.ids, status: 0})
         .then(response => {
           if (response.status !== 200) {
@@ -582,7 +579,6 @@ export default {
         })
     },
     archiveContent () {
-      this.confirmSelection()
       api.POST(config.content.changeState, {ids: this.ids, status: 3})
         .then(response => {
           if (response.status !== 200) {
@@ -599,7 +595,6 @@ export default {
         })
     },
     removeFiles () {
-      this.confirmSelection()
       api.POST(config.content.changeState, {ids: this.ids, status: 4})
         .then(response => {
           if (response.status !== 200) {
@@ -616,7 +611,6 @@ export default {
         })
     },
     moveContent () {
-      this.confirmSelection()
       api.POST(config.content.move, {articles: this.ids, category_id: this.moveToValue[this.moveToValue.length - 1]})
         .then(response => {
           if (response.status !== 200) {
@@ -634,7 +628,6 @@ export default {
         })
     },
     pushContent () {
-      this.confirmSelection()
       api.POST(config.content.subject, {articles: this.ids, subjects: this.selectedSubject})
         .then(response => {
           if (response.status !== 200) {
@@ -652,7 +645,6 @@ export default {
         })
     },
     fixContent () {
-      this.confirmSelection()
       api.POST(config.content.top, {articles: this.ids, is_topped: 1, sort: this.topOrder})
         .then(response => {
           if (response.status !== 200) {
@@ -670,6 +662,7 @@ export default {
         })
     },
     // 对话框确定按钮绑定的事件，根据对话标题调用不同的函数
+    /*
     confirmOperation () {
       switch (this.dialogTitle) {
         case '删除':
@@ -695,28 +688,12 @@ export default {
           break
       }
       this.closeDialog()
-      /*
-      this.$confirm(tipContent, tipTitle, {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(({ value }) => {
-        this.$notify({
-          type: 'success',
-          message: '操作成功'
-        })
-      }).catch(() => {
-        this.$notify({
-          type: 'info',
-          message: '取消操作'
-        })
-      })
-      */
     },
+    */
     // 确认是否已勾选
     confirmSelection () {
       if (this.ids.length === 0) {
-        this.$confirm('请进行正确操作，请优先勾选？', '错误', {
+        this.$confirm('请进行正确操作，请优先勾选表单', '错误', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'error'
@@ -725,7 +702,9 @@ export default {
         }).catch(() => {
           return
         })
-        return
+        return false
+      } else {
+        return true
       }
     },
     handleSelectionChange (val) {
@@ -736,34 +715,76 @@ export default {
       })
     },
     handleCommand(command) {
-      this.openDialog(command)
-      /*
+      if (!this.confirmSelection()) {
+        return
+      }
       switch (command) {
         case '删除':
-          this.confirmOperation(this.tipArr[0][0], this.tipArr[0][1])
+          this.$confirm('此操作将删除选定的文章。是否继续删除？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.deleteId()
+          })
           break
         case '复制':
-          this.confirmOperation(this.tipArr[1][0], this.tipArr[1][1])
+          this.$confirm('此操作将复制选定的文章。是否继续复制？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.copyContent()
+          })
           break
         case '审核':
-          this.confirmOperation(this.tipArr[2][0], this.tipArr[2][1])
+          this.$confirm('此操作将通过文章审核，文章将能正常发布和查看。是否继续？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.reviewContent()
+          })
           break
         case '退回':
-          this.confirmOperation(this.tipArr[3][0], this.tipArr[3][1])
+          this.$confirm('此操作将不同意通过文章审核，文章将会被退回。是否继续？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.returnContent()
+          })
           break
         case '提交':
-          this.confirmOperation(this.tipArr[4][0], this.tipArr[4][1])
+          this.$confirm('此操作把文章提交给有权限的操作员进行审核。是否继续？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.submitContent()
+          })
           break
         case '归档':
-          this.confirmOperation(this.tipArr[5][0], this.tipArr[5][1])
+          this.$confirm('此操作将归档选定文章，归档后不能进行修改和调整。是否继续归档？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.archiveContent()
+          })
           break
         case '出档':
-          this.confirmOperation(this.tipArr[6][0], this.tipArr[6][1])
+          this.$confirm('此操作将把文章从归档状态移除。是否继续出档？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.removeFiles()
+          })
           break
         default:
           this.openDialog(command)
       }
-      */
     },
     // 获取移动路径
     getMoveToTarget (value) {

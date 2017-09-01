@@ -157,7 +157,9 @@ export default {
       searchForm: {
         keyword: ''
       },
-      response: null,
+      response: {
+        data: null
+      },
       error: null,
       dialogType: '',
       dialogTitle: '',
