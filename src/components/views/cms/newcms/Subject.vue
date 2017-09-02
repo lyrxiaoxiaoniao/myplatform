@@ -140,16 +140,17 @@ export default {
   name: 'sc-subject-table',
   data () {
     var validateSubjectName = (rule, value, callback) => {
+      callback()
+      /*
       api.GET(config.subject.checkName, {display_name: value})
         .then(response => {
-          if (response.status !== 200) {
-            this.error = response.statusText
-            return
-          }
           if (response.data.errcode === '60000') {
             callback(new Error('专题重名'))
+          }else {
+            callback()
           }
         })
+      */
     }
     return {
       selectedCatlg: '',
@@ -399,8 +400,10 @@ export default {
       })
     },
     submitForm (formName) {
+      console.log('提交表单')
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          console.log('valid为真')
           this.ruleForm.active = 0
           switch (this.ruleForm.is_recommend) {
             case false:
@@ -412,7 +415,6 @@ export default {
           }
           // this.ruleForm.active = Number(this.ruleForm.active)
           var obj = this.ruleForm
-          console.log(obj)
           api.POST(config.subject.add, obj)
             .then(response => {
               if (response.status !== 200) {
@@ -434,6 +436,7 @@ export default {
               }
             })
         } else {
+          console.log('valid为假')
           return false
         }
       })
