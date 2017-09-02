@@ -5,5 +5,8 @@
 export default {
   recovery: {
     index: '/award/category/index'
+  },
+  restaurants: {
+  	index: '/restaurants/index'
   }
 }

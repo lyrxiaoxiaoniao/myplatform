@@ -66,7 +66,7 @@
               <el-table-column type="selection" width="55"></el-table-column>
               <el-table-column prop="id" label="ID" width="80"></el-table-column>
               <el-table-column prop="title" label="内容标题" width="250"></el-table-column>
-              <el-table-column prop="slug" label="类型"></el-table-column>
+              <el-table-column prop="type" label="类型"></el-table-column>
               <el-table-column prop="created_at" label="创建时间" width="150"></el-table-column>
               <el-table-column prop="click" label="点击" width="70"></el-table-column>
               <el-table-column prop="author" label="作者" width="100"></el-table-column>
@@ -77,7 +77,7 @@
                 >
                 <template scope="scope">
                   <el-button @click="toEdit(scope.row.id)" size="small" icon="edit"></el-button>
-                  <el-button @click="deleteId(scope.row.id)" size="small" icon="delete2"></el-button>
+                  <el-button @click="toDelete(scope.row.id)" size="small" icon="delete2"></el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -276,14 +276,14 @@ export default {
       },
       uploadUrl: config.serverURI + config.uploadImgAPI,
       selectCategoryOptions: [{
-        value: '1',
+        value: 1,
         label: '所有信息'
       }, {
-        value: '2',
-        label: '栏目名称'
+        value: 2,
+        label: '内容标题'
       }, {
-        value: '3',
-        label: '访问路径'
+        value: 3,
+        label: '作者'
       }],
       statesOptions: [{
         value: '0',
@@ -360,13 +360,27 @@ export default {
       this.parentId = data.id
       this.getList({category_id: this.parentId})
     },
-    // 关键词搜索
+    // 搜索按钮
     onSearch () {
-      const data = {
+      let data = {
         currentPage: 1,
-        pageSize: this.response.pageSize,
-        ...this.form
+        pageSize: this.response.pageSize
       }
+      // 判断选择框是否有选择
+      switch (this.selectValue) {
+        // 选择作者
+        case 3:
+          data.author = this.form.keyword
+          break
+        default:
+          Object.assign(data, this.form)
+      }
+      // console.log(typeof this.selectValue)
+      // const data = {
+      //   currentPage: 1,
+      //   pageSize: this.response.pageSize,
+      //   ...this.form
+      // }
       this.getList(data)
     },
     // 高级搜索
@@ -446,6 +460,13 @@ export default {
         if (v.status === 4) {
           v.status = '出档'
         }
+        switch (v.type) {
+          case 1:
+            v.type = '普通'
+            break
+          case 2:
+            v.type = '图文'
+        }
       })
       return res
     },
@@ -493,6 +514,16 @@ export default {
     refresh () {
       this.getTree()
       this.getList()
+    },
+    // 点击单行记录的删除按钮确认操作
+    toDelete (deleteid) {
+      this.$confirm('此操作将删除选定的文章。是否继续删除？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.deleteId(deleteid)
+      })
     },
     deleteId (deleteid) {
       if (deleteid) {

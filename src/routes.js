@@ -143,6 +143,8 @@ import RecycleClass from 'components/views/recycle/village/recycleClass.vue'
 import RecycleAdd from 'components/views/recycle/village/recycleAdd.vue'
 // 回收公司管理
 import RecycleRecoveryList from './components/views/recycle/recovery/base.vue'
+// 餐饮企业管理
+import RestaurantsList from './components/views/recycle/restaurants/RestaurantsList.vue'
 
 const routes = [
   {
@@ -983,6 +985,18 @@ const routes = [
             path: 'index',
             component: RecycleRecoveryList,
             name: '回收公司管理',
+            meta: {description: '列表'}
+          }]
+        }, {
+          path: 'restaurants',
+          component: DashMainView,
+          redirect: '/admin/recycle/restaurants/index',
+          name: '餐饮企业管理',
+          meta: {description: '列表'},
+          children: [{
+            path: 'index',
+            component: RestaurantsList,
+            name: '餐饮企业信息管理',
             meta: {description: '列表'}
           }]
         }]
