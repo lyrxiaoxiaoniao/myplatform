@@ -145,7 +145,8 @@ import VillageDetail from 'components/views/recycle/village/villageDetail.vue'
 import RelSeverList from 'components/views/recycle/village/relSever.vue'
 
 // 回收公司管理
-import RecycleRecoveryList from './components/views/recycle/recovery/base.vue'
+import RecycleRecoveryList from './components/views/recycle/recovery/index.vue'
+import RecycleRecoveryAdd from './components/views/recycle/recovery/add.vue'
 
 const routes = [
   {
@@ -1000,8 +1001,13 @@ const routes = [
           children: [{
             path: 'index',
             component: RecycleRecoveryList,
-            name: '回收公司管理',
+            name: '清运公司管理',
             meta: {description: '列表'}
+          }, {
+            path: 'add',
+            component: RecycleRecoveryAdd,
+            name: '回收公司管理',
+            meta: {description: '新增'}
           }]
         }]
       }

@@ -4,14 +4,13 @@
         <div slot="kobe-table-header" class="kobe-table-header">
           <el-row type="flex" justify="end">
             <el-col :span="16">
-                <el-button @click="resFresh" type="primary">刷新</el-button>
+                <el-button @click="resFresh" type="primary">添加</el-button>
                 <el-dropdown @command="handleCommand" style="margin-left:10px;">
                   <el-button type="primary">
                     更多操作<i class="el-icon-caret-bottom el-icon--right"></i>
                   </el-button>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item command="复原文章">复原文章</el-dropdown-item>
-                    <el-dropdown-item command="彻底删除">彻底删除</el-dropdown-item>
+                    <el-dropdown-item command="彻底删除">批量删除</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
             </el-col>
@@ -25,65 +24,24 @@
             <el-button icon="setting" type="primary"></el-button>
           </el-row>
           <el-dialog title="高级搜索" v-model="showDialog" size="tiny">
-            <el-form :model="selected" label-width="70px">
+            <el-form :model="selected" label-width="85px">
                 <el-form-item label="关键字">
                     <el-input v-model="selected.keyword" placeholder="请输入关键字"></el-input>
                 </el-form-item>
-                <el-form-item label="栏目">
-                    <el-cascader
-                      style="width:100%;"
-                      change-on-select
-                      :options="data"
-                      :props="props"
-                      v-model="cids"
-                      @change="handleChange">
-                    </el-cascader>
+                <el-form-item label="清运公司">
+                    <el-input v-model="selected.keyword" placeholder="请输入清运公司名"></el-input>
                 </el-form-item>
-                <el-form-item label="发布时间">
-                    <el-col :span="11">
-                        <el-form-item>
-                            <el-date-picker type="datetime" placeholder="选择开始时间" v-model="selected.start_time" style="width: 100%;"></el-date-picker>
-                        </el-form-item>
-                    </el-col>
-                    <el-col class="line" :span="2">-</el-col>
-                    <el-col :span="11">
-                        <el-form-item>
-                            <el-date-picker type="datetime" placeholder="选择结束时间" v-model="selected.end_time" style="width: 100%;"></el-date-picker>
-                        </el-form-item>
-                    </el-col>
+                <el-form-item label="负责人">
+                    <el-input v-model="selected.keyword" placeholder="请输入负责人姓名"></el-input>
                 </el-form-item>
-                <el-form-item label="文章状态">
-                     <el-select v-model="selected.states" multiple placeholder="请选择" style="width:100%;">
-                        <el-option
-                        v-for="item in optionStatus"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                        </el-option>
+                <el-form-item label="负责人电话">
+                    <el-input v-model="selected.keyword" placeholder="请输入负责人电话"></el-input>
+                </el-form-item>
+                <el-form-item label="业务类型">
+                    <el-select v-model="selected.keyword" placeholder="请选择业务类型" class="fullwidth">
+                      <el-option label="大件垃圾" value=0></el-option>
+                      <el-option label="餐厨垃圾" value=1></el-option>
                     </el-select>
-                </el-form-item>
-                <el-form-item label="文章类型">
-                     <el-select v-model="selected.types" multiple placeholder="请选择" style="width:100%;">
-                        <el-option
-                        v-for="item in optionType"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-col :span="12">
-                    <el-form-item label="固顶">
-                        <el-checkbox v-model="is_topped">固顶文章</el-checkbox>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item label="推荐">
-                        <el-checkbox v-model="is_recommend">推荐文章</el-checkbox>
-                    </el-form-item>
-                </el-col>
-                <el-form-item label="作者">
-                    <el-input v-model="selected.author" placeholder="请输入作者"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -102,33 +60,17 @@
                 @row-dblclick="rowDbclick">
                 <el-table-column type="selection" width="55"></el-table-column>
                 <el-table-column prop="id" label="ID" width="60"></el-table-column>
-                <el-table-column label="内容标题" prop="title"></el-table-column>
-                <el-table-column prop="brief" label="类型"></el-table-column>
-                <el-table-column prop="category.display_name" label="栏目" width="120"></el-table-column>
-                <el-table-column prop="created_at" label="创建时间" width="200">
-                  <template scope="scope">
-                    {{ scope.row.created_at | toDateTime }}
-                  </template>
-                </el-table-column>
-                <el-table-column prop="deleting" label="删除时间" width="200">
-                  <template scope="scope">
-                    {{ scope.row.deleting | toDateTime }}
-                  </template>
-                </el-table-column>
-                <!-- <el-table-column label="启用" width="100">
-                  <template scope="scope">
-                    <el-switch
-                      v-model="scope.row.active"
-                      on-text="开"
-                      off-text="关"
-                      @change="toswitch(scope.row.active, scope.row.id)">
-                    </el-switch>
-                  </template>
-                </el-table-column> -->
-                <el-table-column prop="status" label="操作" width="70">
+                <el-table-column label="单位名称" prop="title"></el-table-column>
+                <el-table-column prop="brief" label="业务类型"></el-table-column>
+                <el-table-column prop="category.display_name" label="负责人" width="120"></el-table-column>
+                <el-table-column prop="brief" label="联系电话"></el-table-column>
+                <el-table-column prop="brief" label="详细地址"></el-table-column>
+                <el-table-column prop="brief" label="营业执照"></el-table-column>
+                <el-table-column prop="brief" label="已有车辆"></el-table-column>
+                <el-table-column prop="status" label="操作" width="115">
                   <template scope="scope"> 
                       <el-button @click="goAwardsDetail(scope.row.id)" size="small" icon="edit"></el-button>
-                      <!-- <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button> -->
+                      <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
                   </template>
                 </el-table-column>
             </el-table>
@@ -163,48 +105,15 @@ export default {
         label: 'display_name',
         value: 'id'
       },
-      optionStatus: [{
-        value: 0,
-        label: '待审核'
-      }, {
-        value: 1,
-        label: '已审核'
-      }, {
-        value: 2,
-        label: '退回'
-      }, {
-        value: 3,
-        label: '已归档'
-      }, {
-        value: 4,
-        label: '出档'
-      }],
-      optionType: [{
-        value: 1,
-        label: '普通'
-      }, {
-        value: 2,
-        label: '图文'
-      }],
       multipleSelection: [],
       showDialog: false,
       response: {
         data: []
       },
       ids: [],
-      cids: [],
-      is_topped: null,
-      is_recommend: null,
       selected: {
         keyword: '',
-        author: '',
-        category_id: null,
-        start_time: null,
-        end_time: null,
-        states: [],
-        types: [],
-        is_topped: null,
-        is_recommend: null
+        author: ''
       },
       form: {
         keyword: ''
@@ -212,12 +121,10 @@ export default {
     }
   },
   methods: {
-    handleChange (val) {
-      this.cids = val
-      this.selected.category_id = JSON.parse(JSON.stringify(val)).pop()
-    },
     handleCommand (command) {
-      this.deleteType(command)
+      if (command === '批量删除') {
+        this.deleteType()
+      }
     },
     toggleSelection (rows) {
       if (rows) {
@@ -260,14 +167,6 @@ export default {
     },
     /* 高级搜索 */
     advancedSearch () {
-      if (this.selected.start_time) {
-        this.selected.start_time = this.selected.start_time.getTime()
-      }
-      if (this.selected.end_time) {
-        this.selected.end_time = this.selected.end_time.getTime()
-      }
-      this.selected.is_topped = this.getNumber(this.is_topped)
-      this.selected.is_recommend = this.getNumber(this.is_recommend)
       const data = {
         currentPage: 1,
         pageSize: this.response.pageSize,
@@ -280,19 +179,13 @@ export default {
       this.goAwardsDetail()
     },
     // 删除表单
-    deleteType (type) {
-    //   if (id) {
-    //     this.ids = []
-    //     this.ids.push(id)
-    //   }
-      let URL = ''
-      if (type === '彻底删除') {
-        URL = config.newcms.removeNcmRecycleAPI
-      } else if (type === '复原文章') {
-        URL = config.newcms.replyNcmRecycleAPI
+    deleteType (id) {
+      if (id) {
+        this.ids = []
+        this.ids.push(id)
       }
       if (this.ids.length === 0) {
-        this.$confirm('请进行正确操作，请先勾选文章？', '错误', {
+        this.$confirm('请进行正确操作，请先勾选清运公司？', '错误', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'error'
@@ -303,17 +196,17 @@ export default {
         })
         return
       }
-      this.$confirm('是否确认' + type + '文章', '提示', {
+      this.$confirm('是否确认是否删除清运公司', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.POST(URL, {
+        api.POST(config.newcms.removeNcmRecycleAPI, {
           ids: this.ids
         })
         .then(response => {
           if (response.data.errcode === '0000') {
-            this.onSuccess(type + '成功')
+            this.onSuccess('删除成功')
             this.getList()
           } else {
             this.$message.error('发生错误，请重试')
@@ -374,36 +267,10 @@ export default {
         message: string,
         type: 'success'
       })
-    },
-    getTree () {
-      api.GET(config.newcms.ncmsCategotyAPI)
-      .then(response => {
-        var newData = response.data.data
-        this.iteration(newData)
-        newData.push({ id: 0, display_name: '根级分类', label: '根级分类', value: 0 })
-        this.data = newData
-      })
-      .catch(error => {
-        this.$message.error(error)
-      })
-    },
-    iteration (obj) {
-      for (let key in obj) {
-        if (obj.hasOwnProperty(key)) {
-          if (obj[key] instanceof Object) {
-            if (obj[key].length === 0) {
-              obj[key] = null
-            } else {
-              this.iteration(obj[key])
-            }
-          }
-        }
-      }
     }
   },
   mounted () {
     this.getList()
-    this.getTree()
   }
 }
 </script>

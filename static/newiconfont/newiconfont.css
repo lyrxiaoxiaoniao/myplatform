@@ -5,6 +5,7 @@
     width: 14px;
     height:14px;
 }
+.fullwidth {width: 100%;}
 .newicon-safety-danger { background: url('safety_danger.png') no-repeat center/cover; }
 .newicon-new-media { background: url('./01-new_media.png') no-repeat center/cover; }
 .newicon-wechat-manage { background: url('./01-1-wechat_manage.png') no-repeat center/cover; }
