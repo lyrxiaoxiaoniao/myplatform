@@ -148,6 +148,7 @@ import RestaurantsList from './components/views/recycle/restaurants/RestaurantsL
 
 import RecycleRecoveryList from './components/views/recycle/recovery/index.vue'
 import RecycleRecoveryAdd from './components/views/recycle/recovery/add.vue'
+import RecycleRecoveryInfo from './components/views/recycle/recovery/baseInfo.vue'
 
 const routes = [
   {
@@ -994,6 +995,11 @@ const routes = [
             component: RecycleRecoveryAdd,
             name: '回收公司管理',
             meta: {description: '新增'}
+          }, {
+            path: 'info',
+            component: RecycleRecoveryInfo,
+            name: '回收公司',
+            meta: {description: '信息管理'}
           }]
         }, {
           path: 'restaurants',
