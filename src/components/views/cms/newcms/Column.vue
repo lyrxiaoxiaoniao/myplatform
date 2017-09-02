@@ -15,16 +15,16 @@
           <el-row type="flex" justify="end">
             <el-col :span="14">
               <el-button @click="openDialog" type="primary">添加栏目</el-button>
-              <!-- <el-button type="primary">权限分配</el-button> -->
-              <el-dropdown @command="handleCommand">
+              <el-button @click="handleCommand" type="primary">批量删除</el-button>
+              <!-- <el-dropdown @command="handleCommand">
                 <el-button type="primary">
                   更多操作<i class="el-icon-caret-bottom el-icon--right"></i>
                 </el-button>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="删除">删除</el-dropdown-item>
+                  <el-dropdown-item command="删除">删除</el-dropdown-item> -->
                   <!-- <el-dropdown-item command="移动">移动</el-dropdown-item> -->
-                </el-dropdown-menu>
-              </el-dropdown>
+                <!-- </el-dropdown-menu>
+              </el-dropdown> -->
               <el-button @click="reFresh" type="primary">刷新</el-button>
             </el-col>
             <!-- <el-select v-model="form.value" placeholder="所有信息" style="width:140px;">
@@ -103,10 +103,10 @@
     <el-dialog v-model="dialogVisible" size="tiny">
       <img width="100%" :src="dialogImageUrl" alt="">
     </el-dialog>
-    <el-dialog :title="dialogTitle" v-model="showDialog" size="small">
+    <el-dialog :title="dialogTitle" v-model="showDialog" size="small" top="5%">
       <el-form :model="classData" label-width="90px">
         <el-row>
-          <el-col :span="24">
+          <el-col :span="12">
             <el-form-item label="上级栏目">
               <el-cascader
                 :options="options"
@@ -118,22 +118,22 @@
               </el-cascader>
             </el-form-item>
           </el-col>
-          <el-col :span="24">
-            <el-form-item label="栏目名称">
-              <el-input v-model="classData.display_name" placeholder="请输入栏目名称"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
+          <el-col :span="12">
             <el-form-item label="访问路径">
               <el-input v-model="classData.url" placeholder="例如：/admin/newcms/index"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="24">
+            <el-form-item label="栏目名称">
+              <el-input v-model="classData.display_name" placeholder="请输入栏目名称"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
             <el-form-item label="排列顺序">
               <el-input-number v-model="classData.sort"></el-input-number>
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="12">
             <el-form-item label="是否显示">
               <el-switch
                 v-model="classData.active"
@@ -173,7 +173,7 @@
               </el-upload>
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="6">
             <el-form-item label="是否审核">
               <el-switch
                 v-model="classData.is_audit"
@@ -182,7 +182,7 @@
               </el-switch>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="9">
             <el-form-item label="评论">
               <el-radio-group v-model="classData.is_comment">
                 <el-radio :label="1">允许</el-radio>
@@ -190,7 +190,7 @@
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="9">
             <el-form-item label="顶踩">
               <el-radio-group v-model="classData.is_upvote">
                 <el-radio :label="1">允许</el-radio>
@@ -198,12 +198,12 @@
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="12">
             <el-form-item label="Meta关键字">
               <el-input v-model="classData.meta_key" placeholder="请输入Meta关键字"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="12">
             <el-form-item label="Meta标题">
               <el-input v-model="classData.meta_title" placeholder="请输入Meta标题"></el-input>
             </el-form-item>
@@ -288,14 +288,14 @@ export default {
     }
   },
   methods: {
-    handleCommand (command) {
-      if (command === '删除') {
-        this.deleteType()
-      }
+    handleCommand () {
+      // if (command === '删除') {
+      //   this.deleteType()
+      // }
+      this.deleteType()
     },
     // 树形结构选择
     handleChange (val) {
-      // console.log(val)
       this.classData.cids = val
       this.classData.parent_id = JSON.parse(JSON.stringify(val)).pop()
     },
@@ -351,12 +351,12 @@ export default {
           ...data
         }
         this.classData.cids = this.classData.cids.split(',')
+        this.classData.banner = this.classData.banners[0]
         let ids = []
         this.classData.cids.forEach(v => {
           ids.push(Number(v))
         })
         this.classData.cids = ids
-        console.log(this.classData, '111')
       } else {
         this.dialogType = 'add'
         this.dialogTitle = '新增栏目'
@@ -388,7 +388,7 @@ export default {
         if (response.data.errcode === '0000') {
           this.onSuccess(this.dialogTitle + '成功！')
           this.showDialog = false
-          this.getList()
+          this.reFresh()
         } else {
           this.$message.error(response.data.errmsg)
         }
@@ -470,6 +470,8 @@ export default {
     changeActive (res) {
       res.data.forEach(v => {
         if (v.active) {
+          v.active = Boolean(v.active)
+        } else {
           v.active = Boolean(v.active)
         }
         if (v.is_audit) {
