@@ -15,10 +15,10 @@
                   </el-dropdown-menu>
                 </el-dropdown>
             </el-col>
-            <el-select v-model="operation" placeholder="所有" style="width:150px;">
+            <!-- <el-select v-model="operation" placeholder="所有" style="width:150px;">
                 <el-option label="所有" value="所有"></el-option>
                 <el-option label="词汇名称" value="词汇名称"></el-option>
-            </el-select>
+            </el-select> -->
             <el-col :span="8">
                 <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
                 <el-button slot="append" @click="onSearch" icon="search"></el-button>
@@ -206,6 +206,7 @@ export default {
             message: '修改状态成功！',
             type: 'success'
           })
+          this.getList()
         }
       })
     },
@@ -264,14 +265,14 @@ export default {
     openDialog (data = null, type = null) {
       if (data !== null && type === 'edit') {
         this.dialogType = 'edit'
-        this.dialogTitle = '修改表单'
+        this.dialogTitle = '修改来源'
         this.selected = {
           ...this.selected,
           ...data
         }
       } else {
         this.dialogType = 'add'
-        this.dialogTitle = '新增表单'
+        this.dialogTitle = '新增来源'
         this.selected = {
           state: '',
           name: '',

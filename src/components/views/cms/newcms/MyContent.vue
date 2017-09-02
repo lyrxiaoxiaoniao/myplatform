@@ -36,7 +36,7 @@
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-col>
-              <el-col :span="3">
+              <!-- <el-col :span="3">
                 <el-select v-model="selectValue" placeholder="所有信息" style="width:105px;">
                   <el-option
                     v-for="item in selectCategoryOptions"
@@ -45,8 +45,8 @@
                     :value="item.value">
                   </el-option>
                 </el-select>
-              </el-col>
-              <el-col :span="5">
+              </el-col> -->
+              <el-col :span="8">
                 <el-input v-model="form.keyword" placeholder="请输入内容名称" class="sc-table-header-select">
                   <el-button slot="append" class="sc-table-search-btn" @click="onSearch" icon="search"></el-button>
                 </el-input>

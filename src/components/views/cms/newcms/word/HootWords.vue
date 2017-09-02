@@ -15,10 +15,10 @@
                   </el-dropdown-menu>
                 </el-dropdown>
             </el-col>
-            <el-select v-model="operation" placeholder="所有" style="width:150px;">
+            <!-- <el-select v-model="operation" placeholder="所有" style="width:150px;">
                 <el-option label="所有" value="所有"></el-option>
                 <el-option label="专题名称" value="专题名称"></el-option>
-            </el-select>
+            </el-select> -->
             <el-col :span="8">
                 <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
                 <el-button slot="append" @click="onSearch" icon="search"></el-button>

@@ -1,5 +1,7 @@
 /* eslint no-useless-escape: "off" */
+import Recycle from './recycle.js'
 export default {
+  ...Recycle,
   // serverURI: 'https://admin.gov.shencom.cn',
   // serverURI: 'https://tst.admin.gov.shencom.cn',
   serverURI: 'http://192.168.1.23:8080',

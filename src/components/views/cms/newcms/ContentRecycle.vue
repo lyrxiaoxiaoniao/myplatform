@@ -273,7 +273,7 @@ export default {
         pageSize: this.response.pageSize,
         ...this.selected
       }
-      this.getList(data)
+      this.getList(data, this.closeDialog)
     },
     // 双击行调用函数
     rowDbclick (data, type) {
@@ -359,10 +359,13 @@ export default {
       })
       return res
     },
-    getList (data = {}) {
+    getList (data = {}, callback) {
       api.POST(config.newcms.ncmRecycleListAPI, data)
       .then(response => {
-        this.response = this.changeActive(response.data.data)
+        if (response.data.errcode === '0000') {
+          this.response = this.changeActive(response.data.data)
+          callback()
+        }
       })
       .catch(error => {
         this.$message.error(error)
