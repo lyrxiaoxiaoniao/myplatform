@@ -7,6 +7,6 @@ export default {
     index: '/award/category/index'
   },
   restaurants: {
-  	index: '/restaurants/index'
+    index: '/restaurants/index'
   }
 }
