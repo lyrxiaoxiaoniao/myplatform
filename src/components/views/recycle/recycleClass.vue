@@ -12,14 +12,13 @@
     <el-col :span="20">
       <kobe-table>
         <div slot="kobe-table-header" class="kobe-table-header">
-         
           <el-row type="flex" justify="end">
             <el-col :span="14">
               <el-button @click="enterAdd" type="primary">添加</el-button>
               
               <el-dropdown @command="handleCommand" style="margin-left:10px;">
                 <el-button type="primary">
-                                   批量操作<i class="el-icon-caret-bottom el-icon--right"></i>
+                  批量操作<i class="el-icon-caret-bottom el-icon--right"></i>
                 </el-button>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="批量删除">删除</el-dropdown-item>
@@ -27,12 +26,12 @@
                 </el-dropdown-menu>
               </el-dropdown>
             </el-col>
-            <el-select v-model="form.audit_state" placeholder="所有信息" style="width:140px;">
+            <el-select v-model="form.value" placeholder="所有信息" style="width:140px;">
               <el-option
                 v-for="item in option"
-                :key="item.audit_state"
+                :key="item.value"
                 :label="item.label"
-                :value="item.audit_state">
+                :value="item.value">
               </el-option>
             </el-select>
             <el-col :span="8">
@@ -40,7 +39,7 @@
                 <el-button slot="append" @click="onSearch" icon="search"></el-button>
               </el-input>
             </el-col>
-            <el-button type="primary" @click="dialogAdvance = true">高级</el-button>
+            <el-button v-popover:advancedSearch type="primary">高级</el-button>
             <el-button icon="upload2" type="primary" style="margin-left:10px;"></el-button>
             <el-button icon="setting" type="primary"></el-button>
           </el-row>
@@ -54,30 +53,32 @@
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="ID" width="50"></el-table-column>
-            <el-table-column prop="name" label="小区名称" width="150"></el-table-column>
-            <el-table-column prop="duty_name" label="负责人" width="95">
+            <el-table-column prop="display_name" label="小区名称" width="150"></el-table-column>
+            <el-table-column prop="logo" label="负责人" width="95">
+              <template scope="scope">
+                <img style="width:58px;height:58px;" :src="scope.row.logo" @click="bigImg(scope.row.logo)" alt="">
+              </template>
             </el-table-column>
-            <el-table-column prop="mobile" label="联系电话"></el-table-column>
-            <el-table-column prop="region_id" label="所属街道"></el-table-column>
+            <el-table-column prop="created_at" label="联系电话"></el-table-column>
+            <el-table-column prop="sort" label="所属街道"></el-table-column>
             <el-table-column label="审核状态" width="90">
               <template scope="scope">
                 <el-switch
                   style="width:60px;"
-                  v-model="scope.row.audit_state"
-                  on-text="已"
-                  off-text="待"
-                  @change="toswitch(scope.row.audit_state,scope.row.id)">
+                  v-model="scope.row.active"
+                  on-text="待"
+                  off-text="已"
+                  @change="toswitch(scope.row.active,scope.row.id)">
                 </el-switch>
               </template>
             </el-table-column>
-            <el-table-column prop="detail_address" label="详细地址"></el-table-column>
+            <el-table-column prop="sort" label="详细地址"></el-table-column>
             <el-table-column 
               width="150"
               label="操作"
               >
               <template scope="scope">
-                <!-- <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button> -->
-                <el-button @click="edit(scope.row.id)" size="small" icon="edit"></el-button>
+                <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button>
                 <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
                 <el-button  size="small" icon="home1"></el-button>
               </template>
@@ -105,7 +106,6 @@
     <el-dialog v-model="dialogVisible" size="tiny">
       <img width="100%" :src="dialogImageUrl" alt="">
     </el-dialog>
-    <!-- 批量移动 -->
     <el-dialog title="移动" v-model="dialogVisibleMove" size="tiny">
         <div style="width:100%">
             <el-row type="flex" justify="center">
@@ -129,47 +129,87 @@
             <el-button type="primary" @click="confirmMove">确 定</el-button>
         </span>
     </el-dialog>
-<!-- 高级搜索模态框 -->
-    <el-dialog title="高级搜索" v-model="dialogAdvance" size="tiny">
-        <el-form :model="advancedSearch" style="padding-right:30px;">
-           <el-form-item label="关键字" :label-width="formLabelWidth">
-              <el-input v-model="advancedSearch.key" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="所属街道" :label-width="formLabelWidth">
+    <el-dialog :title="dialogTitle" v-model="showDialog" size="tiny">
+      <el-form :model="classData" :rules="rules" ref="classData" label-width="80px">
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="上级分类">
               <el-cascader
-                :options="options"
-                v-model="selectedOptions"
-                @change="handleChange">
+                :options="cascaderData"
+                :props="props"
+                :change-on-select="true"
+                v-model="stepsSelection"
+                @change="handleChange"
+                style="width:100%;">
               </el-cascader>
             </el-form-item>
-            <el-form-item label="关联物业" :label-width="formLabelWidth">
-              <el-input v-model="advancedSearch.server" auto-complete="off"></el-input>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="小区名称" prop="display_name" require>
+              <el-input v-model="classData.display_name"></el-input>
             </el-form-item>
-            <el-form-item label="数据状态" :label-width="formLabelWidth">
-                 <el-radio class="radio" v-model="advancedSearch.radio" label="1" style="margin:0 10px;">已审核</el-radio>
-                 <el-radio class="radio" v-model="advancedSearch.radio" label="0"  style="margin:0 10px;">未审核</el-radio>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="分类排序">
+              <el-input-number v-model="classData.sort" style="width:120px;"></el-input-number>
             </el-form-item>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-            <el-button @click="dialogAdvance = false">取 消</el-button>
-            <el-button type="primary" @click="dialogAdvance = false">确 定</el-button>
-        </span>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="是否启用">
+              <el-switch
+                v-model="classData.active"
+                on-text="开"
+                off-text="关">
+              </el-switch>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="分类说明" prop="description" require>
+              <el-input type="textarea" v-model="classData.description"></el-input>
+            </el-form-item>
+          </el-col>
+           <el-col :span="12">
+            <el-form-item label="分类icon">
+              <el-upload
+                class="avatar-uploader"
+                :action="uploadURL"
+                :show-file-list="false"
+                :on-success="iconHandleAvatarSuccess"
+                :before-upload="beforeAvatarUpload">
+                <img v-if="classData.icon" :src="classData.icon" class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+            </el-form-item>
+          </el-col> 
+          <el-col :span="12">
+            <el-form-item label="分类图片">
+              <el-upload
+                class="avatar-uploader"
+                :action="uploadURL"
+                :show-file-list="false"
+                :on-success="handleAvatarSuccess"
+                :before-upload="beforeAvatarUpload">
+                <img v-if="classData.logo" :src="classData.logo" class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+            </el-form-item>
+          </el-col>
+        </el-row> 
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+          <el-button @click="showDialog = false">取消</el-button>
+          <el-button @click="submitForm('classData')" v-if="dialogType === 'add'">确定</el-button>
+          <el-button @click="editForm()" v-if="dialogType === 'edit'">确定</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
 <script>
-import config from 'src/config/recycle.js'
+import config from 'src/config'
 import api from 'src/api'
 export default {
   data () {
     return {
-      formLabelWidth: '90px',
-      advancedSearch: {
-        key: '',
-        server: '',
-        radio: '1'
-      },
-      dialogAdvance: false,
       moveVal: null,
       dialogVisibleMove: false,
       data: [],
@@ -186,13 +226,13 @@ export default {
       uploadURL: config.serverURI + config.uploadFilesAPI,
       multipleSelection: [],
       option: [{
-        audit_state: null,
+        value: '0',
         label: '全部'
       }, {
-        audit_state: '1',
+        value: '1',
         label: '已审核'
       }, {
-        audit_state: '0',
+        value: '2',
         label: '待审核'
       }],
       response: {
@@ -219,7 +259,7 @@ export default {
       dialogType: '',
       form: {
         keyword: '',
-        audit_state: ''
+        value: ''
       },
       parentId: null,
       ids: [],
@@ -235,13 +275,8 @@ export default {
     }
   },
   methods: {
-    // 进入添加小区页面
     enterAdd () {
-      this.$router.push('/admin/recycle/village/add')
-    },
-    // 进入小区详情页
-    edit (id) {
-      this.$router.push({ path: '/admin/recycle/village/detail', query: { 'id': id } })
+      this.$router.push('/admin/recycle/add')
     },
     handleCommand (command) {
       if (command === '批量删除') {
@@ -254,11 +289,14 @@ export default {
     // 将数据中所有的时间转换成 yyyy-mm-dd hh:mm:ss  state 状态值
     transformDate (res) {
       res.data.forEach(v => {
-        if (v.audit_state === 0) {
-          v.audit_state = false
+        if (v.created_at) {
+          v.created_at = this.formatDate(v.created_at)
         }
-        if (v.audit_state === 1) {
-          v.audit_state = true
+        if (v.active === 1) {
+          v.active = true
+        }
+        if (v.active === 0) {
+          v.active = false
         }
       })
       return res
@@ -298,12 +336,7 @@ export default {
       this.dialogVisible = true
     },
     toswitch (active, id) {
-      if (active) {
-        active = 0
-      } else {
-        active = 1
-      }
-      api.POST(config.village.audit, {id: id, audit_state: active})
+      api.POST(config.activeCategoryAPI, {id: id, active: Number(active)})
       .then(response => {
         this.getList()
         this.onSuccess('启用操作成功！')
@@ -459,13 +492,14 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.POST(config.village.delete, {
+        api.POST(config.deleteCategoryAPI, {
           ids: this.ids
         })
         .then(response => {
           if (response.data.errcode === '0000') {
             this.onSuccess('删除成功')
             this.getList()
+            this.getTree()
           } else {
             this.$message.error('发生错误，请重试')
           }
@@ -487,6 +521,7 @@ export default {
         pageSize: this.response.pageSize,
         ...this.form
       }
+
       this.getList(data)
     },
     onSearch () {
@@ -524,7 +559,7 @@ export default {
       })
     },
     getList (data = {}) {
-      api.GET(config.village.list, data)
+      api.GET(config.categoryIndexAPI, data)
       .then(response => {
         this.response = this.transformDate(response.data.data)
       })
@@ -541,6 +576,7 @@ export default {
     }
   },
   mounted () {
+    this.getTree()
     this.getList()
   }
 }
@@ -579,5 +615,4 @@ export default {
     font-size: 14px;
     margin: 7px 0 0 7px;
 }
-
 </style>

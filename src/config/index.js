@@ -388,6 +388,7 @@ export default {
     move: '/ncms/article/move',
     top: '/ncms/article/top',
     subject: '/ncms/article/subject',
+    removeSubject: '/ncms/article/subject/delete', // 从此专题移出
     recycleList: '/ncms/article/recycle/index',
     recycleDelete: '/ncms/article/recycle/delete'// 从回收站删除
   },

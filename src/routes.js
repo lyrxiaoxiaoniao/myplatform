@@ -140,6 +140,9 @@ import SCBannedList from 'components/views/reservation/bannedListManagement/List
 // recycle
 import RecycleClass from 'components/views/recycle/village/recycleClass.vue'
 import RecycleAdd from 'components/views/recycle/village/recycleAdd.vue'
+import VillageDetail from 'components/views/recycle/village/villageDetail.vue'
+import RelSeverList from 'components/views/recycle/village/relSever.vue'
+
 // 回收公司管理
 
 // 餐饮企业管理
@@ -974,6 +977,21 @@ const routes = [
             path: 'index',
             component: RecycleClass,
             name: '小区信息管理',
+            meta: {description: '列表'}
+          }, {
+            path: 'add',
+            component: RecycleAdd,
+            name: '添加小区',
+            meta: {description: '列表'}
+          }, {
+            path: 'detail',
+            component: VillageDetail,
+            name: '小区详情',
+            meta: {description: '列表'}
+          }, {
+            path: 'relsever',
+            component: RelSeverList,
+            name: '关联物业',
             meta: {description: '列表'}
           }]
         }, {
