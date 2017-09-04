@@ -141,6 +141,9 @@ import SCBannedList from 'components/views/reservation/bannedListManagement/List
 // recycle
 import RecycleClass from 'components/views/recycle/village/recycleClass.vue'
 import RecycleAdd from 'components/views/recycle/village/recycleAdd.vue'
+import VillageDetail from 'components/views/recycle/village/villageDetail.vue'
+import RelSeverList from 'components/views/recycle/village/relSever.vue'
+
 // 回收公司管理
 
 // 餐饮企业管理
@@ -148,6 +151,7 @@ import RestaurantsList from './components/views/recycle/restaurants/RestaurantsL
 
 import RecycleRecoveryList from './components/views/recycle/recovery/index.vue'
 import RecycleRecoveryAdd from './components/views/recycle/recovery/add.vue'
+import RecycleRecoveryInfo from './components/views/recycle/recovery/baseInfo.vue'
 
 const routes = [
   {
@@ -972,6 +976,21 @@ const routes = [
             component: RecycleClass,
             name: '小区信息管理',
             meta: {description: '列表'}
+          }, {
+            path: 'add',
+            component: RecycleAdd,
+            name: '添加小区',
+            meta: {description: '列表'}
+          }, {
+            path: 'detail',
+            component: VillageDetail,
+            name: '小区详情',
+            meta: {description: '列表'}
+          }, {
+            path: 'relsever',
+            component: RelSeverList,
+            name: '关联物业',
+            meta: {description: '列表'}
           }]
         }, {
           path: 'server',
@@ -994,6 +1013,11 @@ const routes = [
             component: RecycleRecoveryAdd,
             name: '回收公司管理',
             meta: {description: '新增'}
+          }, {
+            path: 'info',
+            component: RecycleRecoveryInfo,
+            name: '回收公司',
+            meta: {description: '信息管理'}
           }]
         }, {
           path: 'restaurants',
