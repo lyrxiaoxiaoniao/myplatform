@@ -6,9 +6,9 @@
           <el-button type="primary" @click="openDialog('新增专题')">添加</el-button>
         </el-col>
         <el-col :span="2" style="margin-right:10px;">
-          <el-select v-model="selectValue" placeholder="所有信息" style="width:105px;">
+          <el-select v-model="searchSelectValue" placeholder="所有信息" style="width:105px;" @change="searchSelect">
             <el-option
-              v-for="item in selectCategoryOptions"
+              v-for="item in searchSelectOptions"
               :key="item.value"
               :label="item.label"
               :value="item.value">
@@ -17,7 +17,7 @@
         </el-col>
         <el-col :span="5">
           <el-input v-model="form.keyword" placeholder="" class="sc-table-header-select">
-            <el-button slot="append" class="sc-table-search-btn" @click="onKeywordSearch" icon="search"></el-button>
+            <el-button slot="append" class="sc-table-search-btn" @click="onSearch" icon="search"></el-button>
           </el-input>
         </el-col>
         <el-button @click="openDialog('高级搜索')" icon="search" type="primary" style="margin-left:10px;">高级</el-button>
@@ -30,21 +30,29 @@
         :data="response.data"
         border
         stripe
-        @selection-change="handleSelectionChange">
+        @selection-change="selectIds">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
-        <el-table-column prop="display_name" label="专题名称"></el-table-column>
-        <el-table-column prop="articleCount" label="文章数" width="120"></el-table-column>
-        <el-table-column prop="sort" label="排序" width="120"></el-table-column>
-        <el-table-column prop="is_recommend" label="是否推荐" width="120">
+        <el-table-column prop="display_name" label="企业名称"></el-table-column>
+        <el-table-column prop="articleCount" label="负责人" width="80"></el-table-column>
+        <el-table-column prop="display_name" label="联系电话"></el-table-column>
+        <el-table-column prop="display_name" label="营业执照">
           <template scope="scope">
-            <el-switch on-text="开" off-text="关" v-model="scope.row.is_recommend" @change="toggleSwicth(scope.row)"></el-switch>
+            <img :src="scope.row.is_recommend" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="120px">
+        <el-table-column prop="sort" label="签约状态"></el-table-column>
+        <el-table-column prop="is_recommend" label="审核状态" width="120">
+          <template scope="scope">
+            <el-switch on-text="已" off-text="未" v-model="scope.row.is_recommend" @change="toggleSwicth(scope.row)"></el-switch>
+          </template>
+        </el-table-column>
+        <el-table-column prop="sort" label="详细地址"></el-table-column>
+        <el-table-column label="操作" width="180px">
           <template scope="scope">
             <el-button size="small" icon="delete2" @click="deleteData(scope.row.id)" title="删除"></el-button>
             <el-button size="small" icon="edit" @click="openDialog('修改专题',scope.row.id)" title="修改"></el-button>
+            <el-button size="small" v-if="scope.row.id" @click="openDialog('签约',scope.row.id)">签约</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -65,77 +73,57 @@
         </el-col>
       </el-row>
       <el-dialog :title="dialogTitle" v-model="dialogFormVisible">
-        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="top-ruleForm">
-          <el-form-item label="专题名称" prop="display_name" style="margin-bottom:30px;">
-            <el-input v-model="ruleForm.display_name" placeholder="简单为宜" @blur="checkSubjectName"></el-input>
-          </el-form-item>
-          <el-form-item label="专题排序" prop="sort">
-            <el-input-number v-model="ruleForm.sort" :min="1" :max="10"></el-input-number>
-          </el-form-item>
-          <el-form-item label="是否推荐" required>
-            <el-switch
-              v-model="ruleForm.is_recommend"
-              on-text="开"
-              off-text="关">
-            </el-switch>
-          </el-form-item>
-          <el-form-item label="专题说明" prop="description">
-            <el-input type="textarea" :rows="3" v-model="ruleForm.description"></el-input>
-          </el-form-item>
-          <el-form-item label="标题图" prop="logo">
-            <el-upload
-              class="avatar-uploader"
-              :action="uploadURL"
-              :show-file-list="false"
-              :on-success="iconHandleAvatarSuccess"
-              :before-upload="beforeAvatarUpload">
-              <img v-if="ruleForm.logo" :src="ruleForm.logo" class="avatar">
-              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-            </el-upload>
-          </el-form-item>
-          <el-form-item label="内容图" prop="banners">
-            <el-upload
-              :action="uploadURL"
-              list-type="picture-card"
-              :on-success="bannersHandleAvatarSuccess"
-              :on-remove="handleRemove">
-              <i class="el-icon-plus"></i>
-            </el-upload>
-            <el-dialog v-model="bannersVisible">
-              <img width="100%" v-for="value in ruleForm.banners" :src="value" alt="">
-            </el-dialog>
-          </el-form-item>
-          <el-form-item v-if="dialogTitle === '修改专题'">
+        <div class="dialog-advancedSearch" v-show="dialogTitle==='高级搜索'">
+          <el-form :model="advancedSearchForm" :rules="rules" ref="advancedSearchForm" label-width="100px">
+            <el-form-item label="企业名称" prop="display_name" style="margin-bottom:30px;">
+              <el-input v-model="advancedSearchForm.display_name" placeholder="例：京鹏" @blur="checkSubjectName"></el-input>
+            </el-form-item>
+            <el-form-item label="公司地址" prop="sort">
+              <el-input v-model="advancedSearchForm.display_name" placeholder="例：深圳市罗湖区"></el-input>
+            </el-form-item>
+            <el-form-item label="联系电话" prop="description">
+              <el-input v-model="advancedSearchForm.description" placeholder="例：13132541515"></el-input>
+            </el-form-item>
+            <el-form-item label="组织机构代码" prop="description">
+              <el-input v-model="advancedSearchForm.description" placeholder="例：HJDHHJD5656d"></el-input>
+            </el-form-item>
+            <el-form-item label="负责人" prop="description">
+              <el-input v-model="advancedSearchForm.description" class="name" placeholder="例：帅帅"></el-input>
+            </el-form-item>
+            <el-form-item label="签约状态" prop="description">
+              <el-radio class="radio" v-model="advancedSearchForm.contractStatus" label="0">未签约</el-radio>
+              <el-radio class="radio" v-model="advancedSearchForm.contractStatus" label="1">已签约</el-radio>
+            </el-form-item>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
             <el-row type="flex" justify="end">
-              <el-button size="small" icon="delete2" title="删除" @click="deleteArticles"></el-button>
+              <el-button @click="dialogFormVisible = false">取 消</el-button>
+              <el-button type="primary" @click="submitForm('advancedSearchForm')">搜索</el-button>
             </el-row>
-          </el-form-item>
-          <el-form-item v-if="dialogTitle === '修改专题'">
-            <el-table
-              :data="articleData.data"
-              style="width: 100%"
-              @selection-change="handleArticleSelectionChange">
-              <el-table-column type="selection" width="55"></el-table-column>
-              <el-table-column prop="created_at" label="日期" width="150"></el-table-column>
-              <el-table-column prop="author" label="作者" width="100"></el-table-column>
-              <el-table-column prop="title" label="标题"></el-table-column>
-            </el-table>
-          </el-form-item>
-          <el-form-item v-if="dialogTitle === '修改专题'">
-            <el-row type="flex" justify="center">
-              <el-pagination
-                @current-change="handleArticleDataCurrentChange"
-                :current-page="articleData.currentPage"
-                :total="articleData.count"
-                layout="total, prev, pager, next, jumper">
-              </el-pagination>
+          </div>
+        </div>
+        <div class="dialog-contract" v-show="dialogTitle==='签约'">
+          <el-form :model="contractForm" :rules="rules" ref="contractForm" label-width="100px">
+            <el-form-item label="签约人" prop="display_name">
+              <el-input v-model="contractForm.display_name" placeholder="请输入签约人姓名"></el-input>
+            </el-form-item>
+            <el-form-item label="联系电话" prop="sort">
+              <el-input v-model="contractForm.display_name" placeholder="请输入签约人联系电话"></el-input>
+            </el-form-item>
+            <el-form-item label="回收单位" prop="description">
+              <el-input v-model="contractForm.description" placeholder="请输入签约回收单位"></el-input>
+            </el-form-item>
+            <el-form-item label="合同期限" prop="description">
+              <el-date-picker v-model="contractForm.startTime" type="datetime" placeholder="选择开始时间"></el-date-picker>
+              <el-date-picker v-model="contractForm.endTime" type="datetime" placeholder="选择结束时间"></el-date-picker>
+            </el-form-item>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-row type="flex" justify="end">
+              <el-button @click="closeDialog">取 消</el-button>
+              <el-button type="primary" @click="editForm">保存</el-button>
             </el-row>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitForm('ruleForm')" v-if="dialogTitle === '新增专题'">保存</el-button>
-          <el-button type="primary" @click="editForm" v-if="dialogTitle === '修改专题'">保存</el-button>
+          </div>
         </div>
       </el-dialog>
     </div>
@@ -156,18 +144,103 @@
         form: {
           keyword: ''
         },
-        ruleForm: {
-          keyword: '',
-          start_time: '',
-          end_time: '',
-          states: [],
-          types: [],
-          author: ''
-        }
+        advancedSearchForm: {
+          contractStatus: '0'
+        },
+        contractForm: {
+        },
+        dialogTitle: '',
+        dialogFormVisible: false,
+        searchSelectOptions: [{
+          value: '',
+          label: '所有信息'
+        }, {
+          value: 0,
+          label: '未签约'
+        }, {
+          value: 1,
+          label: '已签约'
+        }],
+        searchSelectValue: '', // 列表页顶部选择器的值
+        restaurantsSelectedIds: []
       }
     },
     computed: {},
     methods: {
+      handleSizeChange (value) {
+        const data = {
+          currentPage: this.response.currentPage,
+          pageSize: value,
+          contractStatus: this.searchSelectValue, // 签约状态
+          ...this.form
+        }
+        this.getList(data)
+      },
+      handleCurrentChange (value) {
+        const data = {
+          currentPage: value,
+          pageSize: this.response.pageSize,
+          contractStatus: this.searchSelectValue, // 签约状态
+          ...this.form
+        }
+        this.getList(data)
+      },
+      searchSelect () {
+        const data = {
+          currentPage: this.response.currentPage,
+          pageSize: this.response.pageSize,
+          contractStatus: this.searchSelectValue, // 签约状态
+          ...this.form
+        }
+        this.getList(data)
+      },
+      // 搜索按钮
+      onSearch () {
+        let data = {
+          currentPage: 1,
+          pageSize: this.response.pageSize,
+          contractStatus: this.searchSelectValue, // 签约状态
+          ...this.form
+        }
+        // console.log(typeof this.selectValue)
+        // const data = {
+        //   currentPage: 1,
+        //   pageSize: this.response.pageSize,
+        //   ...this.form
+        // }
+        this.getList(data)
+      },
+      // 高级搜索
+      onAdvancedSearch () {
+        // 清空选择器和搜索框
+        this.searchSelectValue = ''
+        this.form.keyword = ''
+        var obj = this.advancedSearchForm
+        // obj.is_recommend = this.changeState(obj.is_recommend)
+        // obj.is_topped = this.changeState(obj.is_topped)
+        // obj.category_id = this.cascaderValue[this.cascaderValue.length - 1]
+        const data = {
+          currentPage: 1,
+          pageSize: this.response.pageSize,
+          ...obj
+        }
+        api.POST(config.content.list, data)
+        .then(response => {
+          this.response = this.transformData(response.data.data)
+          this.closeDialog()
+          this.advancedSearchForm = {
+            keyword: '',
+            start_time: '',
+            end_time: '',
+            states: [],
+            types: [],
+            author: ''
+          }
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
+      },
       getList (data = {}) {
         api.GET(config.categoryIndexAPI, data)
         .then(response => {
@@ -222,6 +295,66 @@
         s = s < 10 ? ('0' + s) : s
         value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
         return value
+      },
+      deleteData (value) {
+        this.selectIds(value)
+        api.POST(config.deleteCategoryAPI, {ids: this.restaurantsSelectedIds})
+          .then(response => {
+            if (response.status !== 200) {
+              this.error = response.statusText
+              return
+            }
+            if (response.data.errcode === '0000') {
+              this.onSuccess('删除成功')
+              this.getList()
+            }
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
+      },
+      toggleSwicth (value) {
+        value.is_recommend = Number(value.is_recommend)
+        api.POST(config.subject.update, value)
+        .then(response => {
+          if (response.data.errcode === '0000') {
+            this.$notify({
+              title: '成功',
+              message: '修改成功',
+              type: 'success'
+            })
+            let data = {
+              pageSize: this.response.pageSize,
+              currentPage: this.response.currentPage,
+              contractStatus: this.searchSelectValue, // 签约状态
+              ...this.form
+            }
+            this.getList(data)
+          }
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
+      },
+      // 单行记录和多行记录操作生成id数组
+      selectIds (value) {
+        this.restaurantsSelectedIds = []
+        // 单行记录操作传进来的参数是数字，多行记录操作传进来的参数是数组
+        if (value.length === undefined) {
+          this.restaurantsSelectedIds.push(value)
+        } else {
+          this.restaurantsSelectedIds = value.map(v => {
+            return v.id
+          })
+        }
+      },
+      openDialog (value, id) {
+        this.dialogTitle = value
+        this.dialogFormVisible = true
+      },
+      closeDialog () {
+        this.dialogFormVisible = false
+        this.dialogTitle = ''
       }
     },
     components: {
@@ -233,6 +366,7 @@
 </script>
 
 <style scoped>
+  /*
   .sc-report-table {
     margin-left: 2rem;
     margin-right: 2rem;
@@ -261,5 +395,14 @@
 
   .top-ruleForm .el-form-item {
     margin-bottom: 10px;
+  }
+  */
+
+  .name {
+    width: 20%;
+  }
+
+  .el-date-editor--datetime {
+    width: 49.6%;
   }
 </style>
