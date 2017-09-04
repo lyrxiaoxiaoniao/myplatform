@@ -3,7 +3,7 @@
     <div class="login-logo">
       <a href="javascript:;">
         <!-- <h2>{{ title }}</h2> -->
-        <img src="../../static/img/login/logo@2x.png" alt="深传互动">
+        <img src="../../static/img/login/logo--new@2x.png" alt="深传互动">
       </a>
     </div>
 
@@ -198,7 +198,7 @@ export default {
     this.getAppInfo()
     console.log(title, appid)
     switch (appid) {
-      case 'gmsafety':
+      case 'gmaj':
         title.innerHTML = '安全光明'
         this.title = '安全光明'
         this.cover = 'static/img/login/banner@2x.png'
@@ -237,7 +237,7 @@ export default {
         background-size: 100% 100%;
         a {
             display: block;
-            margin: 10px 0 0 50px;
+            margin: 12px 0 0 30px;
         }
     }
     .login-box-body{
@@ -348,9 +348,11 @@ export default {
             margin: 0;
             text-align: center;
             font: 500 14px 'MicroSoft YaHei';
+            // color: #fff;
             color: #a6a6a6;
             a {
                 color: #a6a6a6;
+                // color: #fff;
             }
             span {
                 margin: 0 5px;

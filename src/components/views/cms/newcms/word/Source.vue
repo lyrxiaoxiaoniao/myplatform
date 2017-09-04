@@ -6,14 +6,15 @@
             <el-col :span="16">
                 <el-button type="primary" @click="openDialog">添加来源</el-button>
                 <el-button type="primary">刷新</el-button>
-                <el-dropdown @command="handleCommand" style="margin-left:10px;">
+                <el-button @click="handleCommand" type="primary">批量删除</el-button>
+                <!-- <el-dropdown @command="handleCommand" style="margin-left:10px;">
                   <el-button type="primary">
                     更多操作<i class="el-icon-caret-bottom el-icon--right"></i>
                   </el-button>
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item command="批量删除">批量删除</el-dropdown-item>
                   </el-dropdown-menu>
-                </el-dropdown>
+                </el-dropdown> -->
             </el-col>
             <!-- <el-select v-model="operation" placeholder="所有" style="width:150px;">
                 <el-option label="所有" value="所有"></el-option>
@@ -37,11 +38,11 @@
             @selection-change="handleSelectionChange"
             @row-dblclick="openDialog">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="id" label="ID" width="50"></el-table-column>
+            <el-table-column prop="id" label="ID" width="70"></el-table-column>
             <el-table-column prop="name" label="来源名称"></el-table-column>
             <el-table-column prop="count" label="文档数量"></el-table-column>
             <el-table-column prop="created_at" label="创建时间"></el-table-column>
-            <el-table-column label="是否推荐" width="120">
+            <el-table-column label="是否有效" width="120">
               <template scope="scope">
                 <el-switch
                   v-model="scope.row.active"
@@ -177,9 +178,10 @@ export default {
       return value
     },
     handleCommand (command) {
-      if (command === '批量删除') {
-        this.deleteType()
-      }
+      // if (command === '批量删除') {
+      //   this.deleteType()
+      // }
+      this.deleteType()
     },
     changeNum (val) {
       if (val) {
@@ -190,6 +192,10 @@ export default {
       return val
     },
     toswitch (active, id) {
+      let data = {
+        pageSize: this.response.pageSize,
+        currentPage: this.response.currentPage
+      }
       var obj = {
         id: id,
         active: this.changeNum(active)
@@ -206,7 +212,7 @@ export default {
             message: '修改状态成功！',
             type: 'success'
           })
-          this.getList()
+          this.getList(data)
         }
       })
     },
@@ -279,6 +285,7 @@ export default {
           active: ''
         }
       }
+      this.selected.active = Boolean(this.selected.active)
       this.showDialog = true
     },
     closeDialog () {

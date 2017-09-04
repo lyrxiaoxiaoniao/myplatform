@@ -52,7 +52,7 @@
             :data="response.data"
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="id" label="ID" width="60"></el-table-column>
+            <el-table-column prop="id" label="ID" width="70"></el-table-column>
             <el-table-column prop="display_name" label="栏目名称"></el-table-column>
             <el-table-column prop="url" label="访问路径"></el-table-column>
             <el-table-column prop="created_at" label="创建时间" width="130">
@@ -376,7 +376,9 @@ export default {
       obj.cids = obj.cids.join(',')
       obj.active = Number(obj.active)
       obj.is_audit = Number(obj.is_audit)
-      obj.banners = obj.banner.split(',')
+      if (obj.banner) {
+        obj.banners = obj.banner.split(',')
+      }
       // console.log(obj)
       if (this.dialogType === 'edit') {
         URL = config.newcms.editNcmsCategotyAPI
@@ -432,9 +434,14 @@ export default {
     },
     /* 切换状态 */
     toswitch (active, id) {
+      let data = {
+        pageSize: this.response.pageSize,
+        currentPage: this.response.currentPage,
+        parent_id: this.parent_id
+      }
       api.POST(config.newcms.activeNcmsCategotyAPI, {id: id, active: Number(active)})
       .then(response => {
-        this.getList()
+        this.getList(data)
         this.onSuccess('状态操作成功！')
       })
       .catch(error => {
@@ -476,12 +483,14 @@ export default {
         }
         if (v.is_audit) {
           v.is_audit = Boolean(v.is_audit)
+        } else {
+          v.is_audit = Boolean(v.is_audit)
         }
       })
       return res
     },
     getList (data = {}) {
-      api.GET(config.newcms.ncmsCategotyListAPI, data)
+      api.GET(config.newcms.ncmsCategotyListAPI, {...data, parent_id: this.parent_id})
       .then(response => {
         this.response = this.changeActive(response.data.data)
       })

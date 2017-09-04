@@ -533,9 +533,9 @@ export default {
         path: '/admin/ad/content/index'
       })
     },
-    getPoint () {
+    getPoint (data = {}) {
       // getAdvertisementAPI
-      api.GET(config.getAdvertisementAPI, {id: this.id, isvalid: 1, typeId: this.ruleForm.typeId})
+      api.GET(config.getAdvertisementAPI, {id: this.id, isvalid: 1, typeId: this.ruleForm.typeId, ...data})
       .then(response => {
         if (response.status !== 200) {
           this.error = response.statusText
@@ -636,6 +636,10 @@ export default {
       })
     },
     toswitch (state, id) {
+      let data = {
+        pageSize: this.data.pageSize,
+        currentPage: this.data.currentPage
+      }
       if (state) {
         state = 1
       } else {
@@ -648,7 +652,7 @@ export default {
           return
         }
         if (response.data.errcode === '0000') {
-          this.getPoint()
+          this.getPoint(data)
           this.$notify({
             title: '成功',
             message: '状态切换成功！',

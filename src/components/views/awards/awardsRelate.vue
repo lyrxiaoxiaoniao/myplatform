@@ -198,9 +198,13 @@ export default {
       return isLt2M
     },
     toswitch (active, id) {
+      let data = {
+        pageSize: this.response.pageSize,
+        currentPage: this.response.currentPage
+      }
       api.POST(config.activeCategoryAPI, {id: id, active: Number(active)})
       .then(response => {
-        this.getList()
+        this.getList(data)
         this.onSuccess('操作成功！')
       })
       .catch(error => {

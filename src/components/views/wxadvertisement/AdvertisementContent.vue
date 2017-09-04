@@ -393,10 +393,15 @@ export default {
       return val
     },
     toswitch (state, id) {
+      let data = {
+        pageSize: this.data.pageSize,
+        currentPage: this.data.currentPage
+      }
       var obj = {
         id: id,
         state: this.changeNum(state)
       }
+      console.log(111)
       api.POST(config.updatestateAdvAPI, obj)
       .then(response => {
         if (response.status !== 200) {
@@ -409,6 +414,7 @@ export default {
             message: '修改状态成功！',
             type: 'success'
           })
+          this.updateList(data)
         }
       })
     },
