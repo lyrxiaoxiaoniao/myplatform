@@ -41,7 +41,7 @@
               </el-row>
               <el-row class="tips">注：如果此功能关闭，则不开放预约功能，所有设置均不可进行</el-row>
             </el-card>
-            <el-card class="box-card">
+            <el-card class="box-card space">
               <div slot="header" class="clearfix">
                 <span style="line-height: 36px; font-size: 18px">预约配置</span>
                 <el-button style="float: right;" type="primary">保存</el-button>
@@ -112,13 +112,157 @@
                   <el-col :span="7" class="align">自动拉黑</el-col>
                 </el-row>
               </div>
-              <div class="reserveSet"></div>
+            </el-card>
+            <el-card class="box-card">
+              <div slot="header" class="clearfix">
+                <span style="line-height: 36px; font-size: 18px">预约类型设置</span>
+                <el-button style="float: right;" type="primary">保存</el-button>
+              </div>
+              <div>
+                <el-button size="large">删除</el-button>
+                <el-button size="large" type="primary" @click="openDialog('addConfigVisible')">添加</el-button>
+              </div>
+              <div class="reserveSet">
+                <el-row>
+                  <el-col :span="1">
+                    <el-checkbox></el-checkbox>
+                  </el-col>
+                  <el-col :span="22" :offset="1">
+                    <el-row>个人预约</el-row>
+                    <el-row class="setItem">
+                      <el-col :span="4">参观人数限制</el-col>
+                      <el-col :span="19" :offset="1">
+                        <el-input-number v-model="num4" :min="1" :max="10"></el-input-number> 至
+                        <el-input-number v-model="num4" :min="1" :max="10"></el-input-number>
+                      </el-col>
+                    </el-row>
+                    <el-row class="setItem">
+                      <el-col :span="4">报名填写字段</el-col>
+                      <el-col :offset="1" :span="19">
+                        <el-tag class="tag" :key="tag" v-for="tag in tags" :closable="true" :close-transition="false" @close="handleClose(tag)">
+                          {{tag}}
+                        </el-tag>
+                        <el-input class="input-new-tag" v-if="inputVisible" v-model="inputValue" ref="saveTagInput" size="mini" @keyup.enter.native="handleInputConfirm" @blur="handleInputConfirm"></el-input>
+                        <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
+                      </el-col>
+                    </el-row>
+                  </el-col>
+                </el-row>
+              </div>
             </el-card>
           </el-tab-pane>
-          <el-tab-pane label="配置管理">配置管理</el-tab-pane>
+          <el-tab-pane label="配置管理">
+            <el-card class="box-card">
+              <div slot="header" class="clearfix">
+                <span style="line-height: 36px; font-size: 18px">预约排期</span>
+                <el-button style="float: right;" type="primary">保存</el-button>
+              </div>
+            </el-card>
+            <el-card class="box-card">
+            </el-card>
+          </el-tab-pane>
         </el-tabs>
       </el-col>
     </el-row>
+    <el-dialog v-model="addConfigVisible">
+      <el-tabs type="border-card">
+        <el-tab-pane label="选择模板">
+          <div class="reserveSet">
+            <el-row>
+              <el-col :span="1">
+                <el-checkbox></el-checkbox>
+              </el-col>
+              <el-col :span="22" :offset="1">
+                <el-row>个人预约</el-row>
+                <el-row class="setItem">
+                  <el-col :span="4">参观人数限制</el-col>
+                  <el-col :span="19" :offset="1">
+                    <el-input-number v-model="num4" :min="1" :max="10"></el-input-number> 至
+                    <el-input-number v-model="num4" :min="1" :max="10"></el-input-number>
+                  </el-col>
+                </el-row>
+                <el-row class="setItem">
+                  <el-col :span="4">报名填写字段</el-col>
+                  <el-col :offset="1" :span="19">
+                    <el-tag class="tag" :key="tag" v-for="tag in tags" :closable="true" :close-transition="false" @close="handleClose(tag, 'tags')">
+                      {{tag}}
+                    </el-tag>
+                    <el-input class="input-new-tag" v-if="inputVisible" v-model="inputValue" ref="saveTagInput" size="mini" @keyup.enter.native="handleInputConfirm" @blur="handleInputConfirm"></el-input>
+                    <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
+                  </el-col>
+                </el-row>
+              </el-col>
+            </el-row>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="自定义">
+          <el-row class="setItem">
+            <el-col :span="6" :offset="1">预约方式名称</el-col>
+            <el-col :span="10">
+              <el-input></el-input>
+            </el-col>
+          </el-row>
+          <el-row class="setItem">
+            <el-col :span="6" :offset="1" class="align">参观限制人数</el-col>
+            <el-col :span="17">
+              <el-input-number v-model="num4" :min="1" :max="10"></el-input-number> 至
+              <el-input-number v-model="num4" :min="1" :max="10"></el-input-number>
+            </el-col>
+          </el-row>
+          <el-row class="setItem">
+            <el-col :span="6" :offset="1" class="align">报名填写字段</el-col>
+            <el-col :span="17">
+              <div class="selected" v-if="selectedList.length">
+                <el-tag class="tag" v-for="tag in selectedList" :closable="true" :close-transition="false" @close="handleClose(tag, 'selectedList')">
+                  {{tag.text}}
+                </el-tag>
+              </div>
+              <div class="tagList">
+                <el-tag class="tagListItem tag" v-for="(tag, index) in tagList" :class="{tagActive: tag.active}">
+                  <div class="tagInner" @click="chooseTag(tag)">{{tag.text}}</div>
+                </el-tag>
+                <el-button size="small" class="btnStyle" @click="toggle">+自定义</el-button>
+              </div>
+            </el-col>
+          </el-row>
+          <div class="customWrapper" v-if="customVisible">
+            <div class="listwrapper">
+              <el-checkbox>必填</el-checkbox>
+              <div class="inputWrapper">
+                <el-input placeholder="字段名称" v-model="customForm.text"></el-input>
+              </div>
+              <div class="inputWrapper">
+                <el-input placeholder="提示信息写在这里"></el-input>
+              </div>
+              <el-radio v-model="radio1" label="1">单行文本</el-radio>
+              <el-radio v-model="radio1" label="2">多行文本</el-radio>
+              <el-radio v-model="radio1" label="3">下拉选项</el-radio>
+            </div>
+            <div class="selectedCustom" v-if="selectedCustomVisible">
+              <div class="text">
+                选项列表
+              </div>
+              <div class="selectedInputWrapper">
+                <div class="inputWrapper" v-for="item in inputNum">
+                  <el-input placeholder="选项名称"></el-input>
+                </div>
+                <div class="inputWrapper">
+                  <el-button icon="plus" type="primary" @click="addInput"></el-button>
+                </div>
+              </div>
+            </div>
+            <div class="btnWrapper">
+              <el-button @click="hideDialog('customVisible')">取消</el-button>
+              <el-button @click="addSelected">确认</el-button>
+            </div>
+          </div>
+        </el-tab-pane>
+      </el-tabs>
+      <div class="dialog-footer" slot="footer">
+        <el-button type="danger" @click="hideDialog('addConfigVisible')">取消</el-button>
+        <el-button type="primary" @click="advanceSearch">保存</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -130,18 +274,115 @@ export default {
         name: '测试',
         mobile: '1234567878',
         time: '2017-08-08 19:00',
-        brief: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+        brief: 'aaa'
       },
       radio: '1',
+      radio1: '1',
       num1: 1,
       num2: 1,
       num3: 1,
-      num4: 1
+      num4: 1,
+      tags: ['标签1', '标签2', '标签3'],
+      inputVisible: false,
+      inputValue: '',
+      addConfigVisible: false,
+      tagList: [
+        {
+          text: '参观人数',
+          active: false
+        },
+        {
+          text: '团队类型',
+          active: false
+        },
+        {
+          text: '所属行业',
+          active: false
+        },
+        {
+          text: '预约说明',
+          active: false
+        }
+      ],
+      selectedList: [],
+      customVisible: false,
+      selectedCustomVisible: false,
+      inputNum: 5,
+      customForm: {
+        text: ''
+      }
+    }
+  },
+  watch: {
+    radio1(val) {
+      if (val === '3') {
+        this.selectedCustomVisible = true
+      } else {
+        this.selectedCustomVisible = false
+        this.inputNum = 5
+      }
     }
   },
   methods: {
     back() {
       this.$router.go(-1)
+    },
+    openDialog(e) {
+      this[e] = true
+    },
+    hideDialog(e) {
+      this[e] = false
+    },
+    advanceSearch() {
+    },
+    toggle() {
+      this.customVisible = !this.customVisible
+    },
+    addInput() {
+      this.inputNum += 1
+    },
+    handleClose(tag, list) {
+      this[list].splice(this[list].indexOf(tag), 1)
+      if (list === 'selectedList') {
+        this.tagList.forEach(e => {
+          if (tag.text === e.text) {
+            e.active = false
+          }
+        })
+      }
+    },
+    showInput() {
+      this.inputVisible = true
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus()
+      })
+    },
+    handleInputConfirm() {
+      let inputValue = this.inputValue
+      if (inputValue) {
+        this.tags.push(inputValue)
+      }
+      this.inputVisible = false
+      this.inputValue = ''
+    },
+    chooseTag(tag) {
+      if (tag.active) {
+        this.selectedList.forEach((e, i) => {
+          if (e.text === tag.text) {
+            this.selectedList.splice(i, 1)
+          }
+        })
+      } else {
+        this.selectedList.push(JSON.parse(JSON.stringify(tag)))
+      }
+      tag.active = !tag.active
+    },
+    addSelected() {
+      const obj = {}
+      obj.text = this.customForm.text
+      obj.active = false
+      this.selectedList.push(obj)
+      this.customVisible = false
     }
   }
 }
@@ -199,5 +440,58 @@ export default {
 .align {
   display: flex;
   align-items: center;
+}
+
+.input-new-tag {
+  width: 60px;
+  height: 24px;
+}
+
+.selected {
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid lightgray;
+}
+
+.tag {
+  margin-right: 5px;
+}
+
+.tagActive {
+  background-color: #20A0FF
+}
+
+.customWrapper {
+  border: 1px solid lightgray;
+}
+
+.customWrapper>.listwrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4%;
+}
+
+.customWrapper>.btnWrapper {
+  display: flex;
+  justify-content: flex-end;
+
+  margin: 0 20px 20px 0;
+}
+
+.selectedCustom>.text {
+  margin-left: 4%;
+}
+
+.selectedCustom>.selectedInputWrapper {
+  overflow: hidden;
+  padding: 1% 4%;
+}
+
+.selectedCustom>.selectedInputWrapper>.inputWrapper {
+  float: left;
+  width: 15%;
+  margin-right: 10px;
+  margin-top: 10px;
 }
 </style>
