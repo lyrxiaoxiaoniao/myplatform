@@ -3,8 +3,19 @@
  * 罗湖城管垃圾接口列表
  */
 export default {
+  // 清运公司管理
   recovery: {
-    index: '/award/category/index'
+    index: '/recycle/index',
+    add: '/recycle/create',
+    edit: '/recycle/update',
+    show: '/recycle/show',
+    remove: '/recycle/delete',
+    // 服务街道列表
+    service: '/recycle/region/index',
+    serviceAdd: '/recycle/region/create',
+    serviceRemove: '/recycle/region/delete',
+    // 服务街道下拉列表
+    dropService: '/recycle/drop/region/index'
   },
   village: {
     list: '/rubbish/community/index',

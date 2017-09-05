@@ -5,29 +5,16 @@
             <el-row type="flex" justify="end">
             <el-col :span="16">
                 <el-button type="primary" @click="openDialog">添加敏感词</el-button>
-                <!-- <el-dropdown @command="handleCommand">
-                  <el-button type="primary">
-                    更多操作<i class="el-icon-caret-bottom el-icon--right"></i>
-                  </el-button>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item command="删除">删除</el-dropdown-item>
-                    <el-dropdown-item command="移动">移动</el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown> -->
                 <el-button @click="reFresh" type="primary">刷新</el-button>
                 <el-button @click="handleCommand" type="primary">批量删除</el-button>
             </el-col>
-            <!-- <el-select v-model="operation" placeholder="所有" style="width:150px;" @change="open3">
-                <el-option label="所有" value="所有"></el-option>
-                <el-option label="敏感词" value="敏感词"></el-option>
-            </el-select> -->
             <el-col :span="8">
                 <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
                 <el-button slot="append" @click="onSearch" icon="search"></el-button>
                 </el-input>
             </el-col>
-            <el-button icon="upload2" type="primary"  style="margin-left:10px;"></el-button>
-            <el-button icon="setting" type="primary"></el-button>
+              <el-button icon="upload2" type="primary"  style="margin-left:10px;"></el-button>
+              <el-button icon="setting" type="primary"></el-button>
             </el-row>
         </div>
         <div slot="kobe-table-content" class="kobe-table">
@@ -345,8 +332,12 @@ export default {
       res.data.forEach(v => {
         if (v.active) {
           v.active = Boolean(v.active)
+        } else {
+          v.active = Boolean(v.active)
         }
         if (v.is_audit) {
+          v.is_audit = Boolean(v.is_audit)
+        } else {
           v.is_audit = Boolean(v.is_audit)
         }
       })
