@@ -65,8 +65,10 @@
               @selection-change="handleSelectionChange">
               <el-table-column type="selection" width="55"></el-table-column>
               <el-table-column prop="id" label="ID" width="80"></el-table-column>
-              <el-table-column prop="title" label="内容标题" width="250"></el-table-column>
-              <el-table-column prop="type" label="类型"></el-table-column>
+              <el-table-column prop="title" label="内容标题"></el-table-column>
+              <!--
+              <el-table-column prop="type" label="类型" width="80"></el-table-column>
+              -->
               <el-table-column prop="created_at" label="创建时间" width="150"></el-table-column>
               <el-table-column prop="click" label="点击" width="70"></el-table-column>
               <el-table-column prop="author" label="作者" width="100"></el-table-column>
@@ -111,13 +113,22 @@
                 </el-col>
                 <el-col :span="24">
                     <el-form-item label="栏目">
-                        <el-select v-model="value" placeholder="栏目选择" style="width:100%;" @change="getAdvancedSearchColumn">
-                          <el-option
-                            v-for="item in advancedCategoryOptions"
-                            :label="item.label"
-                            :value="item.value">
-                          </el-option>
-                        </el-select>
+                      <el-cascader
+                        :options="cascaderData"
+                        :change-on-select="true"
+                        v-model="cascaderValue"
+                        :props="moveDefaultProps"
+                        class="cascader-box">
+                      </el-cascader>
+                      <!--
+                      <el-select v-model="value" placeholder="栏目选择" style="width:100%;" @change="getAdvancedSearchColumn">
+                        <el-option
+                          v-for="item in advancedCategoryOptions"
+                          :label="item.label"
+                          :value="item.value">
+                        </el-option>
+                      </el-select>
+                      -->
                     </el-form-item>
                 </el-col>
                 <el-col :span="24">
@@ -180,8 +191,8 @@
           <el-button type="text" style="color: #48576a; padding:5px 10px;">移动到</el-button>
           <el-cascader
             :options="cascaderData"
-            v-model="moveToValue"
-            @change="getMoveToTarget"
+            :change-on-select="true"
+            v-model="cascaderValue"
             :props="moveDefaultProps">
           </el-cascader>
         </el-row>
@@ -272,7 +283,8 @@ export default {
         end_time: '',
         states: [],
         types: [],
-        author: ''
+        author: '',
+        category_id: ''
       },
       uploadUrl: config.serverURI + config.uploadImgAPI,
       selectCategoryOptions: [{
@@ -311,7 +323,7 @@ export default {
       dynamicTags: [],
       ids: [],
       multipleSelection: [],
-      moveToValue: [],
+      cascaderValue: [],
       selectedSubject: '',
       subjectOptions: [],
       topOrder: 0,
@@ -388,6 +400,7 @@ export default {
       var obj = this.ruleForm
       obj.is_recommend = this.changeState(obj.is_recommend)
       obj.is_topped = this.changeState(obj.is_topped)
+      obj.category_id = this.cascaderValue[this.cascaderValue.length - 1]
       const data = {
         currentPage: 1,
         pageSize: this.response.pageSize,
@@ -405,6 +418,7 @@ export default {
           types: [],
           author: ''
         }
+        this.cascaderValue = []
       })
       .catch(error => {
         this.$message.error(error)
@@ -642,7 +656,7 @@ export default {
         })
     },
     moveContent () {
-      api.POST(config.content.move, {articles: this.ids, category_id: this.moveToValue[this.moveToValue.length - 1]})
+      api.POST(config.content.move, {articles: this.ids, category_id: this.cascaderValue[this.cascaderValue.length - 1]})
         .then(response => {
           if (response.status !== 200) {
             this.error = response.statusText
@@ -652,6 +666,7 @@ export default {
             this.onSuccess('移动成功')
             this.getList()
             this.closeDialog()
+            this.cascaderValue = []
           }
         })
         .catch(error => {
@@ -817,10 +832,6 @@ export default {
           this.openDialog(command)
       }
     },
-    // 获取移动路径
-    getMoveToTarget (value) {
-      this.moveToValue = value
-    },
     getSubjectOptions () {
       var arr = []
       api.GET(config.subject.list)
@@ -933,5 +944,9 @@ export default {
 
   .dialog-space-footer {
     margin-top: 15rem;
+  }
+
+  .cascader-box {
+    width: 100%;
   }
 </style>

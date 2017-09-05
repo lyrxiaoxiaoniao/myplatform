@@ -215,9 +215,7 @@ export default {
       this.inputValue = ''
     },
     goBack () {
-      this.$router.push({
-        path: '/admin/newcms/content/index'
-      })
+      this.$router.go(-1)
     },
     getNumber (val) {
       let res

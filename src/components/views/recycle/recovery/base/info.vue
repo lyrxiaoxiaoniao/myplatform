@@ -4,8 +4,8 @@
       <div class="lh-header">
         <div>新增回收公司基本信息</div>
         <div>
-          <el-button>返回</el-button>
-          <el-button type="primary">新增</el-button>
+          <!-- <el-button>返回</el-button> -->
+          <el-button type="primary">修改</el-button>
         </div>
       </div>
       <div class="lh-form">
@@ -81,8 +81,8 @@
 </template>
 <script>
 import config from 'src/config'
-import streetTable from './addTable/street'
-import lineTable from './addTable/line'
+import streetTable from '../addTable/street'
+import lineTable from '../addTable/line'
 export default {
   data () {
     return {
@@ -121,7 +121,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .lh-container {
-    padding: 1rem 2rem;
+    // padding: 1rem 2rem;
     .lh-top {
       border: 1px solid lightgray;
       border-radius: 5px;

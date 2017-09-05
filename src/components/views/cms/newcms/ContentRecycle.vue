@@ -101,7 +101,7 @@
                 @selection-change="handleSelectionChange"
                 @row-dblclick="rowDbclick">
                 <el-table-column type="selection" width="55"></el-table-column>
-                <el-table-column prop="id" label="ID" width="60"></el-table-column>
+                <el-table-column prop="id" label="ID" width="70"></el-table-column>
                 <el-table-column label="内容标题" prop="title"></el-table-column>
                 <el-table-column prop="brief" label="类型"></el-table-column>
                 <el-table-column prop="category.display_name" label="栏目" width="120"></el-table-column>

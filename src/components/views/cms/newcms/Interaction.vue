@@ -186,7 +186,11 @@ export default {
     },
     /* 切换状态 */
     toswitch (active, id) {
-      api.POST(config.newcms.auditNcmsCommentAPI, {id: id, status: Number(active)})
+      let data = {
+        pageSize: this.response.pageSize,
+        currentPage: this.response.currentPage
+      }
+      api.POST(config.newcms.auditNcmsCommentAPI, {id: id, status: Number(active), ...data})
       .then(response => {
         this.getList()
         this.onSuccess('状态操作成功！')

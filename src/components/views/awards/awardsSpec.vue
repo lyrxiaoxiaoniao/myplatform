@@ -216,6 +216,10 @@ export default {
       return val
     },
     toswitch (active, id) {
+      let data = {
+        pageSize: this.response.pageSize,
+        currentPage: this.response.currentPage
+      }
       let ids = []
       ids.push(id)
       var obj = {
@@ -229,7 +233,7 @@ export default {
           return
         }
         if (response.data.errcode === '0000') {
-          this.getList()
+          this.getList(data)
           this.$notify({
             title: '成功',
             message: '修改状态成功！！！',

@@ -14,6 +14,7 @@ export default {
     update: '/rubbish/community/update',
     repetition: '/rubbish/community/repetition',
     indexOne: '/rubbish/community/indexOne'
+  },
   restaurants: {
     index: '/restaurants/index'
   }
