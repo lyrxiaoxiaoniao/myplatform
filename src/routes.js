@@ -147,6 +147,11 @@ import RelSeverList from 'components/views/recycle/village/relSever.vue'
 
 // 餐饮企业管理
 import RestaurantsList from './components/views/recycle/restaurants/RestaurantsList.vue'
+import RestaurantsAdd from './components/views/recycle/restaurants/RestaurantsAdd.vue'
+import RestaurantsEdit from './components/views/recycle/restaurants/RestaurantsEdit.vue'
+
+// 地磅信息管理
+import LoadometerInformationList from './components/views/recycle/loadometerInformation/LoadometerInformationList.vue'
 
 import RecycleRecoveryList from './components/views/recycle/recovery/index.vue'
 import RecycleRecoveryAdd from './components/views/recycle/recovery/add.vue'
@@ -1054,6 +1059,38 @@ const routes = [
             component: RestaurantsList,
             name: '餐饮企业信息管理',
             meta: {description: '列表'}
+          }, {
+            path: 'add',
+            component: RestaurantsAdd,
+            name: '添加餐饮企业',
+            meta: {description: '添加餐饮企业'}
+          }, {
+            path: 'edit',
+            component: RestaurantsEdit,
+            name: '企业详情',
+            meta: {description: '查看和编辑企业信息'}
+          }]
+        }, {
+          path: 'loadometerInformation',
+          component: DashMainView,
+          redirect: '/admin/recycle/loadometerInformation/index',
+          name: '餐饮企业管理',
+          meta: {description: '列表'},
+          children: [{
+            path: 'index',
+            component: LoadometerInformationList,
+            name: '地磅信息管理',
+            meta: {description: '列表'}
+          }, {
+            path: 'add',
+            component: RestaurantsAdd,
+            name: '地磅数据管理',
+            meta: {description: '地磅数据统计'}
+          }, {
+            path: 'edit',
+            component: RestaurantsEdit,
+            name: '地磅数据管理',
+            meta: {description: '地磅点每天数据详情'}
           }]
         }]
       }

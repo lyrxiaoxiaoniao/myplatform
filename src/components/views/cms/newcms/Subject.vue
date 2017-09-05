@@ -59,53 +59,65 @@
           <el-form-item label="专题名称" prop="display_name" style="margin-bottom:30px;">
             <el-input v-model="ruleForm.display_name" placeholder="简单为宜" @blur="checkSubjectName"></el-input>
           </el-form-item>
-          <el-form-item label="专题排序" prop="sort">
-            <el-input-number v-model="ruleForm.sort" :min="1" :max="10"></el-input-number>
-          </el-form-item>
-          <el-form-item label="是否推荐" required>
-            <el-switch
-              v-model="ruleForm.is_recommend"
-              on-text="开"
-              off-text="关">
-            </el-switch>
-          </el-form-item>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="专题排序" prop="sort">
+                <el-input-number v-model="ruleForm.sort" :min="1" :max="10"></el-input-number>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="是否推荐" required>
+                <el-switch
+                  v-model="ruleForm.is_recommend"
+                  on-text="开"
+                  off-text="关">
+                </el-switch>
+              </el-form-item>
+            </el-col>
+          </el-row>
           <el-form-item label="专题说明" prop="description">
             <el-input type="textarea" :rows="3" v-model="ruleForm.description"></el-input>
           </el-form-item>
-          <el-form-item label="标题图" prop="logo">
-            <el-upload
-              class="avatar-uploader"
-              :action="uploadURL"
-              :show-file-list="false"
-              :on-success="iconHandleAvatarSuccess"
-              :before-upload="beforeAvatarUpload">
-              <img v-if="ruleForm.logo" :src="ruleForm.logo" class="avatar">
-              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-            </el-upload>
-          </el-form-item>
-          <el-form-item label="内容图" prop="banners">
-            <el-upload
-              class="avatar-uploader"
-              :action="uploadURL"
-              :show-file-list="false"
-              :on-success="bannersHandleAvatarSuccess"
-              :before-upload="beforeAvatarUpload">
-              <img v-if="ruleForm.banners.length" :src="ruleForm.banners[0]" class="avatar">
-              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-            </el-upload>
-          <!--
-            <el-upload
-              :action="uploadURL"
-              list-type="picture-card"
-              :on-success="bannersHandleAvatarSuccess"
-              :on-remove="handleRemove">
-              <i class="el-icon-plus"></i>
-            </el-upload>
-            <el-dialog v-model="bannersVisible">
-              <img width="100%" v-for="value in ruleForm.banners" :src="value" alt="">
-            </el-dialog>
-          -->
-          </el-form-item>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="标题图" prop="logo">
+                <el-upload
+                  class="avatar-uploader"
+                  :action="uploadURL"
+                  :show-file-list="false"
+                  :on-success="iconHandleAvatarSuccess"
+                  :before-upload="beforeAvatarUpload">
+                  <img v-if="ruleForm.logo" :src="ruleForm.logo" class="avatar">
+                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                </el-upload>
+              </el-form-item>   
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="内容图" prop="banners">
+                <el-upload
+                  class="avatar-uploader"
+                  :action="uploadURL"
+                  :show-file-list="false"
+                  :on-success="bannersHandleAvatarSuccess"
+                  :before-upload="beforeAvatarUpload">
+                  <img v-if="ruleForm.banners.length" :src="ruleForm.banners[0]" class="avatar">
+                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                </el-upload>
+              <!--
+                <el-upload
+                  :action="uploadURL"
+                  list-type="picture-card"
+                  :on-success="bannersHandleAvatarSuccess"
+                  :on-remove="handleRemove">
+                  <i class="el-icon-plus"></i>
+                </el-upload>
+                <el-dialog v-model="bannersVisible">
+                  <img width="100%" v-for="value in ruleForm.banners" :src="value" alt="">
+                </el-dialog>
+              -->
+              </el-form-item>
+            </el-col>
+          </el-row>
           <el-form-item v-if="dialogTitle === '修改专题'">
             <el-row type="flex">
               <el-button size="small" @click="moveArticles">移出专题</el-button>
@@ -280,7 +292,7 @@ export default {
       })
     },
     getArticleData (id) {
-      api.GET(config.content.list, {subject_id: id})
+      api.POST(config.content.list, {subject_id: id})
       .then(response => {
         if (response.status !== 200) {
           this.error = response.statusText
