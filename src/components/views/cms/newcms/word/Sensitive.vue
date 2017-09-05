@@ -5,16 +5,17 @@
             <el-row type="flex" justify="end">
             <el-col :span="16">
                 <el-button type="primary" @click="openDialog">添加敏感词</el-button>
-                <el-dropdown @command="handleCommand">
+                <!-- <el-dropdown @command="handleCommand">
                   <el-button type="primary">
                     更多操作<i class="el-icon-caret-bottom el-icon--right"></i>
                   </el-button>
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item command="删除">删除</el-dropdown-item>
-                    <!-- <el-dropdown-item command="移动">移动</el-dropdown-item> -->
+                    <el-dropdown-item command="移动">移动</el-dropdown-item>
                   </el-dropdown-menu>
-                </el-dropdown>
+                </el-dropdown> -->
                 <el-button @click="reFresh" type="primary">刷新</el-button>
+                <el-button @click="handleCommand" type="primary">批量删除</el-button>
             </el-col>
             <!-- <el-select v-model="operation" placeholder="所有" style="width:150px;" @change="open3">
                 <el-option label="所有" value="所有"></el-option>
@@ -37,7 +38,7 @@
             :data="response.data"
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="id" label="ID" width="60"></el-table-column>
+            <el-table-column prop="id" label="ID" width="70"></el-table-column>
             <el-table-column prop="badword" label="敏感词"></el-table-column>
             <el-table-column prop="replacement" label="替换词汇"></el-table-column>
             <el-table-column prop="created_at" label="创建时间">
@@ -170,9 +171,10 @@ export default {
   },
   methods: {
     handleCommand (command) {
-      if (command === '删除') {
-        this.deleteType()
-      }
+      // if (command === '删除') {
+      //   this.deleteType()
+      // }
+      this.deleteType()
     },
     toggleSelection (rows) {
       if (rows) {
@@ -192,9 +194,13 @@ export default {
     },
     /* 切换状态 */
     toswitch (active, id) {
+      let data = {
+        pageSize: this.response.pageSize,
+        currentPage: this.response.currentPage
+      }
       api.POST(config.newcms.activeNcmsSensitiveAPI, {id: id, active: Number(active)})
       .then(response => {
-        this.getList()
+        this.getList(data)
         this.onSuccess('状态操作成功！')
       })
       .catch(error => {
@@ -250,6 +256,7 @@ export default {
         ...this.selectedEdit,
         ...data
       }
+      this.selectedEdit.active = Boolean(this.selectedEdit.active)
       this.showEditDialog = true
     },
     closeDialog () {

@@ -1,0 +1,168 @@
+<template>
+	<div class="lh-container">
+		<div class="lh-top">
+      <div class="lh-header">
+        <div>新增回收公司基本信息</div>
+        <div>
+          <!-- <el-button>返回</el-button> -->
+          <el-button type="primary">修改</el-button>
+        </div>
+      </div>
+      <div class="lh-form">
+        <el-form :model="selected" label-width="100px">
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="单位名称">
+                <el-input placeholder="请输入"></el-input>
+              </el-form-item>
+            </el-col>  
+            <el-col :span="12">
+              <el-form-item label="固定电话">
+                <el-input placeholder="请输入"></el-input>
+              </el-form-item>
+            </el-col>  
+            <el-col :span="12">
+              <el-form-item label="详细地址">
+                <el-input placeholder="请输入"></el-input>
+              </el-form-item>
+            </el-col>  
+            <el-col :span="12">
+              <el-form-item label="业务类型">
+                <el-input placeholder="请输入"></el-input>
+              </el-form-item>
+            </el-col>  
+            <el-col :span="8">
+              <el-form-item label="负责人">
+                <el-input placeholder="请输入"></el-input>
+              </el-form-item>
+            </el-col>  
+            <el-col :span="8">
+              <el-form-item label="负责人电话">
+                <el-input placeholder="请输入"></el-input>
+              </el-form-item>
+            </el-col>  
+            <el-col :span="8">
+              <el-form-item label="组织机构代码">
+                <el-input placeholder="请输入"></el-input>
+              </el-form-item>
+            </el-col>  
+            <el-col :span="24">
+              <el-form-item label="企业说明">
+                <el-input type="textarea" placeholder="请输入"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+            <el-form-item label="营业执照">
+              <el-upload
+                  class="avatar-uploader"
+                  :action="uploadURL"
+                  :show-file-list="false"
+                  :on-success="handleAvatarSuccess"
+                  :before-upload="beforeAvatarUpload">
+                  <img v-if="selected.banner" :src="selected.banner" class="avatar">
+                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                  <div class="el-upload__tip" slot="tip">上传有效、清晰的营业执照图片（最多上传1张，每张最大10M）</div>
+              </el-upload>
+            </el-form-item>
+          </el-col>
+          </el-row>
+        </el-form>
+      </div>
+    </div>
+		<div class="lh-bottom">
+      <street-table
+        v-if="isLine">
+      </street-table>
+      <line-table
+        v-else>
+      </line-table>
+    </div>
+	</div>      
+</template>
+<script>
+import config from 'src/config'
+import streetTable from '../addTable/street'
+import lineTable from '../addTable/line'
+export default {
+  data () {
+    return {
+      uploadURL: config.serverURI + config.uploadFilesAPI,
+      selected: {
+        banner: ''
+      },
+      isLine: false
+    }
+  },
+  components: {
+    streetTable,
+    lineTable
+  },
+  methods: {
+    /* 上传图片函数 */
+    handleAvatarSuccess (res, file) {
+      console.log(res, file)
+      // this.classData.icon = res.data[0]
+    },
+    beforeAvatarUpload (file) {
+      const isJPG = file.type === 'image/jpeg'
+      const isLt2M = file.size / 1024 / 1024 < 10
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 JPG 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 10MB!')
+      }
+      return isJPG && isLt2M
+    }
+  },
+  mounted () {
+  }
+}
+</script>
+<style lang="scss" scoped>
+.lh-container {
+    // padding: 1rem 2rem;
+    .lh-top {
+      border: 1px solid lightgray;
+      border-radius: 5px;
+      width: 100%;
+      background-color: #fff;
+      padding-bottom: 1rem;
+      .lh-header {
+        padding: 0 2rem;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 60px;
+        border-bottom: 1px solid lightgray;
+        div:nth-of-type(1){
+          font-size: 16px;
+        }
+      }
+      .lh-form {
+        margin: 1rem 2rem;
+      }
+    }
+    .lh-bottom {
+      margin-top: 1rem;
+      border-radius: 5px;
+      border: 1px solid lightgray;
+      width: 100%;
+      background-color: #fff;
+      padding-bottom: 1rem;
+      .lh-header {
+        padding: 0 2rem;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 60px;
+        border-bottom: 1px solid lightgray;
+        div:nth-of-type(1){
+          font-size: 16px;
+        }
+      }
+    }
+}
+</style>

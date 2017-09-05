@@ -101,7 +101,7 @@
                 @selection-change="handleSelectionChange"
                 @row-dblclick="rowDbclick">
                 <el-table-column type="selection" width="55"></el-table-column>
-                <el-table-column prop="id" label="ID" width="60"></el-table-column>
+                <el-table-column prop="id" label="ID" width="70"></el-table-column>
                 <el-table-column label="内容标题" prop="title"></el-table-column>
                 <el-table-column prop="brief" label="类型"></el-table-column>
                 <el-table-column prop="category.display_name" label="栏目" width="120"></el-table-column>
@@ -273,7 +273,7 @@ export default {
         pageSize: this.response.pageSize,
         ...this.selected
       }
-      this.getList(data)
+      this.getList(data, this.closeDialog)
     },
     // 双击行调用函数
     rowDbclick (data, type) {
@@ -359,10 +359,13 @@ export default {
       })
       return res
     },
-    getList (data = {}) {
+    getList (data = {}, callback) {
       api.POST(config.newcms.ncmRecycleListAPI, data)
       .then(response => {
-        this.response = this.changeActive(response.data.data)
+        if (response.data.errcode === '0000') {
+          this.response = this.changeActive(response.data.data)
+          callback()
+        }
       })
       .catch(error => {
         this.$message.error(error)

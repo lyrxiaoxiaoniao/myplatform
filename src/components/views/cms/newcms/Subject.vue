@@ -24,7 +24,7 @@
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
         <el-table-column prop="display_name" label="专题名称"></el-table-column>
-        <el-table-column prop="articleCount" label="文章数" width="120"></el-table-column>
+        <el-table-column prop="amount" label="文章数" width="120"></el-table-column>
         <el-table-column prop="sort" label="排序" width="120"></el-table-column>
         <el-table-column prop="is_recommend" label="是否推荐" width="120">
           <template scope="scope">
@@ -85,6 +85,16 @@
           </el-form-item>
           <el-form-item label="内容图" prop="banners">
             <el-upload
+              class="avatar-uploader"
+              :action="uploadURL"
+              :show-file-list="false"
+              :on-success="bannersHandleAvatarSuccess"
+              :before-upload="beforeAvatarUpload">
+              <img v-if="ruleForm.banners.length" :src="ruleForm.banners[0]" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          <!--
+            <el-upload
               :action="uploadURL"
               list-type="picture-card"
               :on-success="bannersHandleAvatarSuccess"
@@ -94,17 +104,19 @@
             <el-dialog v-model="bannersVisible">
               <img width="100%" v-for="value in ruleForm.banners" :src="value" alt="">
             </el-dialog>
+          -->
           </el-form-item>
           <el-form-item v-if="dialogTitle === '修改专题'">
-            <el-row type="flex" justify="end">
-              <el-button size="small" icon="delete2" title="删除" @click="deleteArticles"></el-button>
+            <el-row type="flex">
+              <el-button size="small" @click="moveArticles">移出专题</el-button>
             </el-row>
           </el-form-item>
           <el-form-item v-if="dialogTitle === '修改专题'">
             <el-table
               :data="articleData.data"
               style="width: 100%"
-              @selection-change="handleArticleSelectionChange">
+              @selection-change="handleArticleSelectionChange"
+              @cell-dblclick="toContentEdit(row.id)">
               <el-table-column type="selection" width="55"></el-table-column>
               <el-table-column prop="created_at" label="日期" width="150"></el-table-column>
               <el-table-column prop="author" label="作者" width="100"></el-table-column>
@@ -142,12 +154,10 @@ export default {
     var validateSubjectName = (rule, value, callback) => {
       api.GET(config.subject.checkName, {display_name: value})
         .then(response => {
-          if (response.status !== 200) {
-            this.error = response.statusText
-            return
-          }
           if (response.data.errcode === '60000') {
             callback(new Error('专题重名'))
+          } else {
+            callback()
           }
         })
     }
@@ -157,7 +167,9 @@ export default {
       searchForm: {
         keyword: ''
       },
-      response: null,
+      response: {
+        data: null
+      },
       error: null,
       dialogType: '',
       dialogTitle: '',
@@ -172,6 +184,7 @@ export default {
       },
       multipleSelection: [],
       ids: [],
+      subjectId: 0, // 正在编辑的专题id
       uploadURL: config.serverURI + config.uploadFilesAPI,
       bannersVisible: false,
       articleData: [],
@@ -350,6 +363,38 @@ export default {
         })
       })
     },
+    moveArticles () {
+      if (this.articleIds.length === 0) {
+        this.$confirm('请进行正确操作，请优先勾选', '错误', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'error'
+        }).then(() => {
+          return
+        }).catch(() => {
+          return
+        })
+        return
+      }
+      this.$confirm('是否确认移出该专题', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        api.POST(config.content.removeSubject, {
+          articles: this.articleIds,
+          subject_id: this.subjectId
+        })
+        .then(response => {
+          if (response.data.errcode === '0000') {
+            this.onSuccess('移出成功')
+          } else {
+            this.$message.error('发生错误，请重试')
+          }
+        })
+      })
+    },
+    /*
     deleteArticles () {
       if (this.articleIds.length === 0) {
         this.$confirm('请进行正确操作，请优先勾选专题？', '错误', {
@@ -380,6 +425,15 @@ export default {
         })
       })
     },
+    */
+    toContentEdit (id) {
+      this.$router.push({
+        path: '/admin/newcms/content/edit',
+        query: {
+          id: id
+        }
+      })
+    },
     // 专题列表选中记录
     handleSelectionChange (val) {
       this.multipleSelection = val
@@ -399,18 +453,9 @@ export default {
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.ruleForm.active = 0
-          switch (this.ruleForm.is_recommend) {
-            case false:
-              this.ruleForm.is_recommend = 0
-              break
-            case true:
-              this.ruleForm.is_recommend = 1
-              break
-          }
-          // this.ruleForm.active = Number(this.ruleForm.active)
+          this.ruleForm.is_recommend = Number(this.ruleForm.is_recommend)
+          this.ruleForm.active = Number(this.ruleForm.active)
           var obj = this.ruleForm
-          console.log(obj)
           api.POST(config.subject.add, obj)
             .then(response => {
               if (response.status !== 200) {
@@ -513,8 +558,19 @@ export default {
       this.dialogTitle = value
       this.dialogFormVisible = true
       if (value === '修改专题') {
+        this.subjectId = id
         this.getDetail(id)// 获取专题详情
         this.getArticleData(id)// 获取该专题下所有文章
+      }
+      if (value === '新增专题') {
+        this.ruleForm = {
+          display_name: '',
+          sort: 0,
+          is_recommend: false,
+          description: '',
+          logo: '',
+          banners: []
+        }
       }
     },
     closeDialog () {
@@ -523,10 +579,12 @@ export default {
     },
     checkSubjectName (formName) {
     },
+    // 内容图上传成功
     bannersHandleAvatarSuccess (res, file) {
       this.ruleForm.banners.push(res.data[0])
       this.bannersVisible = true
     },
+    // 标题图上传成功
     iconHandleAvatarSuccess(res, file) {
       this.ruleForm.logo = res.data[0]
       // this.saveImg(this.ruleForm.logo)

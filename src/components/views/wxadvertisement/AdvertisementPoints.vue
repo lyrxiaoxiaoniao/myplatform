@@ -381,6 +381,10 @@
         return val
       },
       toswitch (state, id) {
+        let data = {
+          pageSize: this.response.pageSize,
+          currentPage: this.response.currentPage
+        }
         var obj = {
           id: id,
           state: this.changeNum(state)
@@ -397,6 +401,7 @@
               message: '修改状态成功！！！',
               type: 'success'
             })
+            this.updateList(data)
           }
         })
       },

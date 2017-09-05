@@ -111,7 +111,6 @@ import SCNewcmsJurisdiction from 'components/views/cms/newcms/Jurisdiction.vue'
 import SCNewcmsContentAdd from 'components/views/cms/newcms/ContentAdd.vue'
 import SCNewcmsContentRecycle from 'components/views/cms/newcms/ContentRecycle.vue'
 import SCNewcmsContentEdit from 'components/views/cms/newcms/ContentEdit.vue'
-// import SCNewcmsSpecial from 'components/views/cms/newcms/Special.vue'
 import SCSysConfig from 'components/views/cms/newcms/SystemConfig.vue'
 import SCInteraction from 'components/views/cms/newcms/Interaction.vue'
 import SCHotWords from 'components/views/cms/newcms/word/HootWords.vue'
@@ -141,6 +140,20 @@ import SCBannedList from 'components/views/reservation/bannedListManagement/List
 // recycle
 import RecycleClass from 'components/views/recycle/village/recycleClass.vue'
 import RecycleAdd from 'components/views/recycle/village/recycleAdd.vue'
+import VillageDetail from 'components/views/recycle/village/villageDetail.vue'
+import RelSeverList from 'components/views/recycle/village/relSever.vue'
+
+// 回收公司管理
+
+// 餐饮企业管理
+import RestaurantsList from './components/views/recycle/restaurants/RestaurantsList.vue'
+
+import RecycleRecoveryList from './components/views/recycle/recovery/index.vue'
+import RecycleRecoveryAdd from './components/views/recycle/recovery/add.vue'
+import RecycleRecoveryInfo from './components/views/recycle/recovery/baseInfo.vue'
+import RecycleRecoveryWay from './components/views/recycle/recovery/way.vue'
+import RecycleRecoveryWayEdit from './components/views/recycle/recovery/wayManage/editWay.vue'
+import RecycleRecoveryWayAdd from './components/views/recycle/recovery/wayManage/addWay.vue'
 
 const routes = [
   {
@@ -965,12 +978,83 @@ const routes = [
             component: RecycleClass,
             name: '小区信息管理',
             meta: {description: '列表'}
+          }, {
+            path: 'add',
+            component: RecycleAdd,
+            name: '添加小区',
+            meta: {description: '列表'}
+          }, {
+            path: 'detail',
+            component: VillageDetail,
+            name: '小区详情',
+            meta: {description: '列表'}
+          }, {
+            path: 'relsever',
+            component: RelSeverList,
+            name: '关联物业',
+            meta: {description: '列表'}
           }]
         }, {
           path: 'server',
           component: RecycleAdd,
           name: '物业管理',
           meta: {description: '列表'}
+        }, {
+          path: 'recovery',
+          component: DashMainView,
+          redirect: '/admin/recycle/recovery/index',
+          name: '收运公司管理',
+          meta: {description: '列表'},
+          children: [{
+            path: 'index',
+            component: RecycleRecoveryList,
+            name: '清运公司管理',
+            meta: {description: '列表'}
+          }, {
+            path: 'add',
+            component: RecycleRecoveryAdd,
+            name: '回收公司管理',
+            meta: {description: '新增'}
+          }, {
+            path: 'info',
+            component: RecycleRecoveryInfo,
+            name: '回收公司',
+            meta: {description: '信息管理'}
+          }, {
+            path: 'way',
+            component: DashMainView,
+            redirect: '/admin/recycle/recovery/way/index',
+            name: '线路',
+            meta: {description: '信息管理'},
+            children: [{
+              path: 'index',
+              component: RecycleRecoveryWay,
+              name: '回收公司线路管理',
+              meta: {description: '列表'}
+            }, {
+              path: 'add',
+              component: RecycleRecoveryWayAdd,
+              name: '线路管理',
+              meta: {description: '添加线路'}
+            }, {
+              path: 'edit',
+              component: RecycleRecoveryWayEdit,
+              name: '线路管理详情',
+              meta: {description: '修改线路'}
+            }]
+          }]
+        }, {
+          path: 'restaurants',
+          component: DashMainView,
+          redirect: '/admin/recycle/restaurants/index',
+          name: '餐饮企业管理',
+          meta: {description: '列表'},
+          children: [{
+            path: 'index',
+            component: RestaurantsList,
+            name: '餐饮企业信息管理',
+            meta: {description: '列表'}
+          }]
         }]
       }
     ]

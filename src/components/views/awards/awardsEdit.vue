@@ -357,9 +357,7 @@ export default {
       this.inputValue = ''
     },
     goBack () {
-      this.$router.push({
-        path: '/admin/awards/product'
-      })
+      this.$router.go(-1)
     },
     // handleSuccess (response, file, fileList) {
     //   this.formData.images = []
