@@ -5,7 +5,7 @@
             <el-row type="flex" justify="end">
             <el-col :span="16">
                 <el-button type="primary" @click="openDialog">添加来源</el-button>
-                <el-button type="primary">刷新</el-button>
+                <el-button @click="refresh" type="primary">刷新</el-button>
                 <el-button @click="handleCommand" type="primary">批量删除</el-button>
                 <!-- <el-dropdown @command="handleCommand" style="margin-left:10px;">
                   <el-button type="primary">
@@ -387,6 +387,9 @@ export default {
       .catch(error => {
         this.$message.error(error)
       })
+    },
+    refresh () {
+      this.getList()
     }
   },
   mounted () {

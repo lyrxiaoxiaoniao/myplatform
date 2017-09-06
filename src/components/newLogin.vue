@@ -264,7 +264,7 @@ export default {
             display: flex;
             justify-content: space-around;
             .login-adv {
-                margin-top: 42px;
+                margin-top: 95px;
                 width: 370px;
                 height: 90px;
                 z-index: 2;
