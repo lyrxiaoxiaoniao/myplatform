@@ -94,7 +94,7 @@
     </el-dialog>
     <!-- 高级搜索模态框 -->
     <el-dialog title="高级搜索" v-model="dialogAdvance" size="tiny">
-        <el-form :model="advancedSearch" label-position="left">
+        <el-form :model="advancedSearch" label-position="left" style="padding: 0 2em;">
            <el-form-item label="关键字" :label-width="formLabelWidth">
              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
            </el-form-item>
@@ -120,7 +120,7 @@
   </div>      
 </template>
 <script>
-import config from 'src/config/recycle.js'
+import config from 'src/config'
 import api from 'src/api'
 export default {
   data () {
@@ -265,6 +265,7 @@ export default {
     },
     // 获取表单
     getList (data = {}) {
+      console.log(1)
       api.GET(config.server.index, data)
       .then(response => {
         this.response = this.transformDate(response.data.data)
@@ -322,6 +323,9 @@ export default {
         ...this.form
       }
       this.getList(data)
+    },
+    enterAdd () {
+      this.$router.push('/admin/recycle/server/add')
     }
   },
   mounted () {

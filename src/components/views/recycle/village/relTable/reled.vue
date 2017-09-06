@@ -1,0 +1,145 @@
+<template>
+    <div class="lh-container">
+    <div class="lh-top">
+            <div class="lh-header">
+                <div>回收公司人员信息</div>
+                <div>
+                    <!-- <el-button>返回</el-button> -->
+                    <el-button v-model="id" type="primary">修改</el-button>
+                </div>
+            </div>
+            <div class="lh-form">
+                <kobe-table>
+                    <div slot="kobe-table-header" class="kobe-table-header"></div>
+                    <div slot="kobe-table-content" class="kobe-table">
+                    <el-table
+                        ref="multipleTable"
+                        border
+                        stripe
+                        :data="response.data"
+                        @selection-change="handleSelectionChange">
+                        <el-table-column type="selection" width="40"></el-table-column>
+                        <el-table-column prop="id" label="ID" sortable width="120"></el-table-column>
+                        <el-table-column prop="name" label="物业名称" width="170"></el-table-column>
+                        <el-table-column prop="duty_name" label="联系人" width="150"></el-table-column>
+                        <el-table-column prop="mobile" label="联系电话" width="150"></el-table-column>
+                        <el-table-column prop="address" label="公司地址"></el-table-column>
+                        <el-table-column width="160" label="操作">
+                        <template scope="scope">
+                            <el-button size="small" icon="edit" title="修改"></el-button>
+                            <el-button size="small" icon="delete2" title="解除">关联</el-button>
+                        </template>
+                        </el-table-column>
+                    </el-table>
+                    </div>
+                    <div slot="kobe-table-footer" class="kobe-table-footer">
+                        <el-row type="flex" justify="center">
+                        <el-col :span="8">
+                            <el-pagination
+                            @size-change="handleSizeChange"
+                            @current-change="handleCurrentChange"
+                            :current-page="response.currentPage"
+                            :page-sizes="[10, 20, 50, 100]"
+                            :page-size="response.pageSize"
+                            :total="response.count"
+                            layout="total, sizes, prev, pager, next, jumper">
+                            </el-pagination>
+                        </el-col>
+                        </el-row>
+                    </div>
+                </kobe-table>
+            </div>
+        </div>
+    </div>    
+</template>
+<script>
+import config from 'src/config'
+import api from 'src/api'
+export default {
+  props: ['id'],
+  data () {
+    return {
+      id: this.id,
+      response: {
+        data: null
+      },
+      multipleSelection: [],
+      ids: []
+    }
+  },
+  methods: {
+    toggleSelection (rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row)
+        })
+      } else {
+        this.$refs.multipleTable.clearSelection()
+      }
+    },
+    handleSelectionChange (val) {
+      this.multipleSelection = val
+      this.ids = []
+      this.multipleSelection.forEach(v => {
+        this.ids.push(v.id)
+      })
+    },
+    handleSizeChange (value) {
+      const data = {
+        currentPage: this.response.currentPage,
+        pageSize: value,
+        ...this.form
+      }
+      this.getList(data)
+    },
+    handleCurrentChange (value) {
+      const data = {
+        currentPage: value,
+        pageSize: this.response.pageSize,
+        ...this.form
+      }
+      this.getList(data)
+    },
+    getList (data = {}) {
+      data = {
+        id: this.id
+      }
+      api.GET(config.village.relServer, data)
+      .then(response => {
+        this.response.data = response.data
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    }
+  },
+  mounted () {
+    this.getList()
+    console.log(this.response.data)
+  }
+}
+</script>
+<style lang="scss" scoped>
+.lh-container {
+    // padding: 1rem 2rem;
+    .lh-top {
+        border: 1px solid lightgray;
+        border-radius: 5px;
+        width: 100%;
+        background-color: #fff;
+        padding-bottom: 1rem;
+        .lh-header {
+            padding: 0 2rem;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+            border-bottom: 1px solid lightgray;
+            div:nth-of-type(1){
+                font-size: 16px;
+            }
+        }
+    }
+}
+</style>

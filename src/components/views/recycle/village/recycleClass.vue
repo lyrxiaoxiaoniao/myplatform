@@ -11,12 +11,10 @@
    </el-col>
     <el-col :span="20">
       <kobe-table>
-        <div slot="kobe-table-header" class="kobe-table-header">
-         
+        <div slot="kobe-table-header" class="kobe-table-header">      
           <el-row type="flex" justify="end">
             <el-col :span="14">
-              <el-button @click="enterAdd" type="primary">添加</el-button>
-              
+              <el-button @click="enterAdd" type="primary">添加</el-button>      
               <el-dropdown @command="handleCommand" style="margin-left:10px;">
                 <el-button type="primary">
                                    批量操作<i class="el-icon-caret-bottom el-icon--right"></i>
@@ -57,7 +55,7 @@
             <el-table-column prop="name" label="小区名称" width="150"></el-table-column>
             <el-table-column prop="duty_name" label="负责人" width="95">
             </el-table-column>
-            <el-table-column prop="mobile" label="联系电话"></el-table-column>
+            <el-table-column prop="mobile" width="105" label="联系电话"></el-table-column>
             <el-table-column prop="region_id" label="所属街道"></el-table-column>
             <el-table-column label="审核状态" width="90">
               <template scope="scope">
@@ -72,14 +70,14 @@
             </el-table-column>
             <el-table-column prop="detail_address" label="详细地址"></el-table-column>
             <el-table-column 
-              width="150"
+              width="170"
               label="操作"
               >
               <template scope="scope">
                 <!-- <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button> -->
                 <el-button @click="edit(scope.row.id)" size="small" icon="edit"></el-button>
                 <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
-                <el-button  size="small" icon="home1"></el-button>
+                <el-button @click="enterRel(scope.row.id)" size="small"><i class="fa fa-home"></i></el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -131,43 +129,54 @@
     </el-dialog>
 <!-- 高级搜索模态框 -->
     <el-dialog title="高级搜索" v-model="dialogAdvance" size="tiny">
-        <el-form :model="advancedSearch" style="padding-right:30px;">
+        <el-form :model="advancedSearch" style="padding-right:30px;" label-position="left">
            <el-form-item label="关键字" :label-width="formLabelWidth">
-              <el-input v-model="advancedSearch.key" auto-complete="off"></el-input>
+              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="所属街道" :label-width="formLabelWidth">
+            <el-form-item label="关联物业" :label-width="formLabelWidth">
+              <el-input v-model="advancedSearch.server" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-row>
+              <el-form-item label="所属街道" :label-width="formLabelWidth">
               <el-cascader
                 :options="options"
                 v-model="selectedOptions"
                 @change="handleChange">
               </el-cascader>
             </el-form-item>
-            <el-form-item label="关联物业" :label-width="formLabelWidth">
-              <el-input v-model="advancedSearch.server" auto-complete="off"></el-input>
-            </el-form-item>
+            </el-row>
+            <el-row>
+              <el-col :span="13">
+              <el-form-item label="联系人" :label-width="formLabelWidth">
+               <el-input v-model="advancedSearch.duty_name" auto-complete="off"></el-input>
+              </el-form-item>
+            </el-col>
+            </el-row>
             <el-form-item label="数据状态" :label-width="formLabelWidth">
-                 <el-radio class="radio" v-model="advancedSearch.radio" label="1" style="margin:0 10px;">已审核</el-radio>
-                 <el-radio class="radio" v-model="advancedSearch.radio" label="0"  style="margin:0 10px;">未审核</el-radio>
+                 <el-radio class="radio" v-model="advancedSearch.audit_state" label="1" style="margin:0 10px;">已审核</el-radio>
+                 <el-radio class="radio" v-model="advancedSearch.audit_state" label="0"  style="margin:0 10px;">未审核</el-radio>
             </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
             <el-button @click="dialogAdvance = false">取 消</el-button>
-            <el-button type="primary" @click="dialogAdvance = false">确 定</el-button>
+            <el-button type="primary" @click="advance">确 定</el-button>
         </span>
     </el-dialog>
   </div>
 </template>
 <script>
-import config from 'src/config/recycle.js'
+import config from 'src/config'
 import api from 'src/api'
 export default {
   data () {
     return {
       formLabelWidth: '90px',
+      adSwitch: true,
       advancedSearch: {
-        key: '',
+        keyword: '',
         server: '',
-        radio: '1'
+        audit_state: '1',
+        duty_name: ''
       },
       dialogAdvance: false,
       moveVal: null,
@@ -243,6 +252,9 @@ export default {
     edit (id) {
       this.$router.push({ path: '/admin/recycle/village/detail', query: { 'id': id } })
     },
+    enterRel (id) {
+      this.$router.push({ path: '/admin/recycle/village/relserver', query: { 'id': id } })
+    },
     handleCommand (command) {
       if (command === '批量删除') {
         this.deleteType()
@@ -299,14 +311,30 @@ export default {
     },
     toswitch (active, id) {
       if (active) {
-        active = 0
-      } else {
         active = 1
+      } else {
+        active = 0
       }
       api.POST(config.village.audit, {id: id, audit_state: active})
       .then(response => {
         this.getList()
         this.onSuccess('启用操作成功！')
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    advance () {
+      this.dialogAdvance = false
+      this.adSwitch = false
+      const data = {
+        currentPage: 1,
+        pageSize: this.response.pageSize,
+        ...this.advancedSearch
+      }
+      api.GET(config.village.advanced, data)
+      .then(response => {
+        this.response = this.transformDate(response.data)
       })
       .catch(error => {
         this.$message.error(error)
@@ -478,8 +506,11 @@ export default {
         pageSize: value,
         ...this.form
       }
-
-      this.getList(data)
+      if (this.adSwitch) {
+        this.getList(data)
+      } else {
+        this.adSwitch = true
+      }
     },
     handleCurrentChange (value) {
       const data = {
@@ -487,7 +518,11 @@ export default {
         pageSize: this.response.pageSize,
         ...this.form
       }
-      this.getList(data)
+      if (this.adSwitch) {
+        this.getList(data)
+      } else {
+        this.adSwitch = true
+      }
     },
     onSearch () {
       const data = {
