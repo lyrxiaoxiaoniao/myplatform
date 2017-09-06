@@ -20,7 +20,7 @@ import personTab from './base/person'
 export default {
   data () {
     return {
-      activeName: 'second'
+      activeName: 'first'
     }
   },
   components: {

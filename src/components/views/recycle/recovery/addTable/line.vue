@@ -16,7 +16,7 @@
             :data="response.data"
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="40"></el-table-column>
-            <el-table-column prop="id" label="ID" sortable width="80"></el-table-column>
+            <el-table-column prop="id" label="ID" width="60"></el-table-column>
             <el-table-column prop="id" label="线路" width="200"></el-table-column>
             <el-table-column prop="id" label="描述"></el-table-column>
             <el-table-column prop="id" label="服务商户数量" width="120"></el-table-column>
@@ -43,17 +43,26 @@
             </el-row>
         </div>
     </kobe-table>
+    <el-dialog v-model="showDialog" title="新增服务街道" size="tiny">
+
+      <span slot="footer" class="dialog-footer">
+        <el-button>取 消</el-button>
+        <el-button type="primary">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
 export default {
+  props: ['companyId'],
   data () {
     return {
       response: {
         data: null
       },
       multipleSelection: [],
-      ids: []
+      ids: [],
+      showDialog: false
     }
   },
   methods: {

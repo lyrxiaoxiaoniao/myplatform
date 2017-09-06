@@ -2,9 +2,9 @@
 	<div class="lh-container">
 		<div class="lh-top">
       <div class="lh-header">
-        <div>新增回收公司基本信息</div>
+        <div>修改回收公司基本信息</div>
         <div>
-          <!-- <el-button>返回</el-button> -->
+          <el-button>返回</el-button>
           <el-button type="primary">修改</el-button>
         </div>
       </div>
@@ -13,42 +13,49 @@
           <el-row :gutter="20">
             <el-col :span="12">
               <el-form-item label="单位名称">
-                <el-input placeholder="请输入"></el-input>
+                <el-input v-model="selected.name" placeholder="请输入"></el-input>
               </el-form-item>
             </el-col>  
             <el-col :span="12">
               <el-form-item label="固定电话">
-                <el-input placeholder="请输入"></el-input>
+                <el-input v-model="selected.mobile" placeholder="请输入"></el-input>
               </el-form-item>
             </el-col>  
             <el-col :span="12">
               <el-form-item label="详细地址">
-                <el-input placeholder="请输入"></el-input>
+                <el-input v-model="selected.detailAddress" placeholder="请输入"></el-input>
               </el-form-item>
             </el-col>  
             <el-col :span="12">
               <el-form-item label="业务类型">
-                <el-input placeholder="请输入"></el-input>
+                <el-select @change="selectedType" v-model="selected.businessType" class="fullwidth" placeholder="请选择业务类型">
+                  <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
               </el-form-item>
             </el-col>  
             <el-col :span="8">
               <el-form-item label="负责人">
-                <el-input placeholder="请输入"></el-input>
+                <el-input v-model="selected.dutyName" placeholder="请输入"></el-input>
               </el-form-item>
             </el-col>  
             <el-col :span="8">
               <el-form-item label="负责人电话">
-                <el-input placeholder="请输入"></el-input>
+                <el-input v-model="selected.phone" placeholder="请输入"></el-input>
               </el-form-item>
             </el-col>  
             <el-col :span="8">
               <el-form-item label="组织机构代码">
-                <el-input placeholder="请输入"></el-input>
+                <el-input v-model="selected.orgCode" placeholder="请输入"></el-input>
               </el-form-item>
             </el-col>  
             <el-col :span="24">
               <el-form-item label="企业说明">
-                <el-input type="textarea" placeholder="请输入"></el-input>
+                <el-input v-model="selected.memo" type="textarea" placeholder="请输入"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -59,7 +66,7 @@
                   :show-file-list="false"
                   :on-success="handleAvatarSuccess"
                   :before-upload="beforeAvatarUpload">
-                  <img v-if="selected.banner" :src="selected.banner" class="avatar">
+                  <img v-if="selected.license" :src="selected.license" class="avatar">
                   <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                   <div class="el-upload__tip" slot="tip">上传有效、清晰的营业执照图片（最多上传1张，每张最大10M）</div>
               </el-upload>
@@ -71,26 +78,45 @@
     </div>
 		<div class="lh-bottom">
       <street-table
-        v-if="isLine">
+        v-if="isLine"
+        :companyId="id">
       </street-table>
       <line-table
-        v-else>
+        v-else
+        :companyId="id">
       </line-table>
     </div>
 	</div>      
 </template>
 <script>
 import config from 'src/config'
+import api from 'src/api'
 import streetTable from '../addTable/street'
 import lineTable from '../addTable/line'
 export default {
   data () {
     return {
+      id: this.$route.query.id,
       uploadURL: config.serverURI + config.uploadFilesAPI,
       selected: {
-        banner: ''
+        license: '',
+        memo: '',
+        orgCode: '',
+        phone: '',
+        dutyName: '',
+        businessType: '',
+        detailAddress: '',
+        mobile: '',
+        name: ''
       },
-      isLine: false
+      options: [{
+        value: 1,
+        label: '大件垃圾'
+      }, {
+        value: 2,
+        label: '餐厨垃圾'
+      }],
+      isLine: true
     }
   },
   components: {
@@ -98,10 +124,16 @@ export default {
     lineTable
   },
   methods: {
+    selectedType (val) {
+      if (val === 1) {
+        this.isLine = true
+      } else if (val === 2) {
+        this.isLine = false
+      }
+    },
     /* 上传图片函数 */
     handleAvatarSuccess (res, file) {
-      console.log(res, file)
-      // this.classData.icon = res.data[0]
+      this.selected.license = res.data[0]
     },
     beforeAvatarUpload (file) {
       const isJPG = file.type === 'image/jpeg'
@@ -113,9 +145,18 @@ export default {
         this.$message.error('上传头像图片大小不能超过 10MB!')
       }
       return isJPG && isLt2M
+    },
+    getData () {
+      api.GET(config.recovery.show, {id: this.id})
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.selected = response.data.data
+        }
+      })
     }
   },
   mounted () {
+    this.getData()
   }
 }
 </script>

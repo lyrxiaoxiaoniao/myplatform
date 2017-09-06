@@ -4,8 +4,8 @@
       <div class="lh-header">
         <div>新增回收公司基本信息</div>
         <div>
-          <el-button>返回</el-button>
-          <el-button type="primary">新增</el-button>
+          <el-button @click="goBack">返回</el-button>
+          <el-button @click="addCompany" type="primary">新增</el-button>
         </div>
       </div>
       <div class="lh-form">
@@ -13,42 +13,49 @@
           <el-row :gutter="20">
             <el-col :span="12">
               <el-form-item label="单位名称">
-                <el-input placeholder="请输入"></el-input>
+                <el-input v-model="selected.name" placeholder="请输入"></el-input>
               </el-form-item>
             </el-col>  
             <el-col :span="12">
               <el-form-item label="固定电话">
-                <el-input placeholder="请输入"></el-input>
+                <el-input v-model="selected.mobile" placeholder="请输入"></el-input>
               </el-form-item>
             </el-col>  
             <el-col :span="12">
               <el-form-item label="详细地址">
-                <el-input placeholder="请输入"></el-input>
+                <el-input v-model="selected.detailAddress" placeholder="请输入"></el-input>
               </el-form-item>
             </el-col>  
             <el-col :span="12">
               <el-form-item label="业务类型">
-                <el-input placeholder="请输入"></el-input>
+                <el-select v-model="selected.businessType" class="fullwidth" placeholder="请选择业务类型">
+                  <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
               </el-form-item>
             </el-col>  
             <el-col :span="8">
               <el-form-item label="负责人">
-                <el-input placeholder="请输入"></el-input>
+                <el-input v-model="selected.dutyName" placeholder="请输入"></el-input>
               </el-form-item>
             </el-col>  
             <el-col :span="8">
               <el-form-item label="负责人电话">
-                <el-input placeholder="请输入"></el-input>
+                <el-input v-model="selected.phone" placeholder="请输入"></el-input>
               </el-form-item>
             </el-col>  
             <el-col :span="8">
               <el-form-item label="组织机构代码">
-                <el-input placeholder="请输入"></el-input>
+                <el-input v-model="selected.orgCode" placeholder="请输入"></el-input>
               </el-form-item>
             </el-col>  
             <el-col :span="24">
               <el-form-item label="企业说明">
-                <el-input type="textarea" placeholder="请输入"></el-input>
+                <el-input v-model="selected.memo" type="textarea" placeholder="请输入"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -59,7 +66,7 @@
                   :show-file-list="false"
                   :on-success="handleAvatarSuccess"
                   :before-upload="beforeAvatarUpload">
-                  <img v-if="selected.banner" :src="selected.banner" class="avatar">
+                  <img v-if="selected.license" :src="selected.license" class="avatar">
                   <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                   <div class="el-upload__tip" slot="tip">上传有效、清晰的营业执照图片（最多上传1张，每张最大10M）</div>
               </el-upload>
@@ -69,50 +76,73 @@
         </el-form>
       </div>
     </div>
-		<div class="lh-bottom">
-      <street-table
-        v-if="isLine">
-      </street-table>
-      <line-table
-        v-else>
-      </line-table>
-    </div>
 	</div>      
 </template>
 <script>
 import config from 'src/config'
-import streetTable from './addTable/street'
-import lineTable from './addTable/line'
+import api from 'src/api'
 export default {
   data () {
     return {
       uploadURL: config.serverURI + config.uploadFilesAPI,
       selected: {
-        banner: ''
+        license: '',
+        memo: '',
+        orgCode: '',
+        phone: '',
+        dutyName: '',
+        businessType: '',
+        detailAddress: '',
+        mobile: '',
+        name: ''
       },
-      isLine: false
+      options: [{
+        value: 1,
+        label: '大件垃圾'
+      }, {
+        value: 2,
+        label: '餐厨垃圾'
+      }]
     }
-  },
-  components: {
-    streetTable,
-    lineTable
   },
   methods: {
     /* 上传图片函数 */
     handleAvatarSuccess (res, file) {
-      console.log(res, file)
-      // this.classData.icon = res.data[0]
+      // console.log(res, file)
+      this.selected.license = res.data[0]
     },
     beforeAvatarUpload (file) {
-      const isJPG = file.type === 'image/jpeg'
+      const isJPG = file.type === 'image/jpeg' || 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 10
       if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!')
+        this.$message.error('上传头像图片只能是 JPG/PNG 格式!')
       }
       if (!isLt2M) {
         this.$message.error('上传头像图片大小不能超过 10MB!')
       }
       return isJPG && isLt2M
+    },
+    addCompany () {
+      // console.log(this.selected)
+      api.POST(config.recovery.add, this.selected)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.onSuccess('新增清运公司成功！')
+          this.goBack()
+        } else {
+          this.$message.error(response.data.errmsg)
+        }
+      })
+    },
+    onSuccess (string) {
+      this.$notify({
+        title: '成功',
+        message: string,
+        type: 'success'
+      })
+    },
+    goBack () {
+      this.$router.go(-1)
     }
   },
   mounted () {
@@ -142,26 +172,6 @@ export default {
       }
       .lh-form {
         margin: 1rem 2rem;
-      }
-    }
-    .lh-bottom {
-      margin-top: 1rem;
-      border-radius: 5px;
-      border: 1px solid lightgray;
-      width: 100%;
-      background-color: #fff;
-      padding-bottom: 1rem;
-      .lh-header {
-        padding: 0 2rem;
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        height: 60px;
-        border-bottom: 1px solid lightgray;
-        div:nth-of-type(1){
-          font-size: 16px;
-        }
       }
     }
 }

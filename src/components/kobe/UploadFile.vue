@@ -53,7 +53,7 @@
                 </div>
             </div>
             <!--图片弹出框-->
-            <el-dialog title="选择图片资源" :modal="false" v-model="uploadDialod" size="small">
+            <el-dialog title="选择图片资源" v-model="uploadDialod" size="small">
                 <el-upload
                     :action="uploadURL"
                     list-type="picture-card"

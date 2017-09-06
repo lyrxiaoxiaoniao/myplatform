@@ -94,7 +94,8 @@ export default {
         mobile: '',
         region_id: '',
         detail_address: '',
-        memo: ''
+        memo: '',
+        id: this.$route.query.id
       },
       rules: {
         phone: [
@@ -116,14 +117,13 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          // console.log(this.form)
-          // api.POST(config.village.update, this.form)
-          // .then(response => {
-          //   this.onSuccess('修改成功！')
-          // })
-          // .catch(error => {
-          //   this.$message.error(error)
-          // })
+          api.POST(config.village.update, this.detailForm)
+          .then(response => {
+            this.onSuccess('修改成功！')
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
         } else {
           this.$notify({
             title: '提示',

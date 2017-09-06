@@ -143,6 +143,11 @@ import RecycleAdd from 'components/views/recycle/village/recycleAdd.vue'
 import VillageDetail from 'components/views/recycle/village/villageDetail.vue'
 import RelSeverList from 'components/views/recycle/village/relSever.vue'
 
+// server
+import ServerIndex from 'components/views/recycle/server/index.vue'
+import ServerDetail from 'components/views/recycle/server/serverDetail.vue'
+import ServerAdd from 'components/views/recycle/server/add.vue'
+
 // 回收公司管理
 
 // 餐饮企业管理
@@ -996,16 +1001,33 @@ const routes = [
             name: '小区详情',
             meta: {description: '列表'}
           }, {
-            path: 'relsever',
+            path: 'relserver',
             component: RelSeverList,
             name: '关联物业',
             meta: {description: '列表'}
           }]
         }, {
           path: 'server',
-          component: RecycleAdd,
+          component: DashMainView,
+          redirect: '/admin/recycle/server/index',
           name: '物业管理',
-          meta: {description: '列表'}
+          meta: {description: '列表'},
+          children: [{
+            path: 'index',
+            component: ServerIndex,
+            name: '物业信息管理',
+            meta: {description: '列表'}
+          }, {
+            path: 'detail',
+            component: ServerDetail,
+            name: '物业详情',
+            meta: {description: '列表'}
+          }, {
+            path: 'add',
+            component: ServerAdd,
+            name: '添加物业',
+            meta: {description: '列表'}
+          }]
         }, {
           path: 'recovery',
           component: DashMainView,
