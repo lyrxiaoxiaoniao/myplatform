@@ -400,6 +400,9 @@ export default {
         .then(response => {
           if (response.data.errcode === '0000') {
             this.onSuccess('移出成功')
+            console.log('重新获取前')
+            this.getArticleData(this.subjectId)// 获取该专题下所有文章
+            console.log('重新获取后')
           } else {
             this.$message.error('发生错误，请重试')
           }

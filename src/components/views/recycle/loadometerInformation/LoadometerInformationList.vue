@@ -41,7 +41,7 @@
           <template scope="scope">
             <el-button size="small" icon="edit" @click="toEditStatus(scope.row.id)" title="修改"></el-button>
             <el-button size="small" icon="delete2" @click="deleteData(scope.row.id)" title="删除"></el-button>
-            <el-button size="small" icon="information" @click="openDialog('签约',scope.row.id)" title="详情"></el-button>
+            <el-button size="small" icon="information" @click="toStatistics(scope.row.id)" title="详情"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -62,28 +62,41 @@
         </el-col>
       </el-row>
       <el-dialog :title="dialogTitle" v-model="dialogFormVisible">
-        <div class="dialog-contract" v-show="dialogTitle==='签约'">
-          <el-form :model="contractForm" :rules="rules" ref="contractForm" label-width="100px">
-            <el-form-item label="签约人" prop="display_name">
-              <el-input v-model="contractForm.display_name" placeholder="请输入签约人姓名"></el-input>
-            </el-form-item>
-            <el-form-item label="联系电话" prop="sort">
-              <el-input v-model="contractForm.display_name" placeholder="请输入签约人联系电话"></el-input>
-            </el-form-item>
-            <el-form-item label="回收单位" prop="description">
-              <el-input v-model="contractForm.description" placeholder="请输入签约回收单位"></el-input>
-            </el-form-item>
-            <el-form-item label="合同期限" prop="description">
-              <el-date-picker v-model="contractForm.startTime" type="datetime" placeholder="选择开始时间"></el-date-picker>
-              <el-date-picker v-model="contractForm.endTime" type="datetime" placeholder="选择结束时间"></el-date-picker>
-            </el-form-item>
-          </el-form>
-          <div slot="footer" class="dialog-footer">
-            <el-row type="flex" justify="end">
-              <el-button @click="closeDialog">取 消</el-button>
-              <el-button type="primary" @click="updateContract">保存</el-button>
-            </el-row>
-          </div>
+        <el-form :model="loadometerInfoForm" :rules="rules" ref="loadometerInfoForm" label-width="100px">
+          <el-form-item label="站点名称" prop="display_name">
+            <el-input v-model="loadometerInfoForm.display_name" placeholder="请输入站点名称"></el-input>
+          </el-form-item>
+          <el-form-item label="详细地址" prop="sort">
+            <el-input v-model="loadometerInfoForm.display_name" placeholder="请输入详细地址"></el-input>
+          </el-form-item>
+          <el-form-item label="固定电话" prop="description">
+            <el-input v-model="loadometerInfoForm.description" placeholder="请输入固定电话"></el-input>
+          </el-form-item>
+          <el-form-item label="负责人" prop="description">
+            <el-input v-model="loadometerInfoForm.description" placeholder="请输入负责人姓名"></el-input>
+          </el-form-item>
+          <el-form-item label="联系电话" prop="description">
+            <el-input v-model="loadometerInfoForm.description" placeholder="请输入负责人联系电话"></el-input>
+          </el-form-item>
+          <el-form-item label="垃圾类型" prop="description">
+            <el-dropdown>
+              <el-button type="primary">
+                请选择<i class="el-icon-caret-bottom el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item>大件垃圾</el-dropdown-item>
+                <el-dropdown-item>餐厨垃圾</el-dropdown-item>
+                <el-dropdown-item>烟花爆竹</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-row type="flex" justify="end">
+            <el-button @click="closeDialog">取 消</el-button>
+            <el-button type="primary" @click="addLoadometer" v-show="dialogTitle==='新增地磅点'">确定</el-button>
+            <el-button type="primary" @click="updateLoadometer" v-show="dialogTitle==='详情/编辑'">确定</el-button>
+          </el-row>
         </div>
       </el-dialog>
     </div>
@@ -95,7 +108,7 @@
   import api from 'src/api'
 
   export default {
-    name: 'sc-restaurants-table',
+    name: 'sc-loadometerInformation-table',
     data () {
       return {
         response: {
@@ -104,17 +117,14 @@
         form: {
           keyword: ''
         },
-        advancedSearchForm: {
-          contractStatus: '0'
-        },
-        contractForm: {
+        loadometerInfoForm: {
         },
         dialogTitle: '',
         dialogFormVisible: false,
         searchSelectOptions: [], // 列表页顶部选择器的可选值
         searchSelectValue: '', // 列表页顶部选择器选中的值
-        restaurantsSelectedIds: [],
-        restaurantId: 0
+        loadometerSelectedIds: [],
+        loadometerId: 0 //  表格操作单行时的id
       }
     },
     computed: {},
@@ -219,7 +229,7 @@
       },
       deleteData (value) {
         this.selectIds(value)
-        api.POST(config.deleteCategoryAPI, {ids: this.restaurantsSelectedIds})
+        api.POST(config.deleteCategoryAPI, {ids: this.loadometerSelectedIds})
           .then(response => {
             if (response.status !== 200) {
               this.error = response.statusText
@@ -234,8 +244,11 @@
             this.$message.error(error)
           })
       },
-      updateContract () {
-        // contractForm和restaurantId
+      addLoadometer () {
+        // 参数loadometerInfoForm
+      },
+      updateLoadometer () {
+        // loadometerInfoForm和loadometerId
         // api.POST(config.subject.update, value)
         //   .then(response => {
         //     if (response.data.errcode === '0000') {
@@ -257,33 +270,36 @@
         //     this.$message.error(error)
         //   })
       },
-      // 单行记录和多行记录操作生成id数组
-      selectIds (value) {
-        this.restaurantsSelectedIds = []
-        // 单行记录操作传进来的参数是数字，多行记录操作传进来的参数是数组
-        if (value.length === undefined) {
-          this.restaurantsSelectedIds.push(value)
-        } else {
-          this.restaurantsSelectedIds = value.map(v => {
-            return v.id
-          })
-        }
-      },
-      toAddStatus () {
+      toStatistics (id) {
         this.$router.push({
-          path: '/admin/recycle/restaurants/add'
-        })
-      },
-      toEditStatus (id) {
-        this.$router.push({
-          path: '/admin/recycle/restaurants/edit',
+          path: '/admin/recycle/loadometerinformation/statistics',
           query: {
             id: id
           }
         })
       },
+      // 单行记录和多行记录操作生成id数组
+      selectIds (value) {
+        this.loadometerSelectedIds = []
+        // 单行记录操作传进来的参数是数字，多行记录操作传进来的参数是数组
+        if (value.length === undefined) {
+          this.loadometerSelectedIds.push(value)
+        } else {
+          this.loadometerSelectedIds = value.map(v => {
+            return v.id
+          })
+        }
+      },
+      toAddStatus () {
+        this.openDialog('新增地磅点')
+        // loadometerInfoForm清空
+      },
+      toEditStatus (id) {
+        this.openDialog('详情/编辑', id)
+        // 获取该id的地磅信息
+      },
       openDialog (value, id) {
-        this.restaurantId = id
+        this.loadometerId = id
         this.dialogTitle = value
         this.dialogFormVisible = true
       },

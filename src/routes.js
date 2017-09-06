@@ -152,6 +152,8 @@ import RestaurantsEdit from './components/views/recycle/restaurants/RestaurantsE
 
 // 地磅信息管理
 import LoadometerInformationList from './components/views/recycle/loadometerInformation/LoadometerInformationList.vue'
+import LoadometerStatistics from './components/views/recycle/loadometerInformation/LoadometerStatistics.vue'
+import LoadometerDetailByDay from './components/views/recycle/loadometerInformation/LoadometerDetailByDay.vue'
 
 import RecycleRecoveryList from './components/views/recycle/recovery/index.vue'
 import RecycleRecoveryAdd from './components/views/recycle/recovery/add.vue'
@@ -1071,9 +1073,9 @@ const routes = [
             meta: {description: '查看和编辑企业信息'}
           }]
         }, {
-          path: 'loadometerInformation',
+          path: 'loadometerinformation',
           component: DashMainView,
-          redirect: '/admin/recycle/loadometerInformation/index',
+          redirect: '/admin/recycle/loadometerinformation/index',
           name: '餐饮企业管理',
           meta: {description: '列表'},
           children: [{
@@ -1082,13 +1084,13 @@ const routes = [
             name: '地磅信息管理',
             meta: {description: '列表'}
           }, {
-            path: 'add',
-            component: RestaurantsAdd,
+            path: 'statistics',
+            component: LoadometerStatistics,
             name: '地磅数据管理',
             meta: {description: '地磅数据统计'}
           }, {
-            path: 'edit',
-            component: RestaurantsEdit,
+            path: 'detail',
+            component: LoadometerDetailByDay,
             name: '地磅数据管理',
             meta: {description: '地磅点每天数据详情'}
           }]

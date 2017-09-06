@@ -102,7 +102,7 @@
         </kobe-table>
       </el-col>
     </el-row>
-    <el-dialog :title="dialogTitle" v-model="dialogFormVisible">
+    <el-dialog :title="dialogTitle" v-model="dialogFormVisible" :size="dialogTitle === '高级搜索'?'small':'tiny'">
       <div class="dialog-advancedSearch" v-show="dialogTitle === '高级搜索'">
         <el-form :model="ruleForm" label-width="80px">
             <el-row>
@@ -207,7 +207,7 @@
       <div class="dialog-push" v-show="dialogTitle === '推送至专题'">
         <el-row type="flex" justify="center">
           <el-button type="text" style="color: #48576a; padding:5px 10px;">推送到专题</el-button>
-          <el-select v-model="selectedSubject" multiple placeholder="请选择活动区域" style="width:100%;" @change="getTargetSubjects">
+          <el-select v-model="selectedSubject" multiple placeholder="请选择活动区域">
             <el-option
                 v-for="item in subjectOptions"
                 :key="item.value"
@@ -893,9 +893,6 @@ export default {
         case true:
           return 1
       }
-    },
-    getTargetSubjects (value) {
-      // this.selectedSubject = value
     }
   },
   components: {
