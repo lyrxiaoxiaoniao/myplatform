@@ -659,8 +659,24 @@ export default {
           this.$message.error(error)
         })
     },
+    getTarget (data, val) {
+      let key = JSON.parse(JSON.stringify(val)).join(',')
+      var res = []
+      data.forEach(v => {
+        res.push({
+          id: v,
+          cids: key
+        })
+      })
+      return res
+    },
     moveContent () {
-      api.POST(config.content.move, {articles: this.ids, category_id: this.cascaderValue[this.cascaderValue.length - 1]})
+      let data = {
+        category_id: this.cascaderValue[this.cascaderValue.length - 1],
+        tagets: this.getTarget(this.ids, this.cascaderValue)
+      }
+      // {articles: this.ids, category_id: this.cascaderValue[this.cascaderValue.length - 1]}
+      api.POST(config.content.move, data)
         .then(response => {
           if (response.status !== 200) {
             this.error = response.statusText

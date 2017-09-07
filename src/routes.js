@@ -166,6 +166,11 @@ import RecycleRecoveryInfo from './components/views/recycle/recovery/baseInfo.vu
 import RecycleRecoveryWay from './components/views/recycle/recovery/way.vue'
 import RecycleRecoveryWayEdit from './components/views/recycle/recovery/wayManage/editWay.vue'
 import RecycleRecoveryWayAdd from './components/views/recycle/recovery/wayManage/addWay.vue'
+import TestMap from './components/views/recycle/map/mapView.vue'
+
+// 电子围栏管理
+import ElectronicFenceList from './components/views/recycle/electronicFence/List.vue'
+import ElectronicFenceAdd from './components/views/recycle/electronicFence/AddNewFence.vue'
 
 const routes = [
   {
@@ -1050,6 +1055,11 @@ const routes = [
             name: '回收公司',
             meta: {description: '信息管理'}
           }, {
+            path: 'map',
+            component: TestMap,
+            name: '测试地图',
+            meta: {description: '信息管理'}
+          }, {
             path: 'way',
             component: DashMainView,
             redirect: '/admin/recycle/recovery/way/index',
@@ -1115,6 +1125,24 @@ const routes = [
             component: LoadometerDetailByDay,
             name: '地磅数据管理',
             meta: {description: '地磅点每天数据详情'}
+          }]
+        }, {
+          path: 'fence',
+          component: DashMainView,
+          redirect: '/admin/recycle/fence/index',
+          name: '电子围栏管理',
+          meta: {description: '列表'},
+          children: [{
+            path: 'index',
+            component: ElectronicFenceList,
+            name: '电子围栏管理管理',
+            meta: {description: '列表'}
+          },
+          {
+            path: 'new',
+            component: ElectronicFenceAdd,
+            name: '电子围栏管理管理',
+            meta: {description: '列表'}
           }]
         }]
       }
