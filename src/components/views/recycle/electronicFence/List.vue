@@ -1,6 +1,6 @@
 <template>
   <div class="sc-fence-list">
-<kobe-table>
+    <kobe-table>
       <div class="kobe-table-header"
            slot="kobe-table-header">
         <el-row type="flex"
@@ -26,9 +26,6 @@
             </el-input>
           </el-col>
           <el-button type="primary"
-                     @click="openDialog('advanceVisible')"
-                     icon="search">高级</el-button>
-          <el-button type="primary"
                      icon="upload2"></el-button>
           <el-button type="primary"
                      icon="setting"></el-button>
@@ -40,37 +37,14 @@
                   border>
           <el-table-column label="ID"
                            prop="id"></el-table-column>
-          <el-table-column label="基地名称"></el-table-column>
-          <el-table-column label="基地电话"></el-table-column>
-          <el-table-column label="基地照片">
-            <template scope="scope">
-              <img style="width:58px; height:58px;"
-                   :src="scope.row.logo"
-                   alt="">
-            </template>
+          <el-table-column label="围栏名称"></el-table-column>
+          <el-table-column label="围栏描述"></el-table-column>
+          <el-table-column label="划分方式">
           </el-table-column>
-          <el-table-column label="基地地址"></el-table-column>
-          <el-table-column label="所属地区"></el-table-column>
-          <el-table-column label="基地负责人"></el-table-column>
-          <el-table-column label="负责人电话"></el-table-column>
-          <el-table-column label="是否推荐">
-            <template scope="scope">
-              <el-switch on-text="开"
-                         off-text="关"></el-switch>
-            </template>
-          </el-table-column>
-          <el-table-column label="是否允许预约"></el-table-column>
-          <el-table-column label="显示状态">
-            <template scope="scope">
-              <el-switch on-text="开"
-                         off-text="关"></el-switch>
-            </template>
-          </el-table-column>
+          <el-table-column label="限制车辆数"></el-table-column>
           <el-table-column label="操作"
                            width="200">
             <template scope="scope">
-              <el-button icon="edit"
-                         size="small"></el-button>
               <el-button icon="setting"
                          size="small"
                          @click="configItem(scope.row.id)"></el-button>
@@ -106,24 +80,52 @@
 export default {
   data() {
     return {
-      options: [
-        {
-          text: '按多边形划分'
-        },
-        {
-          text: '行政区域划分'
-        }
-      ]
+      listData: [{ id: 0 }],
+      response: {},
+      selectValue: '',
+      options: [{
+        value: '1',
+        label: '按多边形划分'
+      },
+      {
+        value: '2',
+        label: '行政区域划分'
+      }],
+      advanceVisible: false,
+      advanceSearchForm: {
+        keyword: '',
+        name: '',
+        mobile: '',
+        person: '',
+        address: ''
+      },
+      infoVisible: false,
+      info: {
+        infoForm: {}
+      },
+      fileList: [],
+      content: '',
+      searchInput: '',
+      point: {},
+      pointAddress: '',
+      map: null,
+      geoc: null
     }
   },
   methods: {
     openDialog(e) {
       this[e] = true
+    },
+    hideDialog(e) {
+      this[e] = false
     }
+  },
+  mounted() {
+
   }
 }
 </script>
 
-<style>
+<style scoped>
 
 </style>

@@ -170,6 +170,7 @@ import TestMap from './components/views/recycle/map/mapView.vue'
 
 // 电子围栏管理
 import ElectronicFenceList from './components/views/recycle/electronicFence/List.vue'
+import ElectronicFenceAdd from './components/views/recycle/electronicFence/AddNewFence.vue'
 
 const routes = [
   {
@@ -1134,6 +1135,12 @@ const routes = [
           children: [{
             path: 'index',
             component: ElectronicFenceList,
+            name: '电子围栏管理管理',
+            meta: {description: '列表'}
+          },
+          {
+            path: 'new',
+            component: ElectronicFenceAdd,
             name: '电子围栏管理管理',
             meta: {description: '列表'}
           }]
