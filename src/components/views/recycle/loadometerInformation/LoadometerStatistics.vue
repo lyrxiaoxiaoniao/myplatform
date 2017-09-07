@@ -1,9 +1,10 @@
 <template>
   <div class="loadometerStatistics-container">
-    <TopInfo></TopInfo>
+    <TopInfo :theId="loadometerId"></TopInfo>
     <div class="bottom">
       <kobe-table>
         <div slot="kobe-table-header" class="kobe-table-header">
+          <!--
           <el-row type="flex" justify="end">
             <el-date-picker
               v-model="value1"
@@ -14,6 +15,7 @@
             <el-button type="primary" icon="upload2" style="margin-left: 10px"></el-button>
             <el-button type="primary" icon="setting"></el-button>
           </el-row>
+          -->
         </div>
         <div slot="kobe-table-content" class="kobe-table">
           <el-tabs v-model="activeTab" @tab-click="handleTabClick">
@@ -99,8 +101,8 @@
 </template>
 
 <script>
-  import config from 'src/config'
-  import api from 'src/api'
+  // import config from 'src/config'
+  // import api from 'src/api'
   import TopInfo from './TopInfo.vue'
 
   export default {
@@ -111,7 +113,7 @@
           data: null
         },
         loadometerSelectedIds: [],
-        loadometerId: 0, //  表格操作单行时的id
+        loadometerId: 0, //  此地磅点的id
         activeTab: 'byDay'
       }
     },
@@ -120,142 +122,9 @@
     },
     computed: {},
     methods: {
-      handleSizeChange (value) {
-        // const data = {
-        //   currentPage: this.response.currentPage,
-        //   pageSize: value,
-        //   ...this.form
-        // }
-        switch (this.activeTab) {
-          case 'byDay':
-            // 请求按天统计数据
-            console.log('请求按天统计数据')
-            break
-          case 'byMonth':
-            console.log('请求按天统计数据')
-            break
-          case 'byYear':
-            console.log('请求按天统计数据')
-            break
-        }
-      },
-      handleCurrentChange (value) {
-        // const data = {
-        //   currentPage: value,
-        //   pageSize: this.response.pageSize,
-        //   ...this.form
-        // }
-
-        switch (this.activeTab) {
-          case 'byDay':
-            // 请求按天统计数据
-            console.log('请求按天统计数据')
-            break
-          case 'byMonth':
-            console.log('请求按天统计数据')
-            break
-          case 'byYear':
-            console.log('请求按天统计数据')
-            break
-        }
-      },
-      handleTabClick () {
-        switch (this.activeTab) {
-          case 'byDay':
-            console.log('获取按天统计数据')
-            break
-          case 'byMonth':
-            console.log('获取按月统计数据')
-            break
-          case 'byYear':
-            console.log('获取按年统计数据')
-            break
-        }
-      },
-      // 确认是否已选择要操作的数据
-      warnSelection () {
-        this.$confirm('请进行正确操作，请优先勾选表单', '错误', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'error'
-        }).then(() => {
-          return true
-        }).catch(() => {
-          return false
-        })
-      },
-      // 确认是否删除
-      confirmDelete () {
-        this.$confirm('此操作将删除选定的文章。是否继续删除？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          return true
-        }).catch(() => {
-          return false
-        })
-      },
-      deleteData (value) {
-        var next = 1
-        this.selectIds(value)
-        if (!this.loadometerSelectedIds) {
-          next = this.warnSelection()
-        }
-        if (next) {
-          next = this.confirmDelete()
-        }
-        if (next) {
-          switch (this.activeTab) {
-            case 'byDay':
-              // 请求删除按天统计数据
-              api.POST(config.deleteCategoryAPI, {ids: this.loadometerSelectedIds})
-                .then(response => {
-                  if (response.status !== 200) {
-                    this.error = response.statusText
-                    return
-                  }
-                  if (response.data.errcode === '0000') {
-                    this.onSuccess('删除成功')
-                    this.getList()
-                  }
-                })
-                .catch(error => {
-                  this.$message.error(error)
-                })
-              break
-            case 'byMonth':
-              console.log('请求删除按天统计数据')
-              break
-            case 'byYear':
-              console.log('请求删除按天统计数据')
-              break
-          }
-        }
-      },
-      // 单行记录和多行记录操作生成id数组
-      selectIds (value) {
-        this.loadometerSelectedIds = []
-        // 单行记录操作传进来的参数是数字，多行记录操作传进来的参数是数组
-        if (value.length === undefined) {
-          this.loadometerSelectedIds.push(value)
-        } else {
-          this.loadometerSelectedIds = value.map(v => {
-            return v.id
-          })
-        }
-      },
-      toDetail (id) {
-        this.$router.push({
-          path: '/admin/recycle/loadometerInformation/detail',
-          query: {
-            id: id
-          }
-        })
-      }
     },
     mounted () {
-      // 获取地磅点信息
+      this.loadometerId = this.$route.query.id
       // 获取地磅点按天信息统计信息
     }
   }

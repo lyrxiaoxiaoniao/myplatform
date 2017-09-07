@@ -37,7 +37,19 @@ export default {
     repetition: '/rubbish/tenement/repetition',
     indexOne: '/rubbish/tenement/indexOne'
   },
+  // 餐饮企业管理
   restaurants: {
     index: '/restaurants/index'
+  },
+  loadometer: {
+    index: '/rubbish/weighbridge/index',
+    indexOne: '/rubbish/weighbridge/indexOne',
+    create: '/rubbish/weighbridge/create',
+    delete: '/rubbish/weighbridge/delete',
+    update: '/rubbish/weighbridge/update',
+    suttleDay: '/rubbish/weighbridge/suttleDay',
+    suttleMonth: '/rubbish/weighbridge/suttleMonth',
+    suttleYear: '/rubbish/weighbridge/suttleYear',
+    weighDetail: '/rubbish/weighbridge/weighDetail'
   }
 }
