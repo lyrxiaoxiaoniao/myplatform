@@ -3,14 +3,29 @@
 		<div class="lh-top">
             <div class="lh-header">
                 <div>回收公司车辆信息</div>
-                <div>
-                    <!-- <el-button>返回</el-button> -->
+                <!-- <div>
+                    <el-button>返回</el-button>
                     <el-button type="primary">修改</el-button>
-                </div>
+                </div> -->
             </div>
             <div class="lh-form">
                 <kobe-table>
-                    <div slot="kobe-table-header" class="kobe-table-header"></div>
+                    <div slot="kobe-table-header" class="kobe-table-header">
+                      <el-row type="flex" justify="end">
+                        <el-col :span="16">
+                            <el-button @click="addCar" type="primary">添 加</el-button>
+                            <el-button @click="handleCommand" type="primary">批量删除</el-button>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
+                            <el-button slot="append" @click="onSearch" icon="search"></el-button>
+                            </el-input>
+                        </el-col>
+                          <el-button icon="search" type="primary" style="margin-left:10px;">高级</el-button>
+                          <el-button icon="upload2" type="primary"></el-button>
+                          <el-button icon="setting" type="primary"></el-button>
+                      </el-row>
+                    </div>
                     <div slot="kobe-table-content" class="kobe-table">
                     <el-table
                         ref="multipleTable"
@@ -24,13 +39,13 @@
                         <el-table-column prop="id" label="品牌" width="150"></el-table-column>
                         <el-table-column prop="id" label="GPS标识" width="150"></el-table-column>
                         <el-table-column prop="id" label="所属清运公司"></el-table-column>
-                        <el-table-column prop="id" label="线路"></el-table-column>
+                        <!-- <el-table-column prop="id" label="线路"></el-table-column> -->
                         <el-table-column prop="id" label="车重" width="120"></el-table-column>
                         <el-table-column prop="id" label="最大承载（吨）" width="120"></el-table-column>
                         <el-table-column width="140" label="操作">
                         <template scope="scope">
-                            <el-button size="small" icon="delete2" title="删除"></el-button>
-                            <el-button size="small" icon="edit" title="修改"></el-button>
+                            <el-button @click="deleteType(scoped.row.id)" size="small" icon="delete2" title="删除"></el-button>
+                            <el-button @click="editCar" size="small" icon="edit" title="修改"></el-button>
                         </template>
                         </el-table-column>
                     </el-table>
@@ -51,22 +66,171 @@
                         </el-row>
                     </div>
                 </kobe-table>
+                <el-dialog title="添加车辆" v-model="showDialog">
+                   <el-form :model="selected" label-width="80px">
+                    <el-row :gutter="20">
+                      <el-col :span="24">
+                        <el-form-item label="车牌号">
+                          <el-input v-model="selected.phone" placeholder="请输入"></el-input>
+                        </el-form-item>
+                      </el-col>  
+                      <el-col :span="24">
+                        <el-form-item label="车辆品牌">
+                          <el-input v-model="selected.phone" placeholder="请输入"></el-input>
+                        </el-form-item>
+                      </el-col>  
+                      <el-col :span="24">
+                        <el-form-item label="GPS标识">
+                          <el-input v-model="selected.phone" placeholder="请输入"></el-input>
+                        </el-form-item>
+                      </el-col>  
+                      <el-col :span="24">
+                        <el-form-item label="所属公司">
+                          <el-select v-model="selected.businessType" class="fullwidth" placeholder="请选择所属公司">
+                            <el-option
+                              v-for="item in options"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value">
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>  
+                      <el-col :span="12">
+                        <el-form-item label="车重">
+                          <el-input v-model="selected.phone" placeholder="请输入"></el-input>
+                        </el-form-item>
+                      </el-col>  
+                      <el-col :span="12">
+                        <el-form-item label="最大承重">
+                          <el-input v-model="selected.phone" placeholder="请输入"></el-input>
+                        </el-form-item>
+                      </el-col>  
+                      <el-col :span="24">
+                        <el-form-item label="行车路线">
+                          <el-select v-model="selected.businessType" class="fullwidth" placeholder="请选择行车路线">
+                            <el-option
+                              v-for="item in options"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value">
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+                  </el-form>
+                  <span slot="footer" class="dialog-footer">
+                    <el-button>取 消</el-button>
+                    <el-button type="primary">添 加</el-button>
+                  </span>
+                </el-dialog>
+                <el-dialog title="修改车辆" v-model="showDialogEdit">
+                   <el-form :model="selectedEdit" label-width="80px">
+                    <el-row :gutter="20">
+                      <el-col :span="24">
+                        <el-form-item label="车牌号">
+                          <el-input v-model="selectedEdit.phone" placeholder="请输入"></el-input>
+                        </el-form-item>
+                      </el-col>  
+                      <el-col :span="24">
+                        <el-form-item label="车辆品牌">
+                          <el-input v-model="selectedEdit.phone" placeholder="请输入"></el-input>
+                        </el-form-item>
+                      </el-col>  
+                      <el-col :span="24">
+                        <el-form-item label="GPS标识">
+                          <el-input v-model="selectedEdit.phone" placeholder="请输入"></el-input>
+                        </el-form-item>
+                      </el-col>  
+                      <el-col :span="24">
+                        <el-form-item label="所属公司">
+                          <el-select v-model="selectedEdit.businessType" class="fullwidth" placeholder="请选择业务类型">
+                            <el-option
+                              v-for="item in options"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value">
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>  
+                      <el-col :span="12">
+                        <el-form-item label="车重">
+                          <el-input v-model="selectedEdit.phone" placeholder="请输入"></el-input>
+                        </el-form-item>
+                      </el-col>  
+                      <el-col :span="12">
+                        <el-form-item label="最大承重">
+                          <el-input v-model="selectedEdit.phone" placeholder="请输入"></el-input>
+                        </el-form-item>
+                      </el-col>  
+                      <el-col :span="8">
+                        <el-form-item label="行车路线">
+                          <el-select v-model="selectedEdit.businessType" class="fullwidth" placeholder="请选择业务类型">
+                            <el-option
+                              v-for="item in options"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value">
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+                  </el-form>
+                  <span slot="footer" class="dialog-footer">
+                    <el-button>修改</el-button>
+                    <el-button type="primary">修改</el-button>
+                  </span>
+                </el-dialog>
             </div>
         </div>
     </div>    
 </template>
 <script>
+import config from 'src/config'
+import api from 'src/api'
 export default {
   data () {
     return {
       response: {
         data: null
       },
+      showDialog: false,
+      showDialogEdit: false,
+      selected: {
+        businessType: '',
+        phone: ''
+      },
+      selectedEdit: {
+        businessType: '',
+        phone: ''
+      },
+      options: [{
+        value: 1,
+        label: '街道1'
+      }, {
+        value: 2,
+        label: '街道2'
+      }],
       multipleSelection: [],
-      ids: []
+      ids: [],
+      form: {
+        keyword: ''
+      }
     }
   },
   methods: {
+    handleCommand (command) {
+      this.deleteType()
+    },
+    addCar () {
+      this.showDialog = true
+    },
+    editCar () {
+      this.showDialogEdit = true
+    },
     toggleSelection (rows) {
       if (rows) {
         rows.forEach(row => {
@@ -82,6 +246,49 @@ export default {
       this.multipleSelection.forEach(v => {
         this.ids.push(v.id)
       })
+    },
+    // 删除表单
+    deleteType (id) {
+      if (id) {
+        this.ids = []
+        this.ids.push(id)
+      }
+      if (this.ids.length === 0) {
+        this.$confirm('请进行正确操作，请先勾选评论信息？', '错误', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'error'
+        }).then(() => {
+          return
+        }).catch(() => {
+          return
+        })
+        return
+      }
+      this.$confirm('此操作将删除该敏感字。是否继续删除？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        api.POST(config.newcms.removeNcmsSensitiveAPI, {
+          ids: this.ids
+        })
+        .then(response => {
+          if (response.data.errcode === '0000') {
+            this.onSuccess('删除成功')
+          } else {
+            this.$message.error(response.data.errmsg)
+          }
+        })
+      })
+    },
+    onSearch () {
+      const data = {
+        currentPage: 1,
+        pageSize: this.response.pageSize,
+        ...this.form
+      }
+      this.getList(data)
     },
     handleSizeChange (value) {
       const data = {

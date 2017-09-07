@@ -1,104 +1,64 @@
-<template>
+<template :id="info.id">
 <div>
-    <kobe-table class="border margin" style="margin: 20px 40px;background-color: white;">
-      <div slot="kobe-table-header" class="kobe-table-header" style="border-bottom: 1px solid gainsboro">
-         <el-row>
-             <el-col :span="18" style="color: black;font-size: 13px;line-height: 36px;font-weight: bold">文锦湖贝小区</el-col>
-             <el-col :offset="2" :span="4">
-                 <el-button @click="back">返回</el-button>   
+    <div class="lh-container">
+    <div class="lh-top">
+      <div class="lh-header">
+        <div>{{info.name}}</div>
+        <div>
+          <!-- <el-button>返回</el-button> -->
+          <el-button @click="back" type="primary">返回</el-button>
+        </div>
+      </div>
+      <div class="lh-form">
+        <el-form :model="info" label-width="120px" label-position="left">
+          <el-row :gutter="20">
+            <el-col :span="10"> 
+              <el-form-item label="联系人" prop="duty_name">
+                <el-input disabled v-model="info.duty_name"></el-input>
+              </el-form-item>
+            </el-col>     
+            <el-col :span="10" :offset="4">      
+              <el-form-item disabled label="联系人电话" prop="mobile">
+                <el-input disabled v-model="info.mobile"></el-input>
+              </el-form-item> 
              </el-col>
-         </el-row>  
-      </div>
-      <div slot="kobe-table-content" class="kobe-table">
-        <el-form  class="padding" :label-position="labelPosition" label-width="80px" :model="formLabelAlign">
-              <el-row class="text-decoration">
-                <el-col :span="10">          
-                    <div>联系人：{{info.duty_name}}</div>       
-                </el-col>
-                <el-col :offset="4" :span="10">                 
-                    <div>联系人电话：{{info.mobile}}</div>                 
-                 </el-col>
-              </el-row>
-                <el-row class="text-decoration">
-                <el-col :span="10">               
-                    <div>详细地址：{{info.detail_address}}</div>          
-                </el-col>
-                <el-col :offset="4" :span="10">                 
-                    <div>已关联物业数量：{{info.count}}</div>                 
-                 </el-col>
-              </el-row>            
-          </el-form>
-      </div>
-    </kobe-table>
-    <el-tabs class="margin" v-model="activeName" @tab-click="handleClick" style="margin:0 40px">
-      <el-tab-pane label="已关联物业" name="first"></el-tab-pane>
-      <el-tab-pane label="未关联物业" name="second"></el-tab-pane>
-      <el-tab-pane label="历史关联" name="third"></el-tab-pane>    
-    </el-tabs>
-    <kobe-table>
-        <div slot="kobe-table-header" class="kobe-table-header">
-         
-      <el-row type="flex" justify="center">
-        <el-col :span="8">
-              <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
-                <el-button slot="append" @click="onSearch" icon="search"></el-button>
-              </el-input>
-            </el-col>
-            <el-button icon="upload2" type="primary" style="margin-left:10px;"></el-button>
-            <el-button icon="setting" type="primary"></el-button>
-      </el-row>
-        </div>
-        <div slot="kobe-table-content" class="kobe-table">
-          <el-table
-            ref="multipleTable"
-            border
-            stripe
-            :data="response.data"
-            @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="id" label="ID" width="50"></el-table-column>
-            <el-table-column prop="name" label="物业名称" width="150"></el-table-column>
-            <el-table-column prop="duty_name" label="联系人" width="95">
-            </el-table-column>
-            <el-table-column prop="mobile" label="联系电话"></el-table-column>
-            <el-table-column prop="region_id" label="公司地址"></el-table-column>
-            <el-table-column 
-              width="150"
-              label="操作"
-              >
-              <template scope="scope">
-                <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button>
-                <el-button @click="deleteType(scope.row.id)" size="small">
-                  关联
-                </el-button>
-                <el-button  size="small" icon="home1"></el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </div>
-        <div slot="kobe-table-footer" class="kobe-table-footer">
-          <el-row type="flex" justify="center">
-            <el-col :span="12">
-              <el-pagination
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                :current-page="response.currentPage"
-                :page-sizes="[10, 20, 50, 100]"
-                :page-size="response.pageSize"
-                :total="response.count"
-                layout="total, sizes, prev, pager, next, jumper">
-              </el-pagination>
-            </el-col>
+             <el-col :span="10"> 
+              <el-form-item label="详细地址" prop="detail_address">
+                <el-input disabled v-model="info.detail_address"></el-input>
+              </el-form-item>
+            </el-col>     
+            <el-col :span="10" :offset="4">      
+              <el-form-item label="已关联物业数量" prop="count">
+                <el-input disabled v-model="info.count"></el-input>
+              </el-form-item> 
+             </el-col>
           </el-row>
-        </div>
-      </kobe-table>
+        </el-form>
+      </div>
+    </div>
 
-
+    <div class="lh-bottom">
+      <el-tabs class="margin" v-model="activeName" @tab-click="handleClick" style="margin:0 2em">
+        <el-tab-pane label="已关联物业" name="first">
+          <rel-tab :id="info.id"></rel-tab>
+        </el-tab-pane>
+        <el-tab-pane label="未关联物业" name="second">
+          <car-tab></car-tab>
+        </el-tab-pane>
+        <el-tab-pane label="历史关联" name="third">
+          <person-tab></person-tab>
+        </el-tab-pane>    
+      </el-tabs>
+    </div>
+  </div>
 </div>
 </template>
 <script type="text/javascript">
-import config from 'src/config/recycle.js'
+import config from 'src/config'
 import api from 'src/api'
+import relTab from './relTable/reled'
+import carTab from '../recovery/base/car'
+import personTab from '../recovery/base/person'
 export default {
   data () {
     return {
@@ -107,10 +67,12 @@ export default {
         data: null
       },
       info: {
+        name: '文锦小区',
         duty_name: '贾克斯',
         mobile: '14718436328',
         detail_address: '深圳',
-        count: '1'
+        count: '1',
+        id: this.$route.query.id
       },
       activeName: 'first',
       form: {
@@ -119,53 +81,77 @@ export default {
       }
     }
   },
+  components: {
+    relTab,
+    carTab,
+    personTab
+  },
   methods: {
-    onSearch () {
-      const data = {
-        currentPage: 1,
-        pageSize: this.response.pageSize,
-        ...this.form
-      }
-      this.getList(data)
-    },
-    getList (data = {}) {
-      api.GET(config.village.list, data)
+    getForm () {
+      api.GET(config.village.indexOne, {id: this.$route.query.id})
       .then(response => {
-        this.response = this.transformDate(response.data.data)
+        if (response.data.errcode === '0000') {
+          this.info = response.data.data
+        }
       })
       .catch(error => {
         this.$message.error(error)
       })
     },
-    transformDate (res) {
-      if (res) {
-        res.data.forEach(v => {
-          if (v.audit_state === 1) {
-            v.audit_state = false
-          }
-          if (v.audit_state === 0) {
-            v.audit_state = true
-          }
-        })
-      }
-      return res
-    },
     back: function () {
       this.$router.push('/admin/recycle/village/index')
     }
+  },
+  mounted () {
+    this.getForm()
   }
 }
 
 </script>
-<style type="text/css">
-.border {
-  border: 1px solid gainsboro;
-  border-radius: 5px;
-}
-.padding {
-  padding: 30px 50px 30px 100px;
-}
-.text-decoration {
-  line-height: 36px;
+<style lang="scss" scoped>
+.lh-container {
+    padding: 1rem 2rem;
+    .lh-top {
+      border: 1px solid lightgray;
+      border-radius: 5px;
+      width: 100%;
+      background-color: #fff;
+      padding-bottom: 1rem;
+      .lh-header {
+        padding: 0 2rem;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 60px;
+        border-bottom: 1px solid lightgray;
+        div:nth-of-type(1){
+          font-size: 16px;
+        }
+      }
+      .lh-form {
+        margin: 1rem 2rem;
+      }
+    }
+    .lh-bottom {
+      margin-top: 1rem;
+      border-radius: 5px;
+      border: 1px solid lightgray;
+      width: 100%;
+      background-color: #fff;
+      padding-bottom: 1rem;
+      .lh-header {
+        padding: 0 2rem;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 60px;
+        border-bottom: 1px solid lightgray;
+        div:nth-of-type(1){
+          font-size: 16px;
+        }
+      }
+    }
 }
 </style>

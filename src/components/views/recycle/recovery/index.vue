@@ -4,15 +4,8 @@
         <div slot="kobe-table-header" class="kobe-table-header">
           <el-row type="flex" justify="end">
             <el-col :span="16">
-                <el-button @click="resFresh" type="primary">添加</el-button>
-                <el-dropdown @command="handleCommand" style="margin-left:10px;">
-                  <el-button type="primary">
-                    更多操作<i class="el-icon-caret-bottom el-icon--right"></i>
-                  </el-button>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item command="彻底删除">批量删除</el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
+                <el-button @click="addBaseinfo" type="primary">添加</el-button>
+                <el-button @click="handleCommand" type="primary">批量删除</el-button>
             </el-col>
             <el-col :span="8">
                 <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
@@ -60,13 +53,17 @@
                 @row-dblclick="rowDbclick">
                 <el-table-column type="selection" width="55"></el-table-column>
                 <el-table-column prop="id" label="ID" width="60"></el-table-column>
-                <el-table-column label="单位名称" prop="title"></el-table-column>
-                <el-table-column prop="brief" label="业务类型"></el-table-column>
-                <el-table-column prop="category.display_name" label="负责人" width="120"></el-table-column>
-                <el-table-column prop="brief" label="联系电话"></el-table-column>
-                <el-table-column prop="brief" label="详细地址"></el-table-column>
-                <el-table-column prop="brief" label="营业执照"></el-table-column>
-                <el-table-column prop="brief" label="已有车辆"></el-table-column>
+                <el-table-column prop="name" label="单位名称"></el-table-column>
+                <el-table-column prop="businessName" label="业务类型"></el-table-column>
+                <el-table-column prop="dutyName" label="负责人" width="120"></el-table-column>
+                <el-table-column prop="mobile" label="联系电话"></el-table-column>
+                <el-table-column prop="detailAddress" label="详细地址"></el-table-column>
+                <el-table-column label="营业执照" width="100">
+                  <template scope="scope">
+                    <img class="table-img" :src="scope.row.license" @click="bigImg(scope.row.license)" alt="">
+                  </template>
+                </el-table-column>
+                <el-table-column prop="vehicleCount" label="已有车辆" width="100"></el-table-column>
                 <el-table-column prop="status" label="操作" width="115">
                   <template scope="scope"> 
                       <el-button @click="goAwardsDetail(scope.row.id)" size="small" icon="edit"></el-button>
@@ -91,6 +88,9 @@
             </el-row>
         </div>
     </kobe-table>
+    <el-dialog v-model="dialogVisible">
+      <img width="100%" :src="dialogImageUrl" alt="">
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -108,8 +108,10 @@ export default {
       multipleSelection: [],
       showDialog: false,
       response: {
-        data: []
+        data: null
       },
+      dialogImageUrl: '',
+      dialogVisible: false,
       ids: [],
       selected: {
         keyword: '',
@@ -121,10 +123,12 @@ export default {
     }
   },
   methods: {
-    handleCommand (command) {
-      if (command === '批量删除') {
-        this.deleteType()
-      }
+    bigImg (url) {
+      this.dialogImageUrl = url
+      this.dialogVisible = true
+    },
+    handleCommand () {
+      this.deleteType()
     },
     toggleSelection (rows) {
       if (rows) {
@@ -144,7 +148,7 @@ export default {
     },
     goAwardsDetail (id) {
       this.$router.push({
-        path: '/admin/newcms/content/edit',
+        path: '/admin/recycle/recovery/info',
         query: {
           id: id
         }
@@ -201,7 +205,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.POST(config.newcms.removeNcmRecycleAPI, {
+        api.POST(config.recovery.remove, {
           ids: this.ids
         })
         .then(response => {
@@ -214,8 +218,10 @@ export default {
         })
       })
     },
-    resFresh () {
-      this.getList()
+    addBaseinfo () {
+      this.$router.push({
+        path: '/admin/recycle/recovery/add'
+      })
     },
     handleSizeChange (value) {
       const data = {
@@ -242,20 +248,10 @@ export default {
       }
       this.getList(data)
     },
-    changeActive (res) {
-      res.data.forEach(v => {
-        if (v.active === 1) {
-          v.active = true
-        } else if (v.active === 0) {
-          v.active = false
-        }
-      })
-      return res
-    },
     getList (data = {}) {
-      api.POST(config.newcms.ncmRecycleListAPI, data)
+      api.GET(config.recovery.index, data)
       .then(response => {
-        this.response = this.changeActive(response.data.data)
+        this.response = response.data.data
       })
       .catch(error => {
         this.$message.error(error)

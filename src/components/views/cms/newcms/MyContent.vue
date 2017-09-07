@@ -401,6 +401,8 @@ export default {
       obj.is_recommend = this.changeState(obj.is_recommend)
       obj.is_topped = this.changeState(obj.is_topped)
       obj.category_id = this.cascaderValue[this.cascaderValue.length - 1]
+      obj.end_time = Date.parse(obj.end_time)
+      obj.start_time = Date.parse(obj.start_time)
       const data = {
         currentPage: 1,
         pageSize: this.response.pageSize,
@@ -416,7 +418,9 @@ export default {
           end_time: '',
           states: [],
           types: [],
-          author: ''
+          author: '',
+          is_topped: 0,
+          is_recommend: 0
         }
         this.cascaderValue = []
       })
@@ -834,7 +838,7 @@ export default {
     },
     getSubjectOptions () {
       var arr = []
-      api.GET(config.subject.list)
+      api.GET(config.subject.list, {pageSize: 1000})
       .then(response => {
         arr = response.data.data.data
         this.subjectOptions = arr.map(value => {

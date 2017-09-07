@@ -13,8 +13,16 @@
         </div>
         <div class="login-body">
             <div class="login-adv">
-                <p>深传政务新媒体平台</p>
-                <p>一站式政务解决方案专家</p>
+                <!-- <p>深传政务新媒体平台</p>
+                <p>一站式政务解决方案专家</p> -->
+                <div class="block">
+                  <el-carousel :interval="3000" arrow="never" height="372px" indicator-position="none">
+                    <el-carousel-item v-for="item in urls" :key="item">
+                      <!-- <h3>{{ item }}</h3> -->
+                      <img :src="item" alt="深传互动">
+                    </el-carousel-item>
+                  </el-carousel>
+                </div>
             </div>
             <div name="login" class="login">
                 <p class="userLogin">用户登录</p>
@@ -80,7 +88,13 @@ export default {
       mailCode: '',
       loginSended: false,
       response: '',
-      cover: ''
+      cover: '',
+      urls: [
+        // 'https://tst.admin.gov.shencom.cn/api/files/860004224de645af91b4cab9a40055d5.png',
+        // 'https://tst.admin.gov.shencom.cn/api/files/780127f1190b4e1da091429337f25bf7.png'
+        'static/img/login/01.png',
+        'static/img/login/02.png'
+      ]
     }
   },
   computed: {
@@ -250,11 +264,21 @@ export default {
             display: flex;
             justify-content: space-around;
             .login-adv {
-                margin-top: 122px;
+                margin-top: 42px;
                 width: 370px;
                 height: 90px;
                 z-index: 2;
                 margin-left: 100px;
+                .block {
+                  width: 536px;
+                  height: 372px;
+                  .el-carousel__item:nth-child(2n) {
+                    background-color: rgba(0, 0, 0, 0);
+                  }
+                  .el-carousel__item:nth-child(2n+1) {
+                    background-color: rgba(0, 0, 0, 0);
+                  }
+                }
                 p {
                     margin: 0;
                     padding: 0;
