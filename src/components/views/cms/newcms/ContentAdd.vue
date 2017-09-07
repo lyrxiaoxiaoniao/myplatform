@@ -34,14 +34,29 @@
                             <el-form-item label="作者">
                                 <el-input v-model="ruleForm.author" placeholder="作者名称"></el-input>
                             </el-form-item>
+                            <el-form-item label="类型">
+                                <el-select @change="changeType" v-model="ruleForm.type" placeholder="选择文章类型" style="width:100%;">
+                                    <el-option
+                                        v-for="item in optionType"
+                                        :key="item.value"
+                                        :label="item.name"
+                                        :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="地址" v-if="showAdress">
+                                <el-input v-model="ruleForm.address" placeholder="文章内容地址"></el-input>
+                            </el-form-item>
+                            <el-row style="text-align: center;">
+                                <el-checkbox v-model="is_original">本文属于原创</el-checkbox>
+                                <el-checkbox v-model="is_recommend">推荐本文</el-checkbox>
+                                <el-checkbox v-model="is_topped">本文固顶</el-checkbox>
+                            </el-row>
                         </el-form>
-                        <el-row style="text-align: center;">
-                            <el-checkbox v-model="is_original">本文属于原创</el-checkbox>
-                            <el-checkbox v-model="is_recommend">推荐本文</el-checkbox>
-                            <el-checkbox v-model="is_topped">本文固顶</el-checkbox>
-                        </el-row>
                     </div>
                 </el-col>
+                <el-dialog>
+                </el-dialog>
                 <el-col :span="18">
                     <div class="ca-content-right">
                         <el-form :model="formData" ref="formData" label-width="80px" class="ca-right-form">
@@ -116,11 +131,20 @@ export default {
     return {
       fileList: [],
       option: [],
+      optionType: [{
+        value: 0,
+        name: '图文类型'
+      }, {
+        value: 1,
+        name: '坐标类型'
+      }],
+      showAdress: false,
       uploadURL: config.serverURI + config.uploadFilesAPI,
       is_original: false,
       is_topped: false,
       is_recommend: false,
       ruleForm: { // 头图与属性
+        type: null,
         source_id: '',
         author: '',
         picture: '',
@@ -150,6 +174,14 @@ export default {
     }
   },
   methods: {
+    changeType (val) {
+      console.log(val)
+      if (val === 0) {
+        this.showAdress = false
+      } else if (val === 1) {
+        this.showAdress = true
+      }
+    },
     /* 分类选择函数 */
     handleChange (val) {
       this.formData.cids = val
@@ -294,7 +326,8 @@ export default {
     this.getTree()
     this.getSource({
       currentPage: 1,
-      pageSize: 100
+      pageSize: 100,
+      active: 1
     })
   }
 }
@@ -310,7 +343,6 @@ export default {
         .ca-content-left {
             background-color: #fff;
             border: 1px solid lightgray;
-            height: 500px;
             h4 {
                 padding: 10px;
                 border-bottom: 1px solid lightgray;

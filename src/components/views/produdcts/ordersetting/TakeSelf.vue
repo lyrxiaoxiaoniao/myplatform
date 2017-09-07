@@ -262,7 +262,6 @@ export default {
       }
     },
     handleClick(tab, event) {
-      console.log(tab.name)
       if (tab.name) {
         this.$nextTick(() => {
           this.init()
@@ -331,6 +330,10 @@ export default {
           this.map.panTo(r.point)
         }
       }, {enableHighAccuracy: true})
+      var local = new BMap.LocalSearch(this.map, {
+        renderOptions: {map: this.map, panel: "bresult"}
+      })
+      local.search('鸿昌广场')
       /* eslint-enable */
     }
   },
