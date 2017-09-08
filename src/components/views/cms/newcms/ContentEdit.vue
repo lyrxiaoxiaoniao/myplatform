@@ -200,7 +200,6 @@ export default {
     onMapfirm (data) {
       this.showMapDialog = false
       this.locationData = data
-      console.log(this.locationData)
     },
     changeType (val) {
       if (val === 0) {

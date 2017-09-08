@@ -5,8 +5,7 @@
       <el-col :span="12">
         <el-input
           v-model="searchInput"
-          placeholder="搜索地址"
-          >
+          placeholder="搜索地址">
           <el-button
             @click="posMarker"
             @keyup.enter.native="posMarker"
@@ -35,18 +34,20 @@ export default {
       point: {},
       pointAddress: '',
       map: null,
-      geoc: null
+      geoc: null,
+      allReady: false
     }
   },
   methods: {
     getData () {
+      /* eslint-disable */
       this.searchInput = this.localMapData.address
       this.point.lng = this.localMapData.lng
       this.point.lat = this.localMapData.lat
-      if (this.map && this.searchInput) {
-        this.mapInit()
+      if (this.searchInput) {
         this.posMarker()
       }
+      /* eslint-enable */
     },
     onClose () {
       this.$emit('close')
@@ -73,7 +74,6 @@ export default {
           map.centerAndZoom(e, 14)
           const marker = new BMap.Marker(e)
           map.addOverlay(marker)
-          marker.setAnimation(BMAP_ANIMATION_BOUNCE)
         } else {
           that.$message({
             showClose: true,
@@ -84,7 +84,7 @@ export default {
       }, '深圳市')
       /* eslint-enable */
     },
-    mapInit() {
+    mapInit(callback) {
       const that = this
       /* eslint-disable */
       const map = new BMap.Map("map")
@@ -121,18 +121,19 @@ export default {
         that.point.lng = e.point.lng
         const marker = new BMap.Marker(e.point)
         map.addOverlay(marker)
-        marker.setAnimation(BMAP_ANIMATION_BOUNCE)
         geoc.getLocation(e.point, function(rs) {
           that.pointAddress = rs.address
         })
       })
+      setTimeout(function() {
+        callback()
+      }, 500)
       /* eslint-enable */
     }
   },
   mounted () {
     this.$nextTick(() => {
-      this.mapInit()
-      this.getData()
+      this.mapInit(this.getData)
     })
   }
 }

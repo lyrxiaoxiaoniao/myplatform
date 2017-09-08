@@ -119,11 +119,11 @@
                         <el-input type="textarea" v-model="selected.content"></el-input>
                     </el-form-item>
                 </el-col>
-                <el-col :span="24">
+                <!-- <el-col :span="24">
                     <el-form-item label="回复">
                         <el-input type="textarea" v-model="selected.des"></el-input>
                     </el-form-item>
-                </el-col>
+                </el-col> -->
             </el-row> 
         </el-form>
         <div slot="footer" class="dialog-footer">
