@@ -46,6 +46,7 @@ import TutorialSignin from 'components/kobe/tutorial/TutorialSignin'
 import TutorialAward from 'components/kobe/tutorial/TutorialAward'
 import TutorialTest from 'components/kobe/tutorial/TutorialTest'
 import TutorialDate from 'components/kobe/tutorial/TutorialDate'
+import MapView from './components/kobe/mapView.vue'
 
 const install = (Vue) => {
   Vue.component('kobe-login', Login)
@@ -91,6 +92,7 @@ const install = (Vue) => {
   Vue.component('kobe-tutorial-award', TutorialAward)
   Vue.component('kobe-tutorial-test', TutorialTest)
   Vue.component('kobe-tutorial-date', TutorialDate)
+  Vue.component('kobe-map-view', MapView)
 }
 
 export default install

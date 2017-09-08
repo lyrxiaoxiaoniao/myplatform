@@ -16,18 +16,22 @@
           </el-button>
         </el-input>
       </el-col>
-      <el-button type="primary" @click="useClick">使用地图当前点</el-button>
+      <el-button style="margin-left: 15px;" @click="useClick">使用地图当前点</el-button>
     </el-row>
     <div id="map">
     </div>
-    <div id="bresult"></div>
+    <el-row type="flex" justify="end" style="margin-top: 25px;">
+       <el-button @click="onClose">取消</el-button>
+       <el-button type="primary" @click="onConfirm">确认</el-button>
+    </el-row>
 </div>
 </template>
 <script>
 export default {
+  props: ['localMapData'],
   data () {
     return {
-      searchInput: '',
+      searchInput: null,
       point: {},
       pointAddress: '',
       map: null,
@@ -35,14 +39,28 @@ export default {
     }
   },
   methods: {
+    getData () {
+      this.searchInput = this.localMapData.address
+      this.point.lng = this.localMapData.lng
+      this.point.lat = this.localMapData.lat
+      if (this.map && this.searchInput) {
+        this.mapInit()
+        this.posMarker()
+      }
+    },
+    onClose () {
+      this.$emit('close')
+    },
+    onConfirm () {
+      var data = {
+        address: this.searchInput,
+        lng: this.point.lng,
+        lat: this.point.lat
+      }
+      this.$emit('confirm', data)
+    },
     useClick() {
-       /* eslint-disable */
       this.searchInput = this.pointAddress
-      var local = new BMap.LocalSearch(this.map, {
-        renderOptions: {map: this.map, panel: "bresult"}
-      })
-      local.search(this.searchInput)
-      /* eslint-enable */
     },
     posMarker() {
       /* eslint-disable */
@@ -53,7 +71,9 @@ export default {
       geoc.getPoint(this.searchInput, function(e) {
         if (e) {
           map.centerAndZoom(e, 14)
-          map.addOverlay(new BMap.Marker(e))
+          const marker = new BMap.Marker(e)
+          map.addOverlay(marker)
+          marker.setAnimation(BMAP_ANIMATION_BOUNCE)
         } else {
           that.$message({
             showClose: true,
@@ -62,10 +82,6 @@ export default {
           })
         }
       }, '深圳市')
-      var local = new BMap.LocalSearch(this.map, {
-        renderOptions: {map: this.map, panel: "bresult"}
-      })
-      local.search(this.searchInput)
       /* eslint-enable */
     },
     mapInit() {
@@ -103,41 +119,32 @@ export default {
         map.clearOverlays()
         that.point.lat = e.point.lat
         that.point.lng = e.point.lng
-        console.log(e.point, 11111)
         const marker = new BMap.Marker(e.point)
         map.addOverlay(marker)
+        marker.setAnimation(BMAP_ANIMATION_BOUNCE)
         geoc.getLocation(e.point, function(rs) {
           that.pointAddress = rs.address
         })
       })
-      var local = new BMap.LocalSearch(this.map, {
-        renderOptions: {map: this.map, panel: "bresult"}
-      })
-      local.search('鸿昌广场')
       /* eslint-enable */
     }
   },
   mounted () {
     this.$nextTick(() => {
       this.mapInit()
+      this.getData()
     })
   }
 }
 </script>
 <style lang="scss" scoped>
 .map-container {
+  margin-top: -25px;
+  text-align: center;
   #map {
-    float: right;
-    width: 75%;
+    width: 100%;
     min-height: 500px;
     margin-top: 10px;
-  }
-  #bresult {
-    float: left;
-    width: 25%;
-    height: 500px;
-    margin-top: 10px;
-    overflow: auto;
   }
   .space {
     margin-top: 1rem;

@@ -147,7 +147,7 @@ export default {
     }
   },
   methods: {
-     // 将数据中所有的时间转换成 yyyy-mm-dd hh:mm:ss  state 状态值
+     // 将数据中所有的时间转换成 yyyy-mm-dd hh:mm:ss  active 状态值
     transformDate (res) {
       res.data.forEach(v => {
         if (v.created_at) {
@@ -200,7 +200,7 @@ export default {
         id: id,
         active: this.changeNum(active)
       }
-      api.POST(config.updateActiveHotWordListAPI, obj)
+      api.POST(config.updateActiveWordSourceAPI, obj)
       .then(response => {
         if (response.status !== 200) {
           this.error = response.statusText
