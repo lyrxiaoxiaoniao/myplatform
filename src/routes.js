@@ -1108,7 +1108,7 @@ const routes = [
           path: 'loadometerinformation',
           component: DashMainView,
           redirect: '/admin/recycle/loadometerinformation/index',
-          name: '餐饮企业管理',
+          name: '地磅信息总路由',
           meta: {description: '列表'},
           children: [{
             path: 'index',
@@ -1123,7 +1123,7 @@ const routes = [
           }, {
             path: 'detail',
             component: LoadometerDetailByDay,
-            name: '地磅数据管理',
+            name: '地磅数据详情',
             meta: {description: '地磅点每天数据详情'}
           }]
         }, {

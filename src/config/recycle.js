@@ -47,6 +47,7 @@ export default {
     create: '/rubbish/weighbridge/create',
     delete: '/rubbish/weighbridge/delete',
     update: '/rubbish/weighbridge/update',
+    audit: '/rubbish/weigh/detail/audit',
     suttleDay: '/rubbish/weighbridge/suttleDay',
     suttleMonth: '/rubbish/weighbridge/suttleMonth',
     suttleYear: '/rubbish/weighbridge/suttleYear',

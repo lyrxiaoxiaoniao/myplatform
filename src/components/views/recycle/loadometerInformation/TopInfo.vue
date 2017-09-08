@@ -1,23 +1,21 @@
 <template>
   <div class="top">
-    <!--
     <div class="table-head">
-      <h4>罗湖文锦地磅点</h4>
+      <h4>{{response.data.name}}</h4>
       <el-button type="primary" @click="toList">返回列表</el-button>
     </div>
     <div class="table-body">
       <table>
         <tr>
-          <td>负责人：杨洋</td>
-          <td>负责人电话：15655653523</td>
+          <td>负责人：{{response.data.duty_name}}</td>
+          <td>负责人电话：{{response.data.mobile}}</td>
         </tr>
         <tr>
-          <td>详细地址：深圳市罗湖区文锦街道XXX物流公司</td>
-          <td>垃圾类型：大件垃圾</td>
+          <td>详细地址：{{response.data.detail_address}}</td>
+          <td>垃圾类型：{{response.data.type}}</td>
         </tr>
       </table>
     </div>
-    -->
   </div>
 </template>
 
@@ -30,11 +28,16 @@
     data () {
       return {
         response: {
-          data: null
+          data: {
+            name: '',
+            duty_name: '',
+            mobile: '',
+            detail_address: '',
+            type: ''
+          }
         }
       }
     },
-    props: ['theId'],
     components: {
     },
     computed: {},
@@ -44,9 +47,9 @@
           path: '/admin/recycle/loadometerInformation/index'
         })
       },
-      getOne () {
-        console.log(this.theId)
-        api.GET(config.loadometer.indexOne, {id: this.theId})
+      getOne (id) {
+        // console.log('getOne时候id' + id)
+        api.GET(config.loadometer.indexOne, {id})
           .then(response => {
             this.response.data = this.transformData(response.data.data)
           })
@@ -83,7 +86,7 @@
       }
     },
     mounted () {
-      this.getOne()
+      this.getOne(this.$route.query.id)
     }
   }
 </script>
