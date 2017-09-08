@@ -166,7 +166,6 @@ import RecycleRecoveryInfo from './components/views/recycle/recovery/baseInfo.vu
 import RecycleRecoveryWay from './components/views/recycle/recovery/way.vue'
 import RecycleRecoveryWayEdit from './components/views/recycle/recovery/wayManage/editWay.vue'
 import RecycleRecoveryWayAdd from './components/views/recycle/recovery/wayManage/addWay.vue'
-import TestMap from './components/views/recycle/map/mapView.vue'
 
 const routes = [
   {
@@ -1049,11 +1048,6 @@ const routes = [
             path: 'info',
             component: RecycleRecoveryInfo,
             name: '回收公司',
-            meta: {description: '信息管理'}
-          }, {
-            path: 'map',
-            component: TestMap,
-            name: '测试地图',
             meta: {description: '信息管理'}
           }, {
             path: 'way',
