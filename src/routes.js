@@ -3,7 +3,7 @@ import LoginView from './components/Login.vue'
 import ForgetView from './components/Forgot.vue'
 import ResetView from './components/Reset.vue'
 import NotFoundView from './components/404.vue'
-
+import baseRouters from './baseRouters.js'
 // Import Views - Dash
 import DashMainView from './components/views/dash/Main.vue'
 
@@ -1145,7 +1145,8 @@ const routes = [
             meta: {description: '列表'}
           }]
         }]
-      }
+      },
+      ...baseRouters
     ]
   }, {
     // not found handler
