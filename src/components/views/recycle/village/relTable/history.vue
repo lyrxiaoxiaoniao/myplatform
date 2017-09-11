@@ -27,12 +27,6 @@
                     <el-table-column prop="duty_name" label="联系人" width="150"></el-table-column>
                     <el-table-column prop="mobile" label="联系电话" width="150"></el-table-column>
                     <el-table-column prop="address" label="公司地址"></el-table-column>
-                    <el-table-column width="160" label="操作">
-                    <template scope="scope">
-                        <el-button size="small" icon="edit" title="修改"></el-button>
-                        <el-button size="small" @click="remove(scope.row.id)" title="解除">解除</el-button>
-                    </template>
-                    </el-table-column>
                 </el-table>
                 </div>
                 <div slot="kobe-table-footer" class="kobe-table-footer">
@@ -62,10 +56,6 @@ export default {
   props: ['communityId'],
   data () {
     return {
-      removeForm: {
-        community_id: this.communityId,
-        tenement_id: ''
-      },
       form: {
         keyword: ''
       },
@@ -113,25 +103,40 @@ export default {
       data = {
         id: this.communityId
       }
-      api.GET(config.village.relServer, data)
+      api.GET(config.village.history, data)
       .then(response => {
         this.response.data = this.transform(response.data.data)
-        if (response.data.errcode === '5000') {
-          this.response.data = null
-        }
+        console.log(this.response.data)
       })
       .catch(error => {
         this.$message.error(error)
       })
     },
-    remove (id) {
-      this.removeForm.tenement_id = id
+    deleteType (id) {
+      if (id) {
+        this.ids = []
+        this.ids.push(id)
+      }
+      if (this.ids.length === 0) {
+        this.$confirm('请进行正确操作，请优先勾选表单？', '错误', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'error'
+        }).then(() => {
+          return
+        }).catch(() => {
+          return
+        })
+        return
+      }
       this.$confirm('此操作将解除关联该物业,是否继续解除？', '解除', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.POST(config.village.removeCorrelate, this.removeForm)
+        api.POST(config.village.delete, {
+          ids: this.ids
+        })
         .then(response => {
           if (response.data.errcode === '0000') {
             this.onSuccess('解除成功')
@@ -141,7 +146,6 @@ export default {
           }
         })
       })
-      this.getList()
     },
     onSuccess (string) {
       this.$notify({
@@ -152,8 +156,11 @@ export default {
     },
     // 转换数据
     transform (data) {
-      var res = []
+      let res = []
+      let count = 0
       data.forEach(e => {
+        count++
+        e.rubTenementVOS[0].count = count
         res.push(e.rubTenementVOS[0])
       })
       return res

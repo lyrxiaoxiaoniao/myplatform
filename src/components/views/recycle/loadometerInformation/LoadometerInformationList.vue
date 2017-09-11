@@ -2,9 +2,10 @@
   <kobe-table>
     <div slot="kobe-table-header" class="kobe-table-header">
       <el-row type="flex" justify="end">
-        <el-col :span="15">
+        <el-col :span="17">
           <el-button type="primary" @click="toAddStatus">添加</el-button>
         </el-col>
+        <!--
         <el-col :span="2" style="margin-right:10px;">
           <el-select v-model="searchSelectValue" placeholder="所有信息" style="width:105px;" @change="searchSelect">
             <el-option
@@ -15,6 +16,7 @@
             </el-option>
           </el-select>
         </el-col>
+        -->
         <el-col :span="5" style="margin-right:10px;">
           <el-input v-model="form.keyword" placeholder="" class="sc-table-header-select">
             <el-button slot="append" class="sc-table-search-btn" @click="onSearch" icon="search"></el-button>
@@ -31,15 +33,15 @@
         stripe
         @selection-change="selectIds">
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="id" label="地磅站点编号" width="120"></el-table-column>
-        <el-table-column prop="display_name" label="站点名称"></el-table-column>
-        <el-table-column prop="articleCount" label="垃圾类型" width="100"></el-table-column>
-        <el-table-column prop="display_name" label="负责人" width="100"></el-table-column>
-        <el-table-column prop="display_name" label="联系电话"></el-table-column>
-        <el-table-column prop="sort" label="详细地址"></el-table-column>
+        <el-table-column prop="site_number" label="地磅站点编号" width="120"></el-table-column>
+        <el-table-column prop="name" label="站点名称"></el-table-column>
+        <el-table-column prop="type" label="垃圾类型" width="120"></el-table-column>
+        <el-table-column prop="duty_name" label="负责人" width="100"></el-table-column>
+        <el-table-column prop="mobile" label="联系电话"></el-table-column>
+        <el-table-column prop="detail_address" label="详细地址"></el-table-column>
         <el-table-column label="操作" width="180px">
           <template scope="scope">
-            <el-button size="small" icon="edit" @click="toEditStatus(scope.row.id)" title="修改"></el-button>
+            <el-button size="small" icon="edit" @click="toEditStatus(scope.row)" title="修改"></el-button>
             <el-button size="small" icon="delete2" @click="deleteData(scope.row.id)" title="删除"></el-button>
             <el-button size="small" icon="information" @click="toStatistics(scope.row.id)" title="详情"></el-button>
           </template>
@@ -63,32 +65,32 @@
       </el-row>
       <el-dialog :title="dialogTitle" v-model="dialogFormVisible">
         <el-form :model="loadometerInfoForm" :rules="rules" ref="loadometerInfoForm" label-width="100px">
-          <el-form-item label="站点名称" prop="display_name">
-            <el-input v-model="loadometerInfoForm.display_name" placeholder="请输入站点名称"></el-input>
+          <el-form-item label="站点编号" prop="site_number">
+            <el-input v-model="loadometerInfoForm.site_number" placeholder="请输入站点名称"></el-input>
           </el-form-item>
-          <el-form-item label="详细地址" prop="sort">
-            <el-input v-model="loadometerInfoForm.display_name" placeholder="请输入详细地址"></el-input>
+          <el-form-item label="站点名称" prop="name">
+            <el-input v-model="loadometerInfoForm.name" placeholder="请输入站点名称"></el-input>
           </el-form-item>
-          <el-form-item label="固定电话" prop="description">
-            <el-input v-model="loadometerInfoForm.description" placeholder="请输入固定电话"></el-input>
+          <el-form-item label="详细地址" prop="detail_address">
+            <el-input v-model="loadometerInfoForm.detail_address" placeholder="请输入详细地址"></el-input>
           </el-form-item>
-          <el-form-item label="负责人" prop="description">
-            <el-input v-model="loadometerInfoForm.description" placeholder="请输入负责人姓名"></el-input>
+          <el-form-item label="固定电话" prop="phone">
+            <el-input v-model="loadometerInfoForm.phone" placeholder="请输入固定电话"></el-input>
           </el-form-item>
-          <el-form-item label="联系电话" prop="description">
-            <el-input v-model="loadometerInfoForm.description" placeholder="请输入负责人联系电话"></el-input>
+          <el-form-item label="负责人" prop="duty_name">
+            <el-input v-model="loadometerInfoForm.duty_name" placeholder="请输入负责人姓名"></el-input>
           </el-form-item>
-          <el-form-item label="垃圾类型" prop="description">
-            <el-dropdown>
-              <el-button type="primary">
-                请选择<i class="el-icon-caret-bottom el-icon--right"></i>
-              </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>大件垃圾</el-dropdown-item>
-                <el-dropdown-item>餐厨垃圾</el-dropdown-item>
-                <el-dropdown-item>烟花爆竹</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
+          <el-form-item label="联系电话" prop="mobile">
+            <el-input v-model="loadometerInfoForm.mobile" placeholder="请输入负责人联系电话"></el-input>
+          </el-form-item>
+          <el-form-item label="垃圾类型" prop="type">
+            <el-select v-model="loadometerInfoForm.type" placeholder="请选择">
+              <el-option
+                v-for="item in loadometerInfoFormType"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -118,7 +120,21 @@
           keyword: ''
         },
         loadometerInfoForm: {
+          created_at: '',
+          detail_address: '',
+          duty_name: '',
+          mobile: '',
+          name: '',
+          site_number: '',
+          type: ''
         },
+        loadometerInfoFormType: [{
+          value: 0,
+          label: '大件垃圾'
+        }, {
+          value: 1,
+          label: '餐厨垃圾'
+        }],
         dialogTitle: '',
         dialogFormVisible: false,
         searchSelectOptions: [], // 列表页顶部选择器的可选值
@@ -133,7 +149,6 @@
         const data = {
           currentPage: this.response.currentPage,
           pageSize: value,
-          contractStatus: this.searchSelectValue, // 签约状态
           ...this.form
         }
         this.getList(data)
@@ -142,16 +157,6 @@
         const data = {
           currentPage: value,
           pageSize: this.response.pageSize,
-          contractStatus: this.searchSelectValue, // 签约状态
-          ...this.form
-        }
-        this.getList(data)
-      },
-      searchSelect () {
-        const data = {
-          currentPage: this.response.currentPage,
-          pageSize: this.response.pageSize,
-          contractStatus: this.searchSelectValue, // 签约状态
           ...this.form
         }
         this.getList(data)
@@ -161,53 +166,38 @@
         let data = {
           currentPage: 1,
           pageSize: this.response.pageSize,
-          contractStatus: this.searchSelectValue, // 签约状态
           ...this.form
         }
-        // console.log(typeof this.selectValue)
-        // const data = {
-        //   currentPage: 1,
-        //   pageSize: this.response.pageSize,
-        //   ...this.form
-        // }
         this.getList(data)
       },
       getList (data = {}) {
-        api.GET(config.categoryIndexAPI, data)
-        .then(response => {
-          this.response = this.transformData(response.data.data)
-        })
-        .catch(error => {
-          this.$message.error(error)
-        })
+        api.GET(config.loadometer.index, data)
+          .then(response => {
+            this.response = this.transformData(response.data.data)
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
+      },
+      getOne (id) {
+        api.GET(config.loadometer.indexOne, {id})
+          .then(response => {
+            this.response = this.transformData(response.data.data)
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
       },
       transformData (res) {
         res.data.forEach(v => {
           if (v.created_at) {
             v.created_at = this.formatDate(v.created_at)
           }
-          if (v.status === 0) {
-            v.status = '待审核'
+          if (v.type === 0) {
+            v.type = '大件垃圾'
           }
-          if (v.status === 1) {
-            v.status = '已审核'
-          }
-          if (v.status === 2) {
-            v.status = '退回'
-          }
-          if (v.status === 3) {
-            v.status = '已归档'
-          }
-          if (v.status === 4) {
-            v.status = '出档'
-          }
-          switch (v.active) {
-            case 0:
-              v.active = false
-              break
-            case 1:
-              v.active = true
-              break
+          if (v.type === 1) {
+            v.type = '餐厨垃圾'
           }
         })
         return res
@@ -227,48 +217,111 @@
         value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
         return value
       },
-      deleteData (value) {
-        this.selectIds(value)
-        api.POST(config.deleteCategoryAPI, {ids: this.loadometerSelectedIds})
+      async deleteData (value) {
+        // next表示是否进行下一步
+        var next = true
+        if (value) {
+          this.selectIds(value)
+        }
+        if (!this.loadometerSelectedIds.length) {
+          // console.log('确认是否勾选前' + next)
+          next = await this.warnSelection(next)
+          // console.log('确认是否勾选后' + next)
+        }
+        if (next) {
+          // console.log('确认前' + next)
+          next = await this.confirmDelete(next)
+          // console.log('确认后' + next)
+        }
+        if (next) {
+          console.log('发起请求')
+          this.loadometerSelectedIds = []
+          // api.POST(config.loadometer.delete, {ids: this.loadometerSelectedIds})
+          // .then(response => {
+          //   if (response.status !== 200) {
+          //     this.error = response.statusText
+          //     return
+          //   }
+          //   if (response.data.errcode === '0000') {
+          //     this.onSuccess('删除成功')
+          //     this.getList()
+          //   }
+          // })
+          // .catch(error => {
+          //   this.$message.error(error)
+          // })
+        }
+      },
+      // 确认是否已选择要操作的数据
+      warnSelection (next) {
+        return this.$confirm('请进行正确操作，请优先勾选表单', '错误', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'error'
+        }).then(() => {
+          next = false
+          return next
+        }).catch(() => {
+          next = false
+          return next
+        })
+      },
+      // 确认是否删除
+      confirmDelete (next) {
+        return this.$confirm('此操作将删除选定的文章。是否继续删除？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          next = true
+          return next
+        }).catch(() => {
+          next = false
+          return next
+        })
+      },
+      addLoadometer () {
+        api.POST(config.loadometer.create, this.loadometerInfoForm)
           .then(response => {
-            if (response.status !== 200) {
-              this.error = response.statusText
-              return
-            }
             if (response.data.errcode === '0000') {
-              this.onSuccess('删除成功')
-              this.getList()
+              this.onSuccess('创建成功')
+              let data = {
+                pageSize: this.response.pageSize,
+                currentPage: this.response.currentPage,
+                ...this.form
+              }
+              this.getList(data)
+              this.closeDialog()
             }
           })
           .catch(error => {
             this.$message.error(error)
           })
-      },
-      addLoadometer () {
         // 参数loadometerInfoForm
       },
       updateLoadometer () {
-        // loadometerInfoForm和loadometerId
-        // api.POST(config.subject.update, value)
-        //   .then(response => {
-        //     if (response.data.errcode === '0000') {
-        //       this.$notify({
-        //         title: '成功',
-        //         message: '修改成功',
-        //         type: 'success'
-        //       })
-        //       let data = {
-        //         pageSize: this.response.pageSize,
-        //         currentPage: this.response.currentPage,
-        //         contractStatus: this.searchSelectValue, // 签约状态
-        //         ...this.form
-        //       }
-        //       this.getList(data)
-        //     }
-        //   })
-        //   .catch(error => {
-        //     this.$message.error(error)
-        //   })
+        api.POST(config.loadometer.update, this.loadometerInfoForm)
+          .then(response => {
+            if (response.data.errcode === '0000') {
+              this.onSuccess('修改成功')
+              // this.$notify({
+              //   title: '成功',
+              //   message: '修改成功',
+              //   type: 'success'
+              // })
+              let data = {
+                pageSize: this.response.pageSize,
+                currentPage: this.response.currentPage,
+                contractStatus: this.searchSelectValue, // 签约状态
+                ...this.form
+              }
+              this.getList(data)
+              this.closeDialog()
+            }
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
       },
       toStatistics (id) {
         this.$router.push({
@@ -278,25 +331,43 @@
           }
         })
       },
-      // 单行记录和多行记录操作生成id数组
+      // 单行记录、多行记录、未选择记录操作生成id数组
       selectIds (value) {
         this.loadometerSelectedIds = []
-        // 单行记录操作传进来的参数是数字，多行记录操作传进来的参数是数组
-        if (value.length === undefined) {
-          this.loadometerSelectedIds.push(value)
-        } else {
-          this.loadometerSelectedIds = value.map(v => {
-            return v.id
-          })
+        // 单行记录操作传进来的参数是数字，多行记录操作传进来的参数是数组，未选择记录未传参数
+        if (value !== undefined) {
+          // console.log('有选中记录')
+          if (value.length === undefined) {
+            this.loadometerSelectedIds.push(value)
+          } else {
+            // console.log('选中多行')
+            this.loadometerSelectedIds = value.map(v => {
+              return v.id
+            })
+          }
         }
       },
       toAddStatus () {
+        this.loadometerInfoForm = {
+          created_at: '',
+          detail_address: '',
+          duty_name: '',
+          mobile: '',
+          name: '',
+          site_number: '',
+          type: ''
+        }
         this.openDialog('新增地磅点')
-        // loadometerInfoForm清空
       },
-      toEditStatus (id) {
-        this.openDialog('详情/编辑', id)
-        // 获取该id的地磅信息
+      toEditStatus (value) {
+        this.loadometerInfoForm = value
+        if (this.loadometerInfoForm.type === '大件垃圾') {
+          this.loadometerInfoForm.type = 0
+        } else {
+          this.loadometerInfoForm.type = 1
+        }
+        // this.getOne(id)
+        this.openDialog('详情/编辑', value.id)
       },
       openDialog (value, id) {
         this.loadometerId = id
@@ -306,6 +377,13 @@
       closeDialog () {
         this.dialogFormVisible = false
         this.dialogTitle = ''
+      },
+      onSuccess (string) {
+        this.$notify({
+          title: '成功',
+          message: string,
+          type: 'success'
+        })
       }
     },
     components: {

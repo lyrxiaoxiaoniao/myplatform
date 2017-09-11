@@ -4,7 +4,7 @@
         <div class="lh-form">
             <kobe-table>
                 <div slot="kobe-table-header" class="kobe-table-header">
-                 <!--  <el-row type="flex" justify="end">
+                  <!-- <el-row type="flex" justify="end">
                     <el-col :span="10" :offset="14">
                         <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
                         <el-button slot="append" @click="onSearch" icon="search"></el-button>
@@ -12,7 +12,7 @@
                     </el-col>
                       <el-button icon="upload2" type="primary" style="margin-left:10px;"></el-button>
                       <el-button icon="setting" type="primary"></el-button>
-                  </el-row>  -->         
+                  </el-row>     -->      
                 </div>
                 <div slot="kobe-table-content" class="kobe-table">
                 <el-table
@@ -30,7 +30,7 @@
                     <el-table-column width="160" label="操作">
                     <template scope="scope">
                         <el-button size="small" icon="edit" title="修改"></el-button>
-                        <el-button size="small" @click="remove(scope.row.id)" title="解除">解除</el-button>
+                        <el-button size="small" @click="openDialog(scope.row.id)" title="关联">关联</el-button>
                     </template>
                     </el-table-column>
                 </el-table>
@@ -51,6 +51,29 @@
                     </el-row>
                 </div>
             </kobe-table>
+     <!-- 关联模态框 -->
+          <el-dialog title="关联物业" v-model="dialogAdvance" size="tiny">
+              <el-row>
+              <el-col :span="12">
+                <el-date-picker
+                  v-model="correlateForm.begin_time"
+                  type="datetime"
+                  placeholder="选择开始时间">
+                </el-date-picker>
+              </el-col>
+              <el-col :span="12">
+                <el-date-picker
+                  v-model="correlateForm.end_time"
+                  type="datetime"
+                  placeholder="选择结束时间">
+                </el-date-picker>
+              </el-col> 
+              </el-row>
+              <span slot="footer" class="dialog-footer">
+                  <el-button @click="dialogAdvance = false">取 消</el-button>
+                  <el-button type="primary" @click="correlate">确 定</el-button>
+              </span>
+          </el-dialog>
         </div>
         </div>
     </div>    
@@ -62,9 +85,12 @@ export default {
   props: ['communityId'],
   data () {
     return {
-      removeForm: {
+      dialogAdvance: false,
+      correlateForm: {
         community_id: this.communityId,
-        tenement_id: ''
+        tenement_id: '',
+        begin_time: '',
+        end_time: ''
       },
       form: {
         keyword: ''
@@ -77,6 +103,21 @@ export default {
     }
   },
   methods: {
+    openDialog (id) {
+      this.dialogAdvance = true
+      this.correlateForm.tenement_id = id
+    },
+    correlate () {
+      this.dialogAdvance = false
+      api.POST(config.village.addcorrelate, this.correlateForm)
+      .then(response => {
+        this.onSuccess('关联成功！')
+        this.getList()
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
     toggleSelection (rows) {
       if (rows) {
         rows.forEach(row => {
@@ -92,6 +133,14 @@ export default {
       this.multipleSelection.forEach(v => {
         this.ids.push(v.id)
       })
+    },
+    // 转换数据
+    transform (data) {
+      var res = []
+      data.forEach(e => {
+        res.push(e.rubTenementVOS[0])
+      })
+      return res
     },
     handleSizeChange (value) {
       const data = {
@@ -113,7 +162,7 @@ export default {
       data = {
         id: this.communityId
       }
-      api.GET(config.village.relServer, data)
+      api.GET(config.village.uncorrelated, data)
       .then(response => {
         this.response.data = this.transform(response.data.data)
         if (response.data.errcode === '5000') {
@@ -124,14 +173,31 @@ export default {
         this.$message.error(error)
       })
     },
-    remove (id) {
-      this.removeForm.tenement_id = id
+    deleteType (id) {
+      if (id) {
+        this.ids = []
+        this.ids.push(id)
+      }
+      if (this.ids.length === 0) {
+        this.$confirm('请进行正确操作，请优先勾选表单？', '错误', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'error'
+        }).then(() => {
+          return
+        }).catch(() => {
+          return
+        })
+        return
+      }
       this.$confirm('此操作将解除关联该物业,是否继续解除？', '解除', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.POST(config.village.removeCorrelate, this.removeForm)
+        api.POST(config.village.delete, {
+          ids: this.ids
+        })
         .then(response => {
           if (response.data.errcode === '0000') {
             this.onSuccess('解除成功')
@@ -141,7 +207,6 @@ export default {
           }
         })
       })
-      this.getList()
     },
     onSuccess (string) {
       this.$notify({
@@ -149,17 +214,10 @@ export default {
         message: string,
         type: 'success'
       })
-    },
-    // 转换数据
-    transform (data) {
-      var res = []
-      data.forEach(e => {
-        res.push(e.rubTenementVOS[0])
-      })
-      return res
     }
   },
   mounted () {
+    console.log(this.$store.state.callingAPI, 111111)
     this.getList()
   }
 }

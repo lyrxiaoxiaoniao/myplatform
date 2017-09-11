@@ -1,23 +1,95 @@
 <template>
   <div class="top">
     <div class="table-head">
-      <h4>罗湖文锦地磅点</h4>
-      <el-button type="primary">返回列表</el-button>
+      <h4>{{response.data.name}}</h4>
+      <el-button type="primary" @click="toList">返回列表</el-button>
     </div>
     <div class="table-body">
       <table>
         <tr>
-          <td>负责人：杨洋</td>
-          <td>负责人电话：15655653523</td>
+          <td>负责人：{{response.data.duty_name}}</td>
+          <td>负责人电话：{{response.data.mobile}}</td>
         </tr>
         <tr>
-          <td>详细地址：深圳市罗湖区文锦街道XXX物流公司</td>
-          <td>垃圾类型：大件垃圾</td>
+          <td>详细地址：{{response.data.detail_address}}</td>
+          <td>垃圾类型：{{response.data.type}}</td>
         </tr>
       </table>
     </div>
   </div>
 </template>
+
+<script>
+  import config from 'src/config'
+  import api from 'src/api'
+
+  export default {
+    name: 'sc-loadometer-topinfo',
+    data () {
+      return {
+        response: {
+          data: {
+            name: '',
+            duty_name: '',
+            mobile: '',
+            detail_address: '',
+            type: ''
+          }
+        }
+      }
+    },
+    components: {
+    },
+    computed: {},
+    methods: {
+      toList () {
+        this.$router.push({
+          path: '/admin/recycle/loadometerInformation/index'
+        })
+      },
+      getOne (id) {
+        // console.log('getOne时候id' + id)
+        api.GET(config.loadometer.indexOne, {id})
+          .then(response => {
+            this.response.data = this.transformData(response.data.data)
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
+      },
+      transformData (res) {
+        if (res.created_at) {
+          res.created_at = this.formatDate(res.created_at)
+        }
+        if (res.type === 0) {
+          res.type = '大件垃圾'
+        }
+        if (res.type === 1) {
+          res.type = '餐厨垃圾'
+        }
+        return res
+      },
+      // 时间转换 毫秒转换成 yyyy-mm-dd hh:mm:ss
+      formatDate (value) {
+        let date = new Date(value)
+        let M = date.getMonth() + 1
+        M = M < 10 ? ('0' + M) : M
+        let d = date.getDate()
+        d = d < 10 ? ('0' + d) : d
+        // let h = date.getHours()
+        let m = date.getMinutes()
+        m = m < 10 ? ('0' + m) : m
+        let s = date.getSeconds()
+        s = s < 10 ? ('0' + s) : s
+        value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
+        return value
+      }
+    },
+    mounted () {
+      this.getOne(this.$route.query.id)
+    }
+  }
+</script>
 
 <style lang="scss" scoped>
   .loadometerStatistics-container {

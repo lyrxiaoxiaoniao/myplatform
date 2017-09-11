@@ -23,12 +23,12 @@
               </el-form-item> 
              </el-col>
              <el-col :span="10"> 
-              <el-form-item label="详细地址" prop="detail_address">
-                <el-input disabled v-model="info.detail_address"></el-input>
+              <el-form-item label="详细地址" prop="address">
+                <el-input disabled v-model="info.address"></el-input>
               </el-form-item>
             </el-col>     
             <el-col :span="10" :offset="4">      
-              <el-form-item label="已关联物业数量" prop="count">
+              <el-form-item label="已服务小区数量" prop="count">
                 <el-input disabled v-model="info.count"></el-input>
               </el-form-item> 
              </el-col>
@@ -39,14 +39,14 @@
 
     <div class="lh-bottom">
       <el-tabs class="margin" v-model="activeName"  @tab-click="handleClick" style="margin:0 2em">
-        <el-tab-pane label="已关联物业" name="first">
-          <rel-tab v-if='firstId' :communityId="info.community_id"></rel-tab>
+        <el-tab-pane label="已服务小区" name="first">
+          <rel-tab :id="info.id"></rel-tab>
         </el-tab-pane>
-        <el-tab-pane label="未关联物业" name="second">
-          <norel-tab :communityId="info.community_id"></norel-tab>
+        <el-tab-pane label="未服务小区" name="second">
+          <norel-tab :id="info.id"></norel-tab>
         </el-tab-pane>
-        <el-tab-pane label="历史关联" name="third">
-          <history :communityId="info.community_id"></history>
+        <el-tab-pane label="历史服务" name="third">
+          <history :id="info.id"></history>
         </el-tab-pane>    
       </el-tabs>
     </div>
@@ -56,9 +56,9 @@
 <script type="text/javascript">
 import config from 'src/config'
 import api from 'src/api'
-import relTab from './relTable/reled'
-import norelTab from './relTable/noRel'
-import history from './relTable/history'
+import relTab from './relTable/reled-service'
+import norelTab from './relTable/noRel-service'
+import history from './relTable/history-service'
 export default {
   data () {
     return {
@@ -66,14 +66,13 @@ export default {
       response: {
         data: null
       },
-      firstId: true,
       info: {
-        name: '',
-        duty_name: '',
-        mobile: '',
-        detail_address: '',
-        count: '',
-        community_id: this.$route.query.id
+        name: '文锦小区',
+        duty_name: '贾克斯',
+        mobile: '14718436328',
+        address: '深圳',
+        count: '1',
+        id: this.$route.query.id
       },
       activeName: 'first',
       form: {
@@ -89,19 +88,10 @@ export default {
   },
   methods: {
     handleClick (tab, event) {
-      if (tab.name === 'first') {
-        this.firstId = true
-      }
-      if (tab.name === 'second') {
-        this.firstId = false
-      }
-      if (tab.name === 'third') {
-        this.firstId = false
-      }
       this.$store.commit('TOGGLE_LOADING')
     },
     getForm () {
-      api.GET(config.village.indexOne, {id: this.$route.query.id})
+      api.GET(config.server.indexOne, {id: this.$route.query.id})
       .then(response => {
         if (response.data.errcode === '0000') {
           this.info = response.data.data
@@ -112,7 +102,7 @@ export default {
       })
     },
     back: function () {
-      this.$router.push('/admin/recycle/village/index')
+      this.$router.push('/admin/recycle/server/index')
     }
   },
   mounted () {

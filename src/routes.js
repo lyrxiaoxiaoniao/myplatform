@@ -147,6 +147,7 @@ import RelSeverList from 'components/views/recycle/village/relSever.vue'
 import ServerIndex from 'components/views/recycle/server/index.vue'
 import ServerDetail from 'components/views/recycle/server/serverDetail.vue'
 import ServerAdd from 'components/views/recycle/server/add.vue'
+import RelVillage from 'components/views/recycle/server/relVillage.vue'
 
 // 回收公司管理
 
@@ -166,6 +167,10 @@ import RecycleRecoveryInfo from './components/views/recycle/recovery/baseInfo.vu
 import RecycleRecoveryWay from './components/views/recycle/recovery/way.vue'
 import RecycleRecoveryWayEdit from './components/views/recycle/recovery/wayManage/editWay.vue'
 import RecycleRecoveryWayAdd from './components/views/recycle/recovery/wayManage/addWay.vue'
+
+// 电子围栏管理
+import ElectronicFenceList from './components/views/recycle/electronicFence/List.vue'
+import ElectronicFenceAdd from './components/views/recycle/electronicFence/AddNewFence.vue'
 
 const routes = [
   {
@@ -1027,6 +1032,11 @@ const routes = [
             component: ServerAdd,
             name: '添加物业',
             meta: {description: '列表'}
+          }, {
+            path: 'relvillage',
+            component: RelVillage,
+            name: '关联小区',
+            meta: {description: '列表'}
           }]
         }, {
           path: 'recovery',
@@ -1098,7 +1108,7 @@ const routes = [
           path: 'loadometerinformation',
           component: DashMainView,
           redirect: '/admin/recycle/loadometerinformation/index',
-          name: '餐饮企业管理',
+          name: '地磅信息总路由',
           meta: {description: '列表'},
           children: [{
             path: 'index',
@@ -1113,8 +1123,26 @@ const routes = [
           }, {
             path: 'detail',
             component: LoadometerDetailByDay,
-            name: '地磅数据管理',
+            name: '地磅数据详情',
             meta: {description: '地磅点每天数据详情'}
+          }]
+        }, {
+          path: 'fence',
+          component: DashMainView,
+          redirect: '/admin/recycle/fence/index',
+          name: '电子围栏管理',
+          meta: {description: '列表'},
+          children: [{
+            path: 'index',
+            component: ElectronicFenceList,
+            name: '电子围栏管理管理',
+            meta: {description: '列表'}
+          },
+          {
+            path: 'new',
+            component: ElectronicFenceAdd,
+            name: '电子围栏管理管理',
+            meta: {description: '列表'}
           }]
         }]
       }

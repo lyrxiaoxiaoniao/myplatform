@@ -41,7 +41,7 @@
               </el-row>			  
     		<el-row>
                 <el-col :span="10"> 
-                    <el-form-item label="所属街道" prop="region_id">
+                    <el-form-item label="所属街道">
                        <el-cascader
                           :options="cascaderData"
                           :props="props"
@@ -87,6 +87,7 @@ export default {
       }
     }
     return {
+      selectedOptions: [],
       labelPosition: 'left',
       form: {
         name: '',
@@ -96,6 +97,12 @@ export default {
         region_id: '',
         detail_address: '',
         memo: ''
+      },
+      cascaderData: [],
+      props: {
+        children: 'children',
+        label: 'title',
+        value: 'id'
       },
       rules: {
         name: [
@@ -114,6 +121,35 @@ export default {
     }
   },
   methods: {
+    handleChange(value) {
+      console.log(value)
+    },
+    getTree () {
+      api.GET(config.village.streetTree)
+      .then(response => {
+        var newData = response.data.data[0].children[0].children
+        this.iteration(newData)
+        this.data = newData
+        this.cascaderData = newData
+        console.log(this.cascaderData)
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    iteration (obj) {
+      for (let key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          if (obj[key] instanceof Object) {
+            if (obj[key].length === 0) {
+              obj[key] = null
+            } else {
+              this.iteration(obj[key])
+            }
+          }
+        }
+      }
+    },
     back () {
       this.$router.push('/admin/recycle/village/index')
     },
@@ -143,6 +179,9 @@ export default {
         type: 'success'
       })
     }
+  },
+  mounted () {
+    this.getTree()
   }
 }
 </script>
