@@ -100,7 +100,7 @@
                   :show-file-list="false"
                   :on-success="bannersHandleAvatarSuccess"
                   :before-upload="beforeAvatarUpload">
-                  <img v-if="ruleForm.banners.length" :src="ruleForm.banners[0]" class="avatar">
+                  <img v-if="ruleForm.banners.length" :src="ruleForm.banners[ruleForm.banners.length-1]" class="avatar">
                   <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                 </el-upload>
               <!--
@@ -400,9 +400,7 @@ export default {
         .then(response => {
           if (response.data.errcode === '0000') {
             this.onSuccess('移出成功')
-            console.log('重新获取前')
             this.getArticleData(this.subjectId)// 获取该专题下所有文章
-            console.log('重新获取后')
           } else {
             this.$message.error('发生错误，请重试')
           }
@@ -528,15 +526,9 @@ export default {
       })
     },
     toggleSwicth (value) {
-      switch (value.is_recommend) {
-        case false:
-          value.is_recommend = 0
-          break
-        case true:
-          value.is_recommend = 1
-          break
-      }
-      api.POST(config.subject.update, value)
+      value.is_recommend = Number(value.is_recommend)
+      console.log(value)
+      api.POST(config.subject.updateRecommend, {id: value.id, active: value.is_recommend})
       .then(response => {
         if (response.data.errcode === '0000') {
           this.$notify({
@@ -596,6 +588,7 @@ export default {
     },
     // 内容图上传成功
     bannersHandleAvatarSuccess (res, file) {
+      this.ruleForm.banners.length = 0
       this.ruleForm.banners.push(res.data[0])
       this.bannersVisible = true
     },

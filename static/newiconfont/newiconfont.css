@@ -7,6 +7,13 @@
 }
 .fullwidth {width: 100%;}
 .table-img {width: 58px;height: 58px;margin: 5px 0;}
+.newicon-config { background: url('./00-config.png') no-repeat center/cover; }
+.newicon-detail { background: url('./00-detail.png') no-repeat center/cover; }
+.newicon-export{ background: url('./00-export.png') no-repeat center/cover; }
+.newicon-link { background: url('./00-link.png') no-repeat center/cover; }
+.newicon-menu{ background: url('./00-menu.png') no-repeat center/cover; }
+.newicon-role{ background: url('./00-role.png') no-repeat center/cover; }
+.newicon-user{ background: url('./00-user.png') no-repeat center/cover; }
 .newicon-safety-danger { background: url('safety_danger.png') no-repeat center/cover; }
 .newicon-new-media { background: url('./01-new_media.png') no-repeat center/cover; }
 .newicon-wechat-manage { background: url('./01-1-wechat_manage.png') no-repeat center/cover; }

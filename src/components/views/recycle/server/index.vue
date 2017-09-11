@@ -57,8 +57,8 @@
                 <el-switch
                   style="width:60px;"
                   v-model="scope.row.audit_state"
-                  on-text="已"
-                  off-text="待"
+                  on-text="开"
+                  off-text="关"
                   @change="toswitch(scope.row.audit_state,scope.row.id)">
                 </el-switch>
               </template>
@@ -67,7 +67,7 @@
               <template scope="scope">
                 <el-button @click="edit(scope.row.id)" size="small" icon="edit"></el-button>
                 <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
-                <el-button  size="small" icon="home1"></el-button>
+                <el-button @click="enterRel(scope.row.id)" size="small" icon="xiaoqu"></el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -179,6 +179,9 @@ export default {
     // 进入小区详情页
     edit (id) {
       this.$router.push({ path: '/admin/recycle/server/detail', query: { 'id': id } })
+    },
+    enterRel(id) {
+      this.$router.push({ path: '/admin/recycle/server/relvillage', query: { 'id': id } })
     },
     handleSizeChange (value) {
       const data = {

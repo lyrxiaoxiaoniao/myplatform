@@ -15,7 +15,19 @@ export default {
     serviceAdd: '/recycle/region/create',
     serviceRemove: '/recycle/region/delete',
     // 服务街道下拉列表
-    dropService: '/recycle/drop/region/index'
+    dropService: '/recycle/drop/region/index',
+    // 车辆管理
+    carIndex: '/vehicle/index',
+    carAdd: '/vehicle/create',
+    carEdit: '/vehicle/update',
+    carRemove: '/vehicle/delete',
+    // 线路管理
+    wayIndex: '/rounter/index',
+    wayAdd: '/rounter/create',
+    wayEdit: '/rounter/update',
+    wayRemove: '/rounter/delete',
+    wayActive: '/rounter/state/update',
+    wayRecycle: '/rounter/recycle/show'
   },
   village: {
     list: '/rubbish/community/index',
@@ -26,7 +38,12 @@ export default {
     repetition: '/rubbish/community/repetition',
     indexOne: '/rubbish/community/indexOne',
     advanced: '/rubbish/community/advanced',
-    relServer: '/rubbish/community/queryCommunity'
+    relServer: '/rubbish/community/queryCommunity',
+    uncorrelated: '/rubbish/community/uncorrelated',
+    addcorrelate: '/rubbish/community/tenement/create',
+    removeCorrelate: '/rubbish/community/tenement/delete',
+    history: '/rubbish/community/queryHistory',
+    streetTree: '/com/region/index'
   },
   server: {
     index: '/rubbish/tenement/index',
@@ -35,9 +52,25 @@ export default {
     create: '/rubbish/tenement/create',
     update: '/rubbish/tenement/update',
     repetition: '/rubbish/tenement/repetition',
-    indexOne: '/rubbish/tenement/indexOne'
+    indexOne: '/rubbish/tenement/indexOne',
+    queryTenement: '/rubbish/tenement/queryTenement',
+    uncorrelated: '/rubbish/tenement/uncorrelated',
+    queryHistory: '/rubbish/tenement/queryHistory'
   },
+  // 餐饮企业管理
   restaurants: {
     index: '/restaurants/index'
+  },
+  loadometer: {
+    index: '/rubbish/weighbridge/index',
+    indexOne: '/rubbish/weighbridge/indexOne',
+    create: '/rubbish/weighbridge/create',
+    delete: '/rubbish/weighbridge/delete',
+    update: '/rubbish/weighbridge/update',
+    audit: '/rubbish/weigh/detail/audit',
+    suttleDay: '/rubbish/weighbridge/suttleDay',
+    suttleMonth: '/rubbish/weighbridge/suttleMonth',
+    suttleYear: '/rubbish/weighbridge/suttleYear',
+    weighDetail: '/rubbish/weighbridge/weighDetail'
   }
 }

@@ -62,8 +62,8 @@
                 <el-switch
                   style="width:60px;"
                   v-model="scope.row.audit_state"
-                  on-text="已"
-                  off-text="待"
+                  on-text="开"
+                  off-text="关"
                   @change="toswitch(scope.row.audit_state,scope.row.id)">
                 </el-switch>
               </template>
@@ -139,7 +139,8 @@
             <el-row>
               <el-form-item label="所属街道" :label-width="formLabelWidth">
               <el-cascader
-                :options="options"
+                :options="cascaderData"
+                :props="props"
                 v-model="selectedOptions"
                 @change="handleChange">
               </el-cascader>
@@ -153,8 +154,8 @@
             </el-col>
             </el-row>
             <el-form-item label="数据状态" :label-width="formLabelWidth">
-                 <el-radio class="radio" v-model="advancedSearch.audit_state" label="1" style="margin:0 10px;">已审核</el-radio>
-                 <el-radio class="radio" v-model="advancedSearch.audit_state" label="0"  style="margin:0 10px;">未审核</el-radio>
+                 <el-radio class="radio" v-model="advancedSearch.audit_state" label="1" style="margin:0 10px;">开</el-radio>
+                 <el-radio class="radio" v-model="advancedSearch.audit_state" label="0"  style="margin:0 10px;">关</el-radio>
             </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -184,12 +185,12 @@ export default {
       data: [],
       defaultProps: {
         children: 'children',
-        label: 'display_name'
+        label: 'title'
       },
       cascaderData: [],
       props: {
         children: 'children',
-        label: 'display_name',
+        label: 'title',
         value: 'id'
       },
       uploadURL: config.serverURI + config.uploadFilesAPI,
@@ -345,7 +346,6 @@ export default {
       console.log(value)
     },
     handleChangeMove (value) {
-      console.log(value)
       this.moveVal = value
     },
     // 树形目录点击事件
@@ -406,7 +406,6 @@ export default {
           var obj = this.classData
           var pid = this.stepsSelection
           obj.parent_id = pid.shift()
-          console.log(obj)
           api.POST(config.createCategoryAPI, obj)
             .then(response => {
               if (response.status !== 200) {
@@ -546,11 +545,10 @@ export default {
       }
     },
     getTree () {
-      api.GET(config.categoryTreeAPI)
+      api.GET(config.village.streetTree)
       .then(response => {
-        var newData = response.data.data
+        var newData = response.data.data[0].children[0].children
         this.iteration(newData)
-        newData.push({ id: 0, display_name: '罗湖', label: '罗湖', value: 0 })
         this.data = newData
         this.cascaderData = newData
       })
@@ -577,6 +575,7 @@ export default {
   },
   mounted () {
     this.getList()
+    this.getTree()
   }
 }
 </script>

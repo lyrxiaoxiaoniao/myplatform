@@ -45,7 +45,17 @@
                                 </el-select>
                             </el-form-item>
                             <el-form-item label="地址" v-if="showAdress">
-                                <el-input v-model="ruleForm.address" placeholder="文章内容地址"></el-input>
+                                <el-input v-model="locationData.address" disabled  placeholder="文章内容地址">
+                                  <el-button @click="openMap" slot="append" class="fa fa-map-marker">
+                                  </el-button>
+                                </el-input>
+                                 <el-dialog title="地图坐标定位" v-model="showMapDialog">
+                                    <kobe-map-view
+                                      @close="onMapClose"
+                                      @confirm="onMapfirm"
+                                      :localMapData="locationData">
+                                    </kobe-map-view>
+                                  </el-dialog>
                             </el-form-item>
                             <el-row style="text-align: center;">
                                 <el-checkbox v-model="is_original">本文属于原创</el-checkbox>
@@ -55,8 +65,6 @@
                         </el-form>
                     </div>
                 </el-col>
-                <el-dialog>
-                </el-dialog>
                 <el-col :span="18">
                     <div class="ca-content-right">
                         <el-form :model="formData" ref="formData" label-width="80px" class="ca-right-form">
@@ -139,6 +147,12 @@ export default {
         name: '坐标类型'
       }],
       showAdress: false,
+      showMapDialog: false,
+      locationData: {
+        address: null,
+        lng: null,
+        lat: null
+      },
       uploadURL: config.serverURI + config.uploadFilesAPI,
       is_original: false,
       is_topped: false,
@@ -174,8 +188,18 @@ export default {
     }
   },
   methods: {
+    // 地图功能函数
+    openMap () {
+      this.showMapDialog = true
+    },
+    onMapClose () {
+      this.showMapDialog = false
+    },
+    onMapfirm (data) {
+      this.showMapDialog = false
+      this.locationData = data
+    },
     changeType (val) {
-      console.log(val)
       if (val === 0) {
         this.showAdress = false
       } else if (val === 1) {
@@ -265,7 +289,8 @@ export default {
       this.formData.tags = this.dynamicTags
       const data = {
         ...this.ruleForm,
-        ...this.formData
+        ...this.formData,
+        ...this.locationData
       }
       data.cids = data.cids.join(',')
       api.POST(config.content.add, data)

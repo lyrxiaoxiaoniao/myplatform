@@ -86,6 +86,7 @@ export default {
       }
     }
     return {
+      cascaderData: [],
       labelPosition: 'left',
       detailForm: {
         name: '',
@@ -111,6 +112,9 @@ export default {
     }
   },
   methods: {
+    handleChange(value) {
+      console.log(value)
+    },
     back () {
       this.$router.push('/admin/recycle/village/index')
     },

@@ -2,7 +2,7 @@
     <div class="lh-container">
 		<div class="lh-top">
             <div class="lh-header">
-                <div>回收公司人员信息</div>
+                <div>人员信息</div>
                 <!-- <div>
                     <el-button>返回</el-button>
                     <el-button type="primary">修改</el-button>
@@ -130,6 +130,7 @@
 import api from 'src/config'
 import config from 'src/api'
 export default {
+  props: ['id'],
   data () {
     return {
       response: {
@@ -248,7 +249,7 @@ export default {
     }
   },
   mounted () {
-    this.getList()
+    this.getList({id: this.id})
   }
 }
 </script>

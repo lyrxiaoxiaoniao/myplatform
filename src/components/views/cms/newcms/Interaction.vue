@@ -5,15 +5,16 @@
             <el-row type="flex" justify="end">
             <el-col :span="16">
                 <el-button type="primary" @click="reFresh">刷新</el-button>
-                <el-dropdown @command="handleCommand">
+                <el-button type="primary" @click="handleCommand">批量删除</el-button>
+                <!-- <el-dropdown @command="handleCommand">
                   <el-button type="primary">
                     更多操作<i class="el-icon-caret-bottom el-icon--right"></i>
                   </el-button>
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item command="删除">删除</el-dropdown-item>
-                    <!-- <el-dropdown-item command="移动">移动</el-dropdown-item> -->
+                    <el-dropdown-item command="移动">移动</el-dropdown-item>
                   </el-dropdown-menu>
-                </el-dropdown>
+                </el-dropdown> -->
             </el-col>
             <!-- <el-select v-model="operation" placeholder="所有" style="width:150px;">
                 <el-option label="所有" value="所有"></el-option>
@@ -109,21 +110,21 @@
                         <el-input v-model="selected.explain"></el-input>
                     </el-form-item>
                 </el-col> -->
-                <el-col :span="24">
+                <!-- <el-col :span="24">
                     <el-form-item label="时间">
                         <el-input v-model="selected.created_at"></el-input>
                     </el-form-item>
-                </el-col>
+                </el-col> -->
                 <el-col :span="24">
                     <el-form-item label="评论">
                         <el-input type="textarea" v-model="selected.content"></el-input>
                     </el-form-item>
                 </el-col>
-                <el-col :span="24">
+                <!-- <el-col :span="24">
                     <el-form-item label="回复">
                         <el-input type="textarea" v-model="selected.des"></el-input>
                     </el-form-item>
-                </el-col>
+                </el-col> -->
             </el-row> 
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -164,9 +165,10 @@ export default {
   },
   methods: {
     handleCommand (command) {
-      if (command === '删除') {
-        this.deleteType()
-      }
+      // if (command === '删除') {
+      //   this.deleteType()
+      // }
+      this.deleteType()
     },
     toggleSelection (rows) {
       if (rows) {
@@ -313,7 +315,6 @@ export default {
       api.GET(config.newcms.ncmsCommentListAPI, data)
       .then(response => {
         this.response = this.getNumber(response.data.data)
-        console.log(this.response)
       })
       .catch(error => {
         this.$message.error(error)

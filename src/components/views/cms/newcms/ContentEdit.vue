@@ -34,12 +34,35 @@
                             <el-form-item label="作者">
                                 <el-input v-model="ruleForm.author" placeholder="作者名称"></el-input>
                             </el-form-item>
+                            <el-form-item label="类型">
+                                <el-select @change="changeType" v-model="ruleForm.type" placeholder="选择文章类型" style="width:100%;">
+                                    <el-option
+                                        v-for="item in optionType"
+                                        :key="item.value"
+                                        :label="item.name"
+                                        :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="地址" v-if="showAdress">
+                                <el-input v-model="locationData.address" disabled placeholder="文章内容地址">
+                                  <el-button @click="openMap" slot="append" class="fa fa-map-marker">
+                                  </el-button>
+                                </el-input>
+                                 <el-dialog title="地图坐标定位" v-model="showMapDialog">
+                                    <kobe-map-view
+                                      @close="onMapClose"
+                                      @confirm="onMapfirm"
+                                      :localMapData="locationData">
+                                    </kobe-map-view>
+                                  </el-dialog>
+                            </el-form-item>
+                            <el-row style="text-align: center;">
+                                <el-checkbox v-model="is_original">本文属于原创</el-checkbox>
+                                <el-checkbox v-model="is_recommend">推荐本文</el-checkbox>
+                                <el-checkbox v-model="is_topped">本文固顶</el-checkbox>
+                            </el-row>
                         </el-form>
-                        <el-row style="text-align: center;">
-                            <el-checkbox v-model="is_original">本文属于原创</el-checkbox>
-                            <el-checkbox v-model="is_recommend">推荐本文</el-checkbox>
-                            <el-checkbox v-model="is_topped">本文固顶</el-checkbox>
-                        </el-row>
                     </div>
                 </el-col>
                 <el-col :span="18">
@@ -118,11 +141,26 @@ export default {
       id: this.$route.query.id,
       fileList: [],
       option: [],
+      optionType: [{
+        value: 0,
+        name: '图文类型'
+      }, {
+        value: 1,
+        name: '坐标类型'
+      }],
+      showAdress: false,
+      showMapDialog: false,
+      locationData: {
+        address: null,
+        lng: null,
+        lat: null
+      },
       uploadURL: config.serverURI + config.uploadFilesAPI,
       is_original: false,
       is_topped: false,
       is_recommend: false,
       ruleForm: { // 头图与属性
+        type: null,
         source_id: '',
         author: '',
         picture: '',
@@ -152,6 +190,24 @@ export default {
     }
   },
   methods: {
+    // 地图功能函数
+    openMap () {
+      this.showMapDialog = true
+    },
+    onMapClose () {
+      this.showMapDialog = false
+    },
+    onMapfirm (data) {
+      this.showMapDialog = false
+      this.locationData = data
+    },
+    changeType (val) {
+      if (val === 0) {
+        this.showAdress = false
+      } else if (val === 1) {
+        this.showAdress = true
+      }
+    },
     /* 分类选择函数 */
     handleChange (val) {
       this.formData.cids = val
@@ -234,7 +290,8 @@ export default {
       this.formData.id = Number(this.id)
       const data = {
         ...this.ruleForm,
-        ...this.formData
+        ...this.formData,
+        ...this.locationData
       }
       data.cids = data.cids.join(',')
       api.POST(config.content.edit, data)
@@ -328,6 +385,9 @@ export default {
       for (var k in this.ruleForm) {
         this.ruleForm[k] = data[k]
       }
+      for (var v in this.locationData) {
+        this.locationData[v] = data[v]
+      }
       this.is_original = Boolean(this.ruleForm.is_original)
       this.is_topped = Boolean(this.ruleForm.is_topped)
       this.is_recommend = Boolean(this.ruleForm.is_recommend)
@@ -354,7 +414,6 @@ export default {
         .ca-content-left {
             background-color: #fff;
             border: 1px solid lightgray;
-            height: 500px;
             h4 {
                 padding: 10px;
                 border-bottom: 1px solid lightgray;
