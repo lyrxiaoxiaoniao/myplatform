@@ -15,7 +15,19 @@ export default {
     serviceAdd: '/recycle/region/create',
     serviceRemove: '/recycle/region/delete',
     // 服务街道下拉列表
-    dropService: '/recycle/drop/region/index'
+    dropService: '/recycle/drop/region/index',
+    // 车辆管理
+    carIndex: '/vehicle/index',
+    carAdd: '/vehicle/create',
+    carEdit: '/vehicle/update',
+    carRemove: '/vehicle/delete',
+    // 线路管理
+    wayIndex: '/rounter/index',
+    wayAdd: '/rounter/create',
+    wayEdit: '/rounter/update',
+    wayRemove: '/rounter/delete',
+    wayActive: '/rounter/state/update',
+    wayRecycle: '/rounter/recycle/show'
   },
   village: {
     list: '/rubbish/community/index',

@@ -2,13 +2,13 @@
     <div class="bf-container">
         <el-tabs v-model="activeName" @tab-click="handleClick">
             <el-tab-pane label="基本信息" name="first">
-              <info-tab></info-tab>
+              <info-tab :id="id"></info-tab>
             </el-tab-pane>
             <el-tab-pane label="车辆信息" name="second">
-              <car-tab></car-tab>
+              <car-tab :id="id"></car-tab>
             </el-tab-pane>
             <el-tab-pane label="人员信息" name="third">
-              <person-tab></person-tab>
+              <person-tab :id="id"></person-tab>
             </el-tab-pane>
         </el-tabs>
     </div>
@@ -20,6 +20,7 @@ import personTab from './base/person'
 export default {
   data () {
     return {
+      id: this.$route.query.id,
       activeName: 'first'
     }
   },

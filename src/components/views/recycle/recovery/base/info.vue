@@ -2,7 +2,7 @@
 	<div class="lh-container">
 		<div class="lh-top">
       <div class="lh-header">
-        <div>修改回收公司基本信息</div>
+        <div>{{selected.name}}</div>
         <div>
           <el-button>返回</el-button>
           <el-button type="primary">修改</el-button>
@@ -94,9 +94,10 @@ import api from 'src/api'
 import streetTable from '../addTable/street'
 import lineTable from '../addTable/line'
 export default {
+  props: ['id'],
   data () {
     return {
-      id: this.$route.query.id,
+      // id: this.$route.query.id,
       uploadURL: config.serverURI + config.uploadFilesAPI,
       selected: {
         license: '',
@@ -104,7 +105,7 @@ export default {
         orgCode: '',
         phone: '',
         dutyName: '',
-        businessType: '',
+        businessType: null,
         detailAddress: '',
         mobile: '',
         name: ''
