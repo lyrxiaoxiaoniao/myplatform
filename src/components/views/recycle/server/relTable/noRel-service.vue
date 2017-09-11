@@ -4,7 +4,7 @@
         <div class="lh-form">
             <kobe-table>
                 <div slot="kobe-table-header" class="kobe-table-header">
-                 <!--  <el-row type="flex" justify="end">
+                  <!-- <el-row type="flex" justify="end">
                     <el-col :span="10" :offset="14">
                         <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
                         <el-button slot="append" @click="onSearch" icon="search"></el-button>
@@ -12,7 +12,7 @@
                     </el-col>
                       <el-button icon="upload2" type="primary" style="margin-left:10px;"></el-button>
                       <el-button icon="setting" type="primary"></el-button>
-                  </el-row>  -->         
+                  </el-row>     -->      
                 </div>
                 <div slot="kobe-table-content" class="kobe-table">
                 <el-table
@@ -23,14 +23,15 @@
                     @selection-change="handleSelectionChange">
                     <el-table-column type="selection" width="40"></el-table-column>
                     <el-table-column prop="id" label="ID" sortable width="120"></el-table-column>
-                    <el-table-column prop="name" label="物业名称" width="170"></el-table-column>
-                    <el-table-column prop="duty_name" label="联系人" width="150"></el-table-column>
+                    <el-table-column prop="name" label="小区名称" width="170"></el-table-column>
+                    <el-table-column prop="duty_name" label="负责人" width="150"></el-table-column>
                     <el-table-column prop="mobile" label="联系电话" width="150"></el-table-column>
-                    <el-table-column prop="address" label="公司地址"></el-table-column>
+                    <el-table-column prop="detail_address" label="所属街道"></el-table-column>
+                    <el-table-column prop="detail_address" label="详细地址地址"></el-table-column>
                     <el-table-column width="160" label="操作">
                     <template scope="scope">
                         <el-button size="small" icon="edit" title="修改"></el-button>
-                        <el-button size="small" @click="remove(scope.row.id)" title="解除">解除</el-button>
+                        <el-button size="small" @click="openDialog(scope.row.id)" title="关联">关联</el-button>
                     </template>
                     </el-table-column>
                 </el-table>
@@ -51,6 +52,29 @@
                     </el-row>
                 </div>
             </kobe-table>
+     <!-- 关联模态框 -->
+          <el-dialog title="关联物业" v-model="dialogAdvance" size="tiny">
+              <el-row>
+              <el-col :span="12">
+                <el-date-picker
+                  v-model="correlateForm.begin_time"
+                  type="datetime"
+                  placeholder="选择开始时间">
+                </el-date-picker>
+              </el-col>
+              <el-col :span="12">
+                <el-date-picker
+                  v-model="correlateForm.end_time"
+                  type="datetime"
+                  placeholder="选择结束时间">
+                </el-date-picker>
+              </el-col> 
+              </el-row>
+              <span slot="footer" class="dialog-footer">
+                  <el-button @click="dialogAdvance = false">取 消</el-button>
+                  <el-button type="primary" @click="correlate">确 定</el-button>
+              </span>
+          </el-dialog>
         </div>
         </div>
     </div>    
@@ -59,16 +83,21 @@
 import config from 'src/config'
 import api from 'src/api'
 export default {
-  props: ['communityId'],
+  props: ['id', 'isclick'],
   data () {
     return {
-      removeForm: {
-        community_id: this.communityId,
-        tenement_id: ''
+      isrepeat: this.isclick,
+      dialogAdvance: false,
+      correlateForm: {
+        community_id: '',
+        tenement_id: this.id,
+        begin_time: '',
+        end_time: ''
       },
       form: {
         keyword: ''
       },
+      id: this.id,
       response: {
         data: null
       },
@@ -77,6 +106,21 @@ export default {
     }
   },
   methods: {
+    openDialog (id) {
+      this.dialogAdvance = true
+      this.correlateForm.community_id = id
+    },
+    correlate () {
+      this.dialogAdvance = false
+      api.POST(config.village.addcorrelate, this.correlateForm)
+      .then(response => {
+        this.onSuccess('关联成功！')
+        this.getList()
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
     toggleSelection (rows) {
       if (rows) {
         rows.forEach(row => {
@@ -92,6 +136,14 @@ export default {
       this.multipleSelection.forEach(v => {
         this.ids.push(v.id)
       })
+    },
+    // 转换数据
+    transform (data) {
+      var res = []
+      data.forEach(e => {
+        res.push(e.rubTenementVOS[0])
+      })
+      return res
     },
     handleSizeChange (value) {
       const data = {
@@ -111,27 +163,41 @@ export default {
     },
     getList (data = {}) {
       data = {
-        id: this.communityId
+        id: this.id
       }
-      api.GET(config.village.relServer, data)
+      api.GET(config.server.uncorrelated, data)
       .then(response => {
         this.response.data = this.transform(response.data.data)
-        if (response.data.errcode === '5000') {
-          this.response.data = null
-        }
       })
       .catch(error => {
         this.$message.error(error)
       })
     },
-    remove (id) {
-      this.removeForm.tenement_id = id
+    deleteType (id) {
+      if (id) {
+        this.ids = []
+        this.ids.push(id)
+      }
+      if (this.ids.length === 0) {
+        this.$confirm('请进行正确操作，请优先勾选表单？', '错误', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'error'
+        }).then(() => {
+          return
+        }).catch(() => {
+          return
+        })
+        return
+      }
       this.$confirm('此操作将解除关联该物业,是否继续解除？', '解除', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.POST(config.village.removeCorrelate, this.removeForm)
+        api.POST(config.village.delete, {
+          ids: this.ids
+        })
         .then(response => {
           if (response.data.errcode === '0000') {
             this.onSuccess('解除成功')
@@ -141,7 +207,6 @@ export default {
           }
         })
       })
-      this.getList()
     },
     onSuccess (string) {
       this.$notify({
@@ -149,18 +214,11 @@ export default {
         message: string,
         type: 'success'
       })
-    },
-    // 转换数据
-    transform (data) {
-      var res = []
-      data.forEach(e => {
-        res.push(e.rubTenementVOS[0])
-      })
-      return res
     }
   },
   mounted () {
     this.getList()
+    // console.log(this.$store.state.callingAPI)
   }
 }
 </script>

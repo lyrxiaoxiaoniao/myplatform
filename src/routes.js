@@ -147,6 +147,7 @@ import RelSeverList from 'components/views/recycle/village/relSever.vue'
 import ServerIndex from 'components/views/recycle/server/index.vue'
 import ServerDetail from 'components/views/recycle/server/serverDetail.vue'
 import ServerAdd from 'components/views/recycle/server/add.vue'
+import RelVillage from 'components/views/recycle/server/relVillage.vue'
 
 // 回收公司管理
 
@@ -1031,6 +1032,11 @@ const routes = [
             path: 'add',
             component: ServerAdd,
             name: '添加物业',
+            meta: {description: '列表'}
+          }, {
+            path: 'relvillage',
+            component: RelVillage,
+            name: '关联小区',
             meta: {description: '列表'}
           }]
         }, {

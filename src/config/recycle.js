@@ -26,7 +26,12 @@ export default {
     repetition: '/rubbish/community/repetition',
     indexOne: '/rubbish/community/indexOne',
     advanced: '/rubbish/community/advanced',
-    relServer: '/rubbish/community/queryCommunity'
+    relServer: '/rubbish/community/queryCommunity',
+    uncorrelated: '/rubbish/community/uncorrelated',
+    addcorrelate: '/rubbish/community/tenement/create',
+    removeCorrelate: '/rubbish/community/tenement/delete',
+    history: '/rubbish/community/queryHistory',
+    streetTree: '/com/region/index'
   },
   server: {
     index: '/rubbish/tenement/index',
@@ -35,7 +40,10 @@ export default {
     create: '/rubbish/tenement/create',
     update: '/rubbish/tenement/update',
     repetition: '/rubbish/tenement/repetition',
-    indexOne: '/rubbish/tenement/indexOne'
+    indexOne: '/rubbish/tenement/indexOne',
+    queryTenement: '/rubbish/tenement/queryTenement',
+    uncorrelated: '/rubbish/tenement/uncorrelated',
+    queryHistory: '/rubbish/tenement/queryHistory'
   },
   // 餐饮企业管理
   restaurants: {
