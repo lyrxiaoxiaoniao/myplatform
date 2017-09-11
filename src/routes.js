@@ -4,6 +4,7 @@ import ForgetView from './components/Forgot.vue'
 import ResetView from './components/Reset.vue'
 import NotFoundView from './components/404.vue'
 import baseRouters from './baseRouters.js'
+import testRouters from './testRouters.js'
 // Import Views - Dash
 import DashMainView from './components/views/dash/Main.vue'
 
@@ -1146,7 +1147,8 @@ const routes = [
           }]
         }]
       },
-      ...baseRouters
+      ...baseRouters,
+      ...testRouters
     ]
   }, {
     // not found handler

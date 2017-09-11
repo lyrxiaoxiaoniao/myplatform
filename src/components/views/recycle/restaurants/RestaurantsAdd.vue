@@ -1,6 +1,145 @@
 <template>
 	<div class="lh-container">
-		<div class="lh-top">
+    <el-tabs type="border-card" @tab-click="showMap">
+      <el-tab-pane label="基本信息" class="lh-top">
+        <div class="table-head">
+          <div>基本信息</div>
+          <div>
+            <el-button>返回</el-button>
+            <el-button type="primary">保存</el-button>
+          </div>
+        </div>
+        <div class="table-body">
+          <el-form :model="restaurantInfo" label-width="100px">
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <el-form-item label="企业名称">
+                  <el-input placeholder="请输入企业名称"></el-input>
+                </el-form-item>
+              </el-col>  
+              <el-col :span="12">
+                <el-form-item label="固定电话">
+                  <el-input placeholder="请输入电话"></el-input>
+                </el-form-item>
+              </el-col>  
+              <el-col :span="12">
+                <el-form-item label="负责人">
+                  <el-input placeholder="请输入负责人姓名"></el-input>
+                </el-form-item>
+              </el-col>  
+              <el-col :span="12">
+                <el-form-item label="联系电话">
+                  <el-input placeholder="请输入负责人联系电话"></el-input>
+                </el-form-item>
+              </el-col>  
+              <el-col :span="12">
+                <el-form-item label="所属街道">
+                  <el-select v-model="restaurantInfo.street" placeholder="请选择所属街道" class="street-select">
+                    <el-option
+                      v-for="item in streetOptions"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>  
+              <el-col :span="12">
+                <el-form-item label="组织机构代码">
+                  <el-input placeholder="请输入组织结构代码"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-form-item label="企业说明">
+                  <el-input type="textarea" placeholder="请输入"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="营业执照">
+                  <el-upload
+                      class="avatar-uploader"
+                      :action="uploadURL"
+                      :show-file-list="false"
+                      :on-success="handleAvatarSuccess"
+                      :before-upload="beforeAvatarUpload">
+                      <img v-if="selected.banner" :src="selected.banner" class="avatar">
+                      <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                      <div class="el-upload__tip" slot="tip">上传有效、清晰的营业执照图片（最多上传1张，每张最大10M）</div>
+                  </el-upload>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+        </div>
+      </el-tab-pane>
+      <el-tab-pane label="地图定位" class="lh-middle">
+        <div class="table-head">
+          <div>地图定位</div>
+        </div>
+        <div class="table-body">
+          <el-form :model="restaurantInfo" label-width="100px">
+            <el-form-item label="详细地址">
+              <el-row>
+                <el-col :span="12">
+                  <el-input v-model="searchInput"></el-input>
+                </el-col>
+                <el-col :span="12">
+                  <div class="btnWrapper">
+                    <el-button @click="posMarker" style="margin-left: 10px">定位到地图</el-button>
+                    <el-button type="primary" @click="useClick">使用地图当前点</el-button>
+                  </div>
+                </el-col>
+              </el-row>
+            </el-form-item>
+            <el-form-item label="地图定位">
+              <div id="map"></div>
+            </el-form-item>
+          </el-form>
+        </div>
+      </el-tab-pane>
+      <el-tab-pane label="签约信息" class="lh-bottom" v-if="showContract">
+        <div class="table-head">
+          <div>是否签约</div>
+          <el-switch v-model="showContract" on-text="开" off-text="关" style="margin-left: 35px;"></el-switch>
+        </div>
+        <div class="table-body">
+          <el-form :model="restaurantInfo.contractStatus" label-width="100px">
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="签约人">
+                  <el-input placeholder="请输入签约人姓名"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="联系电话">
+                  <el-input placeholder="请输入签约人联系电话"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="回收单位">
+                  <el-select v-model="restaurantInfo.street" placeholder="请选择所属街道" class="street-select">
+                    <el-option
+                      v-for="item in streetOptions"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="合同期限" class="contract-time">
+                  <el-date-picker v-model="startTime" type="datetime" placeholder="选择开始时间"></el-date-picker>
+                  <el-date-picker v-model="endTime" type="datetime" placeholder="选择结束时间"></el-date-picker>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            
+          </el-form>
+        </div>
+      </el-tab-pane>
+    </el-tabs>
+		<!-- <div class="lh-top">
       <div class="table-head">
         <div>基本信息</div>
         <div>
@@ -136,8 +275,8 @@
           
         </el-form>
       </div>
-    </div>
-	</div>      
+    </div> -->
+	</div>
 </template>
 
 <script>
@@ -245,12 +384,16 @@
           })
         })
         /* eslint-enable */
+      },
+      showMap(e) {
+        if (e.label === '地图定位') {
+          this.$nextTick(() => {
+            this.mapInit()
+          })
+        }
       }
     },
     mounted () {
-      this.$nextTick(() => {
-        this.mapInit()
-      })
     }
   }
 </script>

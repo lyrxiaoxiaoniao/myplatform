@@ -117,8 +117,6 @@
           data: null
         },
         infoForm: {
-          date: ''
-          // time: ''
         },
         loadometerSelectedIds: [],
         loadometerId: 0, //  表格操作单行时的id
@@ -222,10 +220,13 @@
           .then(response => {
             if (response.data.errcode === '0000') {
               this.onSuccess('校核成功')
-              let data = {
-                pageSize: this.response.pageSize,
-                currentPage: this.response.currentPage
-              }
+              // let data = {
+              //   pageSize: this.response.pageSize,
+              //   currentPage: this.response.currentPage
+              // }
+              var data = this.getHttpParams()
+              data.pageSize = this.response.pageSize
+              data.currentPage = this.response.currentPage
               this.getList(data)
               this.closeDialog()
             }

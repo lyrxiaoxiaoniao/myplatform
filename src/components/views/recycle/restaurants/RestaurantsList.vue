@@ -33,26 +33,26 @@
         @selection-change="selectIds">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
-        <el-table-column prop="display_name" label="企业名称"></el-table-column>
-        <el-table-column prop="articleCount" label="负责人" width="80"></el-table-column>
-        <el-table-column prop="display_name" label="联系电话"></el-table-column>
-        <el-table-column prop="display_name" label="营业执照">
+        <el-table-column prop="name" label="企业名称"></el-table-column>
+        <el-table-column prop="dutyName" label="负责人" width="80"></el-table-column>
+        <el-table-column prop="mobile" label="联系电话"></el-table-column>
+        <el-table-column prop="license" label="营业执照">
           <template scope="scope">
-            <img :src="scope.row.is_recommend" />
+            <img :src="scope.row.license" />
           </template>
         </el-table-column>
-        <el-table-column prop="sort" label="签约状态"></el-table-column>
-        <el-table-column prop="is_recommend" label="审核状态" width="120">
+        <el-table-column prop="signState" label="签约状态" width="100"></el-table-column>
+        <el-table-column prop="checkState" label="审核状态" width="120">
           <template scope="scope">
-            <el-switch on-text="已" off-text="未" v-model="scope.row.is_recommend" @change="toggleSwicth(scope.row)"></el-switch>
+            <el-switch on-text="已" off-text="未" v-model="scope.row.checkState" @change="toggleSwicth(scope.row)"></el-switch>
           </template>
         </el-table-column>
-        <el-table-column prop="sort" label="详细地址"></el-table-column>
+        <el-table-column prop="detailAddress" label="详细地址"></el-table-column>
         <el-table-column label="操作" width="180px">
           <template scope="scope">
-            <el-button size="small" icon="delete2" @click="deleteData(scope.row.id)" title="删除"></el-button>
             <el-button size="small" icon="edit" @click="toEditStatus(scope.row.id)" title="修改"></el-button>
-            <el-button size="small" v-if="scope.row.id" @click="openDialog('签约',scope.row.id)">签约</el-button>
+            <el-button size="small" icon="delete2" @click="deleteData(scope.row.id)" title="删除"></el-button>
+            <el-button size="small" v-if="scope.row.signState" @click="openDialog('签约',scope.row.id)">签约</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -76,7 +76,7 @@
         <div class="dialog-advancedSearch" v-show="dialogTitle==='高级搜索'">
           <el-form :model="advancedSearchForm" :rules="rules" ref="advancedSearchForm" label-width="100px">
             <el-form-item label="企业名称" prop="display_name" style="margin-bottom:30px;">
-              <el-input v-model="advancedSearchForm.display_name" placeholder="例：京鹏" @blur="checkSubjectName"></el-input>
+              <el-input v-model="advancedSearchForm.display_name" placeholder="例：京鹏"></el-input>
             </el-form-item>
             <el-form-item label="公司地址" prop="sort">
               <el-input v-model="advancedSearchForm.display_name" placeholder="例：深圳市罗湖区"></el-input>
@@ -203,12 +203,6 @@
           contractStatus: this.searchSelectValue, // 签约状态
           ...this.form
         }
-        // console.log(typeof this.selectValue)
-        // const data = {
-        //   currentPage: 1,
-        //   pageSize: this.response.pageSize,
-        //   ...this.form
-        // }
         this.getList(data)
       },
       // 高级搜索
@@ -243,7 +237,7 @@
         })
       },
       getList (data = {}) {
-        api.GET(config.categoryIndexAPI, data)
+        api.GET(config.restaurants.index, data)
         .then(response => {
           this.response = this.transformData(response.data.data)
         })
@@ -256,28 +250,17 @@
           if (v.created_at) {
             v.created_at = this.formatDate(v.created_at)
           }
-          if (v.status === 0) {
-            v.status = '待审核'
+          if (v.signState === 0) {
+            v.signState = '未签约'
           }
-          if (v.status === 1) {
-            v.status = '已审核'
+          if (v.signState === 1) {
+            v.signState = '已签约'
           }
-          if (v.status === 2) {
-            v.status = '退回'
+          if (v.checkState === 0) {
+            v.checkState = false
           }
-          if (v.status === 3) {
-            v.status = '已归档'
-          }
-          if (v.status === 4) {
-            v.status = '出档'
-          }
-          switch (v.active) {
-            case 0:
-              v.active = false
-              break
-            case 1:
-              v.active = true
-              break
+          if (v.checkState === 1) {
+            v.checkState = true
           }
         })
         return res

@@ -59,7 +59,10 @@ export default {
   },
   // 餐饮企业管理
   restaurants: {
-    index: '/restaurants/index'
+    index: '/cater/index',
+    delete: '/cater/delete',
+    create: '/cater/create',
+    show: '/cater/show'
   },
   loadometer: {
     index: '/rubbish/weighbridge/index',
