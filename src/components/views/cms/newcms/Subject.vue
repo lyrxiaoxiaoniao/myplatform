@@ -141,6 +141,7 @@
                 @current-change="handleArticleDataCurrentChange"
                 :current-page="articleData.currentPage"
                 :total="articleData.count"
+                :page-sizes="[10]"
                 layout="total, prev, pager, next, jumper">
               </el-pagination>
             </el-row>
@@ -229,9 +230,11 @@ export default {
     },
     handleArticleDataCurrentChange (value) {
       let data = {
-        currentPage: value
+        currentPage: value,
+        pageSize: 10,
+        subject_id: this.subjectId
       }
-      api.GET(config.content.list, data)
+      api.POST(config.content.list, data)
       .then(response => {
         if (response.status !== 200) {
           this.error = response.statusText

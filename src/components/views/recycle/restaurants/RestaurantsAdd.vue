@@ -14,43 +14,50 @@
             <el-row :gutter="20">
               <el-col :span="12">
                 <el-form-item label="企业名称">
-                  <el-input placeholder="请输入企业名称"></el-input>
+                  <el-input placeholder="请输入企业名称" v-model="restaurantInfo.name"></el-input>
                 </el-form-item>
               </el-col>  
               <el-col :span="12">
                 <el-form-item label="固定电话">
-                  <el-input placeholder="请输入电话"></el-input>
+                  <el-input placeholder="请输入电话" v-model="restaurantInfo.phone"></el-input>
                 </el-form-item>
               </el-col>  
               <el-col :span="12">
                 <el-form-item label="负责人">
-                  <el-input placeholder="请输入负责人姓名"></el-input>
+                  <el-input placeholder="请输入负责人姓名" v-model="restaurantInfo.dutyName"></el-input>
                 </el-form-item>
               </el-col>  
               <el-col :span="12">
                 <el-form-item label="联系电话">
-                  <el-input placeholder="请输入负责人联系电话"></el-input>
+                  <el-input placeholder="请输入负责人联系电话" v-model="restaurantInfo.mobile"></el-input>
                 </el-form-item>
-              </el-col>  
+              </el-col>
+              <!--
               <el-col :span="12">
-                <el-form-item label="所属街道">
+                <el-form-item label="所属辖区">
                   <el-select v-model="restaurantInfo.street" placeholder="请选择所属街道" class="street-select">
                     <el-option
-                      v-for="item in streetOptions"
-                      :label="item.label"
-                      :value="item.value">
+                      v-for="item in regionSelectOptions"
+                      :label="item.id"
+                      :value="item.name">
                     </el-option>
                   </el-select>
                 </el-form-item>
-              </el-col>  
+              </el-col>
+              -->
               <el-col :span="12">
                 <el-form-item label="组织机构代码">
-                  <el-input placeholder="请输入组织结构代码"></el-input>
+                  <el-input placeholder="请输入组织结构代码" v-model="restaurantInfo.orgCode"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-form-item label="审核状态">
+                  <el-switch on-text="已" off-text="未" v-model="restaurantInfo.checkState"></el-switch>
                 </el-form-item>
               </el-col>
               <el-col :span="24">
                 <el-form-item label="企业说明">
-                  <el-input type="textarea" placeholder="请输入"></el-input>
+                  <el-input type="textarea" placeholder="请输入" v-model="restaurantInfo.memo"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -61,7 +68,7 @@
                       :show-file-list="false"
                       :on-success="handleAvatarSuccess"
                       :before-upload="beforeAvatarUpload">
-                      <img v-if="selected.banner" :src="selected.banner" class="avatar">
+                      <img v-if="restaurantInfo.license" :src="restaurantInfo.license" class="avatar">
                       <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                       <div class="el-upload__tip" slot="tip">上传有效、清晰的营业执照图片（最多上传1张，每张最大10M）</div>
                   </el-upload>
@@ -281,6 +288,7 @@
 
 <script>
   import config from 'src/config'
+  import api from 'src/api'
 
   export default {
     data () {
@@ -289,8 +297,11 @@
         selected: {
           banner: ''
         },
-        streetOptions: [],
-        restaurantInfo: {},
+        regionSelectOptions: [],
+        restaurantInfo: {
+          checkState: true,
+          license: ''
+        },
         searchInput: '',
         point: {},
         pointAddress: '',
@@ -304,8 +315,7 @@
     methods: {
       /* 上传图片函数 */
       handleAvatarSuccess (res, file) {
-        console.log(res, file)
-        // this.classData.icon = res.data[0]
+        this.restaurantInfo.license = res.data[0]
       },
       beforeAvatarUpload (file) {
         const isJPG = file.type === 'image/jpeg'
@@ -375,8 +385,10 @@
 
         map.addEventListener('click', function(e) {
           map.clearOverlays()
-          that.point.lat = e.point.lat
-          that.point.lng = e.point.lng
+          that.point = JSON.parse(JSON.stringify(e.point))
+          // that.point.lat = e.point.lat
+          // that.point.lng = e.point.lng
+          console.log(that.point)
           const marker = new BMap.Marker(e.point)
           map.addOverlay(marker)
           geoc.getLocation(e.point, function(rs) {
@@ -391,6 +403,50 @@
             this.mapInit()
           })
         }
+      },
+      getRegion (data = {}) {
+        api.GET(config.restaurants.getRegion, data)
+          .then(response => {
+            this.regionSelectOptions = this.transformData(response.data.data)
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
+      },
+      transformData (res) {
+        res.data.forEach(v => {
+          if (v.created_at) {
+            v.created_at = this.formatDate(v.created_at)
+          }
+          if (v.signState === 0) {
+            v.signState = '未签约'
+          }
+          if (v.signState === 1) {
+            v.signState = '已签约'
+          }
+          if (v.checkState === 0) {
+            v.checkState = false
+          }
+          if (v.checkState === 1) {
+            v.checkState = true
+          }
+        })
+        return res
+      },
+      // 时间转换 毫秒转换成 yyyy-mm-dd hh:mm:ss
+      formatDate (value) {
+        let date = new Date(value)
+        let M = date.getMonth() + 1
+        M = M < 10 ? ('0' + M) : M
+        let d = date.getDate()
+        d = d < 10 ? ('0' + d) : d
+        // let h = date.getHours()
+        let m = date.getMinutes()
+        m = m < 10 ? ('0' + m) : m
+        let s = date.getSeconds()
+        s = s < 10 ? ('0' + s) : s
+        value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
+        return value
       }
     },
     mounted () {
