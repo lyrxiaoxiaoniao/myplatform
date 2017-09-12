@@ -27,7 +27,8 @@ export default {
     wayEdit: '/rounter/update',
     wayRemove: '/rounter/delete',
     wayActive: '/rounter/state/update',
-    wayRecycle: '/rounter/recycle/show'
+    wayRecycle: '/rounter/recycle/show',
+    wayHistory: '/rounter/history/index'
   },
   village: {
     list: '/rubbish/community/index',

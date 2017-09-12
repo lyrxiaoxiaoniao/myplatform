@@ -75,11 +75,11 @@
                     </el-switch>
                   </template> 
                 </el-table-column>
-                <el-table-column prop="status" label="操作" width="115">
+                <el-table-column prop="status" label="操作" width="160">
                   <template scope="scope"> 
+                      <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
                       <el-button @click="goAwardsDetail(scope.row.id)" size="small" icon="edit"></el-button>
-                      <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
-                      <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
+                      <el-button @click="deleteType(scope.row.id)" size="small" class="fa fa-th-large"></el-button>
                   </template>
                 </el-table-column>
             </el-table>

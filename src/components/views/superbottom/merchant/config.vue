@@ -42,8 +42,6 @@
     </div>
 </template>
 <script>
-// import config from 'src/config'
-// import api from 'src/api'
 import manageConfig from './baseConfig/manageConfig'
 import mobileConfig from './baseConfig/mobileConfig'
 import shortMassage from './baseConfig/shortMassage'
@@ -51,7 +49,7 @@ import wechatConfig from './baseConfig/wechatConfig'
 export default {
   data () {
     return {
-      activeName: 'second'
+      activeName: 'first'
     }
   },
   components: {
