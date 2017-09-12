@@ -59,11 +59,10 @@
 import config from 'src/config'
 import api from 'src/api'
 export default {
-  props: ['communityId'],
   data () {
     return {
       removeForm: {
-        community_id: this.communityId,
+        community_id: this.$store.state.token,
         tenement_id: ''
       },
       form: {
@@ -111,7 +110,7 @@ export default {
     },
     getList (data = {}) {
       data = {
-        id: this.communityId
+        id: this.$store.state.token
       }
       api.GET(config.village.relServer, data)
       .then(response => {

@@ -181,6 +181,7 @@ export default {
       this.$router.push({ path: '/admin/recycle/server/detail', query: { 'id': id } })
     },
     enterRel(id) {
+      this.$store.commit('SET_TOKEN', id)
       this.$router.push({ path: '/admin/recycle/server/relvillage', query: { 'id': id } })
     },
     handleSizeChange (value) {

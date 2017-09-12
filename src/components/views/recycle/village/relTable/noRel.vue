@@ -87,7 +87,7 @@ export default {
     return {
       dialogAdvance: false,
       correlateForm: {
-        community_id: this.communityId,
+        community_id: this.$store.state.token,
         tenement_id: '',
         begin_time: '',
         end_time: ''
@@ -136,10 +136,14 @@ export default {
     },
     // 转换数据
     transform (data) {
+      var count = 0
       var res = []
       data.forEach(e => {
+        count++
+        e.rubTenementVOS[0].id = e.id
         res.push(e.rubTenementVOS[0])
       })
+      this.response.count = count
       return res
     },
     handleSizeChange (value) {
@@ -160,11 +164,11 @@ export default {
     },
     getList (data = {}) {
       data = {
-        id: this.communityId
+        id: this.$store.state.token
       }
       api.GET(config.village.uncorrelated, data)
       .then(response => {
-        this.response.data = this.transform(response.data.data)
+        this.response.data = this.transform(response.data.data.data)
         if (response.data.errcode === '5000') {
           this.response.data = null
         }
@@ -217,7 +221,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this.$store.state.callingAPI, 111111)
     this.getList()
   }
 }

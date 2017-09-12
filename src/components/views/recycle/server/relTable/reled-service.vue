@@ -65,12 +65,11 @@
 import config from 'src/config'
 import api from 'src/api'
 export default {
-  props: ['id'],
   data () {
     return {
       removeForm: {
-        community_id: this.id,
-        tenement_id: ''
+        community_id: '',
+        tenement_id: this.$store.state.token
       },
       form: {
         keyword: ''
@@ -117,19 +116,19 @@ export default {
     },
     getList (data = {}) {
       data = {
-        id: this.id
+        id: this.$store.state.token
       }
       api.GET(config.server.queryTenement, data)
       .then(response => {
-        // this.response.data = this.transform(response.data.data)
         this.response.data = this.transform(response.data.data)
+        console.log(response.data)
       })
       .catch(error => {
         this.$message.error(error)
       })
     },
     remove (id) {
-      this.removeForm.tenement_id = id
+      this.removeForm.community_id = id
       this.$confirm('此操作将解除关联该物业,是否继续解除？', '解除', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -166,7 +165,7 @@ export default {
     transform (data) {
       var res = []
       data.forEach(e => {
-        e.rubCommunityVOS[0].id = e.id
+        e.rubCommunityVOS[0].id = e.community_id
         e.rubCommunityVOS[0].begin_time = e.begin_time
         e.rubCommunityVOS[0].end_time = e.end_time
         res.push(e.rubCommunityVOS[0])

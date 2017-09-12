@@ -43,7 +43,7 @@ export default {
     addcorrelate: '/rubbish/community/tenement/create',
     removeCorrelate: '/rubbish/community/tenement/delete',
     history: '/rubbish/community/queryHistory',
-    streetTree: '/com/region/index'
+    streetTree: '/rub/region/index'
   },
   server: {
     index: '/rubbish/tenement/index',

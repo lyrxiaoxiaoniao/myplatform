@@ -59,12 +59,11 @@
 import config from 'src/config'
 import api from 'src/api'
 export default {
-  props: ['id'],
   data () {
     return {
       removeForm: {
         community_id: '',
-        tenement_id: this.id
+        tenement_id: this.$store.state.token
       },
       form: {
         keyword: ''
@@ -111,7 +110,7 @@ export default {
     },
     getList (data = {}) {
       data = {
-        id: this.id
+        id: this.$store.state.token
       }
       api.GET(config.server.queryHistory, data)
       .then(response => {
@@ -141,7 +140,7 @@ export default {
     transform (data) {
       var res = []
       data.forEach(e => {
-        e.rubCommunityVOS[0].id = e.id
+        e.rubCommunityVOS[0].id = e.community_id
         e.rubCommunityVOS[0].begin_time = e.begin_time
         e.rubCommunityVOS[0].end_time = e.end_time
         res.push(e.rubCommunityVOS[0])

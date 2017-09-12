@@ -31,7 +31,7 @@
                     <el-table-column width="160" label="操作">
                     <template scope="scope">
                         <el-button size="small" icon="edit" title="修改"></el-button>
-                        <el-button size="small" @click="openDialog(scope.row.id)" title="关联">关联</el-button>
+                        <el-button size="small" @click="openDialog(scope.row.community_id)" title="关联">关联</el-button>
                     </template>
                     </el-table-column>
                 </el-table>
@@ -90,7 +90,7 @@ export default {
       dialogAdvance: false,
       correlateForm: {
         community_id: '',
-        tenement_id: this.id,
+        tenement_id: this.$store.state.token,
         begin_time: '',
         end_time: ''
       },
@@ -141,7 +141,7 @@ export default {
     transform (data) {
       var res = []
       data.forEach(e => {
-        res.push(e.rubTenementVOS[0])
+        res.push(e.rubCommunityVOS[0])
       })
       return res
     },
@@ -163,11 +163,11 @@ export default {
     },
     getList (data = {}) {
       data = {
-        id: this.id
+        id: this.$store.state.token
       }
       api.GET(config.server.uncorrelated, data)
       .then(response => {
-        this.response.data = this.transform(response.data.data)
+        this.response.data = this.transform(response.data.data.data)
       })
       .catch(error => {
         this.$message.error(error)

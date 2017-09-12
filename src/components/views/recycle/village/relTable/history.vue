@@ -53,7 +53,6 @@
 import config from 'src/config'
 import api from 'src/api'
 export default {
-  props: ['communityId'],
   data () {
     return {
       form: {
@@ -101,12 +100,11 @@ export default {
     },
     getList (data = {}) {
       data = {
-        id: this.communityId
+        id: this.$store.state.token
       }
       api.GET(config.village.history, data)
       .then(response => {
         this.response.data = this.transform(response.data.data)
-        console.log(this.response.data)
       })
       .catch(error => {
         this.$message.error(error)
