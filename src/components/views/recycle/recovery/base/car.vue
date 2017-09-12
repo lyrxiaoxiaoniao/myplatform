@@ -67,7 +67,7 @@
                     </div>
                 </kobe-table>
                 <el-dialog title="添加车辆" v-model="showDialog">
-                   <el-form :model="selected" label-width="80px">
+                   <el-form :model="selected" label-width="80px" ref="selected">
                     <el-row :gutter="20">
                       <el-col :span="24">
                         <el-form-item label="车牌号">
@@ -87,24 +87,26 @@
                       <el-col :span="24">
                         <el-form-item label="所属公司">
                           <el-input v-model="selectedEdit.companyName" placeholder="请输入"></el-input>
-                          <!-- <el-select v-model="selected.recycleId" class="fullwidth" placeholder="请选择所属公司">
-                            <el-option
-                              v-for="item in options"
-                              :key="item.id"
-                              :label="item.name"
-                              :value="item.id">
-                            </el-option>
-                          </el-select> -->
                         </el-form-item>
                       </el-col>  
                       <el-col :span="12">
-                        <el-form-item label="车重">
-                           <el-input v-model="selected.weight" placeholder="单位： kg"></el-input>
+                        <el-form-item label="车重"
+                            prop="weight"
+                            :rules="[
+                              { required: true, message: '车重不能为空,单位： kg'},
+                              { type: 'number', message: '车重必须为数字值,单位： kg'}
+                            ]">
+                           <el-input v-model.number="selected.weight" placeholder="单位： kg"></el-input>
                         </el-form-item>
                       </el-col>  
                       <el-col :span="12">
-                        <el-form-item label="最大承重">
-                          <el-input v-model="selected.maxWeight" placeholder="单位： kg"></el-input>
+                        <el-form-item label="最大承重"
+                            prop="maxWeight"
+                            :rules="[
+                              { required: true, message: '车重不能为空,单位： kg'},
+                              { type: 'number', message: '车重必须为数字值,单位： kg'}
+                            ]">
+                          <el-input v-model.number="selected.maxWeight" placeholder="单位： kg"></el-input>
                         </el-form-item>
                       </el-col>  
                       <!-- <el-col :span="24">
@@ -123,11 +125,11 @@
                   </el-form>
                   <span slot="footer" class="dialog-footer">
                     <el-button @click="closeDialogadd">取 消</el-button>
-                    <el-button @click="addConfirm" type="primary">添 加</el-button>
+                    <el-button @click="addConfirm('selected')" type="primary">添 加</el-button>
                   </span>
                 </el-dialog>
                 <el-dialog title="修改车辆" v-model="showDialogEdit">
-                   <el-form :model="selectedEdit" label-width="80px">
+                   <el-form :model="selectedEdit" label-width="80px" ref="selectedEdit">
                     <el-row :gutter="20">
                       <el-col :span="24">
                         <el-form-item label="车牌号">
@@ -147,24 +149,26 @@
                       <el-col :span="24">
                         <el-form-item label="所属公司">
                           <el-input v-model="selectedEdit.companyName" placeholder="请输入"></el-input>
-                          <!-- <el-select v-model="selectedEdit.recycleId" class="fullwidth" placeholder="请选择业务类型">
-                            <el-option
-                              v-for="item in options"
-                              :key="item.id"
-                              :label="item.name"
-                              :value="item.id">
-                            </el-option>
-                          </el-select> -->
+                        </el-form-item>
+                      </el-col>
+                       <el-col :span="12">
+                        <el-form-item label="车重"
+                            prop="weight"
+                            :rules="[
+                              { required: true, message: '车重不能为空,单位： kg'},
+                              { type: 'number', message: '车重必须为数字值,单位： kg'}
+                            ]">
+                           <el-input v-model.number="selectedEdit.weight" placeholder="单位： kg"></el-input>
                         </el-form-item>
                       </el-col>  
                       <el-col :span="12">
-                        <el-form-item label="车重">
-                          <el-input v-model="selectedEdit.weight" placeholder="单位： kg"></el-input>
-                        </el-form-item>
-                      </el-col>  
-                      <el-col :span="12">
-                        <el-form-item label="最大承重">
-                          <el-input v-model="selectedEdit.maxWeight" placeholder="单位： kg"></el-input>
+                        <el-form-item label="最大承重"
+                            prop="maxWeight"
+                            :rules="[
+                              { required: true, message: '车重不能为空,单位： kg'},
+                              { type: 'number', message: '车重必须为数字值,单位： kg'}
+                            ]">
+                          <el-input v-model.number="selectedEdit.maxWeight" placeholder="单位： kg"></el-input>
                         </el-form-item>
                       </el-col>  
                       <!-- <el-col :span="8">
@@ -183,7 +187,7 @@
                   </el-form>
                   <span slot="footer" class="dialog-footer">
                     <el-button @click="closeDialogedit">取消</el-button>
-                    <el-button @click="editConfirm" type="primary">修改</el-button>
+                    <el-button @click="editConfirm('selectedEdit')" type="primary">修改</el-button>
                   </span>
                 </el-dialog>
             </div>
@@ -249,25 +253,37 @@ export default {
       console.log(this.selectedEdit, 11111111111)
       this.showDialogEdit = true
     },
-    addConfirm () {
-      api.POST(config.recovery.carAdd, this.selected)
-      .then(response => {
-        if (response.data.errcode === '0000') {
-          this.onSuccess('添加成功')
-          this.closeDialogadd()
+    addConfirm (formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          api.POST(config.recovery.carAdd, this.selected)
+          .then(response => {
+            if (response.data.errcode === '0000') {
+              this.onSuccess('添加成功')
+              this.closeDialogadd()
+            } else {
+              this.$message.error(response.data.errmsg)
+            }
+          })
         } else {
-          this.$message.error(response.data.errmsg)
+          return false
         }
       })
     },
-    editConfirm () {
-      api.POST(config.recovery.carEdit, this.selectedEdit)
-      .then(response => {
-        if (response.data.errcode === '0000') {
-          this.onSuccess('修改成功')
-          this.showDialogEdit = true
+    editConfirm (formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          api.POST(config.recovery.carEdit, this.selectedEdit)
+          .then(response => {
+            if (response.data.errcode === '0000') {
+              this.onSuccess('修改成功')
+              this.showDialogEdit = true
+            } else {
+              this.$message.error(response.data.errmsg)
+            }
+          })
         } else {
-          this.$message.error(response.data.errmsg)
+          return false
         }
       })
     },

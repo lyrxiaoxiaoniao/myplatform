@@ -7,7 +7,7 @@ export default {
   merchant: {
   },
   // 2.用户管理
-  users: {
+  newuser: {
   },
   // 3.权限管理
   authority: {
