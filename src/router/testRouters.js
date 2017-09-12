@@ -1,8 +1,8 @@
 /**
  * 在线考试列表
  */
-import DashMainView from './components/views/dash/Main.vue'
-import TestView from './components/views/test/testLibrary/index.vue'
+import DashMainView from 'components/views/dash/Main.vue'
+import TestView from 'components/views/test/library/testLibrary/index.vue'
 
 const testRouters = [
   {
