@@ -12,7 +12,7 @@ const testRouters = [
     name: '在线模拟考试',
     meta: {description: '信息'},
     children: [{
-      path: 'library',
+      path: 'index',
       component: TestView,
       name: '题库管理',
       meta: {description: '列表'}
