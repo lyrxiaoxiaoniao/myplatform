@@ -49,27 +49,17 @@
           </el-pagination>
         </el-col>
       </el-row>
-      <el-dialog :title="dialogTitle" v-model="dialogFormVisible">
-        <div class="dialog-add" v-show="dialogTitle==='签约'">
-          <el-form :model="contractForm" :rules="rules" ref="contractForm" label-width="100px">
-            <el-form-item label="签约人" prop="dutyName">
-              <el-input v-model="contractForm.dutyName" placeholder="请输入签约人姓名"></el-input>
-            </el-form-item>
-            <el-form-item label="联系电话" prop="mobile">
-              <el-input v-model="contractForm.mobile" placeholder="请输入签约人联系电话"></el-input>
-            </el-form-item>
-            <el-form-item label="回收单位" prop="description">
-              <el-input v-model="contractForm.description" placeholder="请输入签约回收单位"></el-input>
-            </el-form-item>
-            <el-form-item label="合同期限" prop="description">
-              <el-date-picker v-model="contractForm.begin_time" type="datetime" placeholder="选择开始时间"></el-date-picker>
-              <el-date-picker v-model="contractForm.end_time" type="datetime" placeholder="选择结束时间"></el-date-picker>
+      <el-dialog :title="dialogTitle" v-model="dialogFormVisible" size="tiny">
+        <div class="dialog-add" v-show="dialogTitle==='新增标签'">
+          <el-form :model="addForm" :rules="rules" ref="addForm" label-width="100px">
+            <el-form-item label="标签名称：" prop="dutyName">
+              <el-input v-model="addForm.dutyName" placeholder="请输入新的标签名称"></el-input>
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-row type="flex" justify="end">
               <el-button @click="closeDialog">取 消</el-button>
-              <el-button type="primary" @click="updateContract">保存</el-button>
+              <el-button type="primary" @click="add">保存</el-button>
             </el-row>
           </div>
         </div>
@@ -95,7 +85,7 @@
         advancedSearchForm: {
           signState: 0
         },
-        contractForm: {
+        addForm: {
         },
         dialogTitle: '',
         dialogFormVisible: false,
@@ -110,8 +100,8 @@
           label: '已签约'
         }],
         searchSelectValue: '', // 列表页顶部选择器的值
-        restaurantsSelectedIds: [],
-        restaurantId: 0
+        selectedIds: [],
+        editingId: 0
       }
     },
     computed: {},
@@ -131,15 +121,14 @@
         if (value) {
           this.selectIds(value)
         }
-        if (!this.restaurantsSelectedIds.length) {
+        if (!this.selectedIds.length) {
           next = await this.warnSelection(next)
         }
         if (next) {
           next = await this.confirmDelete(next)
         }
         if (next) {
-          // console.log('发起请求，删除' + this.restaurantsSelectedIds)
-          api.POST(config.restaurants.delete, {ids: this.restaurantsSelectedIds})
+          api.POST(config.restaurants.delete, {ids: this.selectedIds})
             .then(response => {
               if (response.status !== 200) {
                 this.error = response.statusText
@@ -147,7 +136,7 @@
               }
               if (response.data.errcode === '0000') {
                 this.onSuccess('删除成功')
-                this.restaurantsSelectedIds = []
+                this.selectedIds = []
                 this.getList()
               }
             })
@@ -156,6 +145,24 @@
             })
         }
       },
+      add () {
+        api.POST(config.loadometer.create, this.addForm)
+          .then(response => {
+            if (response.data.errcode === '0000') {
+              this.onSuccess('创建成功')
+              let data = {
+                pageSize: this.response.pageSize,
+                currentPage: this.response.currentPage,
+                ...this.form
+              }
+              this.getList(data)
+              this.closeDialog()
+            }
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
+      },
       refresh () {
         this.getList()
       },
@@ -163,6 +170,22 @@
       onSearch () {
         let data = {
           currentPage: 1,
+          pageSize: this.response.pageSize,
+          ...this.form
+        }
+        this.getList(data)
+      },
+      handleSizeChange (value) {
+        const data = {
+          currentPage: this.response.currentPage,
+          pageSize: value,
+          ...this.form
+        }
+        this.getList(data)
+      },
+      handleCurrentChange (value) {
+        const data = {
+          currentPage: value,
           pageSize: this.response.pageSize,
           ...this.form
         }
@@ -219,7 +242,7 @@
       },
       // 确认是否删除
       confirmDelete (next) {
-        return this.$confirm('此操作将删除选定的企业。是否继续删除？', '提示', {
+        return this.$confirm('此操作将删除该标签，删除后，所有被打上该标签的题目都将与该标签解除关联。是否继续删除？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -233,17 +256,44 @@
       },
       // 单行记录、多行记录、未选择记录操作生成id数组
       selectIds (value) {
-        this.restaurantsSelectedIds = []
+        this.selectedIds = []
         // 单行记录操作传进来的参数是数字，多行记录操作传进来的参数是数组，未选择记录未传参数
         if (value !== undefined) {
           if (value.length === undefined) {
-            this.restaurantsSelectedIds.push(value)
+            this.selectedIds.push(value)
           } else {
-            this.restaurantsSelectedIds = value.map(v => {
+            this.selectedIds = value.map(v => {
               return v.id
             })
           }
         }
+      },
+      toAddStatus () {
+        this.openDialog('新增标签')
+      },
+      toEditStatus (id) {
+        this.$router.push({
+          path: '/admin/test/library/label/edit',
+          query: {
+            id: id
+          }
+        })
+      },
+      openDialog (value, id) {
+        this.editingId = id
+        this.dialogTitle = value
+        this.dialogFormVisible = true
+      },
+      closeDialog () {
+        this.dialogFormVisible = false
+        this.dialogTitle = ''
+      },
+      onSuccess (string) {
+        this.$notify({
+          title: '成功',
+          message: string,
+          type: 'success'
+        })
       }
     },
     components: {

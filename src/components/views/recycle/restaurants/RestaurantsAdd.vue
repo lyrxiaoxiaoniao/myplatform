@@ -6,7 +6,7 @@
           <div>基本信息</div>
           <div>
             <el-button>返回</el-button>
-            <el-button type="primary">保存</el-button>
+            <el-button type="primary" @click="add">保存</el-button>
           </div>
         </div>
         <div class="table-body">
@@ -109,21 +109,21 @@
           <el-switch v-model="showContract" on-text="开" off-text="关" style="margin-left: 35px;"></el-switch>
         </div>
         <div class="table-body">
-          <el-form :model="restaurantInfo.contractStatus" label-width="100px">
+          <el-form :model="restaurantInfo" label-width="100px">
             <el-row>
               <el-col :span="12">
                 <el-form-item label="签约人">
-                  <el-input placeholder="请输入签约人姓名"></el-input>
+                  <el-input placeholder="请输入签约人姓名" v-model="restaurantInfo.sign_name"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item label="联系电话">
-                  <el-input placeholder="请输入签约人联系电话"></el-input>
+                  <el-input placeholder="请输入签约人联系电话" v-model="restaurantInfo.sign_phone"></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row>
-              <el-col :span="12">
+              <!-- <el-col :span="12">
                 <el-form-item label="回收单位">
                   <el-select v-model="restaurantInfo.street" placeholder="请选择所属街道" class="street-select">
                     <el-option
@@ -133,11 +133,11 @@
                     </el-option>
                   </el-select>
                 </el-form-item>
-              </el-col>
+              </el-col> -->
               <el-col :span="12">
                 <el-form-item label="合同期限" class="contract-time">
-                  <el-date-picker v-model="startTime" type="datetime" placeholder="选择开始时间"></el-date-picker>
-                  <el-date-picker v-model="endTime" type="datetime" placeholder="选择结束时间"></el-date-picker>
+                  <el-date-picker v-model="restaurantInfo.begin_time" type="datetime" placeholder="选择开始时间"></el-date-picker>
+                  <el-date-picker v-model="restaurantInfo.end_time" type="datetime" placeholder="选择结束时间"></el-date-picker>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -300,7 +300,9 @@
         regionSelectOptions: [],
         restaurantInfo: {
           checkState: true,
-          license: ''
+          license: '',
+          begin_time: '',
+          end_time: ''
         },
         searchInput: '',
         point: {},
@@ -313,6 +315,36 @@
     components: {
     },
     methods: {
+      add () {
+        api.POST(config.loadometer.create, this.restaurantInfo)
+          .then(response => {
+            if (response.status !== 200) {
+              this.error = response.statusText
+              return
+            }
+            if (response.data.errcode === '0000') {
+              this.onSuccess('保存成功')
+              this.restaurantInfo = {
+                checkState: true,
+                license: '',
+                begin_time: '',
+                end_time: ''
+              }
+            }
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
+      },
+      getRegion (data = {}) {
+        api.GET(config.restaurants.getRegion, data)
+          .then(response => {
+            this.regionSelectOptions = this.transformData(response.data.data)
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
+      },
       /* 上传图片函数 */
       handleAvatarSuccess (res, file) {
         this.restaurantInfo.license = res.data[0]
@@ -386,9 +418,12 @@
         map.addEventListener('click', function(e) {
           map.clearOverlays()
           that.point = JSON.parse(JSON.stringify(e.point))
+          that.restaurantInfo.longitude = that.point.lng
+          that.restaurantInfo.latitude = that.point.lat
           // that.point.lat = e.point.lat
           // that.point.lng = e.point.lng
           console.log(that.point)
+          console.log('that.restaurantInfo' + that.restaurantInfo)
           const marker = new BMap.Marker(e.point)
           map.addOverlay(marker)
           geoc.getLocation(e.point, function(rs) {
@@ -403,15 +438,6 @@
             this.mapInit()
           })
         }
-      },
-      getRegion (data = {}) {
-        api.GET(config.restaurants.getRegion, data)
-          .then(response => {
-            this.regionSelectOptions = this.transformData(response.data.data)
-          })
-          .catch(error => {
-            this.$message.error(error)
-          })
       },
       transformData (res) {
         res.data.forEach(v => {
@@ -447,6 +473,13 @@
         s = s < 10 ? ('0' + s) : s
         value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
         return value
+      },
+      onSuccess (string) {
+        this.$notify({
+          title: '成功',
+          message: string,
+          type: 'success'
+        })
       }
     },
     mounted () {

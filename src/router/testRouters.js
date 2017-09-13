@@ -5,8 +5,8 @@ import DashMainView from 'components/views/dash/Main.vue'
 import TestView from 'components/views/test/library/testLibrary/index.vue'
 
 // 标签管理
-import TestLabelListView from 'components/views/test/library/testLabel/index.vue'
-import TestLabelEditView from 'components/views/test/library/testLabel/edit.vue'
+import TestLabelListView from 'components/views/test/library/testLabel/Index.vue'
+import TestLabelEditView from 'components/views/test/library/testLabel/Edit.vue'
 
 const testRouters = [
   {
