@@ -31,6 +31,11 @@
             <el-switch on-text="开" off-text="关" v-model="scope.row.is_recommend" @change="toggleSwicth(scope.row)"></el-switch>
           </template>
         </el-table-column>
+        <el-table-column prop="is_recommend" label="是否启用" width="120">
+          <template scope="scope">
+            <el-switch on-text="开" off-text="关" v-model="scope.row.active" @change="toggleActive(scope.row)"></el-switch>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="120px">
           <template scope="scope">
             <el-button size="small" icon="delete2" @click="deleteData(scope.row.id)" title="删除"></el-button>
@@ -193,7 +198,8 @@ export default {
         is_recommend: false,
         description: '',
         logo: '',
-        banners: []
+        banners: [],
+        active: null
       },
       multipleSelection: [],
       ids: [],
@@ -320,6 +326,12 @@ export default {
         }
         if (v.is_recommend === 1) {
           v.is_recommend = true
+        }
+        if (v.active === 0) {
+          v.active = false
+        }
+        if (v.active === 1) {
+          v.active = true
         }
         if (v.counters.length) {
           v.articleCount = v.counters[0].count
@@ -530,8 +542,29 @@ export default {
     },
     toggleSwicth (value) {
       value.is_recommend = Number(value.is_recommend)
-      console.log(value)
-      api.POST(config.subject.updateRecommend, {id: value.id, active: value.is_recommend})
+      api.POST(config.subject.updateRecommend, {id: value.id, is_recommend: value.is_recommend})
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.$notify({
+            title: '成功',
+            message: '修改成功',
+            type: 'success'
+          })
+          let data = {
+            pageSize: this.response.pageSize,
+            currentPage: this.response.currentPage,
+            ...this.searchForm
+          }
+          this.getList(data)
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    toggleActive (value) {
+      value.active = Number(value.active)
+      api.POST(config.subject.updateactive, {id: value.id, active: value.active})
       .then(response => {
         if (response.data.errcode === '0000') {
           this.$notify({

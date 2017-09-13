@@ -9,6 +9,7 @@ export default {
     edit: '/back/account/update',
     add: '/back/account/create',
     show: '/back/account/show',
+    alter: '/back/ext/alter',
     delete: '/back/account/delete'
   },
   // 2.用户管理

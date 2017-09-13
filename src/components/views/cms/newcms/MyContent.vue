@@ -443,7 +443,7 @@ export default {
       this.ruleForm.category_id = value
     },
     getList (data = {}) {
-      api.POST(config.content.list, data)
+      api.POST(config.content.list, {rank: 'DESC', ...data})
       .then(response => {
         this.response = this.transformData(response.data.data)
       })

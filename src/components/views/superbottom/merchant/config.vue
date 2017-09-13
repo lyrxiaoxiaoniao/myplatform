@@ -2,7 +2,7 @@
     <div class="ca-container">
         <div>
             <el-button @click="goBack" type="primary">返回列表</el-button>
-            <el-button type="primary">刷新</el-button> 
+            <el-button @click="onFresh" type="primary">刷新</el-button> 
         </div>
         <div class="ca-cpntent">
             <el-row :gutter="20">
@@ -41,7 +41,7 @@
                     <div class="ca-content-right">
                       <el-tabs v-model="activeName" @tab-click="handleClick" type="border-card">
                         <el-tab-pane label="站点基础配置" name="first">
-                          <manage-config :manageData="manageConfigData" :manageArr="manageConfigArr"></manage-config>
+                          <manage-config :manageData="manageConfigData"></manage-config>
                           <mobile-config :mobileData="mobileConfigData"></mobile-config>
                           <short-massage :shortMsgData="shortMessageData"></short-massage>
                         </el-tab-pane>
@@ -84,7 +84,6 @@ export default {
         mng_config_icon: null,
         mng_config_background: null
       },
-      manageConfigArr: [],
       mobileConfigData: {
         mobile_config_name: null,
         mobile_config_keyword: null,
@@ -96,9 +95,9 @@ export default {
         mobile_config_background: null
       },
       shortMessageData: {
-        mng_config_name: null,
-        mng_config_keyword: null,
-        mng_config_alias: null
+        msg_servicer: null,
+        msg_month_limit: null,
+        msg_suffix: null
       }
     }
   },
@@ -120,21 +119,14 @@ export default {
         this.form[k] = res[k]
       })
     },
-    getManageConfig (res) {
-      Object.keys(this.manageConfigData).forEach(k => {
+    getConfig (res, data) {
+      Object.keys(data).forEach(k => {
         res.exts.forEach(v => {
           if (v.key.label === k) {
-            this.manageConfigData[k] = {id: v.id, value: v.value}
-            this.manageConfigArr.push({id: v.id, value: v.value, key: v.key.label})
+            data[k] = {id: v.id, value: v.value}
           }
         })
       })
-    },
-    getMobileConfig () {
-      console.log(1)
-    },
-    getShortMessage () {
-      console.log(1)
     },
     getList() {
       api.GET(config.merchant.show, {id: this.id})
@@ -142,9 +134,14 @@ export default {
         if (response.data.errcode === '0000') {
           this.response = response.data.data
           this.getForm(response.data.data)
-          this.getManageConfig(response.data.data)
+          this.getConfig(response.data.data, this.manageConfigData)
+          this.getConfig(response.data.data, this.mobileConfigData)
+          this.getConfig(response.data.data, this.shortMessageData)
         }
       })
+    },
+    onFresh () {
+      this.getList()
     }
   },
   mounted () {

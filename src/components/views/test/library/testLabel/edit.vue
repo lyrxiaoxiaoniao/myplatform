@@ -27,7 +27,7 @@
       <div class="body">
         <el-tabs v-model="activeTab" type="border-card" @tab-click="handleClick">
           <el-tab-pane label="标签题目" name="accord">
-            <QuestionsTable :list="response.data" :cascaderData=""></QuestionsTable>
+            <QuestionsTable :list="response.data" :cascaderData="response.data"></QuestionsTable>
           </el-tab-pane>
           <el-tab-pane label="其他题目" name="other">其他题目</el-tab-pane>
         </el-tabs>
