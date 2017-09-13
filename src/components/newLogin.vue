@@ -16,10 +16,10 @@
                 <!-- <p>深传政务新媒体平台</p>
                 <p>一站式政务解决方案专家</p> -->
                 <div class="block">
-                  <el-carousel :interval="3000" arrow="never" height="372px" indicator-position="none">
+                  <el-carousel :interval="3000" initial-index="0" arrow="never" height="372px" indicator-position="none">
                     <el-carousel-item v-for="item in urls" :key="item">
                       <!-- <h3>{{ item }}</h3> -->
-                      <img :src="item" alt="深传互动">
+                      <img :src="item">
                     </el-carousel-item>
                   </el-carousel>
                 </div>
@@ -88,7 +88,7 @@ export default {
       mailCode: '',
       loginSended: false,
       response: '',
-      cover: '',
+      cover: 'static/img/login/banner@2x.png',
       urls: [
         'static/img/login/01.png',
         'static/img/login/02.png'
@@ -206,14 +206,14 @@ export default {
   },
   mounted() {
     const title = document.getElementsByTagName('title')[0]
-    const appid = this.$route.query.appid
-    this.getAppInfo()
-    console.log(title, appid)
-    switch (appid) {
+    const scid = this.$route.query.scid
+    // this.getAppInfo()
+    console.log(title, scid)
+    switch (scid) {
       case 'gmaj':
         title.innerHTML = '安全光明'
         this.title = '安全光明'
-        this.cover = 'static/img/login/banner@2x.png'
+        this.urls = ['static/img/login/gmaj.png']
         break
       default:
         title.innerHTML = '深传互动政务新媒体平台'

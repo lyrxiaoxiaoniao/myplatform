@@ -21,15 +21,29 @@
                                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                             </el-upload> -->
                         </div>
+                        <el-form ref="form" :model="form" label-width="80px" class="ca-form">
+                            <el-form-item label="商户名称">
+                                <el-input v-model="form.name" disabled></el-input>
+                            </el-form-item>
+                            <el-form-item label="商户分类">
+                                <el-input v-model="form.level" disabled></el-input>
+                            </el-form-item>
+                            <el-form-item label="创建时间">
+                                <el-input v-model="form.created_at" disabled></el-input>
+                            </el-form-item>
+                            <el-form-item label="商户说明">
+                                <el-input type="textarea" v-model="form.brief" disabled></el-input>
+                            </el-form-item>
+                        </el-form>
                     </div>
                 </el-col>
                 <el-col :span="18">
                     <div class="ca-content-right">
                       <el-tabs v-model="activeName" @tab-click="handleClick" type="border-card">
                         <el-tab-pane label="站点基础配置" name="first">
-                          <manage-config></manage-config>
-                          <mobile-config></mobile-config>
-                          <short-massage></short-massage>
+                          <manage-config :manageData="manageConfigData" :manageArr="manageConfigArr"></manage-config>
+                          <mobile-config :mobileData="mobileConfigData"></mobile-config>
+                          <short-massage :shortMsgData="shortMessageData"></short-massage>
                         </el-tab-pane>
                         <el-tab-pane label="微信配置" name="second">
                           <wechat-config></wechat-config>
@@ -46,10 +60,46 @@ import manageConfig from './baseConfig/manageConfig'
 import mobileConfig from './baseConfig/mobileConfig'
 import shortMassage from './baseConfig/shortMassage'
 import wechatConfig from './baseConfig/wechatConfig'
+import api from 'src/api'
+import config from 'src/config'
 export default {
   data () {
     return {
-      activeName: 'first'
+      id: this.$route.query.id,
+      activeName: 'first',
+      response: null,
+      form: {
+        name: null,
+        brief: null,
+        created_at: null,
+        level: null
+      },
+      manageConfigData: {
+        mng_config_name: null,
+        mng_config_keyword: null,
+        mng_config_alias: null,
+        mng_config_desc: null,
+        mng_config_info: null,
+        mng_config_copyright: null,
+        mng_config_icon: null,
+        mng_config_background: null
+      },
+      manageConfigArr: [],
+      mobileConfigData: {
+        mobile_config_name: null,
+        mobile_config_keyword: null,
+        mobile_config_alias: null,
+        mobile_config_desc: null,
+        mobile_config_info: null,
+        mobile_config_copyright: null,
+        mobile_config_icon: null,
+        mobile_config_background: null
+      },
+      shortMessageData: {
+        mng_config_name: null,
+        mng_config_keyword: null,
+        mng_config_alias: null
+      }
     }
   },
   components: {
@@ -64,7 +114,41 @@ export default {
     },
     handleClick (tab, event) {
       console.log(tab, event)
+    },
+    getForm (res) {
+      Object.keys(this.form).forEach(k => {
+        this.form[k] = res[k]
+      })
+    },
+    getManageConfig (res) {
+      Object.keys(this.manageConfigData).forEach(k => {
+        res.exts.forEach(v => {
+          if (v.key.label === k) {
+            this.manageConfigData[k] = {id: v.id, value: v.value}
+            this.manageConfigArr.push({id: v.id, value: v.value, key: v.key.label})
+          }
+        })
+      })
+    },
+    getMobileConfig () {
+      console.log(1)
+    },
+    getShortMessage () {
+      console.log(1)
+    },
+    getList() {
+      api.GET(config.merchant.show, {id: this.id})
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.response = response.data.data
+          this.getForm(response.data.data)
+          this.getManageConfig(response.data.data)
+        }
+      })
     }
+  },
+  mounted () {
+    this.getList()
   }
 }
 </script>
@@ -89,6 +173,9 @@ export default {
                 width: 100%;
                 height: 250px;
                 padding: 10px 30px;
+            }
+            .ca-form {
+                padding: 1rem 2rem 1rem 1rem;
             }
         }
         .ca-content-right {
