@@ -4,40 +4,40 @@
             <div class="lh-header">
                 <div>管理端站点配置</div>
                 <div>
-                    <el-button type="primary">保存</el-button>
+                    <el-button @click="saveConfig" type="primary">保存</el-button>
                 </div>
             </div>
             <div class="lh-form">
-              <el-form :model="selected" label-width="85px">
+              <el-form :model="selectedObj" label-width="85px">
                 <el-row>
                     <el-col :span="12">
                     <el-form-item label="站点名称">
-                        <el-input placeholder="请输入站点名称"></el-input>
+                        <el-input v-model="selectedObj.mng_config_name.value" placeholder="请输入站点名称"></el-input>
                     </el-form-item>
                     </el-col>
                     <el-col :span="12">
                     <el-form-item label="站点别名">
-                        <el-input placeholder="请输入站点别名"></el-input>
+                        <el-input v-model="selectedObj.mng_config_alias.value" placeholder="请输入站点别名"></el-input>
                     </el-form-item>
                     </el-col>
                     <el-col :span="24">
                     <el-form-item label="关键字">
-                        <el-input placeholder="请输入"></el-input>
+                        <el-input v-model="selectedObj.mng_config_keyword.value" placeholder="请输入"></el-input>
                     </el-form-item>
                     </el-col>
                     <el-col :span="24">
                     <el-form-item label="描述">
-                        <el-input type="textarea" placeholder="请输入"></el-input>
+                        <el-input v-model="selectedObj.mng_config_desc.value" type="textarea" placeholder="请输入"></el-input>
                     </el-form-item>
                     </el-col>
                     <el-col :span="24">
                     <el-form-item label="域名信息">
-                        <el-input placeholder="请输入"></el-input>
+                        <el-input v-model="selectedObj.mng_config_info.value" placeholder="请输入"></el-input>
                     </el-form-item>
                     </el-col>
                     <el-col :span="24">
                     <el-form-item label="版权信息">
-                        <el-input placeholder="请输入"></el-input>
+                        <el-input v-model="selectedObj.mng_config_copyright.value" placeholder="请输入"></el-input>
                     </el-form-item>
                     </el-col>
                     <el-col :span="12">
@@ -48,7 +48,7 @@
                             :show-file-list="false"
                             :on-success="handleAvatarSuccessIcon"
                             :before-upload="beforeAvatarUpload">
-                            <img v-if="selected.icon" :src="selected.icon" class="avatar">
+                            <img v-if="selectedObj.mng_config_icon.value" :src="selectedObj.mng_config_icon.value" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         </el-upload>
                     </el-form-item>
@@ -61,12 +61,12 @@
                             :show-file-list="false"
                             :on-success="handleAvatarSuccess"
                             :before-upload="beforeAvatarUploadLogo">
-                            <img v-if="selected.logo" :src="selected.logo" class="avatar">
+                            <img v-if="selectedObj.mng_config_background.value" :src="selectedObj.mng_config_background.value" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         </el-upload>
                     </el-form-item>
                     </el-col>
-                </el-row>  
+                </el-row>
               </el-form>
             </div>
         </div>
@@ -76,23 +76,37 @@
 import config from 'src/config'
 // import api from 'src/api'
 export default {
+  props: {
+    manageData: {
+      type: Object
+    },
+    manageArr: {
+      type: Array
+    }
+  },
   data () {
     return {
       uploadURL: config.serverURI + config.uploadFilesAPI,
-      selected: {
-        logo: null,
-        icon: null
-      }
+      selected: {}
+    }
+  },
+  computed: {
+    selectedObj () {
+      var obj = {}
+      Object.keys(this.manageData).forEach(k => {
+        obj[k] = this.manageData[k]
+      })
+      return obj
     }
   },
   methods: {
     /* 上传图片函数 */
     handleAvatarSuccessIcon (res, file) {
-      this.selected.icon = res.data[0]
+      this.selectedObj.mng_config_icon.value = res.data[0]
     },
     /* 上传图片函数 */
     handleAvatarSuccessLogo (res, file) {
-      this.selected.logo = res.data[0]
+      this.selectedObj.mng_config_background.value = res.data[0]
     },
     beforeAvatarUpload (file) {
       const isJPG = file.type === 'image/jpeg' || 'image/png'
@@ -104,7 +118,15 @@ export default {
         this.$message.error('上传头像图片大小不能超过 5MB!')
       }
       return isJPG && isLt2M
+    },
+    saveConfig () {
+    //   api.POST(config.merchant, data)
+    //   .then(response => {
+    //     console.log(11111111)
+    //   })
     }
+  },
+  mounted () {
   }
 }
 </script>
