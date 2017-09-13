@@ -2,7 +2,7 @@
     <div class="ca-container">
         <div>
             <el-button @click="goBack" type="primary">返回列表</el-button>
-            <el-button type="primary">刷新</el-button> 
+            <el-button @click="onFresh" type="primary">刷新</el-button> 
         </div>
         <div class="ca-cpntent">
             <el-row :gutter="20">
@@ -21,15 +21,29 @@
                                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                             </el-upload> -->
                         </div>
+                        <el-form ref="form" :model="form" label-width="80px" class="ca-form">
+                            <el-form-item label="商户名称">
+                                <el-input v-model="form.name" disabled></el-input>
+                            </el-form-item>
+                            <el-form-item label="商户分类">
+                                <el-input v-model="form.level" disabled></el-input>
+                            </el-form-item>
+                            <el-form-item label="创建时间">
+                                <el-input v-model="form.created_at" disabled></el-input>
+                            </el-form-item>
+                            <el-form-item label="商户说明">
+                                <el-input type="textarea" v-model="form.brief" disabled></el-input>
+                            </el-form-item>
+                        </el-form>
                     </div>
                 </el-col>
                 <el-col :span="18">
                     <div class="ca-content-right">
                       <el-tabs v-model="activeName" @tab-click="handleClick" type="border-card">
                         <el-tab-pane label="站点基础配置" name="first">
-                          <manage-config></manage-config>
-                          <mobile-config></mobile-config>
-                          <short-massage></short-massage>
+                          <manage-config :manageData="manageConfigData"></manage-config>
+                          <mobile-config :mobileData="mobileConfigData"></mobile-config>
+                          <short-massage :shortMsgData="shortMessageData"></short-massage>
                         </el-tab-pane>
                         <el-tab-pane label="微信配置" name="second">
                           <wechat-config></wechat-config>
@@ -42,16 +56,49 @@
     </div>
 </template>
 <script>
-// import config from 'src/config'
-// import api from 'src/api'
 import manageConfig from './baseConfig/manageConfig'
 import mobileConfig from './baseConfig/mobileConfig'
 import shortMassage from './baseConfig/shortMassage'
 import wechatConfig from './baseConfig/wechatConfig'
+import api from 'src/api'
+import config from 'src/config'
 export default {
   data () {
     return {
-      activeName: 'second'
+      id: this.$route.query.id,
+      activeName: 'first',
+      response: null,
+      form: {
+        name: null,
+        brief: null,
+        created_at: null,
+        level: null
+      },
+      manageConfigData: {
+        mng_config_name: null,
+        mng_config_keyword: null,
+        mng_config_alias: null,
+        mng_config_desc: null,
+        mng_config_info: null,
+        mng_config_copyright: null,
+        mng_config_icon: null,
+        mng_config_background: null
+      },
+      mobileConfigData: {
+        mobile_config_name: null,
+        mobile_config_keyword: null,
+        mobile_config_alias: null,
+        mobile_config_desc: null,
+        mobile_config_info: null,
+        mobile_config_copyright: null,
+        mobile_config_icon: null,
+        mobile_config_background: null
+      },
+      shortMessageData: {
+        msg_servicer: null,
+        msg_month_limit: null,
+        msg_suffix: null
+      }
     }
   },
   components: {
@@ -66,7 +113,39 @@ export default {
     },
     handleClick (tab, event) {
       console.log(tab, event)
+    },
+    getForm (res) {
+      Object.keys(this.form).forEach(k => {
+        this.form[k] = res[k]
+      })
+    },
+    getConfig (res, data) {
+      Object.keys(data).forEach(k => {
+        res.exts.forEach(v => {
+          if (v.key.label === k) {
+            data[k] = {id: v.id, value: v.value}
+          }
+        })
+      })
+    },
+    getList() {
+      api.GET(config.merchant.show, {id: this.id})
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.response = response.data.data
+          this.getForm(response.data.data)
+          this.getConfig(response.data.data, this.manageConfigData)
+          this.getConfig(response.data.data, this.mobileConfigData)
+          this.getConfig(response.data.data, this.shortMessageData)
+        }
+      })
+    },
+    onFresh () {
+      this.getList()
     }
+  },
+  mounted () {
+    this.getList()
   }
 }
 </script>
@@ -91,6 +170,9 @@ export default {
                 width: 100%;
                 height: 250px;
                 padding: 10px 30px;
+            }
+            .ca-form {
+                padding: 1rem 2rem 1rem 1rem;
             }
         }
         .ca-content-right {

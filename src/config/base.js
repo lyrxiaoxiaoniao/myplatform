@@ -5,6 +5,12 @@
 export default {
   // 1.商户管理
   merchant: {
+    index: '/back/account/index',
+    edit: '/back/account/update',
+    add: '/back/account/create',
+    show: '/back/account/show',
+    alter: '/back/ext/alter',
+    delete: '/back/account/delete'
   },
   // 2.用户管理
   newuser: {

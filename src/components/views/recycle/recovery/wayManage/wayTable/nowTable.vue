@@ -76,27 +76,6 @@
                         <el-input v-model="selected.name" placeholder="请输入线路名称"></el-input>
                     </el-form-item>
                 </el-col>
-                <el-col :span="12">
-                    <el-form-item label="所属清运公司">
-                        <el-select v-model="selected.recycleId" class="fullwidth" placeholder="请选择所属公司">
-                          <el-option
-                            v-for="item in options"
-                            :key="item.id"
-                            :label="item.name"
-                            :value="item.id">
-                          </el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item label="控制">
-                        <el-switch
-                          v-model="selected.state"
-                          on-text="开"
-                          off-text="关">
-                        </el-switch>
-                    </el-form-item>
-                </el-col>
                 <el-col :span="24">
                     <el-form-item label="线路描述">
                         <el-input type="textarea" v-model="selected.description" placeholder="请输入线路描述"></el-input>
@@ -130,8 +109,7 @@ export default {
         name: null,
         recycleId: null,
         description: null
-      },
-      options: []
+      }
     }
   },
   methods: {
@@ -236,7 +214,6 @@ export default {
     // 模态框显示
     openDialog () {
       this.showDialog = true
-      this.getCompany()
     },
     closeDialog () {
       this.showDialog = false
@@ -304,16 +281,6 @@ export default {
       api.GET(config.recovery.wayIndex, data)
       .then(response => {
         this.response = this.transformDate(response.data.data)
-      })
-      .catch(error => {
-        this.$message.error(error)
-      })
-    },
-    getCompany () {
-      api.GET(config.recovery.wayRecycle)
-      .then(response => {
-        console.log(response.data.data, 11111)
-        this.options = response.data.data
       })
       .catch(error => {
         this.$message.error(error)

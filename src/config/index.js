@@ -377,7 +377,8 @@ export default {
     detail: '/ncms/subject/show',
     delete: '/ncms/subject/delete',
     update: '/ncms/subject/update',
-    updateRecommend: '/ncms/subject/active',
+    updateactive: '/ncms/subject/active',
+    updateRecommend: '/ncms/subject/recommend',
     checkName: '/ncms/subject/check'
   },
   /* 内容管理 */

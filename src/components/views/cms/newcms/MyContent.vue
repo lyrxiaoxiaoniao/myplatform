@@ -15,7 +15,7 @@
             <el-row type="flex" justify="end">
               <el-col :span="15">
                 <el-button type="primary" @click="toAdd">发布内容</el-button>
-                <el-button type="primary" @click="refresh">刷新</el-button>
+                <el-button type="primary" @click="refresh" style="margin-right: 10px">刷新</el-button>
                 <el-dropdown @command="handleCommand">
                   <el-button type="primary">
                     批量<i class="el-icon-caret-bottom el-icon--right"></i>
@@ -207,7 +207,7 @@
       <div class="dialog-push" v-show="dialogTitle === '推送至专题'">
         <el-row type="flex" justify="center">
           <el-button type="text" style="color: #48576a; padding:5px 10px;">推送到专题</el-button>
-          <el-select v-model="selectedSubject" multiple placeholder="请选择活动区域">
+          <el-select v-model="selectedSubject" multiple placeholder="请选择活动区域" style="width: 100%">
             <el-option
                 v-for="item in subjectOptions"
                 :key="item.value"
@@ -235,15 +235,6 @@
           </el-row>
         </div>
       </div>
-      <!--
-      <div class="dialog-mini" v-show="dialogTitle === '删除'||dialogTitle === '复制'||dialogTitle === '审核'||dialogTitle === '退回'||dialogTitle === '提交'||dialogTitle === '归档'||dialogTitle === '出档'">
-        <p v-for="item in getDialogTip">{{item}}</p>
-        <el-row type="flex" justify="end">
-          <el-button @click="dialogFormVisible = false">取消</el-button>
-          <el-button type="primary" @click="confirmOperation">确定</el-button>
-        </el-row>
-      </div>
-      -->
     </el-dialog>
   </div>
 </template>
@@ -353,6 +344,7 @@ export default {
       const data = {
         currentPage: this.response.currentPage,
         pageSize: value,
+        category_id: this.parentId,
         ...this.form
       }
 
@@ -362,6 +354,7 @@ export default {
       const data = {
         currentPage: value,
         pageSize: this.response.pageSize,
+        category_id: this.parentId,
         ...this.form
       }
 
@@ -450,7 +443,7 @@ export default {
       this.ruleForm.category_id = value
     },
     getList (data = {}) {
-      api.POST(config.content.list, data)
+      api.POST(config.content.list, {rank: 'DESC', ...data})
       .then(response => {
         this.response = this.transformData(response.data.data)
       })
@@ -704,6 +697,7 @@ export default {
             this.onSuccess('推送成功')
             this.getList()
             this.closeDialog()
+            this.selectedSubject = []
           }
         })
         .catch(error => {

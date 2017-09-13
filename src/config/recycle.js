@@ -27,7 +27,8 @@ export default {
     wayEdit: '/rounter/update',
     wayRemove: '/rounter/delete',
     wayActive: '/rounter/state/update',
-    wayRecycle: '/rounter/recycle/show'
+    wayRecycle: '/rounter/recycle/show',
+    wayHistory: '/rounter/history/index'
   },
   village: {
     list: '/rubbish/community/index',
@@ -63,8 +64,13 @@ export default {
     index: '/cater/index',
     delete: '/cater/delete',
     create: '/cater/create',
-    show: '/cater/show'
+    show: '/cater/show',
+    getRecycle: '/rounter/recycle/show', //  清运公司列表
+    updateSign: '/cater/sign/update', //  签约状态更新
+    updateCheck: '/cater/state/update', //  审核状态更新,0.未审核 1.已审核
+    getRegion: '/recycle/drop/region/index'// 所属街道列表
   },
+  // 地磅信息管理
   loadometer: {
     index: '/rubbish/weighbridge/index',
     indexOne: '/rubbish/weighbridge/indexOne',
