@@ -1,19 +1,37 @@
 <template>
   <div class="GD-container">
+    <el-row tpye="flex">
+      <el-col :span="4">
+      <el-tree :data="data" :props="defaultProps"
+              accordion
+              :highlight-current="true"
+              node-key="id"
+              @node-click="handleNodeClick">
+      </el-tree>
+   </el-col>
+    <el-col :span="20">
       <kobe-table>
-        <div slot="kobe-table-header" class="kobe-table-header">      
+        <div slot="kobe-table-header" class="kobe-table-header">
           <el-row type="flex" justify="end">
             <el-col :span="14">
-              <el-button @click="openDialog()" type="primary">+新增</el-button>
-              <el-button @click="refresh" type="primary">刷新</el-button>
-              <el-button @click="deleteType()" type="primary">批量删除</el-button>                 
+              <el-button @click="openDialog" type="primary">+新增</el-button>
+              <el-button @click="getList()" type="primary">刷新</el-button>
+              <el-dropdown @command="handleCommand" style="margin-left:10px;">
+                <el-button type="primary">
+                  批量操作<i class="el-icon-caret-bottom el-icon--right"></i>
+                </el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="批量删除">批量删除</el-dropdown-item>
+                  <el-dropdown-item command="移动">移动</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </el-col>
-            <el-select v-model="form.audit_state" placeholder="所有信息" style="width:140px;">
+            <el-select v-model="form.value" placeholder="所有信息" style="width:140px;">
               <el-option
                 v-for="item in option"
-                :key="item.audit_state"
+                :key="item.value"
                 :label="item.label"
-                :value="item.audit_state">
+                :value="item.value">
               </el-option>
             </el-select>
             <el-col :span="8">
@@ -34,24 +52,38 @@
             :data="response.data"
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="id" sortable label="ID" width="80"></el-table-column>
-            <el-table-column prop="name" label="商户名" width="150"></el-table-column>
-            <el-table-column prop="duty_name" label="操作员" width="95">
+            <el-table-column prop="id" label="ID" width="50"></el-table-column>
+            <el-table-column prop="display_name" label="菜单名称"></el-table-column>
+            <el-table-column prop="logo" label="图标" width="95">
+              <template scope="scope">
+                <img style="width:58px;height:58px;" :src="scope.row.logo" @click="bigImg(scope.row.logo)" alt="">
+              </template>
             </el-table-column>
-            <el-table-column prop="mobile" width="105" label="模块"></el-table-column>
-            <el-table-column prop="region_id" label="操作标识"></el-table-column>
-            <el-table-column prop="region_id" label="操作说明"></el-table-column>
-            <el-table-column prop="region_id" label="IP"></el-table-column>
-            <el-table-column prop="detail_address" label="操作时间"></el-table-column>
+            <el-table-column prop="sort" label="同级排序" width="80"></el-table-column>
+            <el-table-column prop="sort" label="菜单路由" width="80"></el-table-column>
+            <el-table-column prop="created_at" label="创建时间"></el-table-column>
+            
+            <el-table-column label="有效状态" width="90">
+              <template scope="scope">
+                <el-switch
+                  style="width:60px;"
+                  v-model="scope.row.active"
+                  on-text="开"
+                  off-text="关"
+                  @change="toswitch(scope.row.active,scope.row.id)">
+                </el-switch>
+              </template>
+            </el-table-column>
             <el-table-column 
-              width="170"
+              width="160"
               label="操作"
               >
               <template scope="scope">
-                <!-- <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button> -->
                 <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button>
                 <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
+                <el-button @click="openPermission(scope.row.id)" size="small">联</el-button>
               </template>
+              
             </el-table-column>
           </el-table>
         </div>
@@ -71,48 +103,130 @@
           </el-row>
         </div>
       </kobe-table>
+     </el-col>
+    </el-row>
     <el-dialog v-model="dialogVisible" size="tiny">
       <img width="100%" :src="dialogImageUrl" alt="">
     </el-dialog>
-<!-- 高级搜索模态框 -->
+    <el-dialog title="移动" v-model="dialogVisibleMove" size="tiny">
+        <div style="width:100%">
+            <el-row type="flex" justify="center">
+                <el-col :span="4">
+                  <p class="FS-moveName">移动到</p>
+                </el-col>
+                <el-col :span="20">
+                    <el-cascader
+                      style="width:100%;"
+                      change-on-select
+                      :options="cascaderData"
+                      :props="props"
+                      v-model="selectedOptions"
+                      @change="handleChangeMove">
+                  </el-cascader>
+                </el-col>
+            </el-row>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisibleMove = false">取 消</el-button>
+          <el-button type="primary" @click="confirmMove">确 定</el-button>
+        </span>
+    </el-dialog>
+    <el-dialog :title="dialogTitle" v-model="showDialog">
+      <el-form :model="classData" :rules="rules" ref="classData" label-width="80px">
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="父级菜单">
+              <el-cascader
+                :options="cascaderData"
+                :props="props"
+                :change-on-select="true"
+                v-model="stepsSelection"
+                @change="handleChange"
+                style="width:100%;">
+              </el-cascader>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="菜单名称" prop="display_name" require>
+              <el-input v-model="classData.display_name"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="同级排序">
+              <el-input-number v-model="classData.sort" style="width:120px;"></el-input-number>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="是否启用">
+              <el-switch
+                v-model="classData.active"
+                on-text="开"
+                off-text="关">
+              </el-switch>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="菜单标识" prop="display_name" require>
+              <el-input v-model="classData.display_name"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="访问路由" prop="display_name" require>
+              <el-input v-model="classData.display_name"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="菜单说明" prop="description" require>
+              <el-input type="textarea" v-model="classData.description"></el-input>
+            </el-form-item>
+          </el-col>
+
+           <el-col :span="12">
+            <el-form-item label="分类icon">
+              <el-upload
+                class="avatar-uploader"
+                :action="uploadURL"
+                :show-file-list="false"
+                :on-success="iconHandleAvatarSuccess"
+                :before-upload="beforeAvatarUpload">
+                <img v-if="classData.icon" :src="classData.icon" class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+            </el-form-item>
+          </el-col> 
+          <el-col :span="12">
+            <el-form-item label="菜单图标">
+              <el-upload
+                class="avatar-uploader"
+                :action="uploadURL"
+                :show-file-list="false"
+                :on-success="handleAvatarSuccess"
+                :before-upload="beforeAvatarUpload">
+                <img v-if="classData.logo" :src="classData.logo" class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+            </el-form-item>
+          </el-col>
+        </el-row> 
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+          <el-button @click="showDialog = false">取消</el-button>
+          <el-button @click="submitForm('classData')" v-if="dialogType === 'add'">确定</el-button>
+          <el-button @click="editForm()" v-if="dialogType === 'edit'">确定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 高级搜索模态框 -->
     <el-dialog title="高级搜索" v-model="dialogAdvance">
         <el-form :model="advancedSearch" :label-width="formLabelWidth">
            <el-form-item label="关键字">
               <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="角色名称">
+            <el-form-item label="菜单名称">
               <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="角色标识">
+            <el-form-item label="菜单标识">
               <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-row>
-              <el-col :span="12">
-                <el-form-item label="角色类别">
-                  <el-select v-model="value1" placeholder="请选择">
-                    <el-option
-                      v-for="item in roleClass"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="归属商户" filterable placeholder="输入或选择商户">
-                  <el-select v-model="value2" placeholder="请选择">
-                    <el-option
-                      v-for="item in origins"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            
+            </el-form-item>            
             <el-form-item label="是否启用">
               <el-switch
                 v-model="enabled"
@@ -138,61 +252,28 @@
             <el-button type="primary" @click="advance">搜 索</el-button>
         </span>
     </el-dialog>
-    <!-- 新增 修改 -->
-    <el-dialog :title="dialogTitle" v-model="detailShow">
-        <el-form :model="detailForm" ref="detailForm" :label-width="formLabelWidth">
-          <el-form-item label="角色名称" prop="id">
-            <el-input v-model="detailForm.id" placeholder="请输入角色名称"></el-input>
-          </el-form-item>
-          <el-row>
-              <el-col :span="12">
-                <el-form-item label="角色类别">
-                  <el-select v-model="value1" placeholder="请选择">
-                    <el-option
-                      v-for="item in roleClass"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="归属商户" filterable placeholder="输入或选择商户">
-                  <el-select v-model="value2" placeholder="请选择">
-                    <el-option
-                      v-for="item in origins"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-form-item label="是否启用">
-              <el-switch
-                v-model="enabled"
-                on-text="是"
-                off-text="否">
-              </el-switch>
+    <!-- 菜单关联权限弹框 -->
+       <el-dialog title="菜单关联权限" v-model="correlateShow">
+        <el-form :model="permissionForm" :label-width="formLabelWidth">
+           <el-form-item label="角色名称">
+              <el-input v-model="permissionForm.name" auto-complete="off"></el-input>
             </el-form-item>
-          <el-form-item label="角色标识" prop="id">
-            <el-input v-model="detailForm.id" placeholder="角色标识"></el-input>
-          </el-form-item>
-          <el-form-item label="角色简介">
-            <el-input
-              type="textarea"
-              :rows="4"
-              placeholder="请输入内容"
-              v-model="form.id">
-            </el-input>
-          </el-form-item>
+            <el-form-item label="角色标识">
+              <el-input v-model="permissionForm.name" auto-complete="off"></el-input>
+            </el-form-item>           
         </el-form>
+        <el-tabs class="margin" v-model="activeName"  @tab-click="handleClick" style="margin:0 2em">
+          <el-tab-pane label="已关联权限" name="first">
+            <rel-tab v-if='firstId'></rel-tab>
+          </el-tab-pane>
+          <el-tab-pane label="未关联权限" name="second">
+            <norel-tab v-if='secondId'></norel-tab>
+          </el-tab-pane>  
+        </el-tabs>
         <div slot="footer" class="dialog-footer">
           <el-row type="flex" justify="end">
-            <el-button @click="detailShow = false">取 消</el-button>
-            <el-button type="primary" @click="detailShow = false">确定</el-button>
+            <el-button @click="correlateShow = false">取 消</el-button>
+            <el-button type="primary" @click="correlateShow = false">确定</el-button>
           </el-row>
         </div>
       </el-dialog>
@@ -201,44 +282,48 @@
 <script>
 import config from 'src/config'
 import api from 'src/api'
+import relTab from './reltable/rel-perssion'
+import norelTab from './reltable/noRel-perssion'
 export default {
   data () {
     return {
-      enabled: false,
-      origins: [{
-        value: '1',
-        label: '商户级别'
-      }],
-      roleClass: [{
-        value: '1',
-        label: '商户级别'
-      }],
-      value1: '',
-      value2: '',
-      formLabelWidth: '90px',
-      adSwitch: true,
+      activeName: 'first',
+      firstId: true,
+      secondId: true,
+      permissionForm: {
+        name: ''
+      },
+      correlateShow: false,
+      formLabelWidth: '80px',
       advancedSearch: {
         keyword: ''
       },
       dialogAdvance: false,
-      detailForm: {
-        id: ''
-      },
+      moveVal: null,
       dialogVisibleMove: false,
       data: [],
       defaultProps: {
         children: 'children',
-        label: 'title'
+        label: 'display_name'
       },
       cascaderData: [],
       props: {
         children: 'children',
-        label: 'title',
+        label: 'display_name',
         value: 'id'
       },
-      dialogTitle: '',
       uploadURL: config.serverURI + config.uploadFilesAPI,
       multipleSelection: [],
+      option: [{
+        value: '0',
+        label: '全部'
+      }, {
+        value: '1',
+        label: '栏目名称'
+      }, {
+        value: '2',
+        label: '访问路径'
+      }],
       response: {
         data: null
       },
@@ -253,23 +338,23 @@ export default {
         logo: '',
         icon: ''
       },
-      detailShow: false,
       selectedOptions: [],
       showDialog: false,
       dialogVisible: false,
       dialogImageUrl: '',
+      dialogTitle: '',
       stepsSelection: [],
       tableData: null,
       dialogType: '',
       form: {
         keyword: '',
-        audit_state: ''
+        value: ''
       },
       parentId: null,
       ids: [],
       rules: {
         display_name: [
-          { required: true, message: '请输入小区名称', trigger: 'blur' }
+          { required: true, message: '请输入分类名称', trigger: 'blur' }
         ],
         description: [
           { required: true, message: '分类说明50字以内', trigger: 'blur' },
@@ -278,27 +363,14 @@ export default {
       }
     }
   },
+  components: {
+    relTab,
+    norelTab
+  },
   methods: {
-    // 刷新
-    refresh () {
-      this.getList()
-    },
-    detail () {
-      this.detailShow = true
-    },
-    // 添加
-    add () {
-      this.detailForm = {
-        id: ''
-      }
-    },
-    // 进入小区详情页
-    edit (id) {
-      this.$router.push({ path: '/admin/recycle/village/detail', query: { 'id': id } })
-    },
-    enterRel (id) {
-      this.$store.commit('SET_TOKEN', id)
-      this.$router.push({ path: '/admin/recycle/village/relserver', query: { 'id': id } })
+    // 打开关联权限弹框
+    openPermission (id) {
+      this.correlateShow = true
     },
     handleCommand (command) {
       if (command === '批量删除') {
@@ -308,14 +380,34 @@ export default {
         this.confirmMove()
       }
     },
+    // 高级搜索
+    advance () {
+      this.dialogAdvance = false
+      this.adSwitch = false
+      const data = {
+        currentPage: 1,
+        pageSize: this.response.pageSize,
+        ...this.advancedSearch
+      }
+      api.GET(config.village.advanced, data)
+      .then(response => {
+        this.response = this.transformDate(response.data)
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
     // 将数据中所有的时间转换成 yyyy-mm-dd hh:mm:ss  state 状态值
     transformDate (res) {
       res.data.forEach(v => {
-        if (v.audit_state === 0) {
-          v.audit_state = false
+        if (v.created_at) {
+          v.created_at = this.formatDate(v.created_at)
         }
-        if (v.audit_state === 1) {
-          v.audit_state = true
+        if (v.active === 1) {
+          v.active = true
+        }
+        if (v.active === 0) {
+          v.active = false
         }
       })
       return res
@@ -355,35 +447,31 @@ export default {
       this.dialogVisible = true
     },
     toswitch (active, id) {
-      if (active) {
-        active = 1
-      } else {
-        active = 0
+      let data = {
+        pageSize: this.response.pageSize,
+        currentPage: this.response.currentPage
       }
-      api.POST(config.village.audit, {id: id, audit_state: active})
+      api.POST(config.activeCategoryAPI, {id: id, active: Number(active)})
       .then(response => {
-        this.getList()
+        this.getList(data)
         this.onSuccess('启用操作成功！')
       })
       .catch(error => {
         this.$message.error(error)
       })
     },
-    advance () {
-      this.dialogAdvance = false
-      this.adSwitch = false
-      const data = {
-        currentPage: 1,
-        pageSize: this.response.pageSize,
-        ...this.advancedSearch
-      }
-      api.GET(config.village.advanced, data)
-      .then(response => {
-        this.response = this.transformDate(response.data)
-      })
-      .catch(error => {
-        this.$message.error(error)
-      })
+    // 树形结构选择
+    handleChange (value) {
+      console.log(value)
+    },
+    handleChangeMove (value) {
+      console.log(value)
+      this.moveVal = value
+    },
+    // 树形目录点击事件
+    handleNodeClick (data, node) {
+      this.parentId = data.id
+      this.getList({parent_id: this.parentId})
     },
     toggleSelection (rows) {
       if (rows) {
@@ -403,21 +491,33 @@ export default {
     },
     // 模态框显示
     openDialog (e, data = null, type = null) {
-      console.log(data)
       if (data !== null && type === 'edit') {
         this.dialogType = 'edit'
-        this.dialogTitle = '修改角色'
-        this.detailForm = {
+        this.dialogTitle = '修改菜单'
+        this.classData = {
+          ...this.classData,
           ...data
+        }
+        this.stepsSelection = []
+        if (data.parent) {
+          this.stepsSelection.push(data.parent.id)
+        } else {
+          this.stepsSelection.push(data.id)
         }
       } else {
         this.dialogType = 'add'
-        this.dialogTitle = '新增角色'
-        this.detailForm = {
-          id: ''
+        this.dialogTitle = '新增菜单'
+        this.classData = {
+          parent_id: [],
+          display_name: '',
+          sort: null,
+          active: 1,
+          description: '',
+          logo: '',
+          icon: ''
         }
       }
-      this.detailShow = true
+      this.showDialog = true
     },
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
@@ -426,6 +526,7 @@ export default {
           var obj = this.classData
           var pid = this.stepsSelection
           obj.parent_id = pid.shift()
+          console.log(obj)
           api.POST(config.createCategoryAPI, obj)
             .then(response => {
               if (response.status !== 200) {
@@ -464,6 +565,25 @@ export default {
         }
       })
     },
+    // 批量移动
+    confirmMove () {
+      this.dialogVisibleMove = true
+      this.parentId = null
+      this.parentId = this.moveVal.shift()
+      var obj = {}
+      obj.ids = this.ids
+      obj.id = this.parentId
+      api.POST(config.moveCategoryAPI, obj)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.getList()
+          this.getTree()
+          this.dialogVisibleMove = false
+        }
+      }).catch(error => {
+        this.$message.error(error)
+      })
+    },
     // 删除表单
     deleteType (id) {
       if (id) {
@@ -482,18 +602,19 @@ export default {
         })
         return
       }
-      this.$confirm('此操作将删除该日志，删除后，操作日志将无法再显示，不过系统仍保留该操作记录。是否继续删除？', '删除', {
+      this.$confirm('是否确认删除该表单', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.POST(config.village.delete, {
+        api.POST(config.deleteCategoryAPI, {
           ids: this.ids
         })
         .then(response => {
           if (response.data.errcode === '0000') {
             this.onSuccess('删除成功')
             this.getList()
+            this.getTree()
           } else {
             this.$message.error('发生错误，请重试')
           }
@@ -506,11 +627,8 @@ export default {
         pageSize: value,
         ...this.form
       }
-      if (this.adSwitch) {
-        this.getList(data)
-      } else {
-        this.adSwitch = true
-      }
+
+      this.getList(data)
     },
     handleCurrentChange (value) {
       const data = {
@@ -518,11 +636,8 @@ export default {
         pageSize: this.response.pageSize,
         ...this.form
       }
-      if (this.adSwitch) {
-        this.getList(data)
-      } else {
-        this.adSwitch = true
-      }
+
+      this.getList(data)
     },
     onSearch () {
       const data = {
@@ -546,10 +661,11 @@ export default {
       }
     },
     getTree () {
-      api.GET(config.village.streetTree)
+      api.GET(config.categoryTreeAPI)
       .then(response => {
-        var newData = response.data.data[0].children[0].children
+        var newData = response.data.data
         this.iteration(newData)
+        newData.push({ id: 0, display_name: '根级分类', label: '根级分类', value: 0 })
         this.data = newData
         this.cascaderData = newData
       })
@@ -558,7 +674,7 @@ export default {
       })
     },
     getList (data = {}) {
-      api.GET(config.village.list, data)
+      api.GET(config.categoryIndexAPI, data)
       .then(response => {
         this.response = this.transformDate(response.data.data)
       })
@@ -575,8 +691,8 @@ export default {
     }
   },
   mounted () {
-    this.getList()
     this.getTree()
+    this.getList()
   }
 }
 </script>
@@ -614,5 +730,4 @@ export default {
     font-size: 14px;
     margin: 7px 0 0 7px;
 }
-
 </style>

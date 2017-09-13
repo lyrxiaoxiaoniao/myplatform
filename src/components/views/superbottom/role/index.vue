@@ -4,6 +4,7 @@
         <div slot="kobe-table-header" class="kobe-table-header">      
           <el-row type="flex" justify="end">
             <el-col :span="14">
+              <el-button @click="openDialog()" type="primary">+新增</el-button>
               <el-button @click="refresh" type="primary">刷新</el-button>
               <el-button @click="deleteType()" type="primary">批量删除</el-button>                 
             </el-col>
@@ -34,22 +35,24 @@
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" sortable label="ID" width="80"></el-table-column>
-            <el-table-column prop="name" label="商户名" width="150"></el-table-column>
-            <el-table-column prop="duty_name" label="操作员" width="95">
+            <el-table-column prop="name" label="角色名称" width="150"></el-table-column>
+            <el-table-column prop="duty_name" label="角色标识" width="95">
             </el-table-column>
-            <el-table-column prop="mobile" width="105" label="模块"></el-table-column>
-            <el-table-column prop="region_id" label="操作标识"></el-table-column>
-            <el-table-column prop="region_id" label="操作说明"></el-table-column>
-            <el-table-column prop="region_id" label="IP"></el-table-column>
-            <el-table-column prop="detail_address" label="操作时间"></el-table-column>
+            <el-table-column prop="mobile" width="105" label="角色类别"></el-table-column>
+            <el-table-column prop="region_id" label="账号数量"></el-table-column>
+            <el-table-column prop="region_id" label="角色说明"></el-table-column>
+            <el-table-column prop="region_id" label="创建时间"></el-table-column>
+            <el-table-column prop="detail_address" label="有效状态"></el-table-column>
             <el-table-column 
               width="170"
               label="操作"
               >
               <template scope="scope">
                 <!-- <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button> -->
-                <el-button @click="detail(scope.row.id)" size="small" icon="edit"></el-button>
+                <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button>
                 <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
+                <el-button size="small" @click="openPermission(scope.row.id)">权</el-button>
+                <el-button size="small" @click="openUsers(scope.row.id)">用</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -75,26 +78,50 @@
     </el-dialog>
 <!-- 高级搜索模态框 -->
     <el-dialog title="高级搜索" v-model="dialogAdvance">
-        <el-form :model="advancedSearch">
-           <el-form-item label="关键字" :label-width="formLabelWidth">
+        <el-form :model="advancedSearch" :label-width="formLabelWidth">
+           <el-form-item label="关键字">
               <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="商户名称" :label-width="formLabelWidth">
+            <el-form-item label="角色名称">
               <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="用户名" :label-width="formLabelWidth">
+            <el-form-item label="角色标识">
               <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="操作标识" :label-width="formLabelWidth">
-              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="角色类别">
+                  <el-select v-model="value1" placeholder="请选择">
+                    <el-option
+                      v-for="item in roleClass"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="归属商户" filterable placeholder="输入或选择商户">
+                  <el-select v-model="value2" placeholder="请选择">
+                    <el-option
+                      v-for="item in origins"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>            
+            <el-form-item label="是否启用">
+              <el-switch
+                v-model="enabled"
+                on-text="是"
+                off-text="否">
+              </el-switch>
             </el-form-item>
-            <el-form-item label="IP地址" :label-width="formLabelWidth">
-              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="操作模块" :label-width="formLabelWidth">
-              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="操作时间" :label-width="formLabelWidth">
+            <el-form-item label="创建时间">
               <el-date-picker
                   v-model="advancedSearch.keyword"
                   type="datetime"
@@ -112,61 +139,52 @@
             <el-button type="primary" @click="advance">搜 索</el-button>
         </span>
     </el-dialog>
-    <el-dialog title="操作详情查看" v-model="detailShow">
-        <el-form :model="detailForm" ref="detailForm" label-width="100px">
-          <el-form-item label="商户名" prop="id">
-            <el-input v-model="detailForm.id" placeholder="请输入商户名"></el-input>
+    <!-- 新增 修改 -->
+    <el-dialog :title="dialogTitle" v-model="detailShow">
+        <el-form :model="detailForm" ref="detailForm" :rules="rules" :label-width="formLabelWidth">
+          <el-form-item label="角色名称" prop="id">
+            <el-input v-model="detailForm.id" placeholder="请输入角色名称"></el-input>
           </el-form-item>
           <el-row>
-            <el-col :span="11">
-              <el-form-item label="操作员" prop="id">
-                <el-input v-model="detailForm.id" placeholder="请输入操作员"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :offset="2" :span="11">
-              <el-form-item label="操作员姓名" prop="id">
-                <el-input v-model="detailForm.id" placeholder="请输入操作员姓名"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row>
-            <el-col :span="11">
-              <el-form-item label="操作模块" prop="id">
-                <el-input v-model="detailForm.id"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :offset="2" :span="11">
-              <el-form-item label="操作标识" prop="id">
-                <el-input v-model="detailForm.id"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row>
-            <el-col :span="11">
-              <el-form-item label="操作时间" prop="id">
-                <el-input v-model="detailForm.id" placeholder="请输入操作员"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :offset="2" :span="11">
-              <el-form-item label="操作IP" prop="id">
-                <el-input v-model="detailForm.id" placeholder="请输入操作IP"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-form-item label="操作说明">
+              <el-col :span="12">
+                <el-form-item label="角色类别">
+                  <el-select v-model="value1" placeholder="请选择">
+                    <el-option
+                      v-for="item in roleClass"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="归属商户" filterable placeholder="输入或选择商户">
+                  <el-select v-model="value2" placeholder="请选择">
+                    <el-option
+                      v-for="item in origins"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-form-item label="是否启用">
+              <el-switch
+                v-model="enabled"
+                on-text="是"
+                off-text="否">
+              </el-switch>
+            </el-form-item>
+          <el-form-item label="角色标识" prop="id">
+            <el-input v-model="detailForm.id" placeholder="角色标识"></el-input>
+          </el-form-item>
+          <el-form-item label="角色简介">
             <el-input
               type="textarea"
               :rows="4"
-              placeholder="请输入内容"
-              v-model="form.id">
-            </el-input>
-          </el-form-item>
-          <el-form-item label="浏览器Agent">
-            <el-input
-              type="textarea"
-              :rows="6"
               placeholder="请输入内容"
               v-model="form.id">
             </el-input>
@@ -175,7 +193,67 @@
         <div slot="footer" class="dialog-footer">
           <el-row type="flex" justify="end">
             <el-button @click="detailShow = false">取 消</el-button>
-            <el-button type="primary" @click="detailShow = false">确定</el-button>
+            <el-button @click="submitForm('detailForm')" v-if="dialogType === 'add'">确定</el-button>
+            <el-button @click="editForm()" v-if="dialogType === 'edit'">确定</el-button>
+          </el-row>
+        </div>
+      </el-dialog>
+    <!-- 角色关联权限弹框 -->
+       <el-dialog title="角色关联权限" v-model="correlateShow">
+        <el-form :model="permissionForm" :label-width="formLabelWidth">
+           <el-form-item label="角色名称">
+              <el-input v-model="permissionForm.name" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="角色标识">
+              <el-input v-model="permissionForm.name" auto-complete="off"></el-input>
+            </el-form-item>           
+        </el-form>
+        <el-tabs class="margin" v-model="activeName"  @tab-click="handleClick" style="margin:0 2em">
+          <el-tab-pane label="已关联权限" name="first">
+            <rel-tab v-if='firstId'></rel-tab>
+          </el-tab-pane>
+          <el-tab-pane label="未关联权限" name="second">
+            <norel-tab v-if='secondId'></norel-tab>
+          </el-tab-pane>  
+        </el-tabs>
+        <div slot="footer" class="dialog-footer">
+          <el-row type="flex" justify="end">
+            <el-button @click="correlateShow = false">取 消</el-button>
+            <el-button type="primary" @click="correlateShow = false">确定</el-button>
+          </el-row>
+        </div>
+      </el-dialog>
+         <!-- 角色关联用户弹框 -->
+       <el-dialog title="角色关联用户" v-model="correlateShow2">
+        <el-form :model="permissionForm" :label-width="formLabelWidth">
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="角色名称">
+                <el-input v-model="permissionForm.name" auto-complete="off"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="角色标识">
+                <el-input v-model="permissionForm.name" auto-complete="off"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>         
+            <el-form-item label="角色归属">
+              <el-input v-model="permissionForm.name" auto-complete="off"></el-input>
+            </el-form-item>           
+        </el-form>
+        <el-tabs class="margin" v-model="activeName"  @tab-click="handleClick" style="margin:0 2em">
+          <el-tab-pane label="已关联用户" name="first">
+            <rel v-if='firstId'></rel>
+          </el-tab-pane>
+          <el-tab-pane label="待关联用户" name="second">
+            <norel v-if='secondId'></norel>
+          </el-tab-pane>  
+        </el-tabs>
+        <div slot="footer" class="dialog-footer">
+          <el-row type="flex" justify="end">
+            <el-button @click="correlateShow2 = false">取 消</el-button>
+            <el-button type="primary" @click="correlateShow2 = false">确定</el-button>
           </el-row>
         </div>
       </el-dialog>
@@ -184,10 +262,39 @@
 <script>
 import config from 'src/config'
 import api from 'src/api'
+import relTab from './reltable/rel-perssion'
+import norelTab from './reltable/noRel-perssion'
+import rel from './reltable/rel-users'
+import norel from './reltable/noRel-users'
 export default {
   data () {
     return {
+      firstId: true,
+      secondId: true,
+      enabled: false,
+      correlateShow2: false,
+      correlateShow: false,
+      activeName: 'first',
+      origins: [{
+        value: '1',
+        label: '商户级别'
+      }, {
+        value: '2',
+        label: '系统级别'
+      }],
+      roleClass: [{
+        value: '1',
+        label: '商户级别'
+      }, {
+        value: '2',
+        label: '系统级别'
+      }],
+      value1: '',
+      value2: '',
       formLabelWidth: '90px',
+      permissionForm: {
+        name: ''
+      },
       adSwitch: true,
       advancedSearch: {
         keyword: ''
@@ -208,28 +315,17 @@ export default {
         label: 'title',
         value: 'id'
       },
+      dialogTitle: '',
       uploadURL: config.serverURI + config.uploadFilesAPI,
       multipleSelection: [],
       response: {
         data: null
-      },
-      icon: '',
-      logo: '',
-      classData: {
-        parent_id: [],
-        display_name: '',
-        sort: null,
-        active: 1,
-        description: '',
-        logo: '',
-        icon: ''
       },
       detailShow: false,
       selectedOptions: [],
       showDialog: false,
       dialogVisible: false,
       dialogImageUrl: '',
-      dialogTitle: '',
       stepsSelection: [],
       tableData: null,
       dialogType: '',
@@ -237,11 +333,10 @@ export default {
         keyword: '',
         audit_state: ''
       },
-      parentId: null,
       ids: [],
       rules: {
         display_name: [
-          { required: true, message: '请输入小区名称', trigger: 'blur' }
+          { required: true, message: '请输入分类名称', trigger: 'blur' }
         ],
         description: [
           { required: true, message: '分类说明50字以内', trigger: 'blur' },
@@ -250,17 +345,27 @@ export default {
       }
     }
   },
+  components: {
+    relTab,
+    norelTab,
+    rel,
+    norel
+  },
   methods: {
+    // 打开关联权限弹框
+    openPermission () {
+      this.correlateShow = true
+    },
+    // 打开关联用户弹框
+    openUsers () {
+      this.correlateShow2 = true
+    },
     // 刷新
     refresh () {
       this.getList()
     },
     detail () {
       this.detailShow = true
-    },
-    // 进入添加小区页面
-    enterAdd () {
-      this.$router.push('/admin/recycle/village/add')
     },
     // 进入小区详情页
     edit (id) {
@@ -373,61 +478,46 @@ export default {
     },
     // 模态框显示
     openDialog (e, data = null, type = null) {
+      console.log(data)
       if (data !== null && type === 'edit') {
         this.dialogType = 'edit'
-        this.dialogTitle = '修改分类'
-        this.classData = {
-          ...this.classData,
+        this.dialogTitle = '修改角色'
+        this.detailForm = {
           ...data
-        }
-        this.stepsSelection = []
-        if (data.parent) {
-          this.stepsSelection.push(data.parent.id)
-        } else {
-          this.stepsSelection.push(data.id)
         }
       } else {
         this.dialogType = 'add'
-        this.dialogTitle = '新增分类'
-        this.classData = {
-          parent_id: [],
-          display_name: '',
-          sort: null,
-          active: 1,
-          description: '',
-          logo: '',
-          icon: ''
+        this.dialogTitle = '新增角色'
+        this.detailForm = {
+          id: ''
         }
       }
-      this.showDialog = true
+      this.detailShow = true
     },
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.classData.active = Number(this.classData.active)
-          var obj = this.classData
-          var pid = this.stepsSelection
-          obj.parent_id = pid.shift()
-          api.POST(config.createCategoryAPI, obj)
-            .then(response => {
-              if (response.status !== 200) {
-                this.error = response.statusText
-                return
-              }
-              if (response.data.errcode === '0000') {
-                this.onSuccess('创建成功')
-                this.getList()
-                this.getTree()
-                this.showDialog = false
-              }
-            })
+          // let data = {}
+          console.log(111)
+          this.detailShow = false
+          // api.POST(config.createCategoryAPI, data)
+          //   .then(response => {
+          //     if (response.status !== 200) {
+          //       this.error = response.statusText
+          //       return
+          //     }
+          //     if (response.data.errcode === '0000') {
+          //       this.onSuccess('创建成功')
+          //       this.getList()
+          //       this.detailShow = false
+          //     }
+          //   })
         } else {
           return false
         }
       })
     },
     editForm () {
-      this.classData.active = Number(this.classData.active)
       var obj = this.classData
       var pid = this.stepsSelection
       obj.parent_id = pid.shift()
@@ -441,8 +531,7 @@ export default {
         if (response.data.errcode === '0000') {
           this.onSuccess('修改成功')
           this.getList()
-          this.getTree()
-          this.showDialog = false
+          this.detailShow = false
         }
       })
     },
@@ -464,7 +553,7 @@ export default {
         })
         return
       }
-      this.$confirm('此操作将删除该日志，删除后，操作日志将无法再显示，不过系统仍保留该操作记录。是否继续删除？', '删除', {
+      this.$confirm('此操作将删除该角色，删除后，拥有该角色的工号权限将会受到影响。是否继续删除？', '删除', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

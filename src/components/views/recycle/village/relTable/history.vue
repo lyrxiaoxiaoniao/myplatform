@@ -21,11 +21,16 @@
                     stripe
                     :data="response.data"
                     @selection-change="handleSelectionChange">
-                    <el-table-column type="selection" width="40"></el-table-column>
-                    <el-table-column prop="id" label="ID" sortable width="120"></el-table-column>
-                    <el-table-column prop="name" label="物业名称" width="170"></el-table-column>
-                    <el-table-column prop="duty_name" label="联系人" width="150"></el-table-column>
-                    <el-table-column prop="mobile" label="联系电话" width="150"></el-table-column>
+                    <!-- <el-table-column type="selection" width="40"></el-table-column> -->
+                    <el-table-column prop="id" label="ID" sortable width="90"></el-table-column>
+                    <el-table-column prop="name" label="物业名称"></el-table-column>
+                    <el-table-column prop="name" label="关联时间" width="120">
+                      <template scope="scope">
+                        {{scope.row.begin_time | toYM}} - {{scope.row.end_time | toYM}}
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="duty_name" label="联系人" width="80"></el-table-column>
+                    <el-table-column prop="mobile" label="联系电话" width="120"></el-table-column>
                     <el-table-column prop="address" label="公司地址"></el-table-column>
                 </el-table>
                 </div>
@@ -53,6 +58,7 @@
 import config from 'src/config'
 import api from 'src/api'
 export default {
+  props: ['communityId'],
   data () {
     return {
       form: {
@@ -86,6 +92,7 @@ export default {
       const data = {
         currentPage: this.response.currentPage,
         pageSize: value,
+        id: this.communityId,
         ...this.form
       }
       this.getList(data)
@@ -94,17 +101,26 @@ export default {
       const data = {
         currentPage: value,
         pageSize: this.response.pageSize,
+        id: this.communityId,
         ...this.form
       }
       this.getList(data)
     },
-    getList (data = {}) {
-      data = {
-        id: this.$store.state.token
+    getList (data = null) {
+      if (data === null) {
+        data = {
+          id: this.communityId,
+          currentPage: 1,
+          pageSize: 10
+        }
       }
       api.GET(config.village.history, data)
       .then(response => {
-        this.response.data = this.transform(response.data.data)
+        console.log(response.data.data)
+        this.response.data = this.transform(response.data.data.data)
+        this.response.currentPage = response.data.data.currentPage
+        this.response.pageSize = response.data.data.pageSize
+        this.response.count = response.data.data.count
       })
       .catch(error => {
         this.$message.error(error)
@@ -155,10 +171,9 @@ export default {
     // 转换数据
     transform (data) {
       let res = []
-      let count = 0
       data.forEach(e => {
-        count++
-        e.rubTenementVOS[0].count = count
+        e.rubTenementVOS[0].begin_time = e.begin_time
+        e.rubTenementVOS[0].end_time = e.end_time
         res.push(e.rubTenementVOS[0])
       })
       return res

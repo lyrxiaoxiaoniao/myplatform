@@ -4,15 +4,15 @@
         <div class="lh-form">
             <kobe-table>
                 <div slot="kobe-table-header" class="kobe-table-header">
-                  <!-- <el-row type="flex" justify="end">
+                  <el-row type="flex" justify="end">
                     <el-col :span="10" :offset="14">
-                        <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
+                        <el-input v-model="form.keyword" placeholder="请输入小区名称">
                         <el-button slot="append" @click="onSearch" icon="search"></el-button>
                         </el-input>
                     </el-col>
                       <el-button icon="upload2" type="primary" style="margin-left:10px;"></el-button>
                       <el-button icon="setting" type="primary"></el-button>
-                  </el-row>     -->      
+                  </el-row>          
                 </div>
                 <div slot="kobe-table-content" class="kobe-table">
                 <el-table
@@ -83,7 +83,7 @@
 import config from 'src/config'
 import api from 'src/api'
 export default {
-  props: ['id', 'isclick'],
+  props: ['tenementId'],
   data () {
     return {
       isrepeat: this.isclick,
@@ -106,6 +106,14 @@ export default {
     }
   },
   methods: {
+    onSearch () {
+      const data = {
+        currentPage: 1,
+        pageSize: this.response.pageSize,
+        ...this.form
+      }
+      this.getList(data)
+    },
     openDialog (id) {
       this.dialogAdvance = true
       this.correlateForm.community_id = id
@@ -161,13 +169,23 @@ export default {
       }
       this.getList(data)
     },
-    getList (data = {}) {
-      data = {
-        id: this.$store.state.token
+    getList (data = null) {
+      if (data === null) {
+        data = {
+          id: this.communityId,
+          currentPage: 1,
+          pageSize: 10
+        }
       }
       api.GET(config.server.uncorrelated, data)
       .then(response => {
         this.response.data = this.transform(response.data.data.data)
+        this.response.currentPage = response.data.data.currentPage
+        this.response.pageSize = response.data.data.pageSize
+        this.response.count = response.data.data.count
+        if (response.data.errcode === '5000') {
+          this.response.data = null
+        }
       })
       .catch(error => {
         this.$message.error(error)
@@ -218,7 +236,6 @@ export default {
   },
   mounted () {
     this.getList()
-    // console.log(this.$store.state.callingAPI)
   }
 }
 </script>

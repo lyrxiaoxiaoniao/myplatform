@@ -4,15 +4,15 @@
         <div class="lh-form">
             <kobe-table>
                 <div slot="kobe-table-header" class="kobe-table-header">
-                  <!-- <el-row type="flex" justify="end">
+                  <el-row type="flex" justify="end">
                     <el-col :span="10" :offset="14">
-                        <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
+                        <el-input v-model="form.keyword" placeholder="请输入小区名称">
                         <el-button slot="append" @click="onSearch" icon="search"></el-button>
                         </el-input>
                     </el-col>
                       <el-button icon="upload2" type="primary" style="margin-left:10px;"></el-button>
                       <el-button icon="setting" type="primary"></el-button>
-                  </el-row>     -->      
+                  </el-row>          
                 </div>
                 <div slot="kobe-table-content" class="kobe-table">
                 <el-table
@@ -21,13 +21,13 @@
                     stripe
                     :data="response.data"
                     @selection-change="handleSelectionChange">
-                    <el-table-column type="selection" width="40"></el-table-column>
-                    <el-table-column prop="id" label="ID" sortable width="120"></el-table-column>
-                    <el-table-column prop="name" label="物业名称" width="170"></el-table-column>
-                    <el-table-column prop="duty_name" label="联系人" width="150"></el-table-column>
-                    <el-table-column prop="mobile" label="联系电话" width="150"></el-table-column>
+                    <!-- <el-table-column type="selection" width="40"></el-table-column> -->
+                    <el-table-column prop="id" label="ID" sortable width="80"></el-table-column>
+                    <el-table-column prop="name" label="物业名称" width="140"></el-table-column>
+                    <el-table-column prop="duty_name" label="联系人" width="80"></el-table-column>
+                    <el-table-column prop="mobile" label="联系电话" width="120"></el-table-column>
                     <el-table-column prop="address" label="公司地址"></el-table-column>
-                    <el-table-column width="160" label="操作">
+                    <el-table-column width="140" label="操作">
                     <template scope="scope">
                         <el-button size="small" icon="edit" title="修改"></el-button>
                         <el-button size="small" @click="openDialog(scope.row.id)" title="关联">关联</el-button>
@@ -87,7 +87,7 @@ export default {
     return {
       dialogAdvance: false,
       correlateForm: {
-        community_id: this.$store.state.token,
+        community_id: this.communityId,
         tenement_id: '',
         begin_time: '',
         end_time: ''
@@ -103,6 +103,14 @@ export default {
     }
   },
   methods: {
+    onSearch () {
+      const data = {
+        currentPage: 1,
+        pageSize: this.response.pageSize,
+        ...this.form
+      }
+      this.getList(data)
+    },
     openDialog (id) {
       this.dialogAdvance = true
       this.correlateForm.tenement_id = id
@@ -113,6 +121,7 @@ export default {
       .then(response => {
         this.onSuccess('关联成功！')
         this.getList()
+        this.$emit('correlateEvent', this.response.count)
       })
       .catch(error => {
         this.$message.error(error)
@@ -136,14 +145,11 @@ export default {
     },
     // 转换数据
     transform (data) {
-      var count = 0
       var res = []
       data.forEach(e => {
-        count++
         e.rubTenementVOS[0].id = e.id
         res.push(e.rubTenementVOS[0])
       })
-      this.response.count = count
       return res
     },
     handleSizeChange (value) {
@@ -162,13 +168,20 @@ export default {
       }
       this.getList(data)
     },
-    getList (data = {}) {
-      data = {
-        id: this.$store.state.token
+    getList (data = null) {
+      if (data === null) {
+        data = {
+          id: this.communityId,
+          currentPage: 1,
+          pageSize: 10
+        }
       }
       api.GET(config.village.uncorrelated, data)
       .then(response => {
         this.response.data = this.transform(response.data.data.data)
+        this.response.currentPage = response.data.data.currentPage
+        this.response.pageSize = response.data.data.pageSize
+        this.response.count = response.data.data.count
         if (response.data.errcode === '5000') {
           this.response.data = null
         }

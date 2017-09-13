@@ -28,7 +28,7 @@
                     <el-table-column prop="mobile" label="联系电话" width="150"></el-table-column>
                     <el-table-column label="服务时间" width="150">
                       <template scope="scope">
-                        {{scope.row.begin_time | toDate}} - {{scope.row.end_time | toDate}}
+                        {{scope.row.begin_time | toYM}} - {{scope.row.end_time | toYM}}
                       </template>
                     </el-table-column>
                     <el-table-column prop="detail_address" label="所属街道" width="150"></el-table-column>
@@ -65,11 +65,12 @@
 import config from 'src/config'
 import api from 'src/api'
 export default {
+  props: ['tenementId'],
   data () {
     return {
       removeForm: {
         community_id: '',
-        tenement_id: this.$store.state.token
+        tenement_id: this.tenementId
       },
       form: {
         keyword: ''
@@ -114,14 +115,20 @@ export default {
       }
       this.getList(data)
     },
-    getList (data = {}) {
-      data = {
-        id: this.$store.state.token
+    getList (data = null) {
+      if (data === null) {
+        data = {
+          id: this.tenementId,
+          currentPage: 1,
+          pageSize: 10
+        }
       }
       api.GET(config.server.queryTenement, data)
       .then(response => {
-        this.response.data = this.transform(response.data.data)
-        console.log(response.data)
+        this.response.data = this.transform(response.data.data.data)
+        this.response.currentPage = response.data.data.currentPage
+        this.response.pageSize = response.data.data.pageSize
+        this.response.count = response.data.data.count
       })
       .catch(error => {
         this.$message.error(error)

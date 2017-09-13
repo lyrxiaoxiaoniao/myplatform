@@ -127,8 +127,8 @@
     </div>    
 </template>
 <script>
-import api from 'src/config'
-import config from 'src/api'
+import config from 'src/config'
+import api from 'src/api'
 export default {
   props: ['id'],
   data () {

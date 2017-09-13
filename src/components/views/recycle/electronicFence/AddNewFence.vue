@@ -9,10 +9,14 @@
                :model="form"
                label-width="80px">
         <el-form-item label="围栏名称">
-          <el-input></el-input>
+          <div class="inputWrapper">
+            <el-input></el-input>
+          </div>
         </el-form-item>
         <el-form-item label="围栏描述">
-          <el-input></el-input>
+          <div class="inputWrapper">
+            <el-input></el-input>
+          </div>
         </el-form-item>
         <el-form-item label="划分方式">
           <el-select v-model="form.type"
@@ -46,9 +50,14 @@
                      v-if="isEditing && form.type === 'duobianxing'"
                      @click="finishPolygon">结束编辑多边形</el-button>
         </el-form-item>
+        <el-form-item>
+          <div class="btnWrapper">
+            <el-button type="primary">添加</el-button>
+            <el-button @click="back">取消</el-button>
+          </div>
+        </el-form-item>
       </el-form>
     </el-card>
-
   </div>
 </template>
 
@@ -94,6 +103,9 @@ export default {
     }
   },
   methods: {
+    back() {
+      this.$router.go(-1)
+    },
     map1Init() {
       // const that = this
       /* eslint-disable */
@@ -170,5 +182,13 @@ export default {
 
 #map2 {
   height: 100%;
+}
+
+.inputWrapper {}
+
+.btnWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

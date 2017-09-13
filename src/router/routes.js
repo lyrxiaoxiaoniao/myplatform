@@ -1,69 +1,70 @@
-import DashView from './components/Dash.vue'
-import LoginView from './components/Login.vue'
-import ForgetView from './components/Forgot.vue'
-import ResetView from './components/Reset.vue'
-import NotFoundView from './components/404.vue'
+import DashView from 'components/Dash.vue'
+import LoginView from 'components/Login.vue'
+import ForgetView from 'components/Forgot.vue'
+import ResetView from 'components/Reset.vue'
+import NotFoundView from 'components/404.vue'
 import baseRouters from './baseRouters.js'
+import testRouters from './testRouters.js'
 // Import Views - Dash
-import DashMainView from './components/views/dash/Main.vue'
+import DashMainView from 'components/views/dash/Main.vue'
 
-import SCReportTableView from './components/views/reports/ReportTable'
-import SCReportDeatilView from './components/views/reports/ReportDetail'
-import SCReportCategoryView from './components/views/reports/ReportCategory.vue'
+import SCReportTableView from 'components/views/reports/ReportTable'
+import SCReportDeatilView from 'components/views/reports/ReportDetail'
+import SCReportCategoryView from 'components/views/reports/ReportCategory.vue'
 
-import SCUserTableView from './components/views/users/UserTable.vue'
-import SCUserAddFormView from './components/views/users/UserAddForm'
-import SCUserDetailView from './components/views/users/UserDetails.vue'
-import SCUserLabelManage from './components/views/users/UserLabelManage.vue'
-import SCUserRoleView from './components/views/users/UserRole.vue'
+import SCUserTableView from 'components/views/users/UserTable.vue'
+import SCUserAddFormView from 'components/views/users/UserAddForm'
+import SCUserDetailView from 'components/views/users/UserDetails.vue'
+import SCUserLabelManage from 'components/views/users/UserLabelManage.vue'
+import SCUserRoleView from 'components/views/users/UserRole.vue'
 
-import SCArticleTableView from './components/views/cms/ArticleTable'
-import SCArticleAddFormView from './components/views/cms/ArticleAddForm.vue'
-import SCArticleDetailView from './components/views/cms/ArticleDetail.vue'
-import SCArticleCategoryManageView from './components/views/cms/ArticleCategoryManage.vue'
+import SCArticleTableView from 'components/views/cms/ArticleTable'
+import SCArticleAddFormView from 'components/views/cms/ArticleAddForm.vue'
+import SCArticleDetailView from 'components/views/cms/ArticleDetail.vue'
+import SCArticleCategoryManageView from 'components/views/cms/ArticleCategoryManage.vue'
 
-import SCNotifyTableView from './components/views/notify/NotifyTable.vue'
-import SCNotifyAddFormView from './components/views/notify/NotifyAddForm.vue'
-import SCNotifyInfoView from './components/views/notify/NotifyInfo'
+import SCNotifyTableView from 'components/views/notify/NotifyTable.vue'
+import SCNotifyAddFormView from 'components/views/notify/NotifyAddForm.vue'
+import SCNotifyInfoView from 'components/views/notify/NotifyInfo'
 
-import SCFirmTableView from './components/views/firm/FirmTable.vue'
-import SCFirmDetailView from './components/views/firm/FirmDetail.vue'
+import SCFirmTableView from 'components/views/firm/FirmTable.vue'
+import SCFirmDetailView from 'components/views/firm/FirmDetail.vue'
 
-import SCWxUserTableView from './components/views/wxusers/WxUserTable.vue'
-import SCWxUserTagAddView from './components/views/wxusers/AddUserTag.vue'
-import SCWxUserLinkView from './components/views/wxusers/WxLinkUser.vue'
-import SCWxUserTagTableView from './components/views/wxusers/WxTagTable.vue'
-import SCWxTagUserListView from './components/views/wxusers/WxTagUserInfo.vue'
-import SCWxUserProfileView from './components/views/wxusers/WxUserProfile.vue'
+import SCWxUserTableView from 'components/views/wxusers/WxUserTable.vue'
+import SCWxUserTagAddView from 'components/views/wxusers/AddUserTag.vue'
+import SCWxUserLinkView from 'components/views/wxusers/WxLinkUser.vue'
+import SCWxUserTagTableView from 'components/views/wxusers/WxTagTable.vue'
+import SCWxTagUserListView from 'components/views/wxusers/WxTagUserInfo.vue'
+import SCWxUserProfileView from 'components/views/wxusers/WxUserProfile.vue'
 
-import SCAdvertisementPoints from './components/views/wxadvertisement/advertisementPoints.vue'
-import SCAdvertisementContent from './components/views/wxadvertisement/advertisementContent.vue'
-import SCUpAdvContent from './components/views/wxadvertisement/upPage/adContent.vue'
-import SCUpAdvPoint from './components/views/wxadvertisement/upPage/adLocation.vue'
+import SCAdvertisementPoints from 'components/views/wxadvertisement/advertisementPoints.vue'
+import SCAdvertisementContent from 'components/views/wxadvertisement/advertisementContent.vue'
+import SCUpAdvContent from 'components/views/wxadvertisement/upPage/adContent.vue'
+import SCUpAdvPoint from 'components/views/wxadvertisement/upPage/adLocation.vue'
 
-import SCMenuTree from './components/views/menulist/MenuTree.vue'
-import SCMenuLink from './components/views/menulist/MenuJurisdiction.vue'
+import SCMenuTree from 'components/views/menulist/MenuTree.vue'
+import SCMenuLink from 'components/views/menulist/MenuJurisdiction.vue'
 
-import SCDictTableView from './components/views/dict/DictTable.vue'
-import SCDictElTableView from './components/views/dict/DictElTable.vue'
+import SCDictTableView from 'components/views/dict/DictTable.vue'
+import SCDictElTableView from 'components/views/dict/DictElTable.vue'
 
-import SCRoleTableView from './components/views/characters/RoleTable.vue'
-import SCRoleUserTableView from './components/views/characters/RoleUserTable.vue'
-import SCRoleLinkUserTableView from './components/views/characters/RoleLinkUserTable.vue'
-import SCRoleLinkAuthTableView from './components/views/characters/LinkAuth.vue'
+import SCRoleTableView from 'components/views/characters/RoleTable.vue'
+import SCRoleUserTableView from 'components/views/characters/RoleUserTable.vue'
+import SCRoleLinkUserTableView from 'components/views/characters/RoleLinkUserTable.vue'
+import SCRoleLinkAuthTableView from 'components/views/characters/LinkAuth.vue'
 
-import SCOrgaTreeView from './components/views/organization/OrgaTree.vue'
-import SCDutyListView from './components/views/organization/DutyList.vue'
-import SCDutyUnrelatedView from './components/views/organization/DutyUnrelated.vue'
+import SCOrgaTreeView from 'components/views/organization/OrgaTree.vue'
+import SCDutyListView from 'components/views/organization/DutyList.vue'
+import SCDutyUnrelatedView from 'components/views/organization/DutyUnrelated.vue'
 
-import SCPersonalTable from './components/views/personal/PersonalTable.vue'
-import SCPersonalDetail from './components/views/personal/PersonalDetail.vue'
+import SCPersonalTable from 'components/views/personal/PersonalTable.vue'
+import SCPersonalDetail from 'components/views/personal/PersonalDetail.vue'
 
-import SCDutyManageView from './components/views/duty/DutyManage.vue'
+import SCDutyManageView from 'components/views/duty/DutyManage.vue'
 
-import SCAuthTableView from './components/views/auth/AuthTable.vue'
-import SCAuthRoleView from './components/views/auth/LinkRole.vue'
-import SCAuthMenuView from './components/views/auth/LinkMenu.vue'
+import SCAuthTableView from 'components/views/auth/AuthTable.vue'
+import SCAuthRoleView from 'components/views/auth/LinkRole.vue'
+import SCAuthMenuView from 'components/views/auth/LinkMenu.vue'
 
 import SCActivityList from 'components/views/activity/List'
 import SCActivityCategory from 'components/views/activity/Category'
@@ -129,7 +130,7 @@ import SCAwardsSpec from 'components/views/awards/awardsSpec.vue'
 import SCAwardsRelate from 'components/views/awards/awardsRelate.vue'
 import SCAwardsRecycle from 'components/views/awards/awardRecycle.vue'
 
-import NewLoginView from './components/newLogin.vue'
+import NewLoginView from 'components/newLogin.vue'
 
 import SCFundationList from 'components/views/reservation/fundationManagement/List.vue'
 import SCFundationConfigList from 'components/views/reservation/fundationManagement/Config.vue'
@@ -152,25 +153,27 @@ import RelVillage from 'components/views/recycle/server/relVillage.vue'
 // 回收公司管理
 
 // 餐饮企业管理
-import RestaurantsList from './components/views/recycle/restaurants/RestaurantsList.vue'
-import RestaurantsAdd from './components/views/recycle/restaurants/RestaurantsAdd.vue'
-import RestaurantsEdit from './components/views/recycle/restaurants/RestaurantsEdit.vue'
+import RestaurantsList from 'components/views/recycle/restaurants/RestaurantsList.vue'
+import RestaurantsAdd from 'components/views/recycle/restaurants/RestaurantsAdd.vue'
+import RestaurantsEdit from 'components/views/recycle/restaurants/RestaurantsEdit.vue'
 
 // 地磅信息管理
-import LoadometerInformationList from './components/views/recycle/loadometerInformation/LoadometerInformationList.vue'
-import LoadometerStatistics from './components/views/recycle/loadometerInformation/LoadometerStatistics.vue'
-import LoadometerDetailByDay from './components/views/recycle/loadometerInformation/LoadometerDetailByDay.vue'
+import LoadometerInformationList from 'components/views/recycle/loadometerInformation/LoadometerInformationList.vue'
+import LoadometerStatistics from 'components/views/recycle/loadometerInformation/LoadometerStatistics.vue'
+import LoadometerDetailByDay from 'components/views/recycle/loadometerInformation/LoadometerDetailByDay.vue'
 
-import RecycleRecoveryList from './components/views/recycle/recovery/index.vue'
-import RecycleRecoveryAdd from './components/views/recycle/recovery/add.vue'
-import RecycleRecoveryInfo from './components/views/recycle/recovery/baseInfo.vue'
-import RecycleRecoveryWay from './components/views/recycle/recovery/way.vue'
-import RecycleRecoveryWayEdit from './components/views/recycle/recovery/wayManage/editWay.vue'
-import RecycleRecoveryWayAdd from './components/views/recycle/recovery/wayManage/addWay.vue'
+import RecycleRecoveryList from 'components/views/recycle/recovery/index.vue'
+import RecycleRecoveryAdd from 'components/views/recycle/recovery/add.vue'
+import RecycleRecoveryInfo from 'components/views/recycle/recovery/baseInfo.vue'
+import RecycleRecoveryWay from 'components/views/recycle/recovery/way.vue'
+import RecycleRecoveryWayEdit from 'components/views/recycle/recovery/wayManage/editWay.vue'
+import RecycleRecoveryWayAdd from 'components/views/recycle/recovery/wayManage/addWay.vue'
 
 // 电子围栏管理
-import ElectronicFenceList from './components/views/recycle/electronicFence/List.vue'
-import ElectronicFenceAdd from './components/views/recycle/electronicFence/AddNewFence.vue'
+import ElectronicFenceList from 'components/views/recycle/electronicFence/List.vue'
+import ElectronicFenceAdd from 'components/views/recycle/electronicFence/AddNewFence.vue'
+import ElectronicFenceConfig from 'components/views/recycle/electronicFence/FenceConfig.vue'
+import ElectronicGpsInfo from 'components/views/recycle/electronicFence/GpsInfo.vue'
 
 const routes = [
   {
@@ -199,6 +202,8 @@ const routes = [
     component: DashView,
     redirect: '/admin/index',
     children: [
+      ...baseRouters,
+      ...testRouters,
       {
         path: 'index',
         component: DashMainView,
@@ -1135,18 +1140,29 @@ const routes = [
           children: [{
             path: 'index',
             component: ElectronicFenceList,
-            name: '电子围栏管理管理',
+            name: '电子围栏管理',
             meta: {description: '列表'}
           },
           {
             path: 'new',
             component: ElectronicFenceAdd,
-            name: '电子围栏管理管理',
+            name: '添加电子围栏',
+            meta: {description: '列表'}
+          },
+          {
+            path: 'config',
+            component: ElectronicFenceConfig,
+            name: '围栏设置',
+            meta: {description: '列表'}
+          },
+          {
+            path: 'gps',
+            component: ElectronicGpsInfo,
+            name: 'GPS信息点',
             meta: {description: '列表'}
           }]
         }]
-      },
-      ...baseRouters
+      }
     ]
   }, {
     // not found handler

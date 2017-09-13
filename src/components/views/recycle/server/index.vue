@@ -28,7 +28,7 @@
                 <el-button slot="append" @click="onSearch" icon="search"></el-button>
               </el-input>
             </el-col>
-            <el-button type="primary" @click="dialogAdvance = true">高级</el-button>
+            <el-button type="primary" @click="dialogAdvance = true" style="margin-left:10px;">高级</el-button>
             <el-button icon="upload2" type="primary" style="margin-left:10px;"></el-button>
             <el-button icon="setting" type="primary"></el-button>
           </el-row>

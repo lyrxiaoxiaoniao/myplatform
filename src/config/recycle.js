@@ -43,7 +43,8 @@ export default {
     addcorrelate: '/rubbish/community/tenement/create',
     removeCorrelate: '/rubbish/community/tenement/delete',
     history: '/rubbish/community/queryHistory',
-    streetTree: '/rub/region/index'
+    streetTree: '/rub/region/index',
+    move: '/rubbish/community/move'
   },
   server: {
     index: '/rubbish/tenement/index',
@@ -59,7 +60,10 @@ export default {
   },
   // 餐饮企业管理
   restaurants: {
-    index: '/restaurants/index'
+    index: '/cater/index',
+    delete: '/cater/delete',
+    create: '/cater/create',
+    show: '/cater/show'
   },
   loadometer: {
     index: '/rubbish/weighbridge/index',

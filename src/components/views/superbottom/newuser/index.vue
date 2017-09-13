@@ -52,20 +52,29 @@
                 @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55"></el-table-column>
                 <el-table-column prop="id" label="ID" width="60"></el-table-column>
-                <el-table-column prop="name" label="商户名称"></el-table-column>
-                <el-table-column prop="businessName" label="负责人"></el-table-column>
-                <el-table-column prop="dutyName" label="商户级别" width="120"></el-table-column>
-                <el-table-column prop="mobile" label="商户简介"></el-table-column>
-                <el-table-column prop="detailAddress" label="账号数量"></el-table-column>
-                <el-table-column prop="detailAddress" label="创建时间">
-                  <template scope="scope">{{scope.row.created_at | toDateTime}}</template>
-                </el-table-column>
-                <el-table-column label="营业执照" width="100">
+                <el-table-column prop="name" label="用户归属"></el-table-column>
+                <el-table-column label="头像" width="100">
                   <template scope="scope">
                     <img class="table-img" :src="scope.row.license" @click="bigImg(scope.row.license)" alt="">
                   </template>
                 </el-table-column>
-                <el-table-column prop="vehicleCount" label="已有车辆" width="100"></el-table-column>
+                <el-table-column prop="dutyName" label="用户名" width="120"></el-table-column>
+                <el-table-column prop="mobile" label="真实姓名"></el-table-column>
+                <el-table-column prop="detailAddress" label="手机号码"></el-table-column>
+                <el-table-column prop="detailAddress" label="邮箱"></el-table-column>
+                <el-table-column prop="detailAddress" label="创建时间">
+                  <template scope="scope">{{scope.row.created_at | toDateTime}}</template>
+                </el-table-column>
+                <el-table-column label="有效状态" width="100px">
+                  <template scope="scope">
+                    <el-switch
+                      v-model="scope.row.state"
+                      on-text="开"
+                      off-text="关"
+                      @change="toswitch(scope.row.state,scope.row.id)">
+                    </el-switch>
+                  </template> 
+                </el-table-column>
                 <el-table-column prop="status" label="操作" width="115">
                   <template scope="scope"> 
                       <el-button @click="goAwardsDetail(scope.row.id)" size="small" icon="edit"></el-button>
@@ -92,17 +101,42 @@
         </div>
     </kobe-table>
     <!-- 添加弹窗start -->
-    <el-dialog title="添加商户" v-model="addShowDialog">
+    <el-dialog title="新增用户" v-model="addShowDialog" top="5%">
       <el-form :model="addMerchant" label-width="80px">
         <el-row>
         <el-col :span="24">
-          <el-form-item label="商户名称">
-            <el-input placeholder="请输入商户名称"></el-input>
+          <el-form-item label="用户名">
+            <el-input placeholder="请输入用户名"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="商户等级">
-              <el-select v-model="addMerchant.grade" placeholder="请选择" style="width:100%;">
+          <el-form-item label="登录秘密">
+              <el-input placeholder="密码"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="确认密码">
+              <el-input placeholder="密码"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="安全手机">
+              <el-input placeholder="安全手机"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="安全邮箱">
+              <el-input placeholder="安全邮箱"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="是否启用">
+              <el-switch on-text="开" off-text="关" v-model="addMerchant.active"></el-switch>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="用户归属">
+              <el-select v-model="addMerchant.grade" placeholder="请选择" class="fullwidth">
                   <el-option
                   v-for="item in optionGrade"
                   :key="item.value"
@@ -113,52 +147,56 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="是否有效">
-              <el-switch on-text="开" off-text="关" v-model="addMerchant.active"></el-switch>
-          </el-form-item>
-        </el-col>
-        <el-col :span="24">
-          <el-form-item label="服务时间">
-            <el-col :span="11">
-              <el-date-picker type="datetime" placeholder="选择开始时间" v-model="addMerchant.beginTime" style="width: 100%;"></el-date-picker>
-            </el-col>
-            <el-col class="line" :span="2">-</el-col>
-            <el-col :span="11">
-              <el-date-picker type="datetime" placeholder="选择结束时间" v-model="addMerchant.endTime" style="width: 100%;"></el-date-picker>
-            </el-col>
+          <el-form-item label="真实姓名">
+              <el-input placeholder="真实姓名"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="负责人">
-              <el-input placeholder="客户负责人姓名"></el-input>
+          <el-form-item label="昵称">
+              <el-input placeholder="昵称"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="联系电话">
-              <el-input placeholder="客户负责人联系电话"></el-input>
+          <el-form-item label="姓名">
+              <el-select v-model="addMerchant.grade" placeholder="请选择" class="fullwidth">
+                  <el-option
+                  v-for="item in optionGrade"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                  </el-option>
+              </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="证件号码">
+              <el-input placeholder="证件号码"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item label="商户地址">
+          <el-form-item label="联系地址">
               <el-input placeholder="商户地址，128字以内"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item label="商户简介">
-              <el-input type="textarea" placeholder="商户简介，控制在256字以内"></el-input>
+          <el-form-item label="备注信息">
+              <el-input type="textarea" placeholder="备注信息"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="客户经理">
-              <el-input placeholder="客户经理姓名"></el-input>
+          <el-form-item label="网站图标">
+              <el-upload
+                  class="avatar-uploader"
+                  :action="uploadURL"
+                  :show-file-list="false"
+                  :on-success="handleAvatarSuccessIcon"
+                  :before-upload="beforeAvatarUpload">
+                  <img v-if="addMerchant.icon" :src="addMerchant.icon" class="avatar">
+                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
-          <el-form-item label="经理电话">
-              <el-input placeholder="客户经理电话"></el-input>
-          </el-form-item>
-        </el-col>
-      </el-row>  
+        </el-row>  
       </el-form>
       <div slot="footer" class="dialog-footer">
           <el-button >取消</el-button>
@@ -167,17 +205,42 @@
     </el-dialog>
     <!-- 添加弹窗end -->
     <!-- 修改弹窗start -->
-    <el-dialog title="修改商户" v-model="editShowDialog">
-      <el-form :model="editMerchant" label-width="80px">
+    <el-dialog title="修改用户" v-model="editShowDialog" top="5%">
+       <el-form :model="editMerchant" label-width="80px">
         <el-row>
         <el-col :span="24">
-          <el-form-item label="商户名称">
-            <el-input placeholder="请输入商户名称"></el-input>
+          <el-form-item label="用户名">
+            <el-input placeholder="请输入用户名"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="商户等级">
-              <el-select v-model="addMerchant.grade" placeholder="请选择" style="width:100%;">
+          <el-form-item label="登录秘密">
+              <el-input placeholder="密码"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="确认密码">
+              <el-input placeholder="密码"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="安全手机">
+              <el-input placeholder="安全手机"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="安全邮箱">
+              <el-input placeholder="安全邮箱"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="是否启用">
+              <el-switch on-text="开" off-text="关" v-model="editMerchant.active"></el-switch>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="用户归属">
+              <el-select v-model="editMerchant.grade" placeholder="请选择" class="fullwidth">
                   <el-option
                   v-for="item in optionGrade"
                   :key="item.value"
@@ -188,52 +251,56 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="是否有效">
-              <el-switch on-text="开" off-text="关" v-model="addMerchant.active"></el-switch>
-          </el-form-item>
-        </el-col>
-        <el-col :span="24">
-          <el-form-item label="服务时间">
-            <el-col :span="11">
-              <el-date-picker type="datetime" placeholder="选择开始时间" v-model="addMerchant.beginTime" style="width: 100%;"></el-date-picker>
-            </el-col>
-            <el-col class="line" :span="2">-</el-col>
-            <el-col :span="11">
-              <el-date-picker type="datetime" placeholder="选择结束时间" v-model="addMerchant.endTime" style="width: 100%;"></el-date-picker>
-            </el-col>
+          <el-form-item label="真实姓名">
+              <el-input placeholder="真实姓名"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="负责人">
-              <el-input placeholder="客户负责人姓名"></el-input>
+          <el-form-item label="昵称">
+              <el-input placeholder="昵称"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="联系电话">
-              <el-input placeholder="客户负责人联系电话"></el-input>
+          <el-form-item label="姓名">
+              <el-select v-model="editMerchant.grade" placeholder="请选择" class="fullwidth">
+                  <el-option
+                  v-for="item in optionGrade"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                  </el-option>
+              </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="证件号码">
+              <el-input placeholder="证件号码"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item label="商户地址">
+          <el-form-item label="联系地址">
               <el-input placeholder="商户地址，128字以内"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item label="商户简介">
-              <el-input type="textarea" placeholder="商户简介，控制在256字以内"></el-input>
+          <el-form-item label="备注信息">
+              <el-input type="textarea" placeholder="备注信息"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="客户经理">
-              <el-input placeholder="客户经理姓名"></el-input>
+          <el-form-item label="网站图标">
+              <el-upload
+                  class="avatar-uploader"
+                  :action="uploadURL"
+                  :show-file-list="false"
+                  :on-success="handleAvatarSuccessIconEdit"
+                  :before-upload="beforeAvatarUpload">
+                  <img v-if="editMerchant.icon" :src="editMerchant.icon" class="avatar">
+                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
-          <el-form-item label="经理电话">
-              <el-input placeholder="客户经理电话"></el-input>
-          </el-form-item>
-        </el-col>
-      </el-row>  
+        </el-row>  
       </el-form>
       <div slot="footer" class="dialog-footer">
           <el-button >取消</el-button>
@@ -250,29 +317,32 @@ export default {
   data () {
     return {
       data: [],
+      uploadURL: config.serverURI + config.uploadFilesAPI,
       addShowDialog: false,
       editShowDialog: false,
       addMerchant: {
         beginTime: null,
         endTime: null,
         active: true,
-        grade: ''
+        grade: '',
+        icon: ''
       },
       editMerchant: {
         beginTime: null,
         endTime: null,
         active: true,
-        grade: ''
+        grade: '',
+        icon: ''
       },
       optionGrade: [{
         value: 1,
-        label: '普通商户'
+        label: '男'
       }, {
         value: 2,
-        label: '高级商户'
+        label: '女'
       }, {
         value: 3,
-        label: 'VIP商户'
+        label: '保密'
       }],
       props: {
         children: 'children',
@@ -295,6 +365,50 @@ export default {
     }
   },
   methods: {
+    /* 上传图片函数 */
+    handleAvatarSuccessIcon (res, file) {
+      this.addMerchant.icon = res.data[0]
+    },
+    /* 上传图片函数 */
+    handleAvatarSuccessIconEdit (res, file) {
+      this.editMerchant.icon = res.data[0]
+    },
+    beforeAvatarUpload (file) {
+      const isJPG = file.type === 'image/jpeg' || 'image/png'
+      const isLt2M = file.size / 1024 / 1024 < 5
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 JPG/PNG 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 5MB!')
+      }
+      return isJPG && isLt2M
+    },
+    toswitch (state, id) {
+      let data = {
+        pageSize: this.response.pageSize,
+        currentPage: this.response.currentPage
+      }
+      var obj = {
+        id: id,
+        state: this.changeNum(state)
+      }
+      api.POST(config.updateStateAdvPointAPI, obj)
+      .then(response => {
+        if (response.status !== 200) {
+          this.error = response.statusText
+          return
+        }
+        if (response.data.errcode === '0000') {
+          this.$notify({
+            title: '成功',
+            message: '修改状态成功！！！',
+            type: 'success'
+          })
+          this.updateList(data)
+        }
+      })
+    },
     bigImg (url) {
       this.dialogImageUrl = url
       this.dialogVisible = true

@@ -40,13 +40,13 @@
     <div class="lh-bottom">
       <el-tabs class="margin" v-model="activeName"  @tab-click="handleClick" style="margin:0 2em">
         <el-tab-pane label="已关联物业" name="first">
-          <rel-tab v-if='firstId'></rel-tab>
+          <rel-tab v-if="firstId" :communityId="community_id" @removeEvent="updateCount"></rel-tab>
         </el-tab-pane>
         <el-tab-pane label="未关联物业" name="second">
-          <norel-tab v-if='secondId'></norel-tab>
+          <norel-tab v-if="secondId" :communityId="community_id" @correlateEvent="updateCount"></norel-tab>
         </el-tab-pane>
         <el-tab-pane label="历史关联" name="third">
-          <history v-if='thirdId'></history>
+          <history v-if="thirdId" :communityId="community_id"></history>
         </el-tab-pane>    
       </el-tabs>
     </div>
@@ -62,13 +62,14 @@ import history from './relTable/history'
 export default {
   data () {
     return {
-      data: [],
-      response: {
-        data: null
-      },
       firstId: true,
       secondId: false,
       thirdId: false,
+      data: [],
+      community_id: this.$route.query.id,
+      response: {
+        data: null
+      },
       info: {
         name: '',
         duty_name: '',
@@ -89,6 +90,9 @@ export default {
     history
   },
   methods: {
+    updateCount (data) {
+      this.getForm()
+    },
     handleClick (tab, event) {
       if (tab.name === 'first') {
         this.firstId = true
@@ -111,6 +115,7 @@ export default {
       .then(response => {
         if (response.data.errcode === '0000') {
           this.info = response.data.data
+          this.info.count = response.data.data.rubCommunityTenementVOS[0].count
         }
       })
       .catch(error => {

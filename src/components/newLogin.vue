@@ -90,8 +90,6 @@ export default {
       response: '',
       cover: '',
       urls: [
-        // 'https://tst.admin.gov.shencom.cn/api/files/860004224de645af91b4cab9a40055d5.png',
-        // 'https://tst.admin.gov.shencom.cn/api/files/780127f1190b4e1da091429337f25bf7.png'
         'static/img/login/01.png',
         'static/img/login/02.png'
       ]

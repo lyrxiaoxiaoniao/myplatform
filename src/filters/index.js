@@ -28,6 +28,13 @@ export function toDate (timestamp) {
   return `${date.getFullYear()}-${month}-${date.getDate()}`
 }
 
+export function toYM (timestamp) {
+  let date = new Date(timestamp)
+  const month = date.getMonth() + 1
+
+  return `${date.getFullYear()}.${month}`
+}
+
 export function toTimestamp (date) {
   return new Date(date).getTime()
 }

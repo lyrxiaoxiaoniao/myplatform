@@ -8,7 +8,7 @@
           <el-col>
             <el-button type="primary"
                        icon="plus"
-                       @click="openDialog('infoVisible')">新增</el-button>
+                       @click="addFence">新增</el-button>
           </el-col>
           <el-select v-model="value"
                      placeholder="请选择">
@@ -118,6 +118,12 @@ export default {
     },
     hideDialog(e) {
       this[e] = false
+    },
+    addFence() {
+      this.$router.push('new')
+    },
+    configItem(id) {
+      this.$router.push('config')
     }
   },
   mounted() {

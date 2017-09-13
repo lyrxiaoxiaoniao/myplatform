@@ -40,13 +40,13 @@
     <div class="lh-bottom">
       <el-tabs class="margin" v-model="activeName"  @tab-click="handleClick" style="margin:0 2em">
         <el-tab-pane label="已服务小区" name="first">
-          <rel-tab v-if='firstId'></rel-tab>
+          <rel-tab v-if='firstId' :tenementId="tenement_id"></rel-tab>
         </el-tab-pane>
         <el-tab-pane label="未服务小区" name="second">
-          <norel-tab v-if='secondId'></norel-tab>
+          <norel-tab v-if='secondId' :tenementId="tenement_id"></norel-tab>
         </el-tab-pane>
         <el-tab-pane label="历史服务" name="third">
-          <history v-if='thirdId'></history>
+          <history v-if='thirdId' :tenementId="tenement_id"></history>
         </el-tab-pane>    
       </el-tabs>
     </div>
@@ -62,6 +62,7 @@ import history from './relTable/history-service'
 export default {
   data () {
     return {
+      tenement_id: this.$route.query.id,
       data: [],
       response: {
         data: null
@@ -126,7 +127,6 @@ export default {
     this.getForm()
   }
 }
-
 </script>
 <style lang="scss" scoped>
 .lh-container {
