@@ -2,9 +2,9 @@
  * 超底层路由列表
  */
 import DashMainView from 'components/views/dash/Main.vue'
-import SBMerchantView from 'components/views/superbottom/merchant/index.vue'
-import SBMerchantConfigView from 'components/views/superbottom/merchant/config.vue'
-import SBNewUserView from 'components/views/superbottom/newuser/index.vue'
+import SBMerchantView from 'components/views/framework/merchant/index.vue'
+import SBMerchantConfigView from 'components/views/framework/merchant/config.vue'
+import SBNewUserView from 'components/views/framework/newuser/index.vue'
 const baseRouters = [
   {
     // 商户模块路由
