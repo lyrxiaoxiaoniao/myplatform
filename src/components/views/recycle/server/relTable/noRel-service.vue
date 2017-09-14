@@ -1,103 +1,100 @@
 <template>
-    <div class="lh-container">
+  <div class="lh-container">
     <div class="lh-top">
-        <div class="lh-form">
-            <kobe-table>
-                <div slot="kobe-table-header" class="kobe-table-header">
-                  <!-- <el-row type="flex" justify="end">
-                    <el-col :span="10" :offset="14">
-                        <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
-                        <el-button slot="append" @click="onSearch" icon="search"></el-button>
-                        </el-input>
-                    </el-col>
-                      <el-button icon="upload2" type="primary" style="margin-left:10px;"></el-button>
-                      <el-button icon="setting" type="primary"></el-button>
-                  </el-row>     -->      
-                </div>
-                <div slot="kobe-table-content" class="kobe-table">
-                <el-table
-                    ref="multipleTable"
-                    border
-                    stripe
-                    :data="response.data"
-                    @selection-change="handleSelectionChange">
-                    <el-table-column type="selection" width="40"></el-table-column>
-                    <el-table-column prop="id" label="ID" sortable width="120"></el-table-column>
-                    <el-table-column prop="name" label="小区名称" width="170"></el-table-column>
-                    <el-table-column prop="duty_name" label="负责人" width="150"></el-table-column>
-                    <el-table-column prop="mobile" label="联系电话" width="150"></el-table-column>
-                    <el-table-column prop="detail_address" label="所属街道"></el-table-column>
-                    <el-table-column prop="detail_address" label="详细地址地址"></el-table-column>
-                    <el-table-column width="160" label="操作">
-                    <template scope="scope">
-                        <el-button size="small" icon="edit" title="修改"></el-button>
-                        <el-button size="small" @click="openDialog(scope.row.id)" title="关联">关联</el-button>
-                    </template>
-                    </el-table-column>
-                </el-table>
-                </div>
-                <div slot="kobe-table-footer" class="kobe-table-footer">
-                    <el-row type="flex" justify="center">
-                    <el-col :span="8">
-                        <el-pagination
-                        @size-change="handleSizeChange"
-                        @current-change="handleCurrentChange"
-                        :current-page="response.currentPage"
-                        :page-sizes="[10, 20, 50, 100]"
-                        :page-size="response.pageSize"
-                        :total="response.count"
-                        layout="total, sizes, prev, pager, next, jumper">
-                        </el-pagination>
-                    </el-col>
-                    </el-row>
-                </div>
-            </kobe-table>
-     <!-- 关联模态框 -->
-          <el-dialog title="关联物业" v-model="dialogAdvance" size="tiny">
-              <el-row>
-              <el-col :span="12">
-                <el-date-picker
-                  v-model="correlateForm.begin_time"
-                  type="datetime"
-                  placeholder="选择开始时间">
-                </el-date-picker>
+      <div class="lh-form">
+        <kobe-table>
+          <div slot="kobe-table-header" class="kobe-table-header">
+            <el-row type="flex" justify="end">
+              <el-col :span="10" :offset="14">
+                <el-input v-model="form.keyword" placeholder="请输入小区名称">
+                <el-button slot="append" @click="onSearch" icon="search"></el-button>
+                </el-input>
               </el-col>
-              <el-col :span="12">
-                <el-date-picker
-                  v-model="correlateForm.end_time"
-                  type="datetime"
-                  placeholder="选择结束时间">
-                </el-date-picker>
-              </el-col> 
-              </el-row>
-              <span slot="footer" class="dialog-footer">
-                  <el-button @click="dialogAdvance = false">取 消</el-button>
-                  <el-button type="primary" @click="correlate">确 定</el-button>
-              </span>
-          </el-dialog>
-        </div>
-        </div>
-    </div>    
+              <el-button icon="upload2" type="primary" style="margin-left:10px;"></el-button>
+              <el-button icon="setting" type="primary"></el-button>
+            </el-row>          
+          </div>
+          <div slot="kobe-table-content" class="kobe-table">
+            <el-table
+              ref="multipleTable"
+              border
+              stripe
+              :data="response.data"
+              @selection-change="handleSelectionChange">
+              <el-table-column type="selection" width="40"></el-table-column>
+              <el-table-column prop="id" label="ID" sortable width="100"></el-table-column>
+              <el-table-column prop="name" label="小区名称" width="150"></el-table-column>
+              <el-table-column prop="duty_name" label="负责人" width="100"></el-table-column>
+              <el-table-column prop="mobile" label="联系电话" width="120"></el-table-column>
+              <el-table-column prop="title" label="所属街道" width="120"></el-table-column>
+              <el-table-column prop="detail_address" label="详细地址地址"></el-table-column>
+              <el-table-column width="160" label="操作">
+              <template scope="scope">
+                <el-button size="small" icon="edit" title="修改"></el-button>
+                <el-button size="small" @click="openDialog(scope.row.id)" title="关联">关联</el-button>
+              </template>
+              </el-table-column>
+            </el-table>
+          </div>
+          <div slot="kobe-table-footer" class="kobe-table-footer">
+            <el-row type="flex" justify="center">
+              <el-col :span="8">
+                <el-pagination
+                  @size-change="handleSizeChange"
+                  @current-change="handleCurrentChange"
+                  :current-page="response.currentPage"
+                  :page-sizes="[10, 20, 50, 100]"
+                  :page-size="response.pageSize"
+                  :total="response.count"
+                  layout="total, sizes, prev, pager, next, jumper">
+                </el-pagination>
+              </el-col>
+            </el-row>
+          </div>
+        </kobe-table>
+        <el-dialog title="关联物业" v-model="dialogAdvance" size="tiny">
+          <el-row>
+            <el-col :span="12">
+              <el-date-picker
+                v-model="correlateForm.begin_time"
+                type="datetime"
+                placeholder="选择开始时间">
+              </el-date-picker>
+            </el-col>
+            <el-col :span="12">
+              <el-date-picker
+                v-model="correlateForm.end_time"
+                type="datetime"
+                placeholder="选择结束时间">
+              </el-date-picker>
+            </el-col> 
+          </el-row>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogAdvance = false">取 消</el-button>
+            <el-button type="primary" @click="correlate">确 定</el-button>
+          </span>
+        </el-dialog>
+      </div>
+    </div>
+  </div>    
 </template>
 <script>
 import config from 'src/config'
 import api from 'src/api'
 export default {
-  props: ['id', 'isclick'],
+  props: ['tenementId'],
   data () {
     return {
-      isrepeat: this.isclick,
       dialogAdvance: false,
       correlateForm: {
         community_id: '',
-        tenement_id: this.id,
+        tenement_id: this.tenementId,
         begin_time: '',
         end_time: ''
       },
       form: {
         keyword: ''
       },
-      id: this.id,
       response: {
         data: null
       },
@@ -106,16 +103,33 @@ export default {
     }
   },
   methods: {
+    onSearch () {
+      const data = {
+        currentPage: 1,
+        id: this.tenementId,
+        pageSize: this.response.pageSize,
+        ...this.form
+      }
+      this.getList(data)
+    },
     openDialog (id) {
       this.dialogAdvance = true
       this.correlateForm.community_id = id
+      console.log(id)
     },
     correlate () {
       this.dialogAdvance = false
       api.POST(config.village.addcorrelate, this.correlateForm)
       .then(response => {
         this.onSuccess('关联成功！')
-        this.getList()
+        const data = {
+          currentPage: 1,
+          id: this.tenementId,
+          pageSize: this.response.pageSize,
+          ...this.form
+        }
+        this.getList(data)
+        this.$emit('correlateEvent')
       })
       .catch(error => {
         this.$message.error(error)
@@ -141,7 +155,8 @@ export default {
     transform (data) {
       var res = []
       data.forEach(e => {
-        res.push(e.rubTenementVOS[0])
+        e.rubCommunityVOS[0].title = e.rubRegionVO.title
+        res.push(e.rubCommunityVOS[0])
       })
       return res
     },
@@ -149,6 +164,7 @@ export default {
       const data = {
         currentPage: this.response.currentPage,
         pageSize: value,
+        id: this.tenementId,
         ...this.form
       }
       this.getList(data)
@@ -157,17 +173,29 @@ export default {
       const data = {
         currentPage: value,
         pageSize: this.response.pageSize,
+        id: this.tenementId,
         ...this.form
       }
       this.getList(data)
     },
-    getList (data = {}) {
-      data = {
-        id: this.id
+    getList (data = null) {
+      if (data === null) {
+        data = {
+          id: this.tenementId,
+          currentPage: 1,
+          pageSize: 10
+        }
       }
       api.GET(config.server.uncorrelated, data)
       .then(response => {
-        this.response.data = this.transform(response.data.data)
+        this.response.data = this.transform(response.data.data.data)
+        console.log(this.response.data)
+        this.response.currentPage = response.data.data.currentPage
+        this.response.pageSize = response.data.data.pageSize
+        this.response.count = response.data.data.count
+        if (response.data.errcode === '5000') {
+          this.response.data = null
+        }
       })
       .catch(error => {
         this.$message.error(error)
@@ -218,7 +246,6 @@ export default {
   },
   mounted () {
     this.getList()
-    // console.log(this.$store.state.callingAPI)
   }
 }
 </script>

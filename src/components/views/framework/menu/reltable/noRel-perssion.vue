@@ -4,34 +4,36 @@
         <div class="lh-form">
             <kobe-table>
                 <div slot="kobe-table-header" class="kobe-table-header">
-                 <!--  <el-row type="flex" justify="end">
-                    <el-col :span="10" :offset="14">
+                 <el-row type="flex">
+                  <el-col justify="start">
+                    <el-button @click="correlation()" type="primary">批量关联</el-button>
+                  </el-col>
+                    <el-col justify="end">
                         <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
                         <el-button slot="append" @click="onSearch" icon="search"></el-button>
                         </el-input>
-                    </el-col>
-                      <el-button icon="upload2" type="primary" style="margin-left:10px;"></el-button>
-                      <el-button icon="setting" type="primary"></el-button>
-                  </el-row>  -->         
+                    </el-col> 
+                  </el-row>    
                 </div>
                 <div slot="kobe-table-content" class="kobe-table">
                 <el-table
                     ref="multipleTable"
                     border
+                    height="400"
                     stripe
                     :data="response.data"
                     @selection-change="handleSelectionChange">
-                    <!-- <el-table-column type="selection" width="40"></el-table-column> -->
-                    <el-table-column prop="id" label="ID" sortable width="90"></el-table-column>
-                    <el-table-column prop="name" label="物业名称"></el-table-column>
-                    <el-table-column prop="name" label="关联时间" width="130">
-                      <template scope="scope">
-                        {{scope.row.begin_time | toYM}} - {{scope.row.end_time | toYM}}
-                      </template>
+                    <el-table-column type="selection" width="40"></el-table-column>
+                    <el-table-column prop="id" label="ID" sortable width="80"></el-table-column>
+                    <el-table-column prop="name" label="权限点名称" width="150"></el-table-column>
+                    <el-table-column prop="duty_name" label="权限标识" width="150"></el-table-column>
+                    <el-table-column prop="mobile" label="权限说明" width="150"></el-table-column>
+                    <el-table-column prop="address" label="有效状态"></el-table-column>
+                    <el-table-column width="80" label="操作">
+                    <template scope="scope">
+                        <el-button size="small" @click="correlation(scope.row.id)" title="关联">关联</el-button>
+                    </template>
                     </el-table-column>
-                    <el-table-column prop="duty_name" label="联系人" width="80"></el-table-column>
-                    <el-table-column prop="mobile" label="联系电话" width="120"></el-table-column>
-                    <el-table-column prop="address" label="公司地址"></el-table-column>
                 </el-table>
                 </div>
                 <div slot="kobe-table-footer" class="kobe-table-footer">
@@ -61,6 +63,12 @@ export default {
   props: ['communityId'],
   data () {
     return {
+      correlateForm: {
+        community_id: this.$store.state.token,
+        tenement_id: '',
+        begin_time: '',
+        end_time: ''
+      },
       form: {
         keyword: ''
       },
@@ -88,11 +96,22 @@ export default {
         this.ids.push(v.id)
       })
     },
+    // 转换数据
+    transform (data) {
+      var count = 0
+      var res = []
+      data.forEach(e => {
+        count++
+        e.rubTenementVOS[0].id = e.id
+        res.push(e.rubTenementVOS[0])
+      })
+      this.response.count = count
+      return res
+    },
     handleSizeChange (value) {
       const data = {
         currentPage: this.response.currentPage,
         pageSize: value,
-        id: this.communityId,
         ...this.form
       }
       this.getList(data)
@@ -101,32 +120,26 @@ export default {
       const data = {
         currentPage: value,
         pageSize: this.response.pageSize,
-        id: this.communityId,
         ...this.form
       }
       this.getList(data)
     },
-    getList (data = null) {
-      if (data === null) {
-        data = {
-          id: this.communityId,
-          currentPage: 1,
-          pageSize: 10
-        }
+    getList (data = {}) {
+      data = {
+        id: this.$store.state.token
       }
-      api.GET(config.village.history, data)
+      api.GET(config.village.uncorrelated, data)
       .then(response => {
-        console.log(response.data.data)
         this.response.data = this.transform(response.data.data.data)
-        this.response.currentPage = response.data.data.currentPage
-        this.response.pageSize = response.data.data.pageSize
-        this.response.count = response.data.data.count
+        if (response.data.errcode === '5000') {
+          this.response.data = null
+        }
       })
       .catch(error => {
         this.$message.error(error)
       })
     },
-    deleteType (id) {
+    correlation (id) {
       if (id) {
         this.ids = []
         this.ids.push(id)
@@ -143,17 +156,17 @@ export default {
         })
         return
       }
-      this.$confirm('此操作将解除关联该物业,是否继续解除？', '解除', {
+      this.$confirm('此操作将关联该权限,是否继续关联？', '关联', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
+        type: 'primary'
       }).then(() => {
         api.POST(config.village.delete, {
           ids: this.ids
         })
         .then(response => {
           if (response.data.errcode === '0000') {
-            this.onSuccess('解除成功')
+            this.onSuccess('关联成功')
             this.getList()
           } else {
             this.$message.error('发生错误，请重试')
@@ -167,16 +180,6 @@ export default {
         message: string,
         type: 'success'
       })
-    },
-    // 转换数据
-    transform (data) {
-      let res = []
-      data.forEach(e => {
-        e.rubTenementVOS[0].begin_time = e.begin_time
-        e.rubTenementVOS[0].end_time = e.end_time
-        res.push(e.rubTenementVOS[0])
-      })
-      return res
     }
   },
   mounted () {

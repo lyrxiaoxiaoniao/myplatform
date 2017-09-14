@@ -44,7 +44,8 @@ export default {
     addcorrelate: '/rubbish/community/tenement/create',
     removeCorrelate: '/rubbish/community/tenement/delete',
     history: '/rubbish/community/queryHistory',
-    streetTree: '/com/region/index'
+    streetTree: '/rub/region/index',
+    move: '/rubbish/community/move'
   },
   server: {
     index: '/rubbish/tenement/index',
@@ -56,7 +57,8 @@ export default {
     indexOne: '/rubbish/tenement/indexOne',
     queryTenement: '/rubbish/tenement/queryTenement',
     uncorrelated: '/rubbish/tenement/uncorrelated',
-    queryHistory: '/rubbish/tenement/queryHistory'
+    queryHistory: '/rubbish/tenement/queryHistory',
+    advanced: '/rubbish/tenement/advanced'
   },
   // 餐饮企业管理
   restaurants: {

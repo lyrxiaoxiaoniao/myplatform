@@ -229,7 +229,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .infoItem {
   margin: 1rem 0;
   font-size: 14px;

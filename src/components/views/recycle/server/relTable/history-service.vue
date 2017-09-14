@@ -22,16 +22,16 @@
                     :data="response.data"
                     @selection-change="handleSelectionChange">
                     <el-table-column type="selection" width="40"></el-table-column>
-                    <el-table-column prop="id" label="ID" sortable width="120"></el-table-column>
+                    <el-table-column prop="id" label="ID" sortable width="100"></el-table-column>
                     <el-table-column prop="name" label="小区名称" width="170"></el-table-column>
                     <el-table-column label="服务时间" width="150">
                       <template scope="scope">
-                        {{scope.row.begin_time | toDate}} - {{scope.row.end_time | toDate}}
+                        {{scope.row.begin_time | toYM}} - {{scope.row.end_time | toYM}}
                       </template>
                     </el-table-column>
-                    <el-table-column prop="duty_name" label="负责人" width="150"></el-table-column>
-                    <el-table-column prop="mobile" label="联系电话" width="150"></el-table-column>
-                    <el-table-column prop="detail_address" label="所属街道" width="150"></el-table-column>
+                    <el-table-column prop="duty_name" label="负责人" width="100"></el-table-column>
+                    <el-table-column prop="mobile" label="联系电话" width="120"></el-table-column>
+                    <el-table-column prop="title" label="所属街道" width="120"></el-table-column>
                     <el-table-column prop="detail_address" label="详细地址"></el-table-column>
                 </el-table>
                 </div>
@@ -59,12 +59,12 @@
 import config from 'src/config'
 import api from 'src/api'
 export default {
-  props: ['id'],
+  props: ['tenementId'],
   data () {
     return {
       removeForm: {
         community_id: '',
-        tenement_id: this.id
+        tenement_id: this.$store.state.token
       },
       form: {
         keyword: ''
@@ -95,6 +95,7 @@ export default {
     },
     handleSizeChange (value) {
       const data = {
+        id: this.tenementId,
         currentPage: this.response.currentPage,
         pageSize: value,
         ...this.form
@@ -103,20 +104,27 @@ export default {
     },
     handleCurrentChange (value) {
       const data = {
+        id: this.tenementId,
         currentPage: value,
         pageSize: this.response.pageSize,
         ...this.form
       }
       this.getList(data)
     },
-    getList (data = {}) {
-      data = {
-        id: this.id
+    getList (data = null) {
+      if (data === null) {
+        data = {
+          id: this.tenementId,
+          currentPage: 1,
+          pageSize: 10
+        }
       }
       api.GET(config.server.queryHistory, data)
       .then(response => {
-        // this.response.data = this.transform(response.data.data)
-        this.response.data = this.transform(response.data.data)
+        this.response.data = this.transform(response.data.data.data)
+        this.response.currentPage = response.data.data.currentPage
+        this.response.pageSize = response.data.data.pageSize
+        this.response.count = response.data.data.count
       })
       .catch(error => {
         this.$message.error(error)
@@ -141,7 +149,8 @@ export default {
     transform (data) {
       var res = []
       data.forEach(e => {
-        e.rubCommunityVOS[0].id = e.id
+        e.rubCommunityVOS[0].title = e.rubRegionVO.title
+        e.rubCommunityVOS[0].id = e.community_id
         e.rubCommunityVOS[0].begin_time = e.begin_time
         e.rubCommunityVOS[0].end_time = e.end_time
         res.push(e.rubCommunityVOS[0])

@@ -1,29 +1,11 @@
 <template>
   <div class="GD-container">
-    <el-row tpye="flex">
-      <el-col :span="4">
-      <el-tree :data="data" :props="defaultProps"
-              accordion
-              :highlight-current="true"
-              node-key="id"
-              @node-click="handleNodeClick">
-      </el-tree>
-   </el-col>
-    <el-col :span="20">
-      <kobe-table> 
+      <kobe-table>
         <div slot="kobe-table-header" class="kobe-table-header">      
           <el-row type="flex" justify="end">
             <el-col :span="14">
-              <el-button @click="enterAdd" type="primary">添加</el-button>      
-              <el-dropdown @command="handleCommand" style="margin-left:10px;">
-                <el-button type="primary">
-                  批量操作<i class="el-icon-caret-bottom el-icon--right"></i>
-                </el-button>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="批量删除">删除</el-dropdown-item>
-                  <el-dropdown-item command="移动">移动</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
+              <el-button @click="refresh" type="primary">刷新</el-button>
+              <el-button @click="deleteType()" type="primary">批量删除</el-button>                 
             </el-col>
             <el-select v-model="form.audit_state" placeholder="所有信息" style="width:140px;">
               <el-option
@@ -38,7 +20,7 @@
                 <el-button slot="append" @click="onSearch" icon="search"></el-button>
               </el-input>
             </el-col>
-            <el-button type="primary" @click="dialogAdvance = true" style="margin-left:10px;">高级</el-button>
+            <el-button type="primary" @click="dialogAdvance = true">高级</el-button>
             <el-button icon="upload2" type="primary" style="margin-left:10px;"></el-button>
             <el-button icon="setting" type="primary"></el-button>
           </el-row>
@@ -52,32 +34,22 @@
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" sortable label="ID" width="80"></el-table-column>
-            <el-table-column prop="name" label="小区名称" width="150"></el-table-column>
-            <el-table-column prop="duty_name" label="负责人" width="95">
+            <el-table-column prop="name" label="商户名" width="150"></el-table-column>
+            <el-table-column prop="duty_name" label="操作员" width="95">
             </el-table-column>
-            <el-table-column prop="mobile" width="105" label="联系电话"></el-table-column>
-            <el-table-column prop="street" label="所属街道" width="90"></el-table-column>
-            <el-table-column label="审核状态" width="90">
-              <template scope="scope">
-                <el-switch
-                  style="width:60px;"
-                  v-model="scope.row.audit_state"
-                  on-text="开"
-                  off-text="关"
-                  @change="toswitch(scope.row.audit_state,scope.row.id)">
-                </el-switch>
-              </template>
-            </el-table-column>
-            <el-table-column prop="detail_address" label="详细地址"></el-table-column>
+            <el-table-column prop="mobile" width="105" label="模块"></el-table-column>
+            <el-table-column prop="region_id" label="操作标识"></el-table-column>
+            <el-table-column prop="region_id" label="操作说明"></el-table-column>
+            <el-table-column prop="region_id" label="IP"></el-table-column>
+            <el-table-column prop="detail_address" label="操作时间"></el-table-column>
             <el-table-column 
               width="170"
               label="操作"
               >
               <template scope="scope">
                 <!-- <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button> -->
-                <el-button @click="edit(scope.row.id)" size="small" icon="edit"></el-button>
+                <el-button @click="detail(scope.row.id)" size="small" icon="edit"></el-button>
                 <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
-                <el-button @click="enterRel(scope.row.id)" size="small"><i class="fa fa-home"></i></el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -98,72 +70,115 @@
           </el-row>
         </div>
       </kobe-table>
-     </el-col>
-    </el-row>
     <el-dialog v-model="dialogVisible" size="tiny">
       <img width="100%" :src="dialogImageUrl" alt="">
     </el-dialog>
-    <!-- 批量移动 -->
-    <el-dialog title="移动" v-model="dialogVisibleMove" size="tiny">
-        <div style="width:100%">
-            <el-row type="flex" justify="center">
-                <el-col :span="4">
-                  <p class="FS-moveName">移动到</p>
-                </el-col>
-                <el-col :span="20">
-                    <el-cascader
-                      style="width:100%;"
-                      change-on-select
-                      :options="cascaderData"
-                      :props="props"
-                      v-model="selectedOptions"
-                      @change="handleChangeMove">
-                  </el-cascader>
-                </el-col>
-            </el-row>
-        </div>
-        <span slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisibleMove = false">取 消</el-button>
-            <el-button type="primary" @click="confirmMove">确 定</el-button>
-        </span>
-    </el-dialog>
 <!-- 高级搜索模态框 -->
-    <el-dialog title="高级搜索" v-model="dialogAdvance" size="tiny">
-        <el-form :model="advancedSearch" style="padding-right:30px;" label-position="left" :label-width="formLabelWidth">
-          <el-form-item label="小区名称" >
-            <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="关联物业">
-            <el-input v-model="advancedSearch.name" auto-complete="off"></el-input>
-          </el-form-item>
-            <el-row>
-              <el-form-item label="所属街道">
-                <el-cascader
-                  :options="cascaderData"
-                  :props="props"
-                  :show-all-levels="false"
-                  v-model="selectedOptions"
-                  @change="handleChange">
-                </el-cascader>
-              </el-form-item>
-            </el-row>
-            <el-row>
-              <el-col :span="13">
-                <el-form-item label="联系人">
-                 <el-input v-model="advancedSearch.duty_name" auto-complete="off"></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-form-item label="数据状态">
-              <el-radio class="radio" v-model="advancedSearch.audit_state" label="1" style="margin:0 10px;">开</el-radio>
-              <el-radio class="radio" v-model="advancedSearch.audit_state" label="0"  style="margin:0 10px;">关</el-radio>
+    <el-dialog title="高级搜索" v-model="dialogAdvance">
+        <el-form :model="advancedSearch">
+           <el-form-item label="关键字" :label-width="formLabelWidth">
+              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="商户名称" :label-width="formLabelWidth">
+              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="用户名" :label-width="formLabelWidth">
+              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="操作标识" :label-width="formLabelWidth">
+              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="IP地址" :label-width="formLabelWidth">
+              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="操作模块" :label-width="formLabelWidth">
+              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="操作时间" :label-width="formLabelWidth">
+              <el-date-picker
+                  v-model="advancedSearch.keyword"
+                  type="datetime"
+                  placeholder="选择开始时间">
+              </el-date-picker>
+              <el-date-picker
+                  v-model="advancedSearch.keyword"
+                  type="datetime"
+                  placeholder="选择结束时间">
+                </el-date-picker>
             </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
             <el-button @click="dialogAdvance = false">取 消</el-button>
-            <el-button type="primary" @click="advance">确 定</el-button>
+            <el-button type="primary" @click="advance">搜 索</el-button>
         </span>
     </el-dialog>
+    <el-dialog title="操作详情查看" v-model="detailShow">
+        <el-form :model="detailForm" ref="detailForm" label-width="90px">
+          <el-form-item label="商户名" prop="id">
+            <el-input v-model="detailForm.id" placeholder="请输入商户名"></el-input>
+          </el-form-item>
+          <el-row>
+            <el-col :span="11">
+              <el-form-item label="操作员" prop="id">
+                <el-input v-model="detailForm.id" placeholder="请输入操作员"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :offset="2" :span="11">
+              <el-form-item label="操作员姓名" prop="id">
+                <el-input v-model="detailForm.id" placeholder="请输入操作员姓名"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row>
+            <el-col :span="11">
+              <el-form-item label="操作模块" prop="id">
+                <el-input v-model="detailForm.id"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :offset="2" :span="11">
+              <el-form-item label="操作标识" prop="id">
+                <el-input v-model="detailForm.id"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row>
+            <el-col :span="11">
+              <el-form-item label="操作时间" prop="id">
+                <el-input v-model="detailForm.id" placeholder="请输入操作员"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :offset="2" :span="11">
+              <el-form-item label="操作IP" prop="id">
+                <el-input v-model="detailForm.id" placeholder="请输入操作IP"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-form-item label="操作说明">
+            <el-input
+              type="textarea"
+              :rows="4"
+              placeholder="请输入内容"
+              v-model="form.id">
+            </el-input>
+          </el-form-item>
+          <el-form-item label="浏览器Agent">
+            <el-input
+              type="textarea"
+              :rows="6"
+              placeholder="请输入内容"
+              v-model="form.id">
+            </el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-row type="flex" justify="end">
+            <el-button @click="detailShow = false">取 消</el-button>
+            <el-button type="primary" @click="detailShow = false">确定</el-button>
+          </el-row>
+        </div>
+      </el-dialog>
   </div>
 </template>
 <script>
@@ -172,17 +187,15 @@ import api from 'src/api'
 export default {
   data () {
     return {
-      formLabelWidth: '90px',
+      formLabelWidth: '80px',
       adSwitch: true,
       advancedSearch: {
-        keyword: '',
-        name: '',
-        title: '',
-        audit_state: '',
-        duty_name: ''
+        keyword: ''
       },
       dialogAdvance: false,
-      moveVal: null,
+      detailForm: {
+        id: ''
+      },
       dialogVisibleMove: false,
       data: [],
       defaultProps: {
@@ -193,20 +206,10 @@ export default {
       props: {
         children: 'children',
         label: 'title',
-        value: 'title'
+        value: 'id'
       },
       uploadURL: config.serverURI + config.uploadFilesAPI,
       multipleSelection: [],
-      option: [{
-        audit_state: null,
-        label: '全部'
-      }, {
-        audit_state: '1',
-        label: '已审核'
-      }, {
-        audit_state: '0',
-        label: '待审核'
-      }],
       response: {
         data: null
       },
@@ -221,6 +224,7 @@ export default {
         logo: '',
         icon: ''
       },
+      detailShow: false,
       selectedOptions: [],
       showDialog: false,
       dialogVisible: false,
@@ -234,8 +238,6 @@ export default {
         audit_state: ''
       },
       parentId: null,
-      region_pid: null,
-      region_id: null,
       ids: [],
       rules: {
         display_name: [
@@ -249,6 +251,13 @@ export default {
     }
   },
   methods: {
+    // 刷新
+    refresh () {
+      this.getList()
+    },
+    detail () {
+      this.detailShow = true
+    },
     // 进入添加小区页面
     enterAdd () {
       this.$router.push('/admin/recycle/village/add')
@@ -266,7 +275,7 @@ export default {
         this.deleteType()
       }
       if (command === '移动') {
-        this.dialogVisibleMove = true
+        this.confirmMove()
       }
     },
     // 将数据中所有的时间转换成 yyyy-mm-dd hh:mm:ss  state 状态值
@@ -278,7 +287,6 @@ export default {
         if (v.audit_state === 1) {
           v.audit_state = true
         }
-        v.street = v.rubRegionVO.title
       })
       return res
     },
@@ -297,6 +305,25 @@ export default {
       value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
       return value
     },
+    iconHandleAvatarSuccess(res, file) {
+      this.icon = window.URL.createObjectURL(file.raw)
+      this.classData.icon = res.data[0]
+    },
+    handleAvatarSuccess(res, file) {
+      this.logo = window.URL.createObjectURL(file.raw)
+      this.classData.logo = res.data[0]
+    },
+    beforeAvatarUpload(file) {
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!')
+      }
+      return isLt2M
+    },
+    bigImg (url) {
+      this.dialogImageUrl = url
+      this.dialogVisible = true
+    },
     toswitch (active, id) {
       if (active) {
         active = 1
@@ -305,13 +332,7 @@ export default {
       }
       api.POST(config.village.audit, {id: id, audit_state: active})
       .then(response => {
-        const data = {
-          currentPage: this.response.currentPage,
-          pageSize: this.response.pageSize,
-          region_id: this.region_id,
-          ...this.form
-        }
-        this.getList(data)
+        this.getList()
         this.onSuccess('启用操作成功！')
       })
       .catch(error => {
@@ -333,35 +354,6 @@ export default {
       .catch(error => {
         this.$message.error(error)
       })
-    },
-    // 树形结构选择
-    handleChange (value) {
-      console.log(value)
-      this.advancedSearch.title = this.selectedOptions[1]
-    },
-    handleChangeMove (value) {
-      this.moveVal = value
-      console.log(value)
-    },
-    // 树形目录点击事件
-    handleNodeClick (data, node) {
-      if (data.type === 'district') {
-        this.region_id = data.id
-        this.getList({
-          region_pid: this.region_id,
-          currentPage: this.response.currentPage,
-          pageSize: this.response.pageSize,
-          ...this.form
-        })
-      } else {
-        this.region_id = data.id
-        this.getList({
-          region_id: this.region_id,
-          currentPage: this.response.currentPage,
-          pageSize: this.response.pageSize,
-          ...this.form
-        })
-      }
     },
     toggleSelection (rows) {
       if (rows) {
@@ -424,13 +416,7 @@ export default {
               }
               if (response.data.errcode === '0000') {
                 this.onSuccess('创建成功')
-                const data = {
-                  currentPage: this.response.currentPage,
-                  pageSize: this.response.pageSize,
-                  region_id: this.region_id,
-                  ...this.form
-                }
-                this.getList(data)
+                this.getList()
                 this.getTree()
                 this.showDialog = false
               }
@@ -454,38 +440,10 @@ export default {
         }
         if (response.data.errcode === '0000') {
           this.onSuccess('修改成功')
-          const data = {
-            currentPage: this.response.currentPage,
-            pageSize: this.response.pageSize,
-            region_id: this.region_id,
-            ...this.form
-          }
-          this.getList(data)
+          this.getList()
           this.getTree()
           this.showDialog = false
         }
-      })
-    },
-    // 批量移动
-    confirmMove () {
-      this.region_pid = []
-      this.region_id = []
-      this.region_pid = this.moveVal[0]
-      this.region_id = this.moveVal[1]
-
-      var obj = {}
-      obj.ids = this.ids
-      obj.region_pid = this.region_pid
-      obj.region_id = this.region_id
-      api.POST(config.village.move, obj)
-      .then(response => {
-        if (response.data.errcode === '0000') {
-          this.getList()
-          this.getTree()
-          this.dialogVisibleMove = false
-        }
-      }).catch(error => {
-        this.$message.error(error)
       })
     },
     // 删除表单
@@ -506,7 +464,7 @@ export default {
         })
         return
       }
-      this.$confirm('此操作将删除选定小区,是否继续删除？', '删除', {
+      this.$confirm('此操作将删除该日志，删除后，操作日志将无法再显示，不过系统仍保留该操作记录。是否继续删除？', '删除', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -528,7 +486,6 @@ export default {
       const data = {
         currentPage: this.response.currentPage,
         pageSize: value,
-        region_id: this.region_id,
         ...this.form
       }
       if (this.adSwitch) {
@@ -538,11 +495,9 @@ export default {
       }
     },
     handleCurrentChange (value) {
-      console.log(value)
       const data = {
         currentPage: value,
         pageSize: this.response.pageSize,
-        region_id: this.region_id,
         ...this.form
       }
       if (this.adSwitch) {
@@ -555,7 +510,6 @@ export default {
       const data = {
         currentPage: 1,
         pageSize: this.response.pageSize,
-        region_id: this.region_id,
         ...this.form
       }
       this.getList(data)
@@ -585,20 +539,10 @@ export default {
         this.$message.error(error)
       })
     },
-    getList (data = null) {
-      if (data === null) {
-        data = {
-          currentPage: 1,
-          pageSize: 10
-        }
-      }
+    getList (data = {}) {
       api.GET(config.village.list, data)
       .then(response => {
-        if (response.data.errcode === '0000') {
-          this.response = this.transformDate(response.data.data)
-        } else {
-          this.response.data = null
-        }
+        this.response = this.transformDate(response.data.data)
       })
       .catch(error => {
         this.$message.error(error)

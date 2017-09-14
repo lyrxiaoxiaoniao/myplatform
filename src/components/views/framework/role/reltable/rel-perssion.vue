@@ -4,34 +4,36 @@
         <div class="lh-form">
             <kobe-table>
                 <div slot="kobe-table-header" class="kobe-table-header">
-                 <!--  <el-row type="flex" justify="end">
-                    <el-col :span="10" :offset="14">
+                  <el-row type="flex">
+                  <el-col justify="start">
+                    <el-button @click="deleteType()" type="primary">批量移除</el-button>
+                  </el-col>
+                    <el-col justify="end">
                         <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
                         <el-button slot="append" @click="onSearch" icon="search"></el-button>
                         </el-input>
-                    </el-col>
-                      <el-button icon="upload2" type="primary" style="margin-left:10px;"></el-button>
-                      <el-button icon="setting" type="primary"></el-button>
-                  </el-row>  -->         
+                    </el-col> 
+                  </el-row>          
                 </div>
                 <div slot="kobe-table-content" class="kobe-table">
                 <el-table
                     ref="multipleTable"
+                    height="400"
                     border
                     stripe
                     :data="response.data"
                     @selection-change="handleSelectionChange">
-                    <!-- <el-table-column type="selection" width="40"></el-table-column> -->
-                    <el-table-column prop="id" label="ID" sortable width="90"></el-table-column>
-                    <el-table-column prop="name" label="物业名称"></el-table-column>
-                    <el-table-column prop="name" label="关联时间" width="130">
-                      <template scope="scope">
-                        {{scope.row.begin_time | toYM}} - {{scope.row.end_time | toYM}}
-                      </template>
+                    <el-table-column type="selection" width="40"></el-table-column>
+                    <el-table-column prop="id" label="ID" sortable width="100"></el-table-column>
+                    <el-table-column prop="name" label="权限点名称" width="150"></el-table-column>
+                    <el-table-column prop="duty_name" label="权限标识" width="150"></el-table-column>
+                    <el-table-column prop="mobile" label="权限说明" width="150"></el-table-column>
+                    <el-table-column prop="address" label="有效状态"></el-table-column>
+                    <el-table-column width="80" label="操作">
+                    <template scope="scope">
+                        <el-button size="small" @click="deleteType(scope.row.id)" icon="delete2" title="移除"></el-button>
+                    </template>
                     </el-table-column>
-                    <el-table-column prop="duty_name" label="联系人" width="80"></el-table-column>
-                    <el-table-column prop="mobile" label="联系电话" width="120"></el-table-column>
-                    <el-table-column prop="address" label="公司地址"></el-table-column>
                 </el-table>
                 </div>
                 <div slot="kobe-table-footer" class="kobe-table-footer">
@@ -58,9 +60,12 @@
 import config from 'src/config'
 import api from 'src/api'
 export default {
-  props: ['communityId'],
   data () {
     return {
+      removeForm: {
+        community_id: this.$store.state.token,
+        tenement_id: ''
+      },
       form: {
         keyword: ''
       },
@@ -92,7 +97,6 @@ export default {
       const data = {
         currentPage: this.response.currentPage,
         pageSize: value,
-        id: this.communityId,
         ...this.form
       }
       this.getList(data)
@@ -101,31 +105,26 @@ export default {
       const data = {
         currentPage: value,
         pageSize: this.response.pageSize,
-        id: this.communityId,
         ...this.form
       }
       this.getList(data)
     },
-    getList (data = null) {
-      if (data === null) {
-        data = {
-          id: this.communityId,
-          currentPage: 1,
-          pageSize: 10
-        }
+    getList (data = {}) {
+      data = {
+        id: this.$store.state.token
       }
-      api.GET(config.village.history, data)
+      api.GET(config.village.relServer, data)
       .then(response => {
-        console.log(response.data.data)
-        this.response.data = this.transform(response.data.data.data)
-        this.response.currentPage = response.data.data.currentPage
-        this.response.pageSize = response.data.data.pageSize
-        this.response.count = response.data.data.count
+        this.response.data = this.transform(response.data.data)
+        if (response.data.errcode === '5000') {
+          this.response.data = null
+        }
       })
       .catch(error => {
         this.$message.error(error)
       })
     },
+    // 删除表单
     deleteType (id) {
       if (id) {
         this.ids = []
@@ -143,7 +142,7 @@ export default {
         })
         return
       }
-      this.$confirm('此操作将解除关联该物业,是否继续解除？', '解除', {
+      this.$confirm('此操作将移除选定权限,是否继续移除？', '移除', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -153,7 +152,7 @@ export default {
         })
         .then(response => {
           if (response.data.errcode === '0000') {
-            this.onSuccess('解除成功')
+            this.onSuccess('删除成功')
             this.getList()
           } else {
             this.$message.error('发生错误，请重试')
@@ -170,10 +169,8 @@ export default {
     },
     // 转换数据
     transform (data) {
-      let res = []
+      var res = []
       data.forEach(e => {
-        e.rubTenementVOS[0].begin_time = e.begin_time
-        e.rubTenementVOS[0].end_time = e.end_time
         res.push(e.rubTenementVOS[0])
       })
       return res

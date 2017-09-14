@@ -10,27 +10,28 @@
       </el-tree>
    </el-col>
     <el-col :span="20">
-      <kobe-table> 
-        <div slot="kobe-table-header" class="kobe-table-header">      
+      <kobe-table>
+        <div slot="kobe-table-header" class="kobe-table-header">
           <el-row type="flex" justify="end">
             <el-col :span="14">
-              <el-button @click="enterAdd" type="primary">添加</el-button>      
+              <el-button @click="openDialog" type="primary">+新增</el-button>
+              <el-button @click="getList()" type="primary">刷新</el-button>
               <el-dropdown @command="handleCommand" style="margin-left:10px;">
                 <el-button type="primary">
                   批量操作<i class="el-icon-caret-bottom el-icon--right"></i>
                 </el-button>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="批量删除">删除</el-dropdown-item>
+                  <el-dropdown-item command="批量删除">批量删除</el-dropdown-item>
                   <el-dropdown-item command="移动">移动</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </el-col>
-            <el-select v-model="form.audit_state" placeholder="所有信息" style="width:140px;">
+            <el-select v-model="form.value" placeholder="所有信息" style="width:140px;">
               <el-option
                 v-for="item in option"
-                :key="item.audit_state"
+                :key="item.value"
                 :label="item.label"
-                :value="item.audit_state">
+                :value="item.value">
               </el-option>
             </el-select>
             <el-col :span="8">
@@ -38,7 +39,7 @@
                 <el-button slot="append" @click="onSearch" icon="search"></el-button>
               </el-input>
             </el-col>
-            <el-button type="primary" @click="dialogAdvance = true" style="margin-left:10px;">高级</el-button>
+            <el-button type="primary" @click="dialogAdvance = true">高级</el-button>
             <el-button icon="upload2" type="primary" style="margin-left:10px;"></el-button>
             <el-button icon="setting" type="primary"></el-button>
           </el-row>
@@ -51,34 +52,38 @@
             :data="response.data"
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="id" sortable label="ID" width="80"></el-table-column>
-            <el-table-column prop="name" label="小区名称" width="150"></el-table-column>
-            <el-table-column prop="duty_name" label="负责人" width="95">
+            <el-table-column prop="id" label="ID" width="50"></el-table-column>
+            <el-table-column prop="display_name" label="菜单名称"></el-table-column>
+            <el-table-column prop="logo" label="图标" width="95">
+              <template scope="scope">
+                <img style="width:58px;height:58px;" :src="scope.row.logo" @click="bigImg(scope.row.logo)" alt="">
+              </template>
             </el-table-column>
-            <el-table-column prop="mobile" width="105" label="联系电话"></el-table-column>
-            <el-table-column prop="street" label="所属街道" width="90"></el-table-column>
-            <el-table-column label="审核状态" width="90">
+            <el-table-column prop="sort" label="同级排序" width="80"></el-table-column>
+            <el-table-column prop="sort" label="菜单路由" width="80"></el-table-column>
+            <el-table-column prop="created_at" label="创建时间"></el-table-column>
+            
+            <el-table-column label="有效状态" width="90">
               <template scope="scope">
                 <el-switch
                   style="width:60px;"
-                  v-model="scope.row.audit_state"
+                  v-model="scope.row.active"
                   on-text="开"
                   off-text="关"
-                  @change="toswitch(scope.row.audit_state,scope.row.id)">
+                  @change="toswitch(scope.row.active,scope.row.id)">
                 </el-switch>
               </template>
             </el-table-column>
-            <el-table-column prop="detail_address" label="详细地址"></el-table-column>
             <el-table-column 
-              width="170"
+              width="160"
               label="操作"
               >
               <template scope="scope">
-                <!-- <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button> -->
-                <el-button @click="edit(scope.row.id)" size="small" icon="edit"></el-button>
+                <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button>
                 <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
-                <el-button @click="enterRel(scope.row.id)" size="small"><i class="fa fa-home"></i></el-button>
+                <el-button @click="openPermission(scope.row.id)" size="small">联</el-button>
               </template>
+              
             </el-table-column>
           </el-table>
         </div>
@@ -103,7 +108,6 @@
     <el-dialog v-model="dialogVisible" size="tiny">
       <img width="100%" :src="dialogImageUrl" alt="">
     </el-dialog>
-    <!-- 批量移动 -->
     <el-dialog title="移动" v-model="dialogVisibleMove" size="tiny">
         <div style="width:100%">
             <el-row type="flex" justify="center">
@@ -123,63 +127,176 @@
             </el-row>
         </div>
         <span slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisibleMove = false">取 消</el-button>
-            <el-button type="primary" @click="confirmMove">确 定</el-button>
+          <el-button @click="dialogVisibleMove = false">取 消</el-button>
+          <el-button type="primary" @click="confirmMove">确 定</el-button>
         </span>
     </el-dialog>
-<!-- 高级搜索模态框 -->
-    <el-dialog title="高级搜索" v-model="dialogAdvance" size="tiny">
-        <el-form :model="advancedSearch" style="padding-right:30px;" label-position="left" :label-width="formLabelWidth">
-          <el-form-item label="小区名称" >
-            <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="关联物业">
-            <el-input v-model="advancedSearch.name" auto-complete="off"></el-input>
-          </el-form-item>
-            <el-row>
-              <el-form-item label="所属街道">
-                <el-cascader
-                  :options="cascaderData"
-                  :props="props"
-                  :show-all-levels="false"
-                  v-model="selectedOptions"
-                  @change="handleChange">
-                </el-cascader>
-              </el-form-item>
-            </el-row>
-            <el-row>
-              <el-col :span="13">
-                <el-form-item label="联系人">
-                 <el-input v-model="advancedSearch.duty_name" auto-complete="off"></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-form-item label="数据状态">
-              <el-radio class="radio" v-model="advancedSearch.audit_state" label="1" style="margin:0 10px;">开</el-radio>
-              <el-radio class="radio" v-model="advancedSearch.audit_state" label="0"  style="margin:0 10px;">关</el-radio>
+    <el-dialog :title="dialogTitle" v-model="showDialog">
+      <el-form :model="classData" :rules="rules" ref="classData" label-width="80px">
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="父级菜单">
+              <el-cascader
+                :options="cascaderData"
+                :props="props"
+                :change-on-select="true"
+                v-model="stepsSelection"
+                @change="handleChange"
+                style="width:100%;">
+              </el-cascader>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="菜单名称" prop="display_name" require>
+              <el-input v-model="classData.display_name"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="同级排序">
+              <el-input-number v-model="classData.sort" style="width:120px;"></el-input-number>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="是否启用">
+              <el-switch
+                v-model="classData.active"
+                on-text="开"
+                off-text="关">
+              </el-switch>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="菜单标识" prop="display_name" require>
+              <el-input v-model="classData.display_name"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="访问路由" prop="display_name" require>
+              <el-input v-model="classData.display_name"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="菜单说明" prop="description" require>
+              <el-input type="textarea" v-model="classData.description"></el-input>
+            </el-form-item>
+          </el-col>
+
+           <el-col :span="12">
+            <el-form-item label="分类icon">
+              <el-upload
+                class="avatar-uploader"
+                :action="uploadURL"
+                :show-file-list="false"
+                :on-success="iconHandleAvatarSuccess"
+                :before-upload="beforeAvatarUpload">
+                <img v-if="classData.icon" :src="classData.icon" class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+            </el-form-item>
+          </el-col> 
+          <el-col :span="12">
+            <el-form-item label="菜单图标">
+              <el-upload
+                class="avatar-uploader"
+                :action="uploadURL"
+                :show-file-list="false"
+                :on-success="handleAvatarSuccess"
+                :before-upload="beforeAvatarUpload">
+                <img v-if="classData.logo" :src="classData.logo" class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+            </el-form-item>
+          </el-col>
+        </el-row> 
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+          <el-button @click="showDialog = false">取消</el-button>
+          <el-button @click="submitForm('classData')" v-if="dialogType === 'add'">确定</el-button>
+          <el-button @click="editForm()" v-if="dialogType === 'edit'">确定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 高级搜索模态框 -->
+    <el-dialog title="高级搜索" v-model="dialogAdvance">
+        <el-form :model="advancedSearch" :label-width="formLabelWidth">
+           <el-form-item label="关键字">
+              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="菜单名称">
+              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="菜单标识">
+              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
+            </el-form-item>            
+            <el-form-item label="是否启用">
+              <el-switch
+                v-model="enabled"
+                on-text="是"
+                off-text="否">
+              </el-switch>
+            </el-form-item>
+            <el-form-item label="创建时间">
+              <el-date-picker
+                  v-model="advancedSearch.keyword"
+                  type="datetime"
+                  placeholder="选择开始时间">
+              </el-date-picker>
+              <el-date-picker
+                  v-model="advancedSearch.keyword"
+                  type="datetime"
+                  placeholder="选择结束时间">
+                </el-date-picker>
             </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
             <el-button @click="dialogAdvance = false">取 消</el-button>
-            <el-button type="primary" @click="advance">确 定</el-button>
+            <el-button type="primary" @click="advance">搜 索</el-button>
         </span>
     </el-dialog>
+    <!-- 菜单关联权限弹框 -->
+       <el-dialog title="菜单关联权限" v-model="correlateShow">
+        <el-form :model="permissionForm" :label-width="formLabelWidth">
+           <el-form-item label="角色名称">
+              <el-input v-model="permissionForm.name" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="角色标识">
+              <el-input v-model="permissionForm.name" auto-complete="off"></el-input>
+            </el-form-item>           
+        </el-form>
+        <el-tabs class="margin" v-model="activeName"  @tab-click="handleClick" style="margin:0 2em">
+          <el-tab-pane label="已关联权限" name="first">
+            <rel-tab v-if='firstId'></rel-tab>
+          </el-tab-pane>
+          <el-tab-pane label="未关联权限" name="second">
+            <norel-tab v-if='secondId'></norel-tab>
+          </el-tab-pane>  
+        </el-tabs>
+        <div slot="footer" class="dialog-footer">
+          <el-row type="flex" justify="end">
+            <el-button @click="correlateShow = false">取 消</el-button>
+            <el-button type="primary" @click="correlateShow = false">确定</el-button>
+          </el-row>
+        </div>
+      </el-dialog>
   </div>
 </template>
 <script>
 import config from 'src/config'
 import api from 'src/api'
+import relTab from './reltable/rel-perssion'
+import norelTab from './reltable/noRel-perssion'
 export default {
   data () {
     return {
-      formLabelWidth: '90px',
-      adSwitch: true,
+      activeName: 'first',
+      firstId: true,
+      secondId: true,
+      permissionForm: {
+        name: ''
+      },
+      correlateShow: false,
+      formLabelWidth: '80px',
       advancedSearch: {
-        keyword: '',
-        name: '',
-        title: '',
-        audit_state: '',
-        duty_name: ''
+        keyword: ''
       },
       dialogAdvance: false,
       moveVal: null,
@@ -187,25 +304,25 @@ export default {
       data: [],
       defaultProps: {
         children: 'children',
-        label: 'title'
+        label: 'display_name'
       },
       cascaderData: [],
       props: {
         children: 'children',
-        label: 'title',
-        value: 'title'
+        label: 'display_name',
+        value: 'id'
       },
       uploadURL: config.serverURI + config.uploadFilesAPI,
       multipleSelection: [],
       option: [{
-        audit_state: null,
+        value: '0',
         label: '全部'
       }, {
-        audit_state: '1',
-        label: '已审核'
+        value: '1',
+        label: '栏目名称'
       }, {
-        audit_state: '0',
-        label: '待审核'
+        value: '2',
+        label: '访问路径'
       }],
       response: {
         data: null
@@ -231,15 +348,13 @@ export default {
       dialogType: '',
       form: {
         keyword: '',
-        audit_state: ''
+        value: ''
       },
       parentId: null,
-      region_pid: null,
-      region_id: null,
       ids: [],
       rules: {
         display_name: [
-          { required: true, message: '请输入小区名称', trigger: 'blur' }
+          { required: true, message: '请输入分类名称', trigger: 'blur' }
         ],
         description: [
           { required: true, message: '分类说明50字以内', trigger: 'blur' },
@@ -248,37 +363,52 @@ export default {
       }
     }
   },
+  components: {
+    relTab,
+    norelTab
+  },
   methods: {
-    // 进入添加小区页面
-    enterAdd () {
-      this.$router.push('/admin/recycle/village/add')
-    },
-    // 进入小区详情页
-    edit (id) {
-      this.$router.push({ path: '/admin/recycle/village/detail', query: { 'id': id } })
-    },
-    enterRel (id) {
-      this.$store.commit('SET_TOKEN', id)
-      this.$router.push({ path: '/admin/recycle/village/relserver', query: { 'id': id } })
+    // 打开关联权限弹框
+    openPermission (id) {
+      this.correlateShow = true
     },
     handleCommand (command) {
       if (command === '批量删除') {
         this.deleteType()
       }
       if (command === '移动') {
-        this.dialogVisibleMove = true
+        this.confirmMove()
       }
+    },
+    // 高级搜索
+    advance () {
+      this.dialogAdvance = false
+      this.adSwitch = false
+      const data = {
+        currentPage: 1,
+        pageSize: this.response.pageSize,
+        ...this.advancedSearch
+      }
+      api.GET(config.village.advanced, data)
+      .then(response => {
+        this.response = this.transformDate(response.data)
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     },
     // 将数据中所有的时间转换成 yyyy-mm-dd hh:mm:ss  state 状态值
     transformDate (res) {
       res.data.forEach(v => {
-        if (v.audit_state === 0) {
-          v.audit_state = false
+        if (v.created_at) {
+          v.created_at = this.formatDate(v.created_at)
         }
-        if (v.audit_state === 1) {
-          v.audit_state = true
+        if (v.active === 1) {
+          v.active = true
         }
-        v.street = v.rubRegionVO.title
+        if (v.active === 0) {
+          v.active = false
+        }
       })
       return res
     },
@@ -297,38 +427,34 @@ export default {
       value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
       return value
     },
-    toswitch (active, id) {
-      if (active) {
-        active = 1
-      } else {
-        active = 0
+    iconHandleAvatarSuccess(res, file) {
+      this.icon = window.URL.createObjectURL(file.raw)
+      this.classData.icon = res.data[0]
+    },
+    handleAvatarSuccess(res, file) {
+      this.logo = window.URL.createObjectURL(file.raw)
+      this.classData.logo = res.data[0]
+    },
+    beforeAvatarUpload(file) {
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!')
       }
-      api.POST(config.village.audit, {id: id, audit_state: active})
+      return isLt2M
+    },
+    bigImg (url) {
+      this.dialogImageUrl = url
+      this.dialogVisible = true
+    },
+    toswitch (active, id) {
+      let data = {
+        pageSize: this.response.pageSize,
+        currentPage: this.response.currentPage
+      }
+      api.POST(config.activeCategoryAPI, {id: id, active: Number(active)})
       .then(response => {
-        const data = {
-          currentPage: this.response.currentPage,
-          pageSize: this.response.pageSize,
-          region_id: this.region_id,
-          ...this.form
-        }
         this.getList(data)
         this.onSuccess('启用操作成功！')
-      })
-      .catch(error => {
-        this.$message.error(error)
-      })
-    },
-    advance () {
-      this.dialogAdvance = false
-      this.adSwitch = false
-      const data = {
-        currentPage: 1,
-        pageSize: this.response.pageSize,
-        ...this.advancedSearch
-      }
-      api.GET(config.village.advanced, data)
-      .then(response => {
-        this.response = this.transformDate(response.data)
       })
       .catch(error => {
         this.$message.error(error)
@@ -337,31 +463,15 @@ export default {
     // 树形结构选择
     handleChange (value) {
       console.log(value)
-      this.advancedSearch.title = this.selectedOptions[1]
     },
     handleChangeMove (value) {
-      this.moveVal = value
       console.log(value)
+      this.moveVal = value
     },
     // 树形目录点击事件
     handleNodeClick (data, node) {
-      if (data.type === 'district') {
-        this.region_id = data.id
-        this.getList({
-          region_pid: this.region_id,
-          currentPage: this.response.currentPage,
-          pageSize: this.response.pageSize,
-          ...this.form
-        })
-      } else {
-        this.region_id = data.id
-        this.getList({
-          region_id: this.region_id,
-          currentPage: this.response.currentPage,
-          pageSize: this.response.pageSize,
-          ...this.form
-        })
-      }
+      this.parentId = data.id
+      this.getList({parent_id: this.parentId})
     },
     toggleSelection (rows) {
       if (rows) {
@@ -383,7 +493,7 @@ export default {
     openDialog (e, data = null, type = null) {
       if (data !== null && type === 'edit') {
         this.dialogType = 'edit'
-        this.dialogTitle = '修改分类'
+        this.dialogTitle = '修改菜单'
         this.classData = {
           ...this.classData,
           ...data
@@ -396,7 +506,7 @@ export default {
         }
       } else {
         this.dialogType = 'add'
-        this.dialogTitle = '新增分类'
+        this.dialogTitle = '新增菜单'
         this.classData = {
           parent_id: [],
           display_name: '',
@@ -416,6 +526,7 @@ export default {
           var obj = this.classData
           var pid = this.stepsSelection
           obj.parent_id = pid.shift()
+          console.log(obj)
           api.POST(config.createCategoryAPI, obj)
             .then(response => {
               if (response.status !== 200) {
@@ -424,13 +535,7 @@ export default {
               }
               if (response.data.errcode === '0000') {
                 this.onSuccess('创建成功')
-                const data = {
-                  currentPage: this.response.currentPage,
-                  pageSize: this.response.pageSize,
-                  region_id: this.region_id,
-                  ...this.form
-                }
-                this.getList(data)
+                this.getList()
                 this.getTree()
                 this.showDialog = false
               }
@@ -454,13 +559,7 @@ export default {
         }
         if (response.data.errcode === '0000') {
           this.onSuccess('修改成功')
-          const data = {
-            currentPage: this.response.currentPage,
-            pageSize: this.response.pageSize,
-            region_id: this.region_id,
-            ...this.form
-          }
-          this.getList(data)
+          this.getList()
           this.getTree()
           this.showDialog = false
         }
@@ -468,16 +567,13 @@ export default {
     },
     // 批量移动
     confirmMove () {
-      this.region_pid = []
-      this.region_id = []
-      this.region_pid = this.moveVal[0]
-      this.region_id = this.moveVal[1]
-
+      this.dialogVisibleMove = true
+      this.parentId = null
+      this.parentId = this.moveVal.shift()
       var obj = {}
       obj.ids = this.ids
-      obj.region_pid = this.region_pid
-      obj.region_id = this.region_id
-      api.POST(config.village.move, obj)
+      obj.id = this.parentId
+      api.POST(config.moveCategoryAPI, obj)
       .then(response => {
         if (response.data.errcode === '0000') {
           this.getList()
@@ -506,18 +602,19 @@ export default {
         })
         return
       }
-      this.$confirm('此操作将删除选定小区,是否继续删除？', '删除', {
+      this.$confirm('是否确认删除该表单', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.POST(config.village.delete, {
+        api.POST(config.deleteCategoryAPI, {
           ids: this.ids
         })
         .then(response => {
           if (response.data.errcode === '0000') {
             this.onSuccess('删除成功')
             this.getList()
+            this.getTree()
           } else {
             this.$message.error('发生错误，请重试')
           }
@@ -528,34 +625,24 @@ export default {
       const data = {
         currentPage: this.response.currentPage,
         pageSize: value,
-        region_id: this.region_id,
         ...this.form
       }
-      if (this.adSwitch) {
-        this.getList(data)
-      } else {
-        this.adSwitch = true
-      }
+
+      this.getList(data)
     },
     handleCurrentChange (value) {
-      console.log(value)
       const data = {
         currentPage: value,
         pageSize: this.response.pageSize,
-        region_id: this.region_id,
         ...this.form
       }
-      if (this.adSwitch) {
-        this.getList(data)
-      } else {
-        this.adSwitch = true
-      }
+
+      this.getList(data)
     },
     onSearch () {
       const data = {
         currentPage: 1,
         pageSize: this.response.pageSize,
-        region_id: this.region_id,
         ...this.form
       }
       this.getList(data)
@@ -574,10 +661,11 @@ export default {
       }
     },
     getTree () {
-      api.GET(config.village.streetTree)
+      api.GET(config.categoryTreeAPI)
       .then(response => {
-        var newData = response.data.data[0].children[0].children
+        var newData = response.data.data
         this.iteration(newData)
+        newData.push({ id: 0, display_name: '根级分类', label: '根级分类', value: 0 })
         this.data = newData
         this.cascaderData = newData
       })
@@ -585,20 +673,10 @@ export default {
         this.$message.error(error)
       })
     },
-    getList (data = null) {
-      if (data === null) {
-        data = {
-          currentPage: 1,
-          pageSize: 10
-        }
-      }
-      api.GET(config.village.list, data)
+    getList (data = {}) {
+      api.GET(config.categoryIndexAPI, data)
       .then(response => {
-        if (response.data.errcode === '0000') {
-          this.response = this.transformDate(response.data.data)
-        } else {
-          this.response.data = null
-        }
+        this.response = this.transformDate(response.data.data)
       })
       .catch(error => {
         this.$message.error(error)
@@ -613,8 +691,8 @@ export default {
     }
   },
   mounted () {
-    this.getList()
     this.getTree()
+    this.getList()
   }
 }
 </script>
@@ -652,5 +730,4 @@ export default {
     font-size: 14px;
     margin: 7px 0 0 7px;
 }
-
 </style>

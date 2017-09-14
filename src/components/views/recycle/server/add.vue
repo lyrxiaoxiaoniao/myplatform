@@ -43,7 +43,7 @@
                       :options="cascaderData"
                       :props="props"
                       :change-on-select="true"
-                      v-model="stepsSelection"
+                      v-model="region_id"
                       @change="handleChange"
                       style="width:100%;">
                   </el-cascader>
@@ -99,6 +99,11 @@ export default {
       }
     }
     return {
+      props: {
+        children: 'children',
+        label: 'title',
+        value: 'id'
+      },
       uploadURL: config.serverURI + config.uploadFilesAPI,
       labelPosition: 'left',
       cascaderData: [],
@@ -172,6 +177,33 @@ export default {
         }
       })
     },
+    getTree () {
+      api.GET(config.village.streetTree)
+      .then(response => {
+        var newData = response.data.data[0].children[0].children
+        console.log(newData)
+        this.iteration(newData)
+        this.data = newData
+        this.cascaderData = newData
+        console.log(this.cascaderData)
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    iteration (obj) {
+      for (let key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          if (obj[key] instanceof Object) {
+            if (obj[key].length === 0) {
+              obj[key] = null
+            } else {
+              this.iteration(obj[key])
+            }
+          }
+        }
+      }
+    },
     onSuccess (string) {
       this.$notify({
         title: '成功',
@@ -193,6 +225,7 @@ export default {
   },
   mounted () {
     this.getForm()
+    this.getTree()
   }
 }
 </script>

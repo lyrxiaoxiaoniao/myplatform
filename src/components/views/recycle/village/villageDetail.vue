@@ -1,17 +1,15 @@
 <template>
-<div>
-    <kobe-table class="border margin" style="margin: 20px 40px;background-color: white;">    
-        <div slot="kobe-table-header" class="kobe-table-header" style="border-bottom: 1px solid gainsboro">
-           <el-row>
-               <el-col :span="16" class="text-v-center" style="color: black;font-size: 13px;line-height: 36px;font-weight: bold">基本信息</el-col>
-               <el-col :offset="2" :span="6">
-                   <el-button @click="back">返回</el-button>  
-                   <el-button type="primary" @click="submitForm('detailForm')" style="margin-left: 10px;">保存</el-button>  
-               </el-col>
-           </el-row>  
+  <div class="lh-container">
+    <div class="lh-top">
+      <div class="lh-header">
+        <div>基本信息</div>
+        <div>
+          <el-button @click="back">返回</el-button>  
+          <el-button type="primary" @click="submitForm('detailForm')" style="margin-left: 10px;">保存</el-button>
         </div>
-        <div slot="kobe-table-content" class="kobe-table">
-          <el-form  :model="detailForm" :rules="rules" ref="detailForm"  class="demo-ruleForm padding" :label-position="labelPosition" label-width="100px">
+      </div>
+      <div class="lh-form">
+        <el-form  :model="detailForm" :rules="rules" ref="detailForm"  class="demo-ruleForm padding" :label-position="labelPosition" label-width="100px">
               <el-row>
                 <el-col :span="10"> 
                     <el-form-item label="小区名称" prop="name">
@@ -66,12 +64,11 @@
                 </el-col>
             </el-row>
           </el-form>
-        </div>   
-    </kobe-table>
-</div>
+      </div>
+    </div>  </div>
 </template>
 <script>
-import config from 'src/config/recycle.js'
+import config from 'src/config'
 import api from 'src/api'
 export default {
   data () {
@@ -161,12 +158,50 @@ export default {
   }
 }
 </script>
-<style scoped>
-.border {
-  border: 1px solid gainsboro;
-  border-radius: 5px;
-}
-.padding {
-  padding: 30px 50px 30px 100px;
+<style lang="scss" scoped>
+.lh-container {
+    padding: 1rem 2rem;
+    .lh-top {
+      border: 1px solid lightgray;
+      border-radius: 5px;
+      width: 100%;
+      background-color: #fff;
+      padding-bottom: 1rem;
+      .lh-header {
+        padding: 0 2rem;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 60px;
+        border-bottom: 1px solid lightgray;
+        div:nth-of-type(1){
+          font-size: 16px;
+        }
+      }
+      .lh-form {
+        margin: 1rem 2rem;
+      }
+    }
+    .lh-bottom {
+      margin-top: 1rem;
+      border-radius: 5px;
+      border: 1px solid lightgray;
+      width: 100%;
+      background-color: #fff;
+      padding-bottom: 1rem;
+      .lh-header {
+        padding: 0 2rem;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 60px;
+        border-bottom: 1px solid lightgray;
+        div:nth-of-type(1){
+          font-size: 16px;
+        }
+      }
+    }
 }
 </style>
