@@ -87,7 +87,7 @@ export default {
     return {
       dialogAdvance: false,
       correlateForm: {
-        community_id: this.communityId,
+        community_id: this.$store.state.token,
         tenement_id: '',
         begin_time: '',
         end_time: ''

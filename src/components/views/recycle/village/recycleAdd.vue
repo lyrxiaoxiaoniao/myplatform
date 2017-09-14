@@ -1,6 +1,6 @@
 <template>
   <div class="lh-container">
-     <el-tabs type="border-card" @tab-click="showMap">
+    <el-tabs type="border-card" @tab-click="showMap">
       <el-tab-pane label="基本信息" class="lh-top">
         <div class="table-head">
           <div>基本信息</div>

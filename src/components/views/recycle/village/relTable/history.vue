@@ -58,7 +58,6 @@
 import config from 'src/config'
 import api from 'src/api'
 export default {
-  props: ['communityId'],
   data () {
     return {
       form: {
