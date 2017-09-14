@@ -105,6 +105,7 @@ export default {
   methods: {
     onSearch () {
       const data = {
+        id: this.communityId,
         currentPage: 1,
         pageSize: this.response.pageSize,
         ...this.form
@@ -120,8 +121,14 @@ export default {
       api.POST(config.village.addcorrelate, this.correlateForm)
       .then(response => {
         this.onSuccess('关联成功！')
-        this.getList()
-        this.$emit('correlateEvent', this.response.count)
+        const data = {
+          id: this.communityId,
+          currentPage: 1,
+          pageSize: this.response.pageSize,
+          ...this.form
+        }
+        this.getList(data)
+        this.$emit('correlateEvent')
       })
       .catch(error => {
         this.$message.error(error)
@@ -154,6 +161,7 @@ export default {
     },
     handleSizeChange (value) {
       const data = {
+        id: this.communityId,
         currentPage: this.response.currentPage,
         pageSize: value,
         ...this.form
@@ -162,6 +170,7 @@ export default {
     },
     handleCurrentChange (value) {
       const data = {
+        id: this.communityId,
         currentPage: value,
         pageSize: this.response.pageSize,
         ...this.form

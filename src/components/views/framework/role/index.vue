@@ -39,12 +39,22 @@
             <el-table-column prop="duty_name" label="角色标识" width="95">
             </el-table-column>
             <el-table-column prop="mobile" width="105" label="角色类别"></el-table-column>
-            <el-table-column prop="region_id" label="账号数量"></el-table-column>
+            <el-table-column prop="region_id" label="账号数量" width="90"></el-table-column>
             <el-table-column prop="region_id" label="角色说明"></el-table-column>
             <el-table-column prop="region_id" label="创建时间"></el-table-column>
-            <el-table-column prop="detail_address" label="有效状态"></el-table-column>
+            <el-table-column prop="detail_address" label="有效状态" width="90">
+              <template scope="scope">
+                <el-switch
+                  style="width:60px;"
+                  v-model="scope.row.audit_state"
+                  on-text="开"
+                  off-text="关"
+                  @change="toswitch(scope.row.audit_state,scope.row.id)">
+                </el-switch>
+              </template>
+            </el-table-column>
             <el-table-column 
-              width="170"
+              width="210"
               label="操作"
               >
               <template scope="scope">
@@ -319,7 +329,8 @@ export default {
       uploadURL: config.serverURI + config.uploadFilesAPI,
       multipleSelection: [],
       response: {
-        data: null
+        data: null,
+        audit_state: true
       },
       detailShow: false,
       selectedOptions: [],

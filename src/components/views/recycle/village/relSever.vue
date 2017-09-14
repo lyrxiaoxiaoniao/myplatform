@@ -1,11 +1,10 @@
 <template>
 <div>
-    <div class="lh-container">
+  <div class="lh-container">
     <div class="lh-top">
       <div class="lh-header">
         <div>{{info.name}}</div>
         <div>
-          <!-- <el-button>返回</el-button> -->
           <el-button @click="back" type="primary">返回</el-button>
         </div>
       </div>
@@ -21,8 +20,8 @@
               <el-form-item disabled label="联系人电话" prop="mobile">
                 <el-input disabled v-model="info.mobile"></el-input>
               </el-form-item> 
-             </el-col>
-             <el-col :span="10"> 
+            </el-col>
+            <el-col :span="10"> 
               <el-form-item label="详细地址" prop="detail_address">
                 <el-input disabled v-model="info.detail_address"></el-input>
               </el-form-item>
@@ -31,12 +30,11 @@
               <el-form-item label="已关联物业数量" prop="count">
                 <el-input disabled v-model="info.count"></el-input>
               </el-form-item> 
-             </el-col>
+            </el-col>
           </el-row>
         </el-form>
       </div>
     </div>
-
     <div class="lh-bottom">
       <el-tabs class="margin" v-model="activeName"  @tab-click="handleClick" style="margin:0 2em">
         <el-tab-pane label="已关联物业" name="first">

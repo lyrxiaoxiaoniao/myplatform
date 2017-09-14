@@ -24,7 +24,7 @@
                     <!-- <el-table-column type="selection" width="40"></el-table-column> -->
                     <el-table-column prop="id" label="ID" sortable width="80"></el-table-column>
                     <el-table-column prop="name" label="物业名称" width="140"></el-table-column>
-                    <el-table-column prop="name" label="关联时间" width="120">
+                    <el-table-column prop="name" label="关联时间" width="130">
                       <template scope="scope">
                         {{scope.row.begin_time | toYM}} - {{scope.row.end_time | toYM}}
                       </template>
@@ -100,6 +100,7 @@ export default {
     },
     handleSizeChange (value) {
       const data = {
+        id: this.communityId,
         currentPage: this.response.currentPage,
         pageSize: value,
         ...this.form
@@ -109,6 +110,7 @@ export default {
     handleCurrentChange (value) {
       const data = {
         currentPage: value,
+        id: this.communityId,
         pageSize: this.response.pageSize,
         ...this.form
       }
@@ -147,14 +149,19 @@ export default {
         .then(response => {
           if (response.data.errcode === '0000') {
             this.onSuccess('解除成功')
-            this.getList()
+            const data = {
+              currentPage: this.response.currentPage,
+              id: this.communityId,
+              pageSize: this.response.pageSize,
+              ...this.form
+            }
+            this.getList(data)
             this.$emit('removeEvent')
           } else {
             this.$message.error('发生错误，请重试')
           }
         })
       })
-      this.getList()
     },
     onSuccess (string) {
       this.$notify({
