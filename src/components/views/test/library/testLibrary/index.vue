@@ -5,7 +5,8 @@
         <el-tree :data="testList"
                  :props="defaultProps"
                  @node-click="handleNodeClick"
-                 :highlight-current="true"></el-tree>
+                 :highlight-current="true"
+                 :expand-on-click-node="false"></el-tree>
       </el-col>
       <el-col :span="18"
               :offset="1">
@@ -13,15 +14,16 @@
           <div class="leftWrapper">
             <el-button type="primary"
                        icon="plus">新 增</el-button>
-            <el-dropdown trigger="click">
+            <el-dropdown trigger="click"
+                         @command="handleCommand">
               <el-button type="primary">
                 批 量
                 <i class="el-icon-caret-bottom el-icon--right"></i>
               </el-button>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>删除</el-dropdown-item>
-                <el-dropdown-item>移库</el-dropdown-item>
-                <el-dropdown-item>批量导入</el-dropdown-item>
+                <el-dropdown-item command="delete">删除</el-dropdown-item>
+                <el-dropdown-item command="move">移库</el-dropdown-item>
+                <el-dropdown-item command="import">批量导入</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
@@ -40,63 +42,108 @@
                          icon="search"></el-button>
             </el-input>
             <el-button icon="search"
-                       type="primary">高级</el-button>
+                       type="primary" @click="openDialog('advanceVisible')">高级</el-button>
             <el-button icon="upload2"
                        type="primary"></el-button>
             <el-button icon="setting"
                        type="primary"></el-button>
           </div>
         </div>
-        <el-card>
-          <div slot="header"
-               class="clearfix">
-            <el-checkbox v-model="all">全选</el-checkbox>
-          </div>
-          <el-card v-for="item in currentList"
-                   class="problemsItem">
-            <el-row>
-              <el-col :span="2">
-                <el-checkbox></el-checkbox>
-                <span class="blue">{{item.type}}</span>
-              </el-col>
-              <el-col :span="21"
-                      :offset="1">
-                <div class="title">{{item.title}}</div>
-                <div class="answers"
-                     v-for="innerItem in item.options">
-                  {{innerItem.title}} 、 {{innerItem.text}}
-                </div>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="3">
-                <span class="orange">【正确答案】</span>
-              </el-col>
-              <el-col :span="1"
-                      :offset="1">
-                {{item.answers.join('、')}}
-              </el-col>
-            </el-row>
-            <div class="infoWrapper">
-              <div class="infoItem">题目编号：{{item.no}}</div>
-              <div class="infoItem">默认分值：{{item.opint}}分</div>
-              <div class="infoItem">难度：{{item.easy}}星</div>
-              <div class="labels">
-                标签：
-                <el-tag class="tagItem" v-for="innerItem in item.label">{{innerItem}}</el-tag>
-              </div>
-              <el-button icon="edit" size="mini" type="primary"></el-button>
-              <el-button icon="delete" size="mini" type="primary"></el-button>
-            </div>
-          </el-card>
-        </el-card>
+        <testList :list="currentList"></testList>
       </el-col>
     </el-row>
+    <el-dialog v-model="moveVisible"
+               title="移库"
+               size="tiny">
+      <div class="cascaderWrapper">
+        移动到：
+        <el-cascader :options="testList"
+                     change-on-select
+                     :props="props"></el-cascader>
+      </div>
+      <div slot="footer"
+           class="dialog-footer">
+        <el-button @click="hideDialog('moveVisible')">取 消</el-button>
+        <el-button type="primary"
+                   @click="hideDialog('moveVisible')">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="高级搜索"
+               v-model="advanceVisible">
+      <div class="searchWrapper">
+        <div class="inputItem">
+          <div class="title">题目类型：</div>
+          <div class="inputWrapper">
+            <el-select v-model="value"
+                       placeholder="请选择">
+              <el-option v-for="item in options"
+                         :label="item"
+                         :value="item">
+              </el-option>
+            </el-select>
+          </div>
+        </div>
+        <div class="inputItem">
+          <div class="title">题目难度：</div>
+          <div class="inputWrapper">
+            <el-select v-model="value"
+                       placeholder="请选择">
+              <el-option v-for="item in options"
+                         :label="item"
+                         :value="item">
+              </el-option>
+            </el-select>
+          </div>
+        </div>
+        <div class="inputItem">
+          <div class="title">题干：</div>
+          <div class="inputWrapper">
+            <el-input></el-input>
+          </div>
+        </div>
+        <div class="inputItem">
+          <div class="title">答案：</div>
+          <div class="inputWrapper">
+            <el-input></el-input>
+          </div>
+        </div>
+        <div class="inputItem">
+          <div class="title">题目编号：</div>
+          <div class="inputWrapper">
+            <el-input></el-input>
+          </div>
+        </div>
+        <div class="inputItem">
+          <div class="title">标签：</div>
+          <div class="inputWrapper">
+            <el-input></el-input>
+          </div>
+        </div>
+        <div class="inputItem">
+          <div class="title">创建时间：</div>
+          <div class="inputWrapper">
+            <el-date-picker v-model="value6"
+                            type="daterange"
+                            placeholder="选择日期范围">
+            </el-date-picker>
+          </div>
+        </div>
+      </div>
+      <div slot="footer"
+           class="dialog-footer">
+        <el-button @click="hideDialog('advanceVisible')">取 消</el-button>
+        <el-button type="primary"
+                   @click="hideDialog('advanceVisible')">搜 索</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import testList from './TestList.vue'
+
 export default {
+  components: { testList },
   data() {
     return {
       testList: [{
@@ -601,15 +648,57 @@ export default {
         label: 'label',
         children: 'children'
       },
+      props: {
+        value: 'label',
+        children: 'children'
+      },
       options: ['单选题', '多选题'],
       all: false,
-      currentList: null
+      currentList: null,
+      moveVisible: false,
+      advanceVisible: false,
+      value6: ''
     }
   },
   methods: {
+    openDialog(e) {
+      this[e] = true
+    },
+    hideDialog(e) {
+      this[e] = false
+    },
     handleNodeClick(data) {
       console.log(data)
       this.currentList = data.problems
+    },
+    handleCommand(command) {
+      if (command === 'delete') {
+        this.deleteTest()
+      } else if (command === 'move') {
+        this.moveLibrary()
+      } else if (command === 'import') {
+        this.importLibrary()
+      }
+    },
+    deleteTest() {
+      this.$confirm('此操作将从题库中删除该题目, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    moveLibrary() {
+      this.openDialog('moveVisible')
     }
   }
 }
@@ -635,8 +724,27 @@ export default {
   margin: 0 10px;
 }
 
-.blue {
-  color: #20A0FF;
-  font-size: 14px;
+.cascaderWrapper {
+  margin-left: 30px;
+}
+
+.searchWrapper {
+  display: flex;
+  flex-wrap: wrap;
+}
+.inputItem {
+  flex: auto;
+  width: 50%;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.inputItem .title {
+  width: 100px;
+  text-align: right;
+  margin-right: 10px;
+}
+.inputItem .inputWrapper {
+  width: 60%;
 }
 </style>
