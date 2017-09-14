@@ -3,7 +3,7 @@
  */
 import DashMainView from 'components/views/dash/Main.vue'
 import TestView from 'components/views/test/library/testLibrary/Index.vue'
-// import TestAddView from 'components/views/test/library/testLibrary/AddTest.vue'
+import TestAddView from 'components/views/test/library/testLibrary/AddTest.vue'
 
 // 标签管理
 import TestLabelListView from 'components/views/test/library/testLabel/Index.vue'
@@ -17,10 +17,22 @@ const testRouters = [
     name: '在线模拟考试',
     meta: { description: '信息' },
     children: [{
-      path: 'index',
-      component: TestView,
+      path: 'list',
+      component: DashMainView,
       name: '题库管理列表',
-      meta: { description: '列表' }
+      meta: { description: '列表' },
+      children: [{
+        path: 'index',
+        component: TestView,
+        name: '题库管理列表',
+        meta: { desceription: '列表' }
+      },
+      {
+        path: 'add',
+        component: TestAddView,
+        name: '题库管理',
+        meta: { desceription: '查看/编辑题目' }
+      }]
     }, {
       path: 'label',
       component: DashMainView,
