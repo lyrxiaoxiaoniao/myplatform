@@ -8,7 +8,7 @@
           <div>基本信息</div>
           <div>
             <el-button>返回</el-button>
-            <el-button type="primary">保存</el-button>
+            <el-button type="primary" @click="add">保存</el-button>
           </div>
         </div>
         <div class="table-body">
@@ -133,22 +133,26 @@
                      style="margin-left: 35px;"></el-switch>
         </div>
         <div class="table-body">
+<<<<<<< HEAD
           <el-form :model="restaurantInfo.contractStatus"
                    label-width="100px">
+=======
+          <el-form :model="restaurantInfo" label-width="100px">
+>>>>>>> 3c048672bc2da3372d22c856d7f0ea25ac16159e
             <el-row>
               <el-col :span="12">
                 <el-form-item label="签约人">
-                  <el-input placeholder="请输入签约人姓名"></el-input>
+                  <el-input placeholder="请输入签约人姓名" v-model="restaurantInfo.sign_name"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item label="联系电话">
-                  <el-input placeholder="请输入签约人联系电话"></el-input>
+                  <el-input placeholder="请输入签约人联系电话" v-model="restaurantInfo.sign_phone"></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row>
-              <el-col :span="12">
+              <!-- <el-col :span="12">
                 <el-form-item label="回收单位">
                   <el-select v-model="restaurantInfo.street"
                              placeholder="请选择所属街道"
@@ -159,16 +163,11 @@
                     </el-option>
                   </el-select>
                 </el-form-item>
-              </el-col>
+              </el-col> -->
               <el-col :span="12">
-                <el-form-item label="合同期限"
-                              class="contract-time">
-                  <el-date-picker v-model="startTime"
-                                  type="datetime"
-                                  placeholder="选择开始时间"></el-date-picker>
-                  <el-date-picker v-model="endTime"
-                                  type="datetime"
-                                  placeholder="选择结束时间"></el-date-picker>
+                <el-form-item label="合同期限" class="contract-time">
+                  <el-date-picker v-model="restaurantInfo.begin_time" type="datetime" placeholder="选择开始时间"></el-date-picker>
+                  <el-date-picker v-model="restaurantInfo.end_time" type="datetime" placeholder="选择结束时间"></el-date-picker>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -321,6 +320,7 @@
 import config from 'src/config'
 import api from 'src/api'
 
+<<<<<<< HEAD
 export default {
   data() {
     return {
@@ -359,12 +359,35 @@ export default {
       }
       if (!isLt2M) {
         this.$message.error('上传头像图片大小不能超过 10MB!')
+=======
+  export default {
+    data () {
+      return {
+        uploadURL: config.serverURI + config.uploadFilesAPI,
+        selected: {
+          banner: ''
+        },
+        regionSelectOptions: [],
+        restaurantInfo: {
+          checkState: true,
+          license: '',
+          begin_time: '',
+          end_time: ''
+        },
+        searchInput: '',
+        point: {},
+        pointAddress: '',
+        map: null,
+        geoc: null,
+        showContract: true
+>>>>>>> 3c048672bc2da3372d22c856d7f0ea25ac16159e
       }
       return isJPG && isLt2M
     },
     useClick() {
       this.searchInput = this.pointAddress
     },
+<<<<<<< HEAD
     posMarker() {
       /* eslint-disable */
       const map = this.map
@@ -381,6 +404,51 @@ export default {
             message: '暂无搜索结果，请确认地点是否正确',
             type: 'error'
           })
+=======
+    methods: {
+      add () {
+        api.POST(config.loadometer.create, this.restaurantInfo)
+          .then(response => {
+            if (response.status !== 200) {
+              this.error = response.statusText
+              return
+            }
+            if (response.data.errcode === '0000') {
+              this.onSuccess('保存成功')
+              this.restaurantInfo = {
+                checkState: true,
+                license: '',
+                begin_time: '',
+                end_time: ''
+              }
+            }
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
+      },
+      getRegion (data = {}) {
+        api.GET(config.restaurants.getRegion, data)
+          .then(response => {
+            this.regionSelectOptions = this.transformData(response.data.data)
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
+      },
+      /* 上传图片函数 */
+      handleAvatarSuccess (res, file) {
+        this.restaurantInfo.license = res.data[0]
+      },
+      beforeAvatarUpload (file) {
+        const isJPG = file.type === 'image/jpeg'
+        const isLt2M = file.size / 1024 / 1024 < 10
+        if (!isJPG) {
+          this.$message.error('上传头像图片只能是 JPG 格式!')
+        }
+        if (!isLt2M) {
+          this.$message.error('上传头像图片大小不能超过 10MB!')
+>>>>>>> 3c048672bc2da3372d22c856d7f0ea25ac16159e
         }
 
       }, '深圳市')
@@ -417,6 +485,7 @@ export default {
       const geoc = new BMap.Geocoder()
       that.geoc = geoc
 
+<<<<<<< HEAD
       map.addEventListener('click', function(e) {
         map.clearOverlays()
         // that.point = JSON.parse(JSON.stringify(e.point))
@@ -439,6 +508,73 @@ export default {
         this.$nextTick(() => {
           this.mapInit()
         })
+=======
+        map.addEventListener('click', function(e) {
+          map.clearOverlays()
+          that.point = JSON.parse(JSON.stringify(e.point))
+          that.restaurantInfo.longitude = that.point.lng
+          that.restaurantInfo.latitude = that.point.lat
+          // that.point.lat = e.point.lat
+          // that.point.lng = e.point.lng
+          console.log(that.point)
+          console.log('that.restaurantInfo' + that.restaurantInfo)
+          const marker = new BMap.Marker(e.point)
+          map.addOverlay(marker)
+          geoc.getLocation(e.point, function(rs) {
+            that.pointAddress = rs.address
+          })
+        })
+        /* eslint-enable */
+      },
+      showMap(e) {
+        if (e.label === '地图定位') {
+          this.$nextTick(() => {
+            this.mapInit()
+          })
+        }
+      },
+      transformData (res) {
+        res.data.forEach(v => {
+          if (v.created_at) {
+            v.created_at = this.formatDate(v.created_at)
+          }
+          if (v.signState === 0) {
+            v.signState = '未签约'
+          }
+          if (v.signState === 1) {
+            v.signState = '已签约'
+          }
+          if (v.checkState === 0) {
+            v.checkState = false
+          }
+          if (v.checkState === 1) {
+            v.checkState = true
+          }
+        })
+        return res
+      },
+      // 时间转换 毫秒转换成 yyyy-mm-dd hh:mm:ss
+      formatDate (value) {
+        let date = new Date(value)
+        let M = date.getMonth() + 1
+        M = M < 10 ? ('0' + M) : M
+        let d = date.getDate()
+        d = d < 10 ? ('0' + d) : d
+        // let h = date.getHours()
+        let m = date.getMinutes()
+        m = m < 10 ? ('0' + m) : m
+        let s = date.getSeconds()
+        s = s < 10 ? ('0' + s) : s
+        value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
+        return value
+      },
+      onSuccess (string) {
+        this.$notify({
+          title: '成功',
+          message: string,
+          type: 'success'
+        })
+>>>>>>> 3c048672bc2da3372d22c856d7f0ea25ac16159e
       }
     },
     getRegion(data = {}) {

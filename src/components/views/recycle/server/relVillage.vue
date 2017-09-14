@@ -40,13 +40,13 @@
     <div class="lh-bottom">
       <el-tabs class="margin" v-model="activeName"  @tab-click="handleClick" style="margin:0 2em">
         <el-tab-pane label="已服务小区" name="first">
-          <rel-tab :id="info.id"></rel-tab>
+          <rel-tab v-if='firstId' :tenementId="tenement_id"></rel-tab>
         </el-tab-pane>
         <el-tab-pane label="未服务小区" name="second">
-          <norel-tab :id="info.id"></norel-tab>
+          <norel-tab v-if='secondId' :tenementId="tenement_id"></norel-tab>
         </el-tab-pane>
         <el-tab-pane label="历史服务" name="third">
-          <history :id="info.id"></history>
+          <history v-if='thirdId' :tenementId="tenement_id"></history>
         </el-tab-pane>    
       </el-tabs>
     </div>
@@ -62,6 +62,7 @@ import history from './relTable/history-service'
 export default {
   data () {
     return {
+      tenement_id: this.$route.query.id,
       data: [],
       response: {
         data: null
@@ -74,6 +75,9 @@ export default {
         count: '1',
         id: this.$route.query.id
       },
+      firstId: true,
+      secondId: false,
+      thirdId: false,
       activeName: 'first',
       form: {
         keyword: '',
@@ -88,7 +92,21 @@ export default {
   },
   methods: {
     handleClick (tab, event) {
-      this.$store.commit('TOGGLE_LOADING')
+      if (tab.name === 'first') {
+        this.firstId = true
+        this.secondId = false
+        this.thirdId = false
+      }
+      if (tab.name === 'second') {
+        this.firstId = false
+        this.secondId = true
+        this.thirdId = false
+      }
+      if (tab.name === 'third') {
+        this.firstId = false
+        this.secondId = false
+        this.thirdId = true
+      }
     },
     getForm () {
       api.GET(config.server.indexOne, {id: this.$route.query.id})
@@ -109,7 +127,6 @@ export default {
     this.getForm()
   }
 }
-
 </script>
 <style lang="scss" scoped>
 .lh-container {

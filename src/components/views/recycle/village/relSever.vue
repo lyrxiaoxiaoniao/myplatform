@@ -40,13 +40,13 @@
     <div class="lh-bottom">
       <el-tabs class="margin" v-model="activeName"  @tab-click="handleClick" style="margin:0 2em">
         <el-tab-pane label="已关联物业" name="first">
-          <rel-tab v-if='firstId' :communityId="info.community_id"></rel-tab>
+          <rel-tab v-if="firstId" :communityId="community_id" @removeEvent="updateCount"></rel-tab>
         </el-tab-pane>
         <el-tab-pane label="未关联物业" name="second">
-          <norel-tab :communityId="info.community_id"></norel-tab>
+          <norel-tab v-if="secondId" :communityId="community_id" @correlateEvent="updateCount"></norel-tab>
         </el-tab-pane>
         <el-tab-pane label="历史关联" name="third">
-          <history :communityId="info.community_id"></history>
+          <history v-if="thirdId" :communityId="community_id"></history>
         </el-tab-pane>    
       </el-tabs>
     </div>
@@ -62,18 +62,20 @@ import history from './relTable/history'
 export default {
   data () {
     return {
+      firstId: true,
+      secondId: false,
+      thirdId: false,
       data: [],
+      community_id: this.$route.query.id,
       response: {
         data: null
       },
-      firstId: true,
       info: {
         name: '',
         duty_name: '',
         mobile: '',
         detail_address: '',
-        count: '',
-        community_id: this.$route.query.id
+        count: ''
       },
       activeName: 'first',
       form: {
@@ -88,23 +90,32 @@ export default {
     history
   },
   methods: {
+    updateCount (data) {
+      this.getForm()
+    },
     handleClick (tab, event) {
       if (tab.name === 'first') {
         this.firstId = true
+        this.secondId = false
+        this.thirdId = false
       }
       if (tab.name === 'second') {
         this.firstId = false
+        this.secondId = true
+        this.thirdId = false
       }
       if (tab.name === 'third') {
         this.firstId = false
+        this.secondId = false
+        this.thirdId = true
       }
-      this.$store.commit('TOGGLE_LOADING')
     },
     getForm () {
       api.GET(config.village.indexOne, {id: this.$route.query.id})
       .then(response => {
         if (response.data.errcode === '0000') {
           this.info = response.data.data
+          this.info.count = response.data.data.rubCommunityTenementVOS[0].count
         }
       })
       .catch(error => {

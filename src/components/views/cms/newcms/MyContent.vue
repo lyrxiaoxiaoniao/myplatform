@@ -15,7 +15,7 @@
             <el-row type="flex" justify="end">
               <el-col :span="15">
                 <el-button type="primary" @click="toAdd">发布内容</el-button>
-                <el-button type="primary" @click="refresh">刷新</el-button>
+                <el-button type="primary" @click="refresh" style="margin-right: 10px">刷新</el-button>
                 <el-dropdown @command="handleCommand">
                   <el-button type="primary">
                     批量<i class="el-icon-caret-bottom el-icon--right"></i>
@@ -344,6 +344,7 @@ export default {
       const data = {
         currentPage: this.response.currentPage,
         pageSize: value,
+        category_id: this.parentId,
         ...this.form
       }
 
@@ -353,6 +354,7 @@ export default {
       const data = {
         currentPage: value,
         pageSize: this.response.pageSize,
+        category_id: this.parentId,
         ...this.form
       }
 
@@ -441,7 +443,7 @@ export default {
       this.ruleForm.category_id = value
     },
     getList (data = {}) {
-      api.POST(config.content.list, data)
+      api.POST(config.content.list, {rank: 'DESC', ...data})
       .then(response => {
         this.response = this.transformData(response.data.data)
       })

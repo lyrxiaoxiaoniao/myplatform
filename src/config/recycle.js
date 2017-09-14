@@ -27,7 +27,8 @@ export default {
     wayEdit: '/rounter/update',
     wayRemove: '/rounter/delete',
     wayActive: '/rounter/state/update',
-    wayRecycle: '/rounter/recycle/show'
+    wayRecycle: '/rounter/recycle/show',
+    wayHistory: '/rounter/history/index'
   },
   village: {
     list: '/rubbish/community/index',
@@ -43,7 +44,8 @@ export default {
     addcorrelate: '/rubbish/community/tenement/create',
     removeCorrelate: '/rubbish/community/tenement/delete',
     history: '/rubbish/community/queryHistory',
-    streetTree: '/com/region/index'
+    streetTree: '/rub/region/index',
+    move: '/rubbish/community/move'
   },
   server: {
     index: '/rubbish/tenement/index',

@@ -28,7 +28,7 @@
                     <el-table-column prop="mobile" label="联系电话" width="150"></el-table-column>
                     <el-table-column label="服务时间" width="150">
                       <template scope="scope">
-                        {{scope.row.begin_time | toDate}} - {{scope.row.end_time | toDate}}
+                        {{scope.row.begin_time | toYM}} - {{scope.row.end_time | toYM}}
                       </template>
                     </el-table-column>
                     <el-table-column prop="detail_address" label="所属街道" width="150"></el-table-column>
@@ -65,12 +65,12 @@
 import config from 'src/config'
 import api from 'src/api'
 export default {
-  props: ['id'],
+  props: ['tenementId'],
   data () {
     return {
       removeForm: {
-        community_id: this.id,
-        tenement_id: ''
+        community_id: '',
+        tenement_id: this.tenementId
       },
       form: {
         keyword: ''
@@ -115,21 +115,27 @@ export default {
       }
       this.getList(data)
     },
-    getList (data = {}) {
-      data = {
-        id: this.id
+    getList (data = null) {
+      if (data === null) {
+        data = {
+          id: this.tenementId,
+          currentPage: 1,
+          pageSize: 10
+        }
       }
       api.GET(config.server.queryTenement, data)
       .then(response => {
-        // this.response.data = this.transform(response.data.data)
-        this.response.data = this.transform(response.data.data)
+        this.response.data = this.transform(response.data.data.data)
+        this.response.currentPage = response.data.data.currentPage
+        this.response.pageSize = response.data.data.pageSize
+        this.response.count = response.data.data.count
       })
       .catch(error => {
         this.$message.error(error)
       })
     },
     remove (id) {
-      this.removeForm.tenement_id = id
+      this.removeForm.community_id = id
       this.$confirm('此操作将解除关联该物业,是否继续解除？', '解除', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -166,7 +172,7 @@ export default {
     transform (data) {
       var res = []
       data.forEach(e => {
-        e.rubCommunityVOS[0].id = e.id
+        e.rubCommunityVOS[0].id = e.community_id
         e.rubCommunityVOS[0].begin_time = e.begin_time
         e.rubCommunityVOS[0].end_time = e.end_time
         res.push(e.rubCommunityVOS[0])
