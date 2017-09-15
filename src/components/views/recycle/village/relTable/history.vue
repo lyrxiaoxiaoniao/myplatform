@@ -30,7 +30,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="duty_name" label="联系人" width="80"></el-table-column>
-                    <el-table-column prop="mobile" label="联系电话" width="120"></el-table-column>
+                    <el-table-column prop="mobile" label="联系电话" width="105"></el-table-column>
                     <el-table-column prop="address" label="公司地址"></el-table-column>
                 </el-table>
                 </div>
@@ -58,6 +58,7 @@
 import config from 'src/config'
 import api from 'src/api'
 export default {
+  props: ['communityId'],
   data () {
     return {
       form: {

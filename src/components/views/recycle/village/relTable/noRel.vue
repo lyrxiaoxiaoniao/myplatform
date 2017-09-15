@@ -6,7 +6,7 @@
                 <div slot="kobe-table-header" class="kobe-table-header">
                   <el-row type="flex" justify="end">
                     <el-col :span="10" :offset="14">
-                        <el-input v-model="form.keyword" placeholder="请输入小区名称">
+                        <el-input v-model="form.keyword" placeholder="请输入关键字">
                         <el-button slot="append" @click="onSearch" icon="search"></el-button>
                         </el-input>
                     </el-col>
@@ -87,7 +87,7 @@ export default {
     return {
       dialogAdvance: false,
       correlateForm: {
-        community_id: this.$store.state.token,
+        community_id: this.communityId,
         tenement_id: '',
         begin_time: '',
         end_time: ''
@@ -154,7 +154,6 @@ export default {
     transform (data) {
       var res = []
       data.forEach(e => {
-        e.rubTenementVOS[0].id = e.id
         res.push(e.rubTenementVOS[0])
       })
       return res

@@ -44,7 +44,7 @@
                       :options="cascaderData"
                       :props="props"
                       :change-on-select="true"
-                      v-model="region_id"
+                      v-model="ids"
                       @change="handleChange"
                       style="width:100%;">
                   </el-cascader>
@@ -124,8 +124,10 @@ export default {
         phone: '',
         duty_name: '',
         mobile: '',
-        region_id: '',
-        memo: ''
+        ids: [],
+        memo: '',
+        region_pid: '',
+        region_id: ''
       },
       cascaderData: [],
       props: {
@@ -229,7 +231,8 @@ export default {
       }
     },
     handleChange(value) {
-      console.log(value)
+      this.form.region_pid = value[0]
+      this.form.region_id = value[1]
     },
     getTree () {
       api.GET(config.village.streetTree)
@@ -264,7 +267,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           const data = {
-            address: this.searchInput,
+            detail_address: this.searchInput,
             ...this.form
           }
           api.POST(config.village.create, data)
