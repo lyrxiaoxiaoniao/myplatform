@@ -57,7 +57,8 @@ export default {
     indexOne: '/rubbish/tenement/indexOne',
     queryTenement: '/rubbish/tenement/queryTenement',
     uncorrelated: '/rubbish/tenement/uncorrelated',
-    queryHistory: '/rubbish/tenement/queryHistory'
+    queryHistory: '/rubbish/tenement/queryHistory',
+    advanced: '/rubbish/tenement/advanced'
   },
   // 餐饮企业管理
   restaurants: {

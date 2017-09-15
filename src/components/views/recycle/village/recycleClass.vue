@@ -17,7 +17,7 @@
               <el-button @click="enterAdd" type="primary">添加</el-button>      
               <el-dropdown @command="handleCommand" style="margin-left:10px;">
                 <el-button type="primary">
-                                   批量操作<i class="el-icon-caret-bottom el-icon--right"></i>
+                  批量操作<i class="el-icon-caret-bottom el-icon--right"></i>
                 </el-button>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="批量删除">删除</el-dropdown-item>
@@ -38,7 +38,7 @@
                 <el-button slot="append" @click="onSearch" icon="search"></el-button>
               </el-input>
             </el-col>
-            <el-button type="primary" @click="dialogAdvance = true">高级</el-button>
+            <el-button type="primary" @click="dialogAdvance = true" style="margin-left:10px;">高级</el-button>
             <el-button icon="upload2" type="primary" style="margin-left:10px;"></el-button>
             <el-button icon="setting" type="primary"></el-button>
           </el-row>
@@ -56,7 +56,7 @@
             <el-table-column prop="duty_name" label="负责人" width="95">
             </el-table-column>
             <el-table-column prop="mobile" width="105" label="联系电话"></el-table-column>
-            <el-table-column prop="street" label="所属街道"></el-table-column>
+            <el-table-column prop="street" label="所属街道" width="90"></el-table-column>
             <el-table-column label="审核状态" width="90">
               <template scope="scope">
                 <el-switch
@@ -129,33 +129,34 @@
     </el-dialog>
 <!-- 高级搜索模态框 -->
     <el-dialog title="高级搜索" v-model="dialogAdvance" size="tiny">
-        <el-form :model="advancedSearch" style="padding-right:30px;" label-position="left">
-           <el-form-item label="关键字" :label-width="formLabelWidth">
-              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="关联物业" :label-width="formLabelWidth">
-              <el-input v-model="advancedSearch.server" auto-complete="off"></el-input>
-            </el-form-item>
+        <el-form :model="advancedSearch" style="padding-right:30px;" label-position="left" :label-width="formLabelWidth">
+          <el-form-item label="小区名称" >
+            <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="关联物业">
+            <el-input v-model="advancedSearch.name" auto-complete="off"></el-input>
+          </el-form-item>
             <el-row>
-              <el-form-item label="所属街道" :label-width="formLabelWidth">
-              <el-cascader
-                :options="cascaderData"
-                :props="props"
-                v-model="selectedOptions"
-                @change="handleChange">
-              </el-cascader>
-            </el-form-item>
+              <el-form-item label="所属街道">
+                <el-cascader
+                  :options="cascaderData"
+                  :props="props"
+                  :show-all-levels="false"
+                  v-model="selectedOptions"
+                  @change="handleChange">
+                </el-cascader>
+              </el-form-item>
             </el-row>
             <el-row>
               <el-col :span="13">
-              <el-form-item label="联系人" :label-width="formLabelWidth">
-               <el-input v-model="advancedSearch.duty_name" auto-complete="off"></el-input>
-              </el-form-item>
-            </el-col>
+                <el-form-item label="联系人">
+                 <el-input v-model="advancedSearch.duty_name" auto-complete="off"></el-input>
+                </el-form-item>
+              </el-col>
             </el-row>
-            <el-form-item label="数据状态" :label-width="formLabelWidth">
-                 <el-radio class="radio" v-model="advancedSearch.audit_state" label="1" style="margin:0 10px;">开</el-radio>
-                 <el-radio class="radio" v-model="advancedSearch.audit_state" label="0"  style="margin:0 10px;">关</el-radio>
+            <el-form-item label="数据状态">
+              <el-radio class="radio" v-model="advancedSearch.audit_state" label="1" style="margin:0 10px;">开</el-radio>
+              <el-radio class="radio" v-model="advancedSearch.audit_state" label="0"  style="margin:0 10px;">关</el-radio>
             </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -175,8 +176,9 @@ export default {
       adSwitch: true,
       advancedSearch: {
         keyword: '',
-        server: '',
-        audit_state: '1',
+        name: '',
+        title: '',
+        audit_state: '',
         duty_name: ''
       },
       dialogAdvance: false,
@@ -191,7 +193,7 @@ export default {
       props: {
         children: 'children',
         label: 'title',
-        value: 'id'
+        value: 'title'
       },
       uploadURL: config.serverURI + config.uploadFilesAPI,
       multipleSelection: [],
@@ -295,25 +297,6 @@ export default {
       value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
       return value
     },
-    iconHandleAvatarSuccess(res, file) {
-      this.icon = window.URL.createObjectURL(file.raw)
-      this.classData.icon = res.data[0]
-    },
-    handleAvatarSuccess(res, file) {
-      this.logo = window.URL.createObjectURL(file.raw)
-      this.classData.logo = res.data[0]
-    },
-    beforeAvatarUpload(file) {
-      const isLt2M = file.size / 1024 / 1024 < 2
-      if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
-      }
-      return isLt2M
-    },
-    bigImg (url) {
-      this.dialogImageUrl = url
-      this.dialogVisible = true
-    },
     toswitch (active, id) {
       if (active) {
         active = 1
@@ -354,6 +337,7 @@ export default {
     // 树形结构选择
     handleChange (value) {
       console.log(value)
+      this.advancedSearch.title = this.selectedOptions[1]
     },
     handleChangeMove (value) {
       this.moveVal = value

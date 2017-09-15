@@ -3,7 +3,7 @@
     <div class="lh-bottom">
       <kobe-table>
         <div slot="kobe-table-header" class="kobe-table-header">
-             <el-row type="flex" justify="end">
+          <el-row type="flex" justify="end">
             <el-col :span="14">
               <el-button @click="enterAdd" type="primary">添加</el-button>           
               <el-dropdown @command="handleCommand" style="margin-left:10px;">
@@ -42,11 +42,11 @@
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="40"></el-table-column>
             <el-table-column prop="id" label="ID" sortable width="80"></el-table-column>
-            <el-table-column prop="name" label="物业公司名称" width="150"></el-table-column>
-            <el-table-column prop="street" label="所属街道"></el-table-column>
+            <el-table-column prop="name" label="物业公司名称"></el-table-column>
+            <el-table-column prop="title" label="所属街道" width="100"></el-table-column>
             <el-table-column prop="duty_name" label="联系人" width="95"></el-table-column>
-            <el-table-column prop="mobile" label="联系电话"></el-table-column>
-            <el-table-column prop="count" label="服务小区数量" width="150"></el-table-column>
+            <el-table-column prop="mobile" label="联系电话" width="110"></el-table-column>
+            <el-table-column prop="count" label="服务小区数量" width="120"></el-table-column>
             <el-table-column prop="logo" label="营业执照" width="95">
               <template scope="scope">
                 <img style="width:58px;height:58px;" :src="scope.row.license" @click="bigImg(scope.row.license)" alt="">
@@ -63,11 +63,11 @@
                 </el-switch>
               </template>
             </el-table-column>
-            <el-table-column label="操作">
+            <el-table-column label="操作" width="160">
               <template scope="scope">
                 <el-button @click="edit(scope.row.id)" size="small" icon="edit"></el-button>
                 <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
-                <el-button @click="enterRel(scope.row.id)" size="small" icon="xiaoqu"></el-button>
+                <el-button @click="enterRel(scope.row.id)" size="small" icon="information"></el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -93,21 +93,21 @@
       <img width="100%" :src="dialogImageUrl" alt="">
     </el-dialog>
     <!-- 高级搜索模态框 -->
-    <el-dialog title="高级搜索" v-model="dialogAdvance" size="tiny">
-        <el-form :model="advancedSearch" label-position="left" style="padding: 0 2em;">
-           <el-form-item label="关键字" :label-width="formLabelWidth">
+    <el-dialog title="高级搜索" v-model="dialogAdvance">
+        <el-form :model="advancedSearch" label-position="right" :label-width="formLabelWidth">
+           <el-form-item label="物业公司名称">
              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
            </el-form-item>
-           <el-form-item label="物业公司名称" :label-width="formLabelWidth">
+           <el-form-item label="小区名称">
               <el-input v-model="advancedSearch.name" auto-complete="off"></el-input>
             </el-form-item>  
-            <el-form-item label="公司地址" :label-width="formLabelWidth">
+            <el-form-item label="公司地址">
               <el-input v-model="advancedSearch.address" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="组织机构代码" :label-width="formLabelWidth">
+            <el-form-item label="组织机构代码">
               <el-input v-model="advancedSearch.org_code" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="联系人" :label-width="formLabelWidth">
+            <el-form-item label="联系人">
               <el-input v-model="advancedSearch.duty_name" auto-complete="off"></el-input>
             </el-form-item>
         </el-form>
@@ -125,7 +125,7 @@ import api from 'src/api'
 export default {
   data () {
     return {
-      formLabelWidth: '120px',
+      formLabelWidth: '100px',
       response: {
         data: null
       },
@@ -170,7 +170,11 @@ export default {
       }
       api.GET(config.server.advanced, data)
       .then(response => {
-        this.response = this.transformDate(response.data)
+        if (response.data.errcode === '5000') {
+          this.response.data = null
+          this.response.count = 0
+        }
+        this.response = this.transformDate(response.data.data)
       })
       .catch(error => {
         this.$message.error(error)
@@ -268,11 +272,19 @@ export default {
       })
     },
     // 获取表单
-    getList (data = {}) {
-      console.log(1)
+    getList (data = null) {
+      if (data === null) {
+        data = {
+          currentPage: 1,
+          pageSize: 10
+        }
+      }
       api.GET(config.server.index, data)
       .then(response => {
         this.response = this.transformDate(response.data.data)
+        if (response.data.errcode === '5000') {
+          this.response.data = null
+        }
       })
       .catch(error => {
         this.$message.error(error)
@@ -299,6 +311,8 @@ export default {
         if (v.audit_state === 1) {
           v.audit_state = true
         }
+        v.count = v.rubCommunityTenementVOS[0].count
+        v.title = v.rubRegionVO.title
       })
       return res
     },
@@ -364,10 +378,7 @@ export default {
     }
     .lh-bottom {
       margin-top: 1rem;
-      border-radius: 5px;
-      border: 1px solid lightgray;
       width: 100%;
-      background-color: #fff;
       padding-bottom: 1rem;
       .lh-header {
         padding: 0 2rem;

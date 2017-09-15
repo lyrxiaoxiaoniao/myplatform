@@ -24,7 +24,7 @@
                     <!-- <el-table-column type="selection" width="40"></el-table-column> -->
                     <el-table-column prop="id" label="ID" sortable width="90"></el-table-column>
                     <el-table-column prop="name" label="物业名称"></el-table-column>
-                    <el-table-column prop="name" label="关联时间" width="120">
+                    <el-table-column prop="name" label="关联时间" width="130">
                       <template scope="scope">
                         {{scope.row.begin_time | toYM}} - {{scope.row.end_time | toYM}}
                       </template>
@@ -58,7 +58,6 @@
 import config from 'src/config'
 import api from 'src/api'
 export default {
-  props: ['communityId'],
   data () {
     return {
       form: {

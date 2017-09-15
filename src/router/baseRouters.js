@@ -2,16 +2,16 @@
  * 超底层路由列表
  */
 import DashMainView from 'components/views/dash/Main.vue'
-import SBMerchantView from 'components/views/superbottom/merchant/index.vue'
-import SBMerchantConfigView from 'components/views/superbottom/merchant/config.vue'
-import SBNewUserView from 'components/views/superbottom/newuser/index.vue'
+import SBMerchantView from 'components/views/framework/merchant/index.vue'
+import SBMerchantConfigView from 'components/views/framework/merchant/config.vue'
+import SBNewUserView from 'components/views/framework/newuser/index.vue'
 // 日志管理
-import LogIndex from 'components/views/superbottom/log/logIndex.vue'
+import LogIndex from 'components/views/framework/log/logIndex.vue'
 
 // 角色管理
-import RoleIndex from 'components/views/superbottom/role/index.vue'
+import RoleIndex from 'components/views/framework/role/index.vue'
 // 菜单管理
-import RcMenu from 'components/views/superbottom/menu/menuIndex.vue'
+import RcMenu from 'components/views/framework/menu/menuIndex.vue'
 const baseRouters = [
   {
     // 商户模块路由
@@ -75,12 +75,12 @@ const baseRouters = [
     path: 'rcmenu',
     component: DashMainView,
     redirect: '/admin/rcmenu/index',
-    name: '角色',
+    name: '菜单',
     meta: {description: '信息'},
     children: [{
       path: 'index',
       component: RcMenu,
-      name: '角色管理',
+      name: '菜单管理',
       meta: {description: '列表'}
     }]
   }
