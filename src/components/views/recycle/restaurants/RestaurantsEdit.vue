@@ -80,7 +80,7 @@
                       :show-file-list="false"
                       :on-success="handleAvatarSuccess"
                       :before-upload="beforeAvatarUpload"
-                      v-if="uploadAgainStatus">
+                      v-if="!restaurantInfo.license">
                       <img v-if="restaurantInfo.license" :src="restaurantInfo.license" class="avatar">
                       <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                       <div class="el-upload__tip" slot="tip">上传有效、清晰的营业执照图片（最多上传1张，每张最大10M）</div>
@@ -139,32 +139,31 @@
             <el-row>
               <el-col :span="12">
                 <el-form-item label="签约人">
-                  <el-input placeholder="请输入签约人姓名" v-model="restaurantInfo.sign_name"></el-input>
+                  <el-input placeholder="请输入签约人姓名" v-model="restaurantInfo.sign_name" :disabled="true"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item label="联系电话">
-                  <el-input placeholder="请输入签约人联系电话" v-model="restaurantInfo.sign_phone"></el-input>
+                  <el-input placeholder="请输入签约人联系电话" v-model="restaurantInfo.sign_phone" :disabled="true"></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row>
-              <!-- <el-col :span="12">
+              <el-col :span="12">
                 <el-form-item label="回收单位">
-                  <el-select v-model="restaurantInfo.street"
-                             placeholder="请选择所属街道"
-                             class="street-select">
-                    <el-option v-for="item in streetOptions"
-                               :label="item.label"
-                               :value="item.value">
+                  <el-select v-model="recycleName" clearable placeholder="请选择签约回收单位" class="recycle-select" :disabled="true">
+                    <el-option
+                      v-for="item in recycleSelectOptions"
+                      :label="item.name"
+                      :value="item.id">
                     </el-option>
                   </el-select>
                 </el-form-item>
-              </el-col> -->
+              </el-col>
               <el-col :span="12">
                 <el-form-item label="合同期限" class="contract-time">
-                  <el-date-picker v-model="restaurantInfo.begin_time" type="datetime" placeholder="选择开始时间"></el-date-picker>
-                  <el-date-picker v-model="restaurantInfo.end_time" type="datetime" placeholder="选择结束时间"></el-date-picker>
+                  <el-date-picker v-model="restaurantInfo.begin_time" type="datetime" placeholder="选择开始时间" :disabled="true"></el-date-picker>
+                  <el-date-picker v-model="restaurantInfo.end_time" type="datetime" placeholder="选择结束时间" :disabled="true"></el-date-picker>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -330,17 +329,28 @@
           banner: ''
         },
         streetOptions: [],
+        recycleSelectOptions: [],
         restaurantInfo: {},
         searchInput: '',
         point: {},
         pointAddress: '',
         map: null,
         geoc: null,
-        showContract: true,
-        uploadAgainStatus: false
+        showContract: true
       }
     },
     components: {
+    },
+    computed: {
+      recycleName () {
+        var name = ''
+        this.recycleSelectOptions.forEach((value) => {
+          if (value.id === Number(this.restaurantInfo.recycle_id)) {
+            name = value.name
+          }
+        })
+        return name
+      }
     },
     methods: {
       getDetail () {
@@ -352,12 +362,46 @@
             this.$message.error(error)
           })
       },
+      getRecycle (data = {}) {
+        api.GET(config.restaurants.getRecycle, data)
+          .then(response => {
+            this.recycleSelectOptions = response.data.data
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
+      },
       update () {
-        console.log('更新数据')
+        if (this.restaurantInfo.begin_time) {
+          this.restaurantInfo.begin_time = Date.parse(this.restaurantInfo.begin_time)
+        }
+        if (this.restaurantInfo.end_time) {
+          this.restaurantInfo.end_time = Date.parse(this.restaurantInfo.end_time)
+        }
+        this.restaurantInfo.checkState = Number(this.restaurantInfo.checkState).toString()
+        this.restaurantInfo.signState = Number(this.restaurantInfo.signState).toString()
+        api.POST(config.restaurants.update, this.restaurantInfo)
+          .then(response => {
+            if (response.status !== 200) {
+              this.error = response.statusText
+              return
+            }
+            if (response.data.errcode === '0000') {
+              this.onSuccess('保存成功')
+              this.restaurantInfo = {
+                checkState: true,
+                license: '',
+                begin_time: '',
+                end_time: ''
+              }
+            }
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
       },
       uploadAgain () {
         this.restaurantInfo.license = ''
-        this.uploadAgainStatus = true
       },
       /* 上传图片函数 */
       handleAvatarSuccess (res, file) {
@@ -383,8 +427,11 @@
         const geoc = this.geoc
         const that = this
         map.clearOverlays()
-        geoc.getPoint(this.searchInput, function(e) {
+        geoc.getPoint(this.restaurantInfo.detailAddress, function(e) {
           if (e) {
+            that.point = JSON.parse(JSON.stringify(e))
+            that.restaurantInfo.longitude = that.point.lng
+            that.restaurantInfo.latitude = that.point.lat
             map.centerAndZoom(e, 14)
             map.addOverlay(new BMap.Marker(e))
           } else {
@@ -394,7 +441,6 @@
               type: 'error'
             })
           }
-
         }, '深圳市')
         /* eslint-enable */
       },
@@ -484,6 +530,7 @@
     },
     mounted () {
       this.getDetail()
+      this.getRecycle()
     }
   }
 </script>
@@ -532,6 +579,9 @@
         .el-date-editor--datetime {
           width: 49.6%;
         }
+      }
+      .recycle-select {
+        width: 100%;
       }
     }
   }

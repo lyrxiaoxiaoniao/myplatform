@@ -31,9 +31,9 @@
                 <el-table-column prop="type" label="垃圾类型" width="150"></el-table-column>
                 <el-table-column prop="suttle_day" label="日净重量（吨）" width="150"></el-table-column>
                 <el-table-column prop="time_day" label="日进场次数" width="150"></el-table-column>
-                <el-table-column label="操作" width="120px">
+                <el-table-column label="操作" width="80px">
                   <template scope="scope">
-                    <el-button size="small" icon="delete2" @click="deleteData(scope.row.id)" title="删除"></el-button>
+                    <!-- <el-button size="small" icon="delete2" @click="deleteData(scope.row.id)" title="删除"></el-button> -->
                     <el-button size="small" icon="information" @click="toDetail(scope.row.id,scope.row.time)" title="详情"></el-button>
                   </template>
                 </el-table-column>
@@ -49,13 +49,13 @@
                 <el-table-column prop="name" label="地磅点"></el-table-column>
                 <el-table-column prop="time" label="时间（月）" width="150"></el-table-column>
                 <el-table-column prop="type" label="垃圾类型" width="150"></el-table-column>
-                <el-table-column prop="suttle_day" label="日净重量（吨）" width="150"></el-table-column>
-                <el-table-column prop="time_day" label="日进场次数" width="150"></el-table-column>
-                <el-table-column label="操作" width="80px">
+                <el-table-column prop="suttle_day" label="月净重量（吨）" width="150"></el-table-column>
+                <el-table-column prop="time_day" label="月进场次数" width="150"></el-table-column>
+                <!-- <el-table-column label="操作" width="80px">
                   <template scope="scope">
                     <el-button size="small" icon="delete2" @click="deleteData(scope.row.id)" title="删除"></el-button>
                   </template>
-                </el-table-column>
+                </el-table-column> -->
               </el-table>
             </el-tab-pane>
             <el-tab-pane label="按年" name="byYear">
@@ -68,20 +68,20 @@
                 <el-table-column prop="name" label="地磅点"></el-table-column>
                 <el-table-column prop="time" label="时间（年）" width="150"></el-table-column>
                 <el-table-column prop="type" label="垃圾类型" width="150"></el-table-column>
-                <el-table-column prop="suttle_day" label="日净重量（吨）" width="150"></el-table-column>
-                <el-table-column prop="time_day" label="日进场次数" width="150"></el-table-column>
-                <el-table-column label="操作" width="80px">
+                <el-table-column prop="suttle_day" label="年净重量（吨）" width="150"></el-table-column>
+                <el-table-column prop="time_day" label="年进场次数" width="150"></el-table-column>
+                <!-- <el-table-column label="操作" width="80px">
                   <template scope="scope">
                     <el-button size="small" icon="delete2" @click="deleteData(scope.row.id)" title="删除"></el-button>
                   </template>
-                </el-table-column>
+                </el-table-column> -->
               </el-table>
             </el-tab-pane>
           </el-tabs>
         </div>
         <div slot="kobe-table-footer" class="kobe-table-footer">
           <el-row type="flex" justify="center">
-            <el-button type="text" style="color: #48576a; padding:5px 0;" @click="deleteData()">删除</el-button>
+            <!-- <el-button type="text" style="color: #48576a; padding:5px 0;" @click="deleteData()">删除</el-button> -->
             <el-col :span="12">
               <el-pagination
                 @size-change="handleSizeChange"
@@ -123,17 +123,11 @@
     computed: {},
     methods: {
       handleSizeChange (value) {
-        console.log('切换显示条数后value' + value)
         var data = this.getHttpParams()
         Object.assign(data, {
           currentPage: this.response.currentPage,
           pageSize: value
         })
-        // const data = {
-        //   currentPage: this.response.currentPage,
-        //   pageSize: value,
-        //   ...this.form
-        // }
         switch (this.activeTab) {
           case 'byDay':
             this.getListByDay(data)
@@ -152,11 +146,6 @@
           currentPage: value,
           pageSize: this.response.pageSize
         })
-        // const data = {
-        //   currentPage: value,
-        //   pageSize: this.response.pageSize,
-        //   ...this.form
-        // }
         switch (this.activeTab) {
           case 'byDay':
             this.getListByDay(data)
@@ -245,36 +234,32 @@
       getListByDay (data = {}) {
         api.GET(config.loadometer.suttleDay, data)
           .then(response => {
-            this.response.data = this.transformData(response.data.data)
+            this.response = this.transformData(response.data.data)
           })
           .catch(error => {
             this.$message.error(error)
           })
       },
       getListByMonth (data = {}) {
-        data = this.getHttpParams()
         api.GET(config.loadometer.suttleMonth, data)
           .then(response => {
-            // console.log('之前this.response.data' + this.response.data)
-            this.response.data = this.transformData(response.data.data)
-            // console.log('之后this.response.data' + this.response.data)
+            this.response = this.transformData(response.data.data)
           })
           .catch(error => {
             this.$message.error(error)
           })
       },
       getListByYear (data = {}) {
-        data = this.getHttpParams()
         api.GET(config.loadometer.suttleYear, data)
           .then(response => {
-            this.response.data = this.transformData(response.data.data)
+            this.response = this.transformData(response.data.data)
           })
           .catch(error => {
             this.$message.error(error)
           })
       },
       transformData (res) {
-        res.forEach(v => {
+        res.data.forEach(v => {
           if (v.created_at) {
             v.created_at = this.formatDate(v.created_at)
           }
@@ -315,11 +300,9 @@
         this.loadometerSelectedIds = []
         // 单行记录操作传进来的参数是数字，多行记录操作传进来的参数是数组，未选择记录未传参数
         if (value !== undefined) {
-          // console.log('有选中记录')
           if (value.length === undefined) {
             this.loadometerSelectedIds.push(value)
           } else {
-            // console.log('选中多行')
             this.loadometerSelectedIds = value.map(v => {
               return v.id
             })
@@ -338,8 +321,6 @@
     },
     mounted () {
       this.loadometerId = this.$route.query.id
-      this.response.currentPage = 1
-      this.response.pageSize = 10
       var data = this.getHttpParams()
       this.getListByDay(data)
     }

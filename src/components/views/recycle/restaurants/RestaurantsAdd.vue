@@ -147,18 +147,17 @@
               </el-col>
             </el-row>
             <el-row>
-              <!-- <el-col :span="12">
+              <el-col :span="12">
                 <el-form-item label="回收单位">
-                  <el-select v-model="restaurantInfo.street"
-                             placeholder="请选择所属街道"
-                             class="street-select">
-                    <el-option v-for="item in streetOptions"
-                               :label="item.label"
-                               :value="item.value">
+                  <el-select v-model="restaurantInfo.recycle_id" clearable placeholder="请选择签约回收单位" class="recycle-select">
+                    <el-option
+                      v-for="item in recycleSelectOptions"
+                      :label="item.name"
+                      :value="item.id">
                     </el-option>
                   </el-select>
                 </el-form-item>
-              </el-col> -->
+              </el-col>
               <el-col :span="12">
                 <el-form-item label="合同期限" class="contract-time">
                   <el-date-picker v-model="restaurantInfo.begin_time" type="datetime" placeholder="选择开始时间"></el-date-picker>
@@ -323,12 +322,17 @@ export default {
         banner: ''
       },
       regionSelectOptions: [],
+      recycleSelectOptions: [],
       restaurantInfo: {
         checkState: true,
         signState: true,
         license: '',
         begin_time: '',
-        end_time: ''
+        end_time: '',
+        detailAddress: '',
+        longitude: 0,
+        latitude: 0,
+        recycle_id: ''
       },
       searchInput: '',
       point: {},
@@ -342,10 +346,14 @@ export default {
   },
   methods: {
     add () {
-      this.restaurantInfo.begin_time = Date.parse(this.restaurantInfo.begin_time)
-      this.restaurantInfo.end_time = Date.parse(this.restaurantInfo.end_time)
-      this.restaurantInfo.checkState = Number(this.restaurantInfo.checkState)
-      this.restaurantInfo.signState = Number(this.restaurantInfo.signState)
+      if (this.restaurantInfo.begin_time) {
+        this.restaurantInfo.begin_time = Date.parse(this.restaurantInfo.begin_time)
+      }
+      if (this.restaurantInfo.end_time) {
+        this.restaurantInfo.end_time = Date.parse(this.restaurantInfo.end_time)
+      }
+      this.restaurantInfo.checkState = Number(this.restaurantInfo.checkState).toString()
+      this.restaurantInfo.signState = Number(this.restaurantInfo.signState).toString()
       api.POST(config.restaurants.create, this.restaurantInfo)
         .then(response => {
           if (response.status !== 200) {
@@ -370,6 +378,15 @@ export default {
       api.GET(config.restaurants.getRegion, data)
         .then(response => {
           this.regionSelectOptions = this.transformData(response.data.data)
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
+    },
+    getRecycle (data = {}) {
+      api.GET(config.restaurants.getRecycle, data)
+        .then(response => {
+          this.recycleSelectOptions = response.data.data
         })
         .catch(error => {
           this.$message.error(error)
@@ -402,6 +419,9 @@ export default {
       map.clearOverlays()
       geoc.getPoint(this.restaurantInfo.detailAddress, function(e) {
         if (e) {
+          that.point = JSON.parse(JSON.stringify(e))
+          that.restaurantInfo.longitude = that.point.lng
+          that.restaurantInfo.latitude = that.point.lat
           map.centerAndZoom(e, 14)
           map.addOverlay(new BMap.Marker(e))
         } else {
@@ -503,6 +523,7 @@ export default {
     }
   },
   mounted() {
+    this.getRecycle()
   }
 }
 </script>
@@ -553,6 +574,9 @@ export default {
       .el-date-editor--datetime {
         width: 49.6%;
       }
+    }
+    .recycle-select {
+      width: 100%;
     }
   }
 }
