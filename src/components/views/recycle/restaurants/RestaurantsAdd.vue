@@ -104,7 +104,7 @@
             <el-form-item label="详细地址">
               <el-row>
                 <el-col :span="12">
-                  <el-input v-model="searchInput"></el-input>
+                  <el-input v-model="restaurantInfo.detailAddress"></el-input>
                 </el-col>
                 <el-col :span="12">
                   <div class="btnWrapper">
@@ -123,22 +123,17 @@
         </div>
       </el-tab-pane>
       <el-tab-pane label="签约信息"
-                   class="lh-bottom"
-                   v-if="showContract">
+                   class="lh-bottom">
         <div class="table-head">
           <div>是否签约</div>
-          <el-switch v-model="showContract"
+          <el-switch v-model="restaurantInfo.signState"
                      on-text="开"
                      off-text="关"
                      style="margin-left: 35px;"></el-switch>
         </div>
-        <div class="table-body">
-<<<<<<< HEAD
-          <el-form :model="restaurantInfo.contractStatus"
+        <div class="table-body" v-if="restaurantInfo.signState">
+          <el-form :model="restaurantInfo"
                    label-width="100px">
-=======
-          <el-form :model="restaurantInfo" label-width="100px">
->>>>>>> 3c048672bc2da3372d22c856d7f0ea25ac16159e
             <el-row>
               <el-col :span="12">
                 <el-form-item label="签约人">
@@ -320,9 +315,8 @@
 import config from 'src/config'
 import api from 'src/api'
 
-<<<<<<< HEAD
 export default {
-  data() {
+  data () {
     return {
       uploadURL: config.serverURI + config.uploadFilesAPI,
       selected: {
@@ -331,27 +325,61 @@ export default {
       regionSelectOptions: [],
       restaurantInfo: {
         checkState: true,
-        license: ''
+        signState: true,
+        license: '',
+        begin_time: '',
+        end_time: ''
       },
       searchInput: '',
       point: {},
-      test: '',
       pointAddress: '',
       map: null,
       geoc: null,
-      showContract: true,
-      lng: '',
-      lat: ''
+      showContract: true
     }
   },
   components: {
   },
   methods: {
+    add () {
+      this.restaurantInfo.begin_time = Date.parse(this.restaurantInfo.begin_time)
+      this.restaurantInfo.end_time = Date.parse(this.restaurantInfo.end_time)
+      this.restaurantInfo.checkState = Number(this.restaurantInfo.checkState)
+      this.restaurantInfo.signState = Number(this.restaurantInfo.signState)
+      api.POST(config.restaurants.create, this.restaurantInfo)
+        .then(response => {
+          if (response.status !== 200) {
+            this.error = response.statusText
+            return
+          }
+          if (response.data.errcode === '0000') {
+            this.onSuccess('保存成功')
+            this.restaurantInfo = {
+              checkState: true,
+              license: '',
+              begin_time: '',
+              end_time: ''
+            }
+          }
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
+    },
+    getRegion (data = {}) {
+      api.GET(config.restaurants.getRegion, data)
+        .then(response => {
+          this.regionSelectOptions = this.transformData(response.data.data)
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
+    },
     /* 上传图片函数 */
-    handleAvatarSuccess(res, file) {
+    handleAvatarSuccess (res, file) {
       this.restaurantInfo.license = res.data[0]
     },
-    beforeAvatarUpload(file) {
+    beforeAvatarUpload (file) {
       const isJPG = file.type === 'image/jpeg'
       const isLt2M = file.size / 1024 / 1024 < 10
       if (!isJPG) {
@@ -359,42 +387,20 @@ export default {
       }
       if (!isLt2M) {
         this.$message.error('上传头像图片大小不能超过 10MB!')
-=======
-  export default {
-    data () {
-      return {
-        uploadURL: config.serverURI + config.uploadFilesAPI,
-        selected: {
-          banner: ''
-        },
-        regionSelectOptions: [],
-        restaurantInfo: {
-          checkState: true,
-          license: '',
-          begin_time: '',
-          end_time: ''
-        },
-        searchInput: '',
-        point: {},
-        pointAddress: '',
-        map: null,
-        geoc: null,
-        showContract: true
->>>>>>> 3c048672bc2da3372d22c856d7f0ea25ac16159e
       }
       return isJPG && isLt2M
     },
     useClick() {
-      this.searchInput = this.pointAddress
+      this.restaurantInfo.detailAddress = this.pointAddress
+      // this.searchInput = this.pointAddress
     },
-<<<<<<< HEAD
     posMarker() {
       /* eslint-disable */
       const map = this.map
       const geoc = this.geoc
       const that = this
       map.clearOverlays()
-      geoc.getPoint(this.searchInput, function(e) {
+      geoc.getPoint(this.restaurantInfo.detailAddress, function(e) {
         if (e) {
           map.centerAndZoom(e, 14)
           map.addOverlay(new BMap.Marker(e))
@@ -404,53 +410,7 @@ export default {
             message: '暂无搜索结果，请确认地点是否正确',
             type: 'error'
           })
-=======
-    methods: {
-      add () {
-        api.POST(config.loadometer.create, this.restaurantInfo)
-          .then(response => {
-            if (response.status !== 200) {
-              this.error = response.statusText
-              return
-            }
-            if (response.data.errcode === '0000') {
-              this.onSuccess('保存成功')
-              this.restaurantInfo = {
-                checkState: true,
-                license: '',
-                begin_time: '',
-                end_time: ''
-              }
-            }
-          })
-          .catch(error => {
-            this.$message.error(error)
-          })
-      },
-      getRegion (data = {}) {
-        api.GET(config.restaurants.getRegion, data)
-          .then(response => {
-            this.regionSelectOptions = this.transformData(response.data.data)
-          })
-          .catch(error => {
-            this.$message.error(error)
-          })
-      },
-      /* 上传图片函数 */
-      handleAvatarSuccess (res, file) {
-        this.restaurantInfo.license = res.data[0]
-      },
-      beforeAvatarUpload (file) {
-        const isJPG = file.type === 'image/jpeg'
-        const isLt2M = file.size / 1024 / 1024 < 10
-        if (!isJPG) {
-          this.$message.error('上传头像图片只能是 JPG 格式!')
         }
-        if (!isLt2M) {
-          this.$message.error('上传头像图片大小不能超过 10MB!')
->>>>>>> 3c048672bc2da3372d22c856d7f0ea25ac16159e
-        }
-
       }, '深圳市')
       /* eslint-enable */
     },
@@ -461,40 +421,29 @@ export default {
       this.map = map
       map.centerAndZoom('深圳', 14)
       map.enableScrollWheelZoom(true)
-
       const navigationControl = new BMap.NavigationControl({
         anchor: BMAP_ANCHOR_TOP_LEFT,
         type: BMAP_NAVIGATION_CONTROL_SMALL,
         enableGeolocation: true
       })
       map.addControl(navigationControl)
-
       const geolocationControl = new BMap.GeolocationControl()
-
       geolocationControl.addEventListener("locationSuccess", function(e) {
         // 定位成功事件
         console.log(e)
       })
-
       geolocationControl.addEventListener("locationError", function(e) {
         // 定位失败事件
         alert(e.message);
       })
       map.addControl(geolocationControl)
-
       const geoc = new BMap.Geocoder()
       that.geoc = geoc
-
-<<<<<<< HEAD
       map.addEventListener('click', function(e) {
         map.clearOverlays()
-        // that.point = JSON.parse(JSON.stringify(e.point))
-        // that.$nextTick(() => {
-        //   that.test = JSON.stringify(e.point)
-        // })
-        that.lat = e.point.lat
-        that.lng = e.point.lng
-        // console.log(that.point)
+        that.point = JSON.parse(JSON.stringify(e.point))
+        that.restaurantInfo.longitude = that.point.lng
+        that.restaurantInfo.latitude = that.point.lat
         const marker = new BMap.Marker(e.point)
         map.addOverlay(marker)
         geoc.getLocation(e.point, function(rs) {
@@ -508,85 +457,9 @@ export default {
         this.$nextTick(() => {
           this.mapInit()
         })
-=======
-        map.addEventListener('click', function(e) {
-          map.clearOverlays()
-          that.point = JSON.parse(JSON.stringify(e.point))
-          that.restaurantInfo.longitude = that.point.lng
-          that.restaurantInfo.latitude = that.point.lat
-          // that.point.lat = e.point.lat
-          // that.point.lng = e.point.lng
-          console.log(that.point)
-          console.log('that.restaurantInfo' + that.restaurantInfo)
-          const marker = new BMap.Marker(e.point)
-          map.addOverlay(marker)
-          geoc.getLocation(e.point, function(rs) {
-            that.pointAddress = rs.address
-          })
-        })
-        /* eslint-enable */
-      },
-      showMap(e) {
-        if (e.label === '地图定位') {
-          this.$nextTick(() => {
-            this.mapInit()
-          })
-        }
-      },
-      transformData (res) {
-        res.data.forEach(v => {
-          if (v.created_at) {
-            v.created_at = this.formatDate(v.created_at)
-          }
-          if (v.signState === 0) {
-            v.signState = '未签约'
-          }
-          if (v.signState === 1) {
-            v.signState = '已签约'
-          }
-          if (v.checkState === 0) {
-            v.checkState = false
-          }
-          if (v.checkState === 1) {
-            v.checkState = true
-          }
-        })
-        return res
-      },
-      // 时间转换 毫秒转换成 yyyy-mm-dd hh:mm:ss
-      formatDate (value) {
-        let date = new Date(value)
-        let M = date.getMonth() + 1
-        M = M < 10 ? ('0' + M) : M
-        let d = date.getDate()
-        d = d < 10 ? ('0' + d) : d
-        // let h = date.getHours()
-        let m = date.getMinutes()
-        m = m < 10 ? ('0' + m) : m
-        let s = date.getSeconds()
-        s = s < 10 ? ('0' + s) : s
-        value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
-        return value
-      },
-      onSuccess (string) {
-        this.$notify({
-          title: '成功',
-          message: string,
-          type: 'success'
-        })
->>>>>>> 3c048672bc2da3372d22c856d7f0ea25ac16159e
       }
     },
-    getRegion(data = {}) {
-      api.GET(config.restaurants.getRegion, data)
-        .then(response => {
-          this.regionSelectOptions = this.transformData(response.data.data)
-        })
-        .catch(error => {
-          this.$message.error(error)
-        })
-    },
-    transformData(res) {
+    transformData (res) {
       res.data.forEach(v => {
         if (v.created_at) {
           v.created_at = this.formatDate(v.created_at)
@@ -607,7 +480,7 @@ export default {
       return res
     },
     // 时间转换 毫秒转换成 yyyy-mm-dd hh:mm:ss
-    formatDate(value) {
+    formatDate (value) {
       let date = new Date(value)
       let M = date.getMonth() + 1
       M = M < 10 ? ('0' + M) : M
@@ -620,6 +493,13 @@ export default {
       s = s < 10 ? ('0' + s) : s
       value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
       return value
+    },
+    onSuccess (string) {
+      this.$notify({
+        title: '成功',
+        message: string,
+        type: 'success'
+      })
     }
   },
   mounted() {

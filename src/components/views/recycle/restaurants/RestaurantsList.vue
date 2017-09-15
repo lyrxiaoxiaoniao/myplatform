@@ -52,7 +52,7 @@
           <template scope="scope">
             <el-button size="small" icon="edit" @click="toEditStatus(scope.row.id)" title="修改"></el-button>
             <el-button size="small" icon="delete2" @click="deleteData(scope.row.id)" title="删除"></el-button>
-            <el-button size="small" v-if="scope.row.signState" @click="openDialog('签约',scope.row.id)">签约</el-button>
+            <el-button size="small" v-show="scope.row.signState==='未签约'" @click="openDialog('签约',scope.row.id)">签约</el-button>
           </template>
         </el-table-column>
       </el-table>
