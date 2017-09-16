@@ -29,8 +29,13 @@ export default {
   // 4.角色管理
   role: {
   },
-  // 5.角色管理
-  menu: {
+  // 5.菜单管理
+  frameWorkMenu: {
+    index: '/admin/menu/index',
+    showLeft: '/admin/menu/show_left',
+    delete: '/admin/menu/delete',
+    check: '/admin/menu/check',
+    active: '/admin/menu/active'
   },
   // 9.日志管理
   journal: {

@@ -149,9 +149,67 @@
             <el-button type="primary" @click="advance">搜 索</el-button>
         </span>
     </el-dialog>
-    <!-- 新增 修改 -->
+    <!-- 新增 -->
+    <el-dialog :title="dialogTitle" v-model="addShow">
+        <el-form :model="addForm" ref="addForm" :rules="rules" :label-width="formLabelWidth">
+          <el-form-item label="角色名称" prop="id">
+            <el-input v-model="addForm.id" placeholder="请输入角色名称"></el-input>
+          </el-form-item>
+          <el-row>
+              <el-col :span="12">
+                <el-form-item label="角色类别">
+                  <el-select v-model="value1" placeholder="请选择">
+                    <el-option
+                      v-for="item in roleClass"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="归属商户" filterable placeholder="输入或选择商户">
+                  <el-select v-model="value2" placeholder="请选择">
+                    <el-option
+                      v-for="item in origins"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-form-item label="是否启用">
+              <el-switch
+                v-model="enabled"
+                on-text="是"
+                off-text="否">
+              </el-switch>
+            </el-form-item>
+          <el-form-item label="角色标识" prop="id">
+            <el-input v-model="addForm.id" placeholder="角色标识"></el-input>
+          </el-form-item>
+          <el-form-item label="角色简介">
+            <el-input
+              type="textarea"
+              :rows="4"
+              placeholder="请输入内容"
+              v-model="form.id">
+            </el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-row type="flex" justify="end">
+            <el-button @click="addShow = false">取 消</el-button>
+            <el-button @click="submitForm('addForm')">确定</el-button>
+          </el-row>
+        </div>
+      </el-dialog>
+    <!-- 修改 -->
     <el-dialog :title="dialogTitle" v-model="detailShow">
-        <el-form :model="detailForm" ref="detailForm" :rules="rules" :label-width="formLabelWidth">
+        <el-form :model="detailForm" ref="detailForm" :label-width="formLabelWidth">
           <el-form-item label="角色名称" prop="id">
             <el-input v-model="detailForm.id" placeholder="请输入角色名称"></el-input>
           </el-form-item>
@@ -203,8 +261,7 @@
         <div slot="footer" class="dialog-footer">
           <el-row type="flex" justify="end">
             <el-button @click="detailShow = false">取 消</el-button>
-            <el-button @click="submitForm('detailForm')" v-if="dialogType === 'add'">确定</el-button>
-            <el-button @click="editForm()" v-if="dialogType === 'edit'">确定</el-button>
+            <el-button @click="editForm()">确定</el-button>
           </el-row>
         </div>
       </el-dialog>
@@ -279,6 +336,7 @@ import norel from './reltable/noRel-users'
 export default {
   data () {
     return {
+      addShow: false,
       firstId: true,
       secondId: true,
       enabled: false,
@@ -311,6 +369,9 @@ export default {
       },
       dialogAdvance: false,
       detailForm: {
+        id: ''
+      },
+      addForm: {
         id: ''
       },
       dialogVisibleMove: false,
@@ -491,19 +552,20 @@ export default {
     openDialog (e, data = null, type = null) {
       console.log(data)
       if (data !== null && type === 'edit') {
+        this.detailShow = true
         this.dialogType = 'edit'
         this.dialogTitle = '修改角色'
         this.detailForm = {
           ...data
         }
       } else {
+        this.addShow = true
         this.dialogType = 'add'
         this.dialogTitle = '新增角色'
         this.detailForm = {
           id: ''
         }
       }
-      this.detailShow = true
     },
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
