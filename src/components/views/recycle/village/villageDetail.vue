@@ -230,7 +230,7 @@ export default {
       if (e.label === '地图定位') {
         this.$nextTick(() => {
           this.mapInit()
-          setTimeout(this.posMarker(), 5000)
+          this.posMarker()
         })
       }
     },
