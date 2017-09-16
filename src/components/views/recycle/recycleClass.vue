@@ -301,40 +301,6 @@ export default {
       })
       return res
     },
-    // 时间转换 毫秒转换成 yyyy-mm-dd hh:mm:ss
-    formatDate (value) {
-      let date = new Date(value)
-      let M = date.getMonth() + 1
-      M = M < 10 ? ('0' + M) : M
-      let d = date.getDate()
-      d = d < 10 ? ('0' + d) : d
-      // let h = date.getHours()
-      let m = date.getMinutes()
-      m = m < 10 ? ('0' + m) : m
-      let s = date.getSeconds()
-      s = s < 10 ? ('0' + s) : s
-      value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
-      return value
-    },
-    iconHandleAvatarSuccess(res, file) {
-      this.icon = window.URL.createObjectURL(file.raw)
-      this.classData.icon = res.data[0]
-    },
-    handleAvatarSuccess(res, file) {
-      this.logo = window.URL.createObjectURL(file.raw)
-      this.classData.logo = res.data[0]
-    },
-    beforeAvatarUpload(file) {
-      const isLt2M = file.size / 1024 / 1024 < 2
-      if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
-      }
-      return isLt2M
-    },
-    bigImg (url) {
-      this.dialogImageUrl = url
-      this.dialogVisible = true
-    },
     toswitch (active, id) {
       api.POST(config.activeCategoryAPI, {id: id, active: Number(active)})
       .then(response => {
@@ -355,6 +321,8 @@ export default {
     },
     // 树形目录点击事件
     handleNodeClick (data, node) {
+      console.log(data)
+      // if (data.type === '')
       this.parentId = data.id
       this.getList({parent_id: this.parentId})
     },
@@ -512,7 +480,6 @@ export default {
         pageSize: value,
         ...this.form
       }
-
       this.getList(data)
     },
     handleCurrentChange (value) {
@@ -521,7 +488,6 @@ export default {
         pageSize: this.response.pageSize,
         ...this.form
       }
-
       this.getList(data)
     },
     onSearch () {

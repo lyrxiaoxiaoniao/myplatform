@@ -4,6 +4,7 @@
 import DashMainView from 'components/views/dash/Main.vue'
 import TestView from 'components/views/test/library/testLibrary/Index.vue'
 import TestAddView from 'components/views/test/library/testLibrary/AddTest.vue'
+import TestUploadView from 'components/views/test/library/testLibrary/UPloadTest.vue'
 
 // 标签管理
 import TestLabelListView from 'components/views/test/library/testLabel/Index.vue'
@@ -38,6 +39,12 @@ const testRouters = [
         component: TestAddView,
         name: '题库管理',
         meta: { desceription: '查看/编辑题目' }
+      },
+      {
+        path: 'upload',
+        component: TestUploadView,
+        name: '题库管理',
+        meta: { desceription: '上传题目' }
       }]
     }, {
       path: 'label',

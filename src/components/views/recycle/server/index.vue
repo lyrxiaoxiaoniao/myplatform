@@ -96,19 +96,19 @@
     <el-dialog title="高级搜索" v-model="dialogAdvance">
         <el-form :model="advancedSearch" label-position="right" :label-width="formLabelWidth">
            <el-form-item label="物业公司名称">
-             <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
+             <el-input v-model="advancedSearch.keyword" placeholder="请输入物业公司名称"></el-input>
            </el-form-item>
            <el-form-item label="小区名称">
-              <el-input v-model="advancedSearch.name" auto-complete="off"></el-input>
+              <el-input v-model="advancedSearch.name" placeholder="请输入小区名称"></el-input>
             </el-form-item>  
             <el-form-item label="公司地址">
-              <el-input v-model="advancedSearch.address" auto-complete="off"></el-input>
+              <el-input v-model="advancedSearch.address" placeholder="请输入公司地址"></el-input>
             </el-form-item>
             <el-form-item label="组织机构代码">
-              <el-input v-model="advancedSearch.org_code" auto-complete="off"></el-input>
+              <el-input v-model="advancedSearch.org_code" placeholder="请输入组织机构代码"></el-input>
             </el-form-item>
             <el-form-item label="联系人">
-              <el-input v-model="advancedSearch.duty_name" auto-complete="off"></el-input>
+              <el-input v-model="advancedSearch.duty_name" placeholder="请输入联系人"></el-input>
             </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">

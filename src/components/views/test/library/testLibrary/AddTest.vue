@@ -76,10 +76,10 @@
                  v-if="value === '单选题'">
               <div class="radioWrapper">
                 <el-radio class="radio"
-                          v-model="radio"
+                          v-model="radio1"
                           label="1">使用文本答案</el-radio>
                 <el-radio class="radio"
-                          v-model="radio"
+                          v-model="radio1"
                           label="2">使用图片答案</el-radio>
               </div>
               <div class="optionsWrapper">
@@ -87,7 +87,19 @@
                      v-for="item in singleLength">
                   <el-radio v-model="singleRadio"
                             :label="item">{{abc[item-1]}}、</el-radio>
-                  <el-input class="optionInput"></el-input>
+                  <el-input class="optionInput"
+                            v-if="radio1 === '1'"></el-input>
+
+                  <el-upload class="avatar-uploader"
+                             action="https://jsonplaceholder.typicode.com/posts/"
+                             :show-file-list="false"
+                             v-if="radio1 === '2'">
+                    <img v-if="imageUrl"
+                         :src="imageUrl"
+                         class="avatar">
+                    <i v-else
+                       class="el-icon-plus avatar-uploader-icon"></i>
+                  </el-upload>
                   <el-button size="mini"
                              icon="circle-close"></el-button>
                   <div class="text"
@@ -97,11 +109,29 @@
             </div>
             <div class="multiChoiceWrapper"
                  v-if="value === '多选题'">
+              <div class="radioWrapper">
+                <el-radio class="radio"
+                          v-model="radio2"
+                          label="1">使用文本答案</el-radio>
+                <el-radio class="radio"
+                          v-model="radio2"
+                          label="2">使用图片答案</el-radio>
+              </div>
               <div class="optionItem"
                    v-for="item in multiLength">
                 <el-checkbox v-model="multiCheck"
                              :label="item">{{abc[item-1]}}、</el-checkbox>
-                <el-input class="optionInput"></el-input>
+                <el-input class="optionInput" v-if="radio2 === '1'"></el-input>
+                <el-upload class="avatar-uploader"
+                             action="https://jsonplaceholder.typicode.com/posts/"
+                             :show-file-list="false"
+                             v-if="radio2 === '2'">
+                    <img v-if="imageUrl"
+                         :src="imageUrl"
+                         class="avatar">
+                    <i v-else
+                       class="el-icon-plus avatar-uploader-icon"></i>
+                  </el-upload>
                 <el-button size="mini"
                            icon="circle-close"></el-button>
                 <div class="text"
@@ -169,7 +199,8 @@ export default {
       inputVisible: false,
       inputValue: '',
       dynamicTags: [],
-      radio: '',
+      radio1: '1',
+      radio2: '1',
       singleLength: 4,
       multiLength: 4,
       abc: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
@@ -262,5 +293,32 @@ export default {
   width: 200px;
   margin-right: 20px;
   margin-bottom: 20px;
+}
+
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.avatar-uploader .el-upload:hover {
+  border-color: #20a0ff;
+}
+
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
 }
 </style>
