@@ -24,13 +24,13 @@
                     <!-- <el-table-column type="selection" width="40"></el-table-column> -->
                     <el-table-column prop="id" label="ID" sortable width="90"></el-table-column>
                     <el-table-column prop="name" label="物业名称"></el-table-column>
-                    <el-table-column prop="name" label="关联时间" width="120">
+                    <el-table-column prop="name" label="关联时间" width="130">
                       <template scope="scope">
                         {{scope.row.begin_time | toYM}} - {{scope.row.end_time | toYM}}
                       </template>
                     </el-table-column>
                     <el-table-column prop="duty_name" label="联系人" width="80"></el-table-column>
-                    <el-table-column prop="mobile" label="联系电话" width="120"></el-table-column>
+                    <el-table-column prop="mobile" label="联系电话" width="105"></el-table-column>
                     <el-table-column prop="address" label="公司地址"></el-table-column>
                 </el-table>
                 </div>

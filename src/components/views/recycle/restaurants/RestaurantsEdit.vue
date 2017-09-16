@@ -1,6 +1,178 @@
 <template>
 	<div class="lh-container">
-		<div class="lh-top">
+    <el-tabs type="border-card"
+             @tab-click="showMap">
+      <el-tab-pane label="基本信息"
+                   class="lh-top">
+        <div class="table-head">
+          <div>基本信息</div>
+          <div>
+            <el-button>返回</el-button>
+            <el-button type="primary" @click="update">保存</el-button>
+          </div>
+        </div>
+        <div class="table-body">
+          <el-form :model="restaurantInfo"
+                   label-width="100px">
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <el-form-item label="企业名称">
+                  <el-input placeholder="请输入企业名称"
+                            v-model="restaurantInfo.name"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="固定电话">
+                  <el-input placeholder="请输入电话"
+                            v-model="restaurantInfo.phone"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="负责人">
+                  <el-input placeholder="请输入负责人姓名"
+                            v-model="restaurantInfo.dutyName"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="联系电话">
+                  <el-input placeholder="请输入负责人联系电话"
+                            v-model="restaurantInfo.mobile"></el-input>
+                </el-form-item>
+              </el-col>
+              <!--
+                  <el-col :span="12">
+                    <el-form-item label="所属辖区">
+                      <el-select v-model="restaurantInfo.street" placeholder="请选择所属街道" class="street-select">
+                        <el-option
+                          v-for="item in regionSelectOptions"
+                          :label="item.id"
+                          :value="item.name">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  -->
+              <el-col :span="12">
+                <el-form-item label="组织机构代码">
+                  <el-input placeholder="请输入组织结构代码"
+                            v-model="restaurantInfo.orgCode"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-form-item label="审核状态">
+                  <el-switch on-text="已"
+                             off-text="未"
+                             v-model="restaurantInfo.checkState"></el-switch>
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-form-item label="企业说明">
+                  <el-input type="textarea"
+                            placeholder="请输入"
+                            v-model="restaurantInfo.memo"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="营业执照">
+                  <el-upload
+                      class="avatar-uploader"
+                      :action="uploadURL"
+                      :show-file-list="false"
+                      :on-success="handleAvatarSuccess"
+                      :before-upload="beforeAvatarUpload"
+                      v-if="!restaurantInfo.license">
+                      <img v-if="restaurantInfo.license" :src="restaurantInfo.license" class="avatar">
+                      <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                      <div class="el-upload__tip" slot="tip">上传有效、清晰的营业执照图片（最多上传1张，每张最大10M）</div>
+                  </el-upload>
+                  <div v-else>
+                    <img src="restaurantInfo.license"/>
+                    <el-button @click="uploadAgain">重新上传营业执照</el-button>
+                  </div>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+        </div>
+      </el-tab-pane>
+      <el-tab-pane label="地图定位"
+                   class="lh-middle">
+        <div class="table-head">
+          <div>地图定位</div>
+        </div>
+        <div class="table-body">
+          <el-form :model="restaurantInfo"
+                   label-width="100px">
+            <el-form-item label="详细地址">
+              <el-row>
+                <el-col :span="12">
+                  <el-input v-model="restaurantInfo.detailAddress"></el-input>
+                </el-col>
+                <el-col :span="12">
+                  <div class="btnWrapper">
+                    <el-button @click="posMarker"
+                               style="margin-left: 10px">定位到地图</el-button>
+                    <el-button type="primary"
+                               @click="useClick">使用地图当前点</el-button>
+                  </div>
+                </el-col>
+              </el-row>
+            </el-form-item>
+            <el-form-item label="地图定位">
+              <div id="map"></div>
+            </el-form-item>
+          </el-form>
+        </div>
+      </el-tab-pane>
+      <el-tab-pane label="签约信息"
+                   class="lh-bottom">
+        <div class="table-head">
+          <div>是否签约</div>
+          <el-switch v-model="restaurantInfo.signState"
+                     on-text="开"
+                     off-text="关"
+                     style="margin-left: 35px;"></el-switch>
+        </div>
+        <div class="table-body" v-if="restaurantInfo.signState">
+          <el-form :model="restaurantInfo"
+                   label-width="100px">
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="签约人">
+                  <el-input placeholder="请输入签约人姓名" v-model="restaurantInfo.sign_name" :disabled="true"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="联系电话">
+                  <el-input placeholder="请输入签约人联系电话" v-model="restaurantInfo.sign_phone" :disabled="true"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="回收单位">
+                  <el-select v-model="recycleName" clearable placeholder="请选择签约回收单位" class="recycle-select" :disabled="true">
+                    <el-option
+                      v-for="item in recycleSelectOptions"
+                      :label="item.name"
+                      :value="item.id">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="合同期限" class="contract-time">
+                  <el-date-picker v-model="restaurantInfo.begin_time" type="datetime" placeholder="选择开始时间" :disabled="true"></el-date-picker>
+                  <el-date-picker v-model="restaurantInfo.end_time" type="datetime" placeholder="选择结束时间" :disabled="true"></el-date-picker>
+                </el-form-item>
+              </el-col>
+            </el-row>
+
+          </el-form>
+        </div>
+      </el-tab-pane>
+    </el-tabs>
+		<!-- <div class="lh-top">
       <div class="table-head">
         <div>基本信息</div>
         <div>
@@ -141,12 +313,13 @@
           
         </el-form>
       </div>
-    </div>
+    </div> -->
 	</div>      
 </template>
 
 <script>
   import config from 'src/config'
+  import api from 'src/api'
 
   export default {
     data () {
@@ -156,23 +329,83 @@
           banner: ''
         },
         streetOptions: [],
+        recycleSelectOptions: [],
         restaurantInfo: {},
         searchInput: '',
         point: {},
         pointAddress: '',
         map: null,
         geoc: null,
-        showContract: true,
-        uploadAgain: false
+        showContract: true
       }
     },
     components: {
     },
+    computed: {
+      recycleName () {
+        var name = ''
+        this.recycleSelectOptions.forEach((value) => {
+          if (value.id === Number(this.restaurantInfo.recycle_id)) {
+            name = value.name
+          }
+        })
+        return name
+      }
+    },
     methods: {
+      getDetail () {
+        api.GET(config.restaurants.show, {id: this.$route.query.id})
+          .then(response => {
+            this.restaurantInfo = this.transformData(response.data.data)
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
+      },
+      getRecycle (data = {}) {
+        api.GET(config.restaurants.getRecycle, data)
+          .then(response => {
+            this.recycleSelectOptions = response.data.data
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
+      },
+      update () {
+        if (this.restaurantInfo.begin_time) {
+          this.restaurantInfo.begin_time = Date.parse(this.restaurantInfo.begin_time)
+        }
+        if (this.restaurantInfo.end_time) {
+          this.restaurantInfo.end_time = Date.parse(this.restaurantInfo.end_time)
+        }
+        this.restaurantInfo.checkState = Number(this.restaurantInfo.checkState).toString()
+        this.restaurantInfo.signState = Number(this.restaurantInfo.signState).toString()
+        api.POST(config.restaurants.update, this.restaurantInfo)
+          .then(response => {
+            if (response.status !== 200) {
+              this.error = response.statusText
+              return
+            }
+            if (response.data.errcode === '0000') {
+              this.onSuccess('保存成功')
+              this.restaurantInfo = {
+                checkState: true,
+                license: '',
+                begin_time: '',
+                end_time: ''
+              }
+            }
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
+      },
+      uploadAgain () {
+        this.restaurantInfo.license = ''
+      },
       /* 上传图片函数 */
       handleAvatarSuccess (res, file) {
-        console.log(res, file)
-        // this.classData.icon = res.data[0]
+        this.restaurantInfo.license = res.data[0]
       },
       beforeAvatarUpload (file) {
         const isJPG = file.type === 'image/jpeg'
@@ -194,8 +427,11 @@
         const geoc = this.geoc
         const that = this
         map.clearOverlays()
-        geoc.getPoint(this.searchInput, function(e) {
+        geoc.getPoint(this.restaurantInfo.detailAddress, function(e) {
           if (e) {
+            that.point = JSON.parse(JSON.stringify(e))
+            that.restaurantInfo.longitude = that.point.lng
+            that.restaurantInfo.latitude = that.point.lat
             map.centerAndZoom(e, 14)
             map.addOverlay(new BMap.Marker(e))
           } else {
@@ -205,7 +441,6 @@
               type: 'error'
             })
           }
-
         }, '深圳市')
         /* eslint-enable */
       },
@@ -251,12 +486,51 @@
           })
         })
         /* eslint-enable */
+      },
+      showMap(e) {
+        if (e.label === '地图定位') {
+          this.$nextTick(() => {
+            this.mapInit()
+          })
+        }
+      },
+      transformData (v) {
+        if (v.created_at) {
+          v.created_at = this.formatDate(v.created_at)
+        }
+        if (v.signState === 0) {
+          v.signState = false
+        }
+        if (v.signState === 1) {
+          v.signState = true
+        }
+        if (v.checkState === 0) {
+          v.checkState = false
+        }
+        if (v.checkState === 1) {
+          v.checkState = true
+        }
+        return v
+      },
+      // 时间转换 毫秒转换成 yyyy-mm-dd hh:mm:ss
+      formatDate (value) {
+        let date = new Date(value)
+        let M = date.getMonth() + 1
+        M = M < 10 ? ('0' + M) : M
+        let d = date.getDate()
+        d = d < 10 ? ('0' + d) : d
+        // let h = date.getHours()
+        let m = date.getMinutes()
+        m = m < 10 ? ('0' + m) : m
+        let s = date.getSeconds()
+        s = s < 10 ? ('0' + s) : s
+        value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
+        return value
       }
     },
     mounted () {
-      this.$nextTick(() => {
-        this.mapInit()
-      })
+      this.getDetail()
+      this.getRecycle()
     }
   }
 </script>
@@ -305,6 +579,9 @@
         .el-date-editor--datetime {
           width: 49.6%;
         }
+      }
+      .recycle-select {
+        width: 100%;
       }
     }
   }

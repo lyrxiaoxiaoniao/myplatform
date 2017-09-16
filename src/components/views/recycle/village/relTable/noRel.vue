@@ -6,7 +6,7 @@
                 <div slot="kobe-table-header" class="kobe-table-header">
                   <el-row type="flex" justify="end">
                     <el-col :span="10" :offset="14">
-                        <el-input v-model="form.keyword" placeholder="请输入小区名称">
+                        <el-input v-model="form.keyword" placeholder="请输入关键字">
                         <el-button slot="append" @click="onSearch" icon="search"></el-button>
                         </el-input>
                     </el-col>
@@ -53,26 +53,22 @@
             </kobe-table>
      <!-- 关联模态框 -->
           <el-dialog title="关联物业" v-model="dialogAdvance" size="tiny">
-              <el-row>
-              <el-col :span="12">
-                <el-date-picker
-                  v-model="correlateForm.begin_time"
-                  type="datetime"
-                  placeholder="选择开始时间">
-                </el-date-picker>
-              </el-col>
-              <el-col :span="12">
-                <el-date-picker
-                  v-model="correlateForm.end_time"
-                  type="datetime"
-                  placeholder="选择结束时间">
-                </el-date-picker>
-              </el-col> 
-              </el-row>
-              <span slot="footer" class="dialog-footer">
-                  <el-button @click="dialogAdvance = false">取 消</el-button>
-                  <el-button type="primary" @click="correlate">确 定</el-button>
-              </span>
+            <el-row  type="flex" justify="space-around">
+              <el-date-picker
+                v-model="correlateForm.begin_time"
+                type="datetime"
+                placeholder="选择开始时间">
+              </el-date-picker>
+              <el-date-picker
+                v-model="correlateForm.end_time"
+                type="datetime"
+                placeholder="选择结束时间">
+              </el-date-picker>
+            </el-row>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogAdvance = false">取 消</el-button>
+                <el-button type="primary" @click="correlate">确 定</el-button>
+            </span>
           </el-dialog>
         </div>
         </div>
@@ -105,6 +101,7 @@ export default {
   methods: {
     onSearch () {
       const data = {
+        id: this.communityId,
         currentPage: 1,
         pageSize: this.response.pageSize,
         ...this.form
@@ -120,8 +117,14 @@ export default {
       api.POST(config.village.addcorrelate, this.correlateForm)
       .then(response => {
         this.onSuccess('关联成功！')
-        this.getList()
-        this.$emit('correlateEvent', this.response.count)
+        const data = {
+          id: this.communityId,
+          currentPage: 1,
+          pageSize: this.response.pageSize,
+          ...this.form
+        }
+        this.getList(data)
+        this.$emit('correlateEvent')
       })
       .catch(error => {
         this.$message.error(error)
@@ -147,13 +150,13 @@ export default {
     transform (data) {
       var res = []
       data.forEach(e => {
-        e.rubTenementVOS[0].id = e.id
         res.push(e.rubTenementVOS[0])
       })
       return res
     },
     handleSizeChange (value) {
       const data = {
+        id: this.communityId,
         currentPage: this.response.currentPage,
         pageSize: value,
         ...this.form
@@ -162,6 +165,7 @@ export default {
     },
     handleCurrentChange (value) {
       const data = {
+        id: this.communityId,
         currentPage: value,
         pageSize: this.response.pageSize,
         ...this.form

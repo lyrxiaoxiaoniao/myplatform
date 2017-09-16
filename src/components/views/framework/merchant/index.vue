@@ -95,7 +95,7 @@
                 <el-table-column prop="principal" label="负责人"></el-table-column>
                 <el-table-column prop="level" label="商户级别" width="120"></el-table-column>
                 <el-table-column prop="brief" label="商户简介"></el-table-column>
-                <el-table-column prop="count" label="账号数量"></el-table-column>
+                <!-- <el-table-column prop="count" label="账号数量"></el-table-column> -->
                 <el-table-column label="创建时间">
                   <template scope="scope">{{scope.row.created_at | toDateTime}}</template>
                 </el-table-column>
@@ -112,7 +112,7 @@
                 <el-table-column prop="status" label="操作" width="160">
                   <template scope="scope"> 
                       <el-button @click="editDetail(scope.row)" size="small" icon="edit"></el-button>
-                      <el-button @click="deleteType(scope.row.id)" size="small" class="fa fa-user-o"></el-button>
+                      <el-button @click="toUser(scope.row.id)" size="small" class="fa fa-user-o"></el-button>
                       <el-button @click="toSetting(scope.row.id)" size="small" icon="setting"></el-button>
                   </template>
                 </el-table-column>
@@ -310,6 +310,27 @@
       </div>
     </el-dialog>
     <!-- 修改弹窗end -->
+    <!-- 删除弹框 -->
+    <el-dialog title="删除商户" v-model="deleteShowDialog" top="35%" size="tiny">
+      <div style="padding-left: 50px;position: relative; height: 36px;">
+        <div class="el-message-box__status el-icon-warning" style="position: absolute;top:0;left:0;"></div>
+        <div style="position: absolute;top:-18px;left:50px;">
+          此操作将删除该商户，删除后，数据无法恢复。请输入手机验证码之后，决定是否继续删除？
+        </div>
+      </div>
+      <div class="form-group has-feedback row">
+          <div class="col-xs-8">
+            <input v-model="mailCode" type="text" class="form-control" placeholder="请输入短信验证码">
+          </div>
+          <div class="col-xs-4">
+            <el-button @click="sendMail" :disabled="mailSended" type="primary" class="btn btn-primary btn-block btn-flat">{{ mailButtonText }}</el-button>
+          </div>
+      </div>
+      <div slot="footer" class="dialog-footer" style="margin-top: -20px;">
+          <el-button @click="closeDialogDelete">取消</el-button>
+          <el-button type="primary" @click="saveDelete">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -318,10 +339,16 @@ import api from 'src/api'
 export default {
   data () {
     return {
-      data: [],
       uploadURL: config.serverURI + config.uploadFilesAPI,
       addShowDialog: false,
       editShowDialog: false,
+      deleteShowDialog: false,
+      mailSended: false,
+      mailCode: '',
+      mailButtonText: '发送验证码',
+      mailCountDown: 60,
+      mailTimer: null,
+      responseMail: '',
       addMerchant: {
         name: null,
         level: null,
@@ -386,10 +413,6 @@ export default {
     }
   },
   methods: {
-    // bigImg (url) {
-    //   this.dialogImageUrl = url
-    //   this.dialogVisible = true
-    // },
     /* 上传图片函数 */
     handleAvatarSuccessIcon (res, file) {
       this.addMerchant.license = res.data[0]
@@ -517,22 +540,69 @@ export default {
         })
         return
       }
-      this.$confirm('是否确认是否删除商户', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        api.POST(config.merchant.delete, {
-          ids: this.ids
-        })
+      this.deleteShowDialog = true
+      // this.$confirm('是否确认是否删除商户', '提示', {
+      //   confirmButtonText: '确定',
+      //   cancelButtonText: '取消',
+      //   type: 'warning'
+      // }).then(() => {
+      //   api.POST(config.merchant.delete, {
+      //     ids: this.ids
+      //   })
+      //   .then(response => {
+      //     if (response.data.errcode === '0000') {
+      //       this.onSuccess('删除成功')
+      //       this.getList()
+      //     } else {
+      //       this.$message.error('发生错误，请重试')
+      //     }
+      //   })
+      // })
+    },
+    sendMail () {
+      api.GET(config.merchant.sendMail)
         .then(response => {
           if (response.data.errcode === '0000') {
-            this.onSuccess('删除成功')
-            this.getList()
+            this.responseMail = '短信已发送,请查收'
+            this.onSuccess(this.responseMail)
           } else {
-            this.$message.error('发生错误，请重试')
+            this.$message.error(response.data.errmsg)
           }
         })
+        .catch(error => {
+          this.responseMail = '短信发送失败'
+          this.$message.error(error)
+          return
+        })
+      this.mailSended = true
+      this.mailButtonText = `重新发送(${this.mailCountDown--})`
+      // set mail button timer
+      this.mailTimer = setInterval(() => {
+        if (this.mailCountDown === 0) {
+          this.mailSended = false
+          this.mailButtonText = '发送验证码'
+          this.responseMail = ''
+          this.mailCountDown = 60
+          clearInterval(this.mailTimer)
+          this.mailTimer = null
+          return
+        }
+        this.mailButtonText = `重新发送(${this.mailCountDown--})`
+      }, 1000)
+    },
+    saveDelete () {
+      api.POST(config.merchant.delete, {
+        ids: this.ids,
+        code: this.mailCode
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.onSuccess('删除成功')
+          this.getList()
+          this.closeDialogDelete()
+        } else {
+          this.$message.error('发生错误，请重试')
+        }
       })
     },
     addBaseinfo () {
@@ -567,6 +637,9 @@ export default {
     },
     closeDialogEdit () {
       this.editShowDialog = false
+    },
+    closeDialogDelete () {
+      this.deleteShowDialog = false
     },
     saveAdd () {
       if (this.addMerchant.started_at) {
@@ -652,7 +725,9 @@ export default {
     getList (data = {}) {
       api.GET(config.merchant.index, data)
       .then(response => {
-        this.response = this.transformDate(response.data.data)
+        if (response.data.errcode === '0000') {
+          this.response = this.transformDate(response.data.data)
+        }
       })
       .catch(error => {
         this.$message.error(error)
@@ -671,6 +746,14 @@ export default {
     toSetting (id) {
       this.$router.push({
         path: '/admin/merchant/config',
+        query: {
+          id: id
+        }
+      })
+    },
+    toUser (id) {
+      this.$router.push({
+        path: '/admin/newuser/index',
         query: {
           id: id
         }

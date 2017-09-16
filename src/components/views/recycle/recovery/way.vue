@@ -2,10 +2,10 @@
 <div class="sb-container">
   <el-tabs v-model="activeName" @tab-click="handleClick">
     <el-tab-pane label="现有线路" name="first">
-      <now-table></now-table>
+      <now-table v-if="tabFirst"></now-table>
     </el-tab-pane>
     <el-tab-pane label="历史线路" name="second">
-      <history-table></history-table>
+      <history-table v-if="tabSecond"></history-table>
     </el-tab-pane>
   </el-tabs>
 </div>
@@ -16,7 +16,9 @@ import historyTable from './wayManage/wayTable/historyTable'
 export default {
   data () {
     return {
-      activeName: 'first'
+      activeName: 'first',
+      tabFirst: true,
+      tabSecond: false
     }
   },
   components: {
@@ -25,7 +27,13 @@ export default {
   },
   methods: {
     handleClick (tab, event) {
-      console.log(tab, event)
+      if (tab.name === 'first') {
+        this.tabFirst = true
+        this.tabSecond = false
+      } else if (tab.name === 'second') {
+        this.tabFirst = false
+        this.tabSecond = true
+      }
     }
   }
 }

@@ -1,41 +1,42 @@
 <template>
   <div class="lh-container">
-    <div class="lh-top">
-      <div class="lh-header">
-        <div>基本信息</div>
-        <div>
-          <el-button @click="back">返回</el-button>  
-          <el-button type="primary" @click="submitForm('form')" style="margin-left: 10px;">保存</el-button> 
+    <el-tabs type="border-card" @tab-click="showMap">
+      <el-tab-pane label="基本信息" class="lh-top">
+        <div class="table-head">
+          <div>基本信息</div>
+          <div>
+            <el-button @click="back">返回</el-button>  
+            <el-button type="primary" @click="submitForm('form')" style="margin-left: 10px;">保存</el-button> 
+          </div>
         </div>
-      </div>
-      <div class="lh-form">
-        <el-form :model="form" :rules="rules" ref="form"  class="demo-ruleForm" :label-position="labelPosition" label-width="100px">
-              <el-row>
-                <el-col :span="10"> 
-                    <el-form-item label="小区名称" prop="name">
-                      <el-input v-model="form.name" placeholder="请输入小区名称"></el-input>
-                    </el-form-item>
-                </el-col>
-            
-                <el-col :offset="4" :span="10">      
-                  <el-form-item label="固定电话" prop="phone">
-                    <el-input v-model="form.phone" placeholder="请输入电话"></el-input>
-                  </el-form-item> 
-                 </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="10"> 
-                    <el-form-item label="负责人" prop="duty_name">
-                      <el-input v-model="form.duty_name" placeholder="请输入负责人姓名"></el-input>
-                    </el-form-item>
-                </el-col>
-             
-                <el-col :offset="4" :span="10">     
-                  <el-form-item label="联系方式" prop="mobile">
-                    <el-input v-model="form.mobile" placeholder="请输入负责人联系电话"></el-input>
-                  </el-form-item> 
-                 </el-col>
-              </el-row>       
+        <div class="table-body">
+          <el-form :model="form" :rules="rules" ref="form"  class="demo-ruleForm" :label-position="labelPosition" label-width="100px">
+            <el-row>
+              <el-col :span="10"> 
+                  <el-form-item label="小区名称" prop="name">
+                    <el-input v-model="form.name" placeholder="请输入小区名称"></el-input>
+                  </el-form-item>
+              </el-col>
+          
+              <el-col :offset="4" :span="10">      
+                <el-form-item label="固定电话" prop="phone">
+                  <el-input v-model="form.phone" placeholder="请输入电话"></el-input>
+                </el-form-item> 
+               </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="10"> 
+                  <el-form-item label="负责人" prop="duty_name">
+                    <el-input v-model="form.duty_name" placeholder="请输入负责人姓名"></el-input>
+                  </el-form-item>
+              </el-col>
+           
+              <el-col :offset="4" :span="10">     
+                <el-form-item label="联系方式" prop="mobile">
+                  <el-input v-model="form.mobile" placeholder="请输入负责人联系电话"></el-input>
+                </el-form-item> 
+               </el-col>
+            </el-row>       
             <el-row>
               <el-col :span="10"> 
                 <el-form-item label="所属街道">
@@ -43,7 +44,7 @@
                       :options="cascaderData"
                       :props="props"
                       :change-on-select="true"
-                      v-model="region_id"
+                      v-model="ids"
                       @change="handleChange"
                       style="width:100%;">
                   </el-cascader>
@@ -51,20 +52,48 @@
               </el-col>
             </el-row>
             <el-row>
-                <el-col :span="24"> 
-                    <el-form-item label="小区说明">
-                      <el-input
-                        type="textarea"
-                        :rows="4"
-                        placeholder="请输入内容"
-                        v-model="form.memo">
-                      </el-input>
-                    </el-form-item>
-                </el-col>
+              <el-col :span="24"> 
+                  <el-form-item label="小区说明">
+                    <el-input
+                      type="textarea"
+                      :rows="4"
+                      placeholder="请输入内容"
+                      v-model="form.memo">
+                    </el-input>
+                  </el-form-item>
+              </el-col>
             </el-row>
           </el-form>
-      </div>
-    </div>  </div>
+        </div>
+      </el-tab-pane>
+      <el-tab-pane label="地图定位" class="lh-middle">
+        <div class="table-head">
+          <div>地图定位</div>
+          <div></div>
+        </div>
+        <div class="table-body">
+          <el-form :model="form" label-width="100px">
+            <el-form-item label="详细地址">
+              <el-row>
+                <el-col :span="12">
+                  <el-input v-model="searchInput"></el-input>
+                </el-col>
+                <el-col :span="12">
+                  <div class="btnWrapper">
+                    <el-button @click="posMarker" style="margin-left: 10px">定位到地图</el-button>
+                    <el-button type="primary" @click="useClick">使用地图当前点</el-button>
+                  </div>
+                </el-col>
+              </el-row>
+            </el-form-item>
+            <el-form-item label="地图定位">
+              <div id="map"></div>
+            </el-form-item>
+          </el-form>
+        </div>
+      </el-tab-pane>
+    </el-tabs> 
+  </div>
 </template>
 <script>
 import config from 'src/config'
@@ -82,6 +111,12 @@ export default {
       }
     }
     return {
+      point: {},
+      pointAddress: '',
+      map: null,
+      geoc: null,
+      showContract: true,
+      searchInput: '',
       selectedOptions: [],
       labelPosition: 'left',
       form: {
@@ -89,9 +124,10 @@ export default {
         phone: '',
         duty_name: '',
         mobile: '',
-        region_id: '',
-        detail_address: '',
-        memo: ''
+        ids: [],
+        memo: '',
+        region_pid: '',
+        region_id: ''
       },
       cascaderData: [],
       props: {
@@ -116,8 +152,87 @@ export default {
     }
   },
   methods: {
+    useClick() {
+      this.searchInput = this.pointAddress
+    },
+    posMarker() {
+      /* eslint-disable */
+      const map = this.map
+      const geoc = this.geoc
+      const that = this
+      map.clearOverlays()
+      geoc.getPoint(this.searchInput, function(e) {
+        if (e) {
+          map.centerAndZoom(e, 14)
+          map.addOverlay(new BMap.Marker(e))
+        } else {
+          that.$message({
+            showClose: true,
+            message: '暂无搜索结果，请确认地点是否正确',
+            type: 'error'
+          })
+        }
+      }, '深圳市')
+      /* eslint-enable */
+    },
+    mapInit() {
+      const that = this
+      /* eslint-disable */
+      const map = new BMap.Map("map")
+      this.map = map
+      map.centerAndZoom('深圳', 14)
+      map.enableScrollWheelZoom(true)
+
+      const navigationControl = new BMap.NavigationControl({
+        anchor: BMAP_ANCHOR_TOP_LEFT,
+        type: BMAP_NAVIGATION_CONTROL_SMALL,
+        enableGeolocation: true
+      })
+      map.addControl(navigationControl)
+
+      const geolocationControl = new BMap.GeolocationControl()
+
+      geolocationControl.addEventListener("locationSuccess", function(e) {
+        // 定位成功事件
+        console.log(e)
+      })
+
+      geolocationControl.addEventListener("locationError", function(e) {
+        // 定位失败事件
+        alert(e.message);
+      })
+      map.addControl(geolocationControl)
+
+      const geoc = new BMap.Geocoder()
+      that.geoc = geoc
+
+      map.addEventListener('click', function(e) {
+        map.clearOverlays()
+        that.point = JSON.parse(JSON.stringify(e.point))
+        that.form.longitude = that.point.lng
+        that.form.latitude = that.point.lat
+        // that.point.lat = e.point.lat
+        // that.point.lng = e.point.lng
+        console.log(that.point)
+        console.log('that.form' + that.form)
+        const marker = new BMap.Marker(e.point)
+        map.addOverlay(marker)
+        geoc.getLocation(e.point, function(rs) {
+          that.pointAddress = rs.address
+        })
+      })
+      /* eslint-enable */
+    },
+    showMap(e) {
+      if (e.label === '地图定位') {
+        this.$nextTick(() => {
+          this.mapInit()
+        })
+      }
+    },
     handleChange(value) {
-      console.log(value)
+      this.form.region_pid = value[0]
+      this.form.region_id = value[1]
     },
     getTree () {
       api.GET(config.village.streetTree)
@@ -151,7 +266,11 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          api.POST(config.village.create, this.form)
+          const data = {
+            detail_address: this.searchInput,
+            ...this.form
+          }
+          api.POST(config.village.create, data)
           .then(response => {
             this.onSuccess('添加成功！')
           })
@@ -181,49 +300,50 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.lh-container {
+  .lh-container {
     padding: 1rem 2rem;
-    .lh-top {
+    .table-head {
+      padding: 0 2rem;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      height: 60px;
+      border-bottom: 1px solid lightgray;
+      div:nth-of-type(1){
+        font-size: 16px;
+      }
+    }
+    .table-body {
+      margin: 1rem 2rem;
+      .street-select {
+        width: 100%;
+      }
+    }
+    #map {
+      height: 500px;
+    }
+    .lh-top,.lh-middle,.lh-bottom {
       border: 1px solid lightgray;
+      background-color: #fff;
       border-radius: 5px;
       width: 100%;
-      background-color: #fff;
       padding-bottom: 1rem;
-      .lh-header {
-        padding: 0 2rem;
-        width: 100%;
-        display: flex;
+    }
+    .lh-top {
+      .table-head {
         justify-content: space-between;
-        align-items: center;
-        height: 60px;
-        border-bottom: 1px solid lightgray;
-        div:nth-of-type(1){
-          font-size: 16px;
-        }
       }
-      .lh-form {
-        margin: 1rem 2rem;
-      }
+    }
+    .lh-middle {
+      margin-top: 1rem;
     }
     .lh-bottom {
       margin-top: 1rem;
-      border-radius: 5px;
-      border: 1px solid lightgray;
-      width: 100%;
-      background-color: #fff;
-      padding-bottom: 1rem;
-      .lh-header {
-        padding: 0 2rem;
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        height: 60px;
-        border-bottom: 1px solid lightgray;
-        div:nth-of-type(1){
-          font-size: 16px;
+      .contract-time {
+        .el-date-editor--datetime {
+          width: 49.6%;
         }
       }
     }
-}
+  }
 </style>

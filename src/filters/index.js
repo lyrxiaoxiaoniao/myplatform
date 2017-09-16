@@ -30,8 +30,8 @@ export function toDate (timestamp) {
 
 export function toYM (timestamp) {
   let date = new Date(timestamp)
-  const month = date.getMonth() + 1
-
+  let month = date.getMonth() + 1
+  month = month < 10 ? ('0' + month) : month
   return `${date.getFullYear()}.${month}`
 }
 
