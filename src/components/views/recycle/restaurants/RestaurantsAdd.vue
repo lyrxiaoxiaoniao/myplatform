@@ -7,7 +7,7 @@
         <div class="table-head">
           <div>基本信息</div>
           <div>
-            <el-button>返回</el-button>
+            <el-button @click="toList">返回</el-button>
             <el-button type="primary" @click="add">保存</el-button>
           </div>
         </div>
@@ -519,6 +519,11 @@ export default {
         title: '成功',
         message: string,
         type: 'success'
+      })
+    },
+    toList () {
+      this.$router.push({
+        path: '/admin/recycle/restaurants/index'
       })
     }
   },

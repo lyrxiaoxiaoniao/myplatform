@@ -7,7 +7,7 @@
         <div class="table-head">
           <div>基本信息</div>
           <div>
-            <el-button>返回</el-button>
+            <el-button @click="toList">返回</el-button>
             <el-button type="primary" @click="update">保存</el-button>
           </div>
         </div>
@@ -526,6 +526,11 @@
         s = s < 10 ? ('0' + s) : s
         value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
         return value
+      },
+      toList () {
+        this.$router.push({
+          path: '/admin/recycle/restaurants/index'
+        })
       }
     },
     mounted () {

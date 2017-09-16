@@ -478,6 +478,9 @@ export default {
           case 2:
             v.type = '图文'
         }
+        if (v.click === undefined) {
+          v.click = 0
+        }
       })
       return res
     },

@@ -23,7 +23,7 @@
       </div>
       <div slot="kobe-table-content" class="kobe-table">
         <el-table 
-          :data="listData"
+          :data="response.data"
           @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55">
           </el-table-column>
@@ -150,8 +150,9 @@ export default {
   data() {
     return {
       listData: null,
-      response: {},
-      selectValue: '',
+      response: {
+        data: null
+      },
       options: [{
         value: '1',
         label: '罗湖区'
@@ -337,13 +338,6 @@ export default {
       this.selectedIds = val.map(v => {
         return v.id
       })
-      /*
-      var arr = val
-      this.selectedIds = []
-      arr.forEach(v => {
-        this.selectedIds.push(v.id)
-      })
-      */
     }
   },
   mounted() {
