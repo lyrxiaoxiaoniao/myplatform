@@ -21,17 +21,17 @@
                 stripe
                 :data="response.data"
                 @selection-change="handleSelectionChange">
-                <el-table-column type="selection" width="40"></el-table-column>
-                <el-table-column prop="id" label="ID" sortable width="100"></el-table-column>
-                <el-table-column prop="name" label="小区名称" width="170"></el-table-column>
-                <el-table-column prop="duty_name" label="负责人" width="150"></el-table-column>
-                <el-table-column prop="mobile" label="联系电话" width="150"></el-table-column>
-                <el-table-column label="服务时间" width="150">
+                <!-- <el-table-column type="selection" width="40"></el-table-column> -->
+                <el-table-column prop="id" label="ID" sortable width="70"></el-table-column>
+                <el-table-column prop="name" label="小区名称"></el-table-column>
+                <el-table-column prop="duty_name" label="负责人" width="80"></el-table-column>
+                <el-table-column prop="mobile" label="联系电话" width="105"></el-table-column>
+                <el-table-column label="服务时间" width="130">
                   <template scope="scope">
                     {{scope.row.begin_time | toYM}} - {{scope.row.end_time | toYM}}
                   </template>
                 </el-table-column>
-                <el-table-column prop="title" label="所属街道" width="150"></el-table-column>
+                <el-table-column prop="title" label="所属街道" width="90"></el-table-column>
                 <el-table-column prop="detail_address" label="详细地址"></el-table-column>
                 <el-table-column width="160" label="操作">
                 <template scope="scope">

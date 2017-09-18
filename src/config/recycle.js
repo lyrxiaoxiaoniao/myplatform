@@ -67,6 +67,7 @@ export default {
     create: '/cater/create',
     show: '/cater/show',
     getRecycle: '/rounter/recycle/show', //  清运公司列表
+    update: '/cater/update', // 修改整张表单，除签约信息
     updateSign: '/cater/sign/update', //  签约状态更新
     updateCheck: '/cater/state/update', //  审核状态更新,0.未审核 1.已审核
     getRegion: '/recycle/drop/region/index'// 所属街道列表

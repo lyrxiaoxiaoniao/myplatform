@@ -7,7 +7,7 @@
         <div class="table-head">
           <div>基本信息</div>
           <div>
-            <el-button>返回</el-button>
+            <el-button @click="toList">返回</el-button>
             <el-button type="primary" @click="add">保存</el-button>
           </div>
         </div>
@@ -104,7 +104,7 @@
             <el-form-item label="详细地址">
               <el-row>
                 <el-col :span="12">
-                  <el-input v-model="searchInput"></el-input>
+                  <el-input v-model="restaurantInfo.detailAddress"></el-input>
                 </el-col>
                 <el-col :span="12">
                   <div class="btnWrapper">
@@ -147,18 +147,17 @@
               </el-col>
             </el-row>
             <el-row>
-              <!-- <el-col :span="12">
+              <el-col :span="12">
                 <el-form-item label="回收单位">
-                  <el-select v-model="restaurantInfo.street"
-                             placeholder="请选择所属街道"
-                             class="street-select">
-                    <el-option v-for="item in streetOptions"
-                               :label="item.label"
-                               :value="item.value">
+                  <el-select v-model="restaurantInfo.recycle_id" clearable placeholder="请选择签约回收单位" class="recycle-select">
+                    <el-option
+                      v-for="item in recycleSelectOptions"
+                      :label="item.name"
+                      :value="item.id">
                     </el-option>
                   </el-select>
                 </el-form-item>
-              </el-col> -->
+              </el-col>
               <el-col :span="12">
                 <el-form-item label="合同期限" class="contract-time">
                   <el-date-picker v-model="restaurantInfo.begin_time" type="datetime" placeholder="选择开始时间"></el-date-picker>
@@ -323,12 +322,17 @@ export default {
         banner: ''
       },
       regionSelectOptions: [],
+      recycleSelectOptions: [],
       restaurantInfo: {
         checkState: true,
         signState: true,
         license: '',
         begin_time: '',
-        end_time: ''
+        end_time: '',
+        detailAddress: '',
+        longitude: 0,
+        latitude: 0,
+        recycle_id: ''
       },
       searchInput: '',
       point: {},
@@ -342,10 +346,14 @@ export default {
   },
   methods: {
     add () {
-      this.restaurantInfo.begin_time = Date.parse(this.restaurantInfo.begin_time)
-      this.restaurantInfo.end_time = Date.parse(this.restaurantInfo.end_time)
-      this.restaurantInfo.checkState = Number(this.restaurantInfo.checkState)
-      this.restaurantInfo.signState = Number(this.restaurantInfo.signState)
+      if (this.restaurantInfo.begin_time) {
+        this.restaurantInfo.begin_time = Date.parse(this.restaurantInfo.begin_time)
+      }
+      if (this.restaurantInfo.end_time) {
+        this.restaurantInfo.end_time = Date.parse(this.restaurantInfo.end_time)
+      }
+      this.restaurantInfo.checkState = Number(this.restaurantInfo.checkState).toString()
+      this.restaurantInfo.signState = Number(this.restaurantInfo.signState).toString()
       api.POST(config.restaurants.create, this.restaurantInfo)
         .then(response => {
           if (response.status !== 200) {
@@ -375,6 +383,15 @@ export default {
           this.$message.error(error)
         })
     },
+    getRecycle (data = {}) {
+      api.GET(config.restaurants.getRecycle, data)
+        .then(response => {
+          this.recycleSelectOptions = response.data.data
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
+    },
     /* 上传图片函数 */
     handleAvatarSuccess (res, file) {
       this.restaurantInfo.license = res.data[0]
@@ -391,7 +408,8 @@ export default {
       return isJPG && isLt2M
     },
     useClick() {
-      this.searchInput = this.pointAddress
+      this.restaurantInfo.detailAddress = this.pointAddress
+      // this.searchInput = this.pointAddress
     },
     posMarker() {
       /* eslint-disable */
@@ -399,8 +417,11 @@ export default {
       const geoc = this.geoc
       const that = this
       map.clearOverlays()
-      geoc.getPoint(this.searchInput, function(e) {
+      geoc.getPoint(this.restaurantInfo.detailAddress, function(e) {
         if (e) {
+          that.point = JSON.parse(JSON.stringify(e))
+          that.restaurantInfo.longitude = that.point.lng
+          that.restaurantInfo.latitude = that.point.lat
           map.centerAndZoom(e, 14)
           map.addOverlay(new BMap.Marker(e))
         } else {
@@ -443,10 +464,6 @@ export default {
         that.point = JSON.parse(JSON.stringify(e.point))
         that.restaurantInfo.longitude = that.point.lng
         that.restaurantInfo.latitude = that.point.lat
-        // that.point.lat = e.point.lat
-        // that.point.lng = e.point.lng
-        console.log(that.point)
-        console.log('that.restaurantInfo' + that.restaurantInfo)
         const marker = new BMap.Marker(e.point)
         map.addOverlay(marker)
         geoc.getLocation(e.point, function(rs) {
@@ -503,9 +520,15 @@ export default {
         message: string,
         type: 'success'
       })
+    },
+    toList () {
+      this.$router.push({
+        path: '/admin/recycle/restaurants/index'
+      })
     }
   },
   mounted() {
+    this.getRecycle()
   }
 }
 </script>
@@ -556,6 +579,9 @@ export default {
       .el-date-editor--datetime {
         width: 49.6%;
       }
+    }
+    .recycle-select {
+      width: 100%;
     }
   }
 }

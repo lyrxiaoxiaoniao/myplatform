@@ -52,7 +52,7 @@
           <template scope="scope">
             <el-button size="small" icon="edit" @click="toEditStatus(scope.row.id)" title="修改"></el-button>
             <el-button size="small" icon="delete2" @click="deleteData(scope.row.id)" title="删除"></el-button>
-            <el-button size="small" v-if="scope.row.signState" @click="openDialog('签约',scope.row.id)">签约</el-button>
+            <el-button size="small" v-show="scope.row.signState==='未签约'" @click="openDialog('签约',scope.row.id)">签约</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -114,8 +114,8 @@
               <el-select v-model="contractForm.recycle_id" clearable placeholder="请选择签约回收单位">
                 <el-option
                   v-for="item in recycleSelectOptions"
-                  :label="item.id"
-                  :value="item.name">
+                  :label="item.name"
+                  :value="item.id">
                 </el-option>
               </el-select>
             </el-form-item>
@@ -151,11 +151,17 @@
           keyword: ''
         },
         advancedSearchForm: {
+          name: '',
+          detailAddress: '',
+          mobile: '',
+          orgCode: '',
+          dutyName: '',
           signState: 0
         },
         contractForm: {
           begin_time: '',
-          end_time: ''
+          end_time: '',
+          recycle_id: ''
         },
         dialogTitle: '',
         dialogFormVisible: false,
@@ -189,7 +195,7 @@
       getRecycle (data = {}) {
         api.GET(config.restaurants.getRecycle, data)
           .then(response => {
-            this.recycleSelectOptions = this.transformData(response.data.data)
+            this.recycleSelectOptions = response.data.data
           })
           .catch(error => {
             this.$message.error(error)
@@ -208,7 +214,6 @@
           next = await this.confirmDelete(next)
         }
         if (next) {
-          // console.log('发起请求，删除' + this.restaurantsSelectedIds)
           api.POST(config.restaurants.delete, {ids: this.restaurantsSelectedIds})
             .then(response => {
               if (response.status !== 200) {
@@ -227,7 +232,7 @@
         }
       },
       toggleSwicth (value) {
-        value.checkState = Number(value.checkState)
+        value.checkState = Number(value.checkState).toString()
         api.POST(config.restaurants.updateCheck, {id: value.id, checkState: value.checkState})
           .then(response => {
             if (response.data.errcode === '0000') {
@@ -258,6 +263,7 @@
                 ...this.form
               }
               this.getList(data)
+              this.closeDialog()
             }
           })
           .catch(error => {
@@ -307,25 +313,27 @@
         this.searchSelectValue = ''
         this.form.keyword = ''
         var obj = this.advancedSearchForm
-        // obj.is_recommend = this.changeState(obj.is_recommend)
-        // obj.is_topped = this.changeState(obj.is_topped)
-        // obj.category_id = this.cascaderValue[this.cascaderValue.length - 1]
         const data = {
           currentPage: 1,
           pageSize: this.response.pageSize,
           ...obj
         }
         api.GET(config.restaurants.index, data)
-        .then(response => {
-          this.response = this.transformData(response.data.data)
-          this.closeDialog()
-          this.advancedSearchForm = {
-            signState: 0
-          }
-        })
-        .catch(error => {
-          this.$message.error(error)
-        })
+          .then(response => {
+            this.response = this.transformData(response.data.data)
+            this.advancedSearchForm = {
+              name: '',
+              detailAddress: '',
+              mobile: '',
+              orgCode: '',
+              dutyName: '',
+              signState: 0
+            }
+            this.closeDialog()
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
       },
       transformData (res) {
         res.data.forEach(v => {

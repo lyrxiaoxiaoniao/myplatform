@@ -51,18 +51,17 @@
             stripe
             :data="response.data"
             @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="id" label="ID" width="50"></el-table-column>
+            <el-table-column type="selection" width="45"></el-table-column>
+            <el-table-column prop="id" label="ID" width="60"></el-table-column>
             <el-table-column prop="display_name" label="菜单名称"></el-table-column>
-            <el-table-column prop="logo" label="图标" width="95">
-              <template scope="scope">
-                <img style="width:58px;height:58px;" :src="scope.row.logo" @click="bigImg(scope.row.logo)" alt="">
-              </template>
+            <el-table-column prop="name" label="菜单标识"></el-table-column>
+            <el-table-column prop="icon" label="图标" width="95">
             </el-table-column>
-            <el-table-column prop="sort" label="同级排序" width="80"></el-table-column>
-            <el-table-column prop="sort" label="菜单路由" width="80"></el-table-column>
-            <el-table-column prop="created_at" label="创建时间"></el-table-column>
-            
+            <el-table-column prop="sort" label="同级排序" width="88"></el-table-column>
+            <el-table-column prop="url" label="菜单路由" width="88"></el-table-column>
+            <el-table-column label="创建时间">
+              <template scope="scope">{{scope.row.created_at | toDateTime}}</template>
+            </el-table-column>
             <el-table-column label="有效状态" width="90">
               <template scope="scope">
                 <el-switch
@@ -131,8 +130,73 @@
           <el-button type="primary" @click="confirmMove">确 定</el-button>
         </span>
     </el-dialog>
-    <el-dialog :title="dialogTitle" v-model="showDialog">
-      <el-form :model="classData" :rules="rules" ref="classData" label-width="80px">
+    <!-- 新增 start -->
+    <el-dialog :title="dialogTitle" v-model="addDialog">
+      <el-form :model="addData" :rules="rules" ref="addData" label-width="80px">
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="父级菜单">
+              <el-cascader
+                :options="cascaderData"
+                :props="props"
+                :change-on-select="true"
+                v-model="addData.parent_id"
+                @change="handleChange"
+                style="width:100%;">
+              </el-cascader>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="菜单名称" prop="displayName">
+              <el-input v-model="addData.display_name"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="同级排序">
+              <el-input-number v-model="addData.sort" style="width:120px;"></el-input-number>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="是否启用">
+              <el-switch
+                v-model="addData.active"
+                on-text="开"
+                off-text="关">
+              </el-switch>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="菜单标识" prop="name" require>
+              <el-input v-model="addData.name"></el-input>
+            </el-form-item>
+          </el-col>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="菜单图标">
+              <el-input v-model="addData.icon"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="访问路由">
+              <el-input v-model="addData.url"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="菜单说明">
+              <el-input type="textarea" v-model="addData.memo"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row> 
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+          <el-button @click="addDialog = false">取消</el-button>
+          <el-button @click="submitForm('addData')">确定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 新增 end -->
+    <!-- 修改 start -->
+    <el-dialog :title="dialogTitle" v-model="editDialog">
+      <el-form :model="classData" ref="classData" label-width="80px">
         <el-row>
           <el-col :span="24">
             <el-form-item label="父级菜单">
@@ -166,55 +230,33 @@
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="菜单标识" prop="display_name" require>
-              <el-input v-model="classData.display_name"></el-input>
+            <el-form-item label="菜单标识">
+              <el-input v-model="classData.name"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="访问路由" prop="display_name" require>
-              <el-input v-model="classData.display_name"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="菜单说明" prop="description" require>
-              <el-input type="textarea" v-model="classData.description"></el-input>
-            </el-form-item>
-          </el-col>
-
-           <el-col :span="12">
-            <el-form-item label="分类icon">
-              <el-upload
-                class="avatar-uploader"
-                :action="uploadURL"
-                :show-file-list="false"
-                :on-success="iconHandleAvatarSuccess"
-                :before-upload="beforeAvatarUpload">
-                <img v-if="classData.icon" :src="classData.icon" class="avatar">
-                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-              </el-upload>
-            </el-form-item>
-          </el-col> 
-          <el-col :span="12">
             <el-form-item label="菜单图标">
-              <el-upload
-                class="avatar-uploader"
-                :action="uploadURL"
-                :show-file-list="false"
-                :on-success="handleAvatarSuccess"
-                :before-upload="beforeAvatarUpload">
-                <img v-if="classData.logo" :src="classData.logo" class="avatar">
-                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-              </el-upload>
+              <el-input v-model="classData.icon"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="访问路由">
+              <el-input v-model="classData.url"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="菜单说明">
+              <el-input type="textarea" v-model="classData.memo"></el-input>
             </el-form-item>
           </el-col>
         </el-row> 
       </el-form>
       <div slot="footer" class="dialog-footer">
-          <el-button @click="showDialog = false">取消</el-button>
-          <el-button @click="submitForm('classData')" v-if="dialogType === 'add'">确定</el-button>
-          <el-button @click="editForm()" v-if="dialogType === 'edit'">确定</el-button>
+          <el-button @click="editDialog = false">取消</el-button>
+          <el-button @click="editForm()">确定</el-button>
       </div>
     </el-dialog>
+    <!-- 修改 end -->
     <!-- 高级搜索模态框 -->
     <el-dialog title="高级搜索" v-model="dialogAdvance">
         <el-form :model="advancedSearch" :label-width="formLabelWidth">
@@ -222,30 +264,33 @@
               <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
             </el-form-item>
             <el-form-item label="菜单名称">
-              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
+              <el-input v-model="advancedSearch.display_name" auto-complete="off"></el-input>
             </el-form-item>
             <el-form-item label="菜单标识">
-              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
+              <el-input v-model="advancedSearch.name" auto-complete="off"></el-input>
             </el-form-item>            
             <el-form-item label="是否启用">
               <el-switch
-                v-model="enabled"
                 on-text="是"
+                v-model="advancedSearch.active"
                 off-text="否">
               </el-switch>
-            </el-form-item>
+            </el-form-item>       
             <el-form-item label="创建时间">
-              <el-date-picker
-                  v-model="advancedSearch.keyword"
+              <el-row type="flex" justify="space-around">
+                <el-date-picker
+                  v-model="advancedSearch.start_time"
                   type="datetime"
                   placeholder="选择开始时间">
-              </el-date-picker>
-              <el-date-picker
-                  v-model="advancedSearch.keyword"
+                </el-date-picker>
+                <el-date-picker
+                  v-model="advancedSearch.end_time"
                   type="datetime"
                   placeholder="选择结束时间">
                 </el-date-picker>
+              </el-row>
             </el-form-item>
+            
         </el-form>
         <span slot="footer" class="dialog-footer">
             <el-button @click="dialogAdvance = false">取 消</el-button>
@@ -286,7 +331,23 @@ import relTab from './reltable/rel-perssion'
 import norelTab from './reltable/noRel-perssion'
 export default {
   data () {
+    var displayName = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error('菜单名称不能为空'))
+      } else {
+        api.POST(config.frameWorkMenu.check, {display_name: this.addData.display_name})
+        .then(response => {
+          this.onSuccess('启用操作成功！')
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
+        // callback(new Error('重名，该菜单已存在'))
+      }
+    }
     return {
+      editDialog: false,
+      addDialog: false,
       activeName: 'first',
       firstId: true,
       secondId: true,
@@ -296,7 +357,12 @@ export default {
       correlateShow: false,
       formLabelWidth: '80px',
       advancedSearch: {
-        keyword: ''
+        keyword: '',
+        display_name: '',
+        name: '',
+        active: '',
+        start_time: '',
+        end_time: ''
       },
       dialogAdvance: false,
       moveVal: null,
@@ -334,8 +400,19 @@ export default {
         display_name: '',
         sort: null,
         active: 1,
-        description: '',
-        logo: '',
+        name: '',
+        memo: '',
+        url: '',
+        icon: ''
+      },
+      addData: {
+        parent_id: [],
+        display_name: '',
+        sort: null,
+        active: 1,
+        name: '',
+        memo: '',
+        url: '',
         icon: ''
       },
       selectedOptions: [],
@@ -354,7 +431,7 @@ export default {
       ids: [],
       rules: {
         display_name: [
-          { required: true, message: '请输入分类名称', trigger: 'blur' }
+          { required: true, validator: displayName, trigger: 'blur' }
         ],
         description: [
           { required: true, message: '分类说明50字以内', trigger: 'blur' },
@@ -382,27 +459,25 @@ export default {
     },
     // 高级搜索
     advance () {
-      this.dialogAdvance = false
-      this.adSwitch = false
+      this.advancedSearch.active = Number(this.advancedSearch.active)
+      if (this.advancedSearch.start_time) {
+        this.advancedSearch.start_time = this.formatDate(this.advancedSearch.start_time)
+      }
+      if (this.advancedSearch.end_time) {
+        this.advancedSearch.end_time = this.formatDate(this.advancedSearch.end_time)
+      }
+      console.log(this.advancedSearch, 1111)
       const data = {
         currentPage: 1,
         pageSize: this.response.pageSize,
         ...this.advancedSearch
       }
-      api.GET(config.village.advanced, data)
-      .then(response => {
-        this.response = this.transformDate(response.data)
-      })
-      .catch(error => {
-        this.$message.error(error)
-      })
+      this.getList(data)
+      this.dialogAdvance = false
     },
     // 将数据中所有的时间转换成 yyyy-mm-dd hh:mm:ss  state 状态值
     transformDate (res) {
       res.data.forEach(v => {
-        if (v.created_at) {
-          v.created_at = this.formatDate(v.created_at)
-        }
         if (v.active === 1) {
           v.active = true
         }
@@ -427,31 +502,12 @@ export default {
       value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
       return value
     },
-    iconHandleAvatarSuccess(res, file) {
-      this.icon = window.URL.createObjectURL(file.raw)
-      this.classData.icon = res.data[0]
-    },
-    handleAvatarSuccess(res, file) {
-      this.logo = window.URL.createObjectURL(file.raw)
-      this.classData.logo = res.data[0]
-    },
-    beforeAvatarUpload(file) {
-      const isLt2M = file.size / 1024 / 1024 < 2
-      if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
-      }
-      return isLt2M
-    },
-    bigImg (url) {
-      this.dialogImageUrl = url
-      this.dialogVisible = true
-    },
     toswitch (active, id) {
       let data = {
         pageSize: this.response.pageSize,
         currentPage: this.response.currentPage
       }
-      api.POST(config.activeCategoryAPI, {id: id, active: Number(active)})
+      api.POST(config.frameWorkMenu.active, {id: id, active: Number(active)})
       .then(response => {
         this.getList(data)
         this.onSuccess('启用操作成功！')
@@ -494,6 +550,7 @@ export default {
       if (data !== null && type === 'edit') {
         this.dialogType = 'edit'
         this.dialogTitle = '修改菜单'
+        this.editDialog = true
         this.classData = {
           ...this.classData,
           ...data
@@ -507,17 +564,17 @@ export default {
       } else {
         this.dialogType = 'add'
         this.dialogTitle = '新增菜单'
-        this.classData = {
-          parent_id: [],
-          display_name: '',
-          sort: null,
-          active: 1,
-          description: '',
-          logo: '',
-          icon: ''
-        }
+        this.addDialog = true
+        // this.classData = {
+        //   parent_id: [],
+        //   display_name: '',
+        //   sort: null,
+        //   active: 1,
+        //   description: '',
+        //   logo: '',
+        //   icon: ''
+        // }
       }
-      this.showDialog = true
     },
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
@@ -607,7 +664,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.POST(config.deleteCategoryAPI, {
+        api.POST(config.frameWorkMenu.delete, {
           ids: this.ids
         })
         .then(response => {
@@ -616,7 +673,7 @@ export default {
             this.getList()
             this.getTree()
           } else {
-            this.$message.error('发生错误，请重试')
+            this.$message.error(response.data.errmsg)
           }
         })
       })
@@ -661,11 +718,11 @@ export default {
       }
     },
     getTree () {
-      api.GET(config.categoryTreeAPI)
+      api.GET(config.frameWorkMenu.showLeft)
       .then(response => {
         var newData = response.data.data
         this.iteration(newData)
-        newData.push({ id: 0, display_name: '根级分类', label: '根级分类', value: 0 })
+        newData.unshift({ id: 0, display_name: '根级分类', label: '根级分类', value: 0 })
         this.data = newData
         this.cascaderData = newData
       })
@@ -674,7 +731,7 @@ export default {
       })
     },
     getList (data = {}) {
-      api.GET(config.categoryIndexAPI, data)
+      api.GET(config.frameWorkMenu.index, data)
       .then(response => {
         this.response = this.transformDate(response.data.data)
       })

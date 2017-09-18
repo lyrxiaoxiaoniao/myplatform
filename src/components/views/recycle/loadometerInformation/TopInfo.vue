@@ -43,12 +43,20 @@
     computed: {},
     methods: {
       toList () {
-        this.$router.push({
-          path: '/admin/recycle/loadometerInformation/index'
-        })
+        if (window.location.hash.indexOf('/statistics') > -1) {
+          this.$router.push({
+            path: '/admin/recycle/loadometerInformation/index'
+          })
+        } else {
+          this.$router.push({
+            path: '/admin/recycle/loadometerinformation/statistics',
+            query: {
+              id: this.$route.query.id
+            }
+          })
+        }
       },
       getOne (id) {
-        // console.log('getOne时候id' + id)
         api.GET(config.loadometer.indexOne, {id})
           .then(response => {
             this.response.data = this.transformData(response.data.data)

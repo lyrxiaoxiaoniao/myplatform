@@ -3,15 +3,15 @@
     <div class="question-list-header">
       <div>
         <el-checkbox v-model="allChecked" @change="toggleAllChecked">全选</el-checkbox>
-        <el-button type="primary">批量移除</el-button>
-        <el-button type="primary">批量标签</el-button>
+        <el-button type="primary" v-show="tab==='accord'" @click="moveOut">批量移除</el-button>
+        <el-button type="primary" v-show="tab==='other'" @click="moveIn">批量标签</el-button>
       </div>
       <div>
         <el-cascader
           placeholder="所有题库"
           :options="cascaderData"
           v-model="cascaderSelectedOptions"
-          @change="handleChange">
+          @change="handleCascaderChange">
         </el-cascader>
          <!-- <el-select v-model="searchSelectValue" style="width:105px;" @change="searchSelect">
           <el-option
@@ -24,7 +24,7 @@
         <el-input v-model="form.keyword" placeholder="" class="sc-table-header-select" style="width:200px;margin-left:10px;">
           <el-button slot="append" class="sc-table-search-btn" @click="onSearch" icon="search"></el-button>
         </el-input>
-        <el-button @click="openDialog('高级搜索')" icon="search" type="primary" style="margin-left:10px;">高级</el-button>
+        <el-button @click="openDialog" icon="search" type="primary" style="margin-left:10px;">高级</el-button>
       </div>
     </div>
     <div v-for="n in 5" class="question-list-item">
@@ -75,10 +75,12 @@
         },
         allChecked: false,
         checkedList: [false, false, true, false, false],
-        cascaderSelectedOptions: []
+        cascaderSelectedOptions: [],
+        idsList: [],
+        selectedIds: []
       }
     },
-    props: ['list', 'cascaderData'],
+    props: ['list', 'cascaderData', 'tab'],
     components: {
     },
     computed: {},
@@ -91,9 +93,34 @@
         } else {
           this.checkedList = [false, false, false, false, false]
         }
+      },
+      getSelectedIds () {
+        this.checkedList.forEach((val, index) => {
+          if (val) {
+            this.selectedIds.push(this.idsList[index])
+          }
+        })
+      },
+      handleCascaderChange () {
+        this.$emit('getSelectedList')
+      },
+      onSearch () {
+        this.$emit('getSelectedList')
+      },
+      openDialog () {
+        this.$emit('openDialog')
+      },
+      moveOut () {
+        this.$emit('moveOut')
+      },
+      moveIn () {
+        this.$emit('moveIn')
       }
     },
     mounted () {
+    },
+    updated () {
+      // 每次更新列表则重新获取checkedList和idsList
     }
   }
 </script>

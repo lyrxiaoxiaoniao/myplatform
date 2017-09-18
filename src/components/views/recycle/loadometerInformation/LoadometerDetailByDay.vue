@@ -130,18 +130,22 @@
     computed: {},
     methods: {
       handleSizeChange (value) {
-        // const data = {
-        //   currentPage: this.response.currentPage,
-        //   pageSize: value,
-        //   ...this.form
-        // }
+        var data = this.getHttpParams()
+        Object.assign(data, {
+          currentPage: this.response.currentPage,
+          pageSize: value,
+          ...this.form
+        })
+        this.getList(data)
       },
       handleCurrentChange (value) {
-        // const data = {
-        //   currentPage: value,
-        //   pageSize: this.response.pageSize,
-        //   ...this.form
-        // }
+        var data = this.getHttpParams()
+        Object.assign(data, {
+          currentPage: value,
+          pageSize: this.response.pageSize,
+          ...this.form
+        })
+        this.getList(data)
       },
       getList (data = {}) {
         api.GET(config.loadometer.weighDetail, data)
@@ -164,12 +168,6 @@
           if (obj.created_at) {
             obj.created_at = this.formatDate(obj.created_at)
           }
-          // if (obj.type === 0) {
-          //   obj.type = '大件垃圾'
-          // }
-          // if (obj.type === 1) {
-          //   obj.type = '餐厨垃圾'
-          // }
           arr.push(obj)
         })
         return arr
@@ -203,11 +201,9 @@
         this.loadometerSelectedIds = []
         // 单行记录操作传进来的参数是数字，多行记录操作传进来的参数是数组，未选择记录未传参数
         if (value !== undefined) {
-          // console.log('有选中记录')
           if (value.length === undefined) {
             this.loadometerSelectedIds.push(value)
           } else {
-            // console.log('选中多行')
             this.loadometerSelectedIds = value.map(v => {
               return v.id
             })
@@ -220,10 +216,6 @@
           .then(response => {
             if (response.data.errcode === '0000') {
               this.onSuccess('校核成功')
-              // let data = {
-              //   pageSize: this.response.pageSize,
-              //   currentPage: this.response.currentPage
-              // }
               var data = this.getHttpParams()
               data.pageSize = this.response.pageSize
               data.currentPage = this.response.currentPage

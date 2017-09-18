@@ -1,7 +1,7 @@
 <template>
   <div class="GD-container">
     <el-row tpye="flex">
-      <el-col :span="4">
+      <el-col :span="3">
       <el-tree :data="data" :props="defaultProps"
               accordion
               :highlight-current="true"
@@ -9,7 +9,7 @@
               @node-click="handleNodeClick">
       </el-tree>
    </el-col>
-    <el-col :span="20">
+    <el-col :span="21">
       <kobe-table> 
         <div slot="kobe-table-header" class="kobe-table-header">      
           <el-row type="flex" justify="end">
@@ -34,7 +34,7 @@
               </el-option>
             </el-select>
             <el-col :span="8">
-              <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
+              <el-input v-model="form.keyword" placeholder="请输入小区名称">
                 <el-button slot="append" @click="onSearch" icon="search"></el-button>
               </el-input>
             </el-col>
@@ -50,14 +50,14 @@
             stripe
             :data="response.data"
             @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="id" sortable label="ID" width="80"></el-table-column>
+            <el-table-column type="selection" width="50"></el-table-column>
+            <el-table-column prop="id" sortable label="ID" width="70"></el-table-column>
             <el-table-column prop="name" label="小区名称" width="150"></el-table-column>
-            <el-table-column prop="duty_name" label="负责人" width="95">
+            <el-table-column prop="duty_name" label="负责人" width="80">
             </el-table-column>
             <el-table-column prop="mobile" width="105" label="联系电话"></el-table-column>
             <el-table-column prop="street" label="所属街道" width="90"></el-table-column>
-            <el-table-column label="审核状态" width="90">
+            <el-table-column label="审核状态" width="95">
               <template scope="scope">
                 <el-switch
                   style="width:60px;"
@@ -70,7 +70,7 @@
             </el-table-column>
             <el-table-column prop="detail_address" label="详细地址"></el-table-column>
             <el-table-column 
-              width="170"
+              width="160"
               label="操作"
               >
               <template scope="scope">
@@ -115,7 +115,7 @@
                       style="width:100%;"
                       change-on-select
                       :options="cascaderData"
-                      :props="props"
+                      :props="moveProps"
                       v-model="selectedOptions"
                       @change="handleChangeMove">
                   </el-cascader>
@@ -128,14 +128,21 @@
         </span>
     </el-dialog>
 <!-- 高级搜索模态框 -->
-    <el-dialog title="高级搜索" v-model="dialogAdvance" size="tiny">
-        <el-form :model="advancedSearch" style="padding-right:30px;" label-position="left" :label-width="formLabelWidth">
+    <el-dialog title="高级搜索" v-model="dialogAdvance">
+        <el-form :model="advancedSearch" style="padding-right:30px;" label-position="right" label-width="70px">
           <el-form-item label="小区名称" >
-            <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
+            <el-input v-model="advancedSearch.keyword" placeholder="请输入小区名称"></el-input>
           </el-form-item>
           <el-form-item label="关联物业">
-            <el-input v-model="advancedSearch.name" auto-complete="off"></el-input>
+            <el-input v-model="advancedSearch.name" placeholder="请输入已关联物业名称"></el-input>
           </el-form-item>
+            <el-row>
+              <el-col :span="13">
+                <el-form-item label="联系人">
+                 <el-input v-model="advancedSearch.duty_name" placeholder="请输入小区负责人" auto-complete="off"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
             <el-row>
               <el-form-item label="所属街道">
                 <el-cascader
@@ -146,13 +153,6 @@
                   @change="handleChange">
                 </el-cascader>
               </el-form-item>
-            </el-row>
-            <el-row>
-              <el-col :span="13">
-                <el-form-item label="联系人">
-                 <el-input v-model="advancedSearch.duty_name" auto-complete="off"></el-input>
-                </el-form-item>
-              </el-col>
             </el-row>
             <el-form-item label="数据状态">
               <el-radio class="radio" v-model="advancedSearch.audit_state" label="1" style="margin:0 10px;">开</el-radio>
@@ -172,6 +172,7 @@ import api from 'src/api'
 export default {
   data () {
     return {
+      regionSelect: true,
       formLabelWidth: '90px',
       adSwitch: true,
       advancedSearch: {
@@ -190,6 +191,11 @@ export default {
         label: 'title'
       },
       cascaderData: [],
+      moveProps: {
+        children: 'children',
+        label: 'title',
+        value: 'id'
+      },
       props: {
         children: 'children',
         label: 'title',
@@ -282,21 +288,6 @@ export default {
       })
       return res
     },
-    // 时间转换 毫秒转换成 yyyy-mm-dd hh:mm:ss
-    formatDate (value) {
-      let date = new Date(value)
-      let M = date.getMonth() + 1
-      M = M < 10 ? ('0' + M) : M
-      let d = date.getDate()
-      d = d < 10 ? ('0' + d) : d
-      // let h = date.getHours()
-      let m = date.getMinutes()
-      m = m < 10 ? ('0' + m) : m
-      let s = date.getSeconds()
-      s = s < 10 ? ('0' + s) : s
-      value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
-      return value
-    },
     toswitch (active, id) {
       if (active) {
         active = 1
@@ -336,20 +327,21 @@ export default {
     },
     // 树形结构选择
     handleChange (value) {
-      console.log(value)
+      // console.log(value)
       this.advancedSearch.title = this.selectedOptions[1]
     },
     handleChangeMove (value) {
       this.moveVal = value
-      console.log(value)
+      // console.log(value)
     },
     // 树形目录点击事件
     handleNodeClick (data, node) {
       if (data.type === 'district') {
         this.region_id = data.id
+        this.regionSelect = false
         this.getList({
           region_pid: this.region_id,
-          currentPage: this.response.currentPage,
+          currentPage: 1,
           pageSize: this.response.pageSize,
           ...this.form
         })
@@ -468,20 +460,20 @@ export default {
     },
     // 批量移动
     confirmMove () {
-      this.region_pid = []
-      this.region_id = []
-      this.region_pid = this.moveVal[0]
-      this.region_id = this.moveVal[1]
-
       var obj = {}
       obj.ids = this.ids
-      obj.region_pid = this.region_pid
-      obj.region_id = this.region_id
+      obj.region_pid = this.moveVal[0]
+      obj.region_id = this.moveVal[1]
       api.POST(config.village.move, obj)
       .then(response => {
         if (response.data.errcode === '0000') {
-          this.getList()
-          this.getTree()
+          const data = {
+            currentPage: this.response.currentPage,
+            pageSize: this.response.pageSize,
+            region_id: this.region_id,
+            ...this.form
+          }
+          this.getList(data)
           this.dialogVisibleMove = false
         }
       }).catch(error => {
@@ -538,24 +530,39 @@ export default {
       }
     },
     handleCurrentChange (value) {
-      console.log(value)
-      const data = {
-        currentPage: value,
-        pageSize: this.response.pageSize,
-        region_id: this.region_id,
-        ...this.form
-      }
-      if (this.adSwitch) {
-        this.getList(data)
+      // console.log(value)
+      if (this.regionSelect === true) {
+        const data = {
+          currentPage: value,
+          pageSize: this.response.pageSize,
+          region_id: this.region_id,
+          ...this.form
+        }
+        if (this.adSwitch) {
+          this.getList(data)
+        } else {
+          this.adSwitch = true
+        }
+        this.regionSelect = false
       } else {
-        this.adSwitch = true
+        const data = {
+          currentPage: value,
+          pageSize: this.response.pageSize,
+          region_pid: this.region_id,
+          ...this.form
+        }
+        if (this.adSwitch) {
+          this.getList(data)
+        } else {
+          this.adSwitch = true
+        }
       }
     },
     onSearch () {
+      this.region_id = ''
       const data = {
         currentPage: 1,
         pageSize: this.response.pageSize,
-        region_id: this.region_id,
         ...this.form
       }
       this.getList(data)
@@ -594,10 +601,11 @@ export default {
       }
       api.GET(config.village.list, data)
       .then(response => {
-        if (response.data.errcode === '0000') {
-          this.response = this.transformDate(response.data.data)
-        } else {
+        if (response.data.errcode === '5000') {
           this.response.data = null
+          this.response.count = 0
+        } else {
+          this.response = this.transformDate(response.data.data)
         }
       })
       .catch(error => {

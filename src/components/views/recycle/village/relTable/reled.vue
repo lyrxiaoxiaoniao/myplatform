@@ -64,10 +64,11 @@
 import config from 'src/config'
 import api from 'src/api'
 export default {
+  props: ['communityId'],
   data () {
     return {
       removeForm: {
-        community_id: this.$store.state.token,
+        community_id: this.communityId,
         tenement_id: ''
       },
       form: {
