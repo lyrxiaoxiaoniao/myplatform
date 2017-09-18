@@ -6,6 +6,7 @@
             <el-col :span="16">
                 <el-button @click="addBaseinfo" type="primary">新增</el-button>
                 <el-button @click="handleCommand" type="primary">批量删除</el-button>
+                <el-button @click="onFresh" type="primary">刷新</el-button>
             </el-col>
             <el-col :span="8">
                 <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
@@ -22,27 +23,27 @@
                     <el-input v-model="selected.keyword" placeholder="请输入关键字"></el-input>
                 </el-form-item>
                 <el-form-item label="用户名">
-                    <el-input v-model="selected.keyword" placeholder="请输入商户名称"></el-input>
+                    <el-input v-model="selected.username" placeholder="请输入用户名"></el-input>
                 </el-form-item>
                 <el-form-item label="真实姓名">
-                    <el-input v-model="selected.keyword" placeholder="请输入客户经理"></el-input>
+                    <el-input v-model="selected.realname" placeholder="请输入真实姓名"></el-input>
                 </el-form-item>
-                <el-form-item label="用户归属">
-                    <el-input v-model="selected.keyword" placeholder="请输入负责人电话"></el-input>
-                </el-form-item>
+                <!-- <el-form-item label="用户归属">
+                    <el-input v-model="selected.keyword" placeholder="请输入用户归属"></el-input>
+                </el-form-item> -->
                 <el-col :span="12">
-                  <el-form-item label="是否启用">
-                      <el-switch on-text="开" off-text="关" v-model="selected.active"></el-switch>
+                  <el-form-item label="是否有效">
+                      <el-switch on-text="开" off-text="关" v-model="selected.is_lock"></el-switch>
                   </el-form-item>
                 </el-col>
                 <el-col :span="24">
                 <el-form-item label="创建时间">
                   <el-col :span="11">
-                    <el-date-picker type="datetime" placeholder="选择开始时间" v-model="selected.started_at" style="width: 100%;"></el-date-picker>
+                    <el-date-picker type="datetime" placeholder="选择开始时间" v-model="selected.start_time" style="width: 100%;"></el-date-picker>
                   </el-col>
                   <el-col class="line" :span="2">-</el-col>
                   <el-col :span="11">
-                    <el-date-picker type="datetime" placeholder="选择结束时间" v-model="selected.ended_at" style="width: 100%;"></el-date-picker>
+                    <el-date-picker type="datetime" placeholder="选择结束时间" v-model="selected.end_time" style="width: 100%;"></el-date-picker>
                   </el-col>
                 </el-form-item>
                 </el-col>
@@ -73,15 +74,15 @@
                 <el-table-column prop="phone" label="手机号码"></el-table-column>
                 <el-table-column prop="email" label="邮箱"></el-table-column>
                 <el-table-column label="创建时间">
-                  <template scope="scope">{{scope.row.createdAt | toDateTime}}</template>
+                  <template scope="scope">{{scope.row.created_at | toDateTime}}</template>
                 </el-table-column>
                 <el-table-column label="有效状态" width="100px">
                   <template scope="scope">
                     <el-switch
-                      v-model="scope.row.isLock"
+                      v-model="scope.row.is_lock"
                       on-text="开"
                       off-text="关"
-                      @change="toswitch(scope.row.isLock,scope.row.id)">
+                      @change="toswitch(scope.row.is_lock,scope.row.id)">
                     </el-switch>
                   </template> 
                 </el-table-column>
@@ -89,7 +90,7 @@
                   <template scope="scope"> 
                       <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
                       <el-button @click="goAwardsDetail(scope.row.id)" size="small" icon="edit"></el-button>
-                      <el-button @click="deleteType(scope.row.id)" size="small" class="fa fa-th-large"></el-button>
+                      <el-button @click="relaType(scope.row)" size="small" class="fa fa-th-large"></el-button>
                   </template>
                 </el-table-column>
             </el-table>
@@ -115,30 +116,30 @@
     </el-dialog>
     <!-- 添加弹窗start -->
     <el-dialog title="新增用户" v-model="addShowDialog" top="5%">
-      <el-form :model="addMerchant" label-width="80px">
+      <el-form :model="addMerchant" :rules="rules" label-width="80px" ref="addMerchant">
         <el-row>
         <el-col :span="24">
-          <el-form-item label="用户名">
+          <el-form-item label="用户名" prop="username">
             <el-input v-model="addMerchant.username" placeholder="请输入用户名"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="登录密码">
-              <el-input v-model="addMerchant.password" placeholder="密码"></el-input>
+          <el-form-item label="登录密码" prop="password">
+              <el-input type="password" v-model="addMerchant.password" placeholder="密码"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="确认密码">
-              <el-input v-model="addMerchant.password" placeholder="密码"></el-input>
+          <el-form-item label="确认密码" prop="checkPassword">
+              <el-input type="password" v-model="addMerchant.checkPassword" placeholder="密码"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="安全手机">
+          <el-form-item label="安全手机" prop="phone">
               <el-input v-model="addMerchant.phone" placeholder="安全手机"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="安全邮箱">
+          <el-form-item label="安全邮箱" prop="email">
               <el-input v-model="addMerchant.email" placeholder="安全邮箱"></el-input>
           </el-form-item>
         </el-col>
@@ -147,18 +148,18 @@
               <el-switch on-text="开" off-text="关" v-model="addMerchant.is_lock"></el-switch>
           </el-form-item>
         </el-col>
-        <!-- <el-col :span="12">
+        <el-col :span="12">
           <el-form-item label="用户归属">
-              <el-select v-model="addMerchant.grade" placeholder="请选择" class="fullwidth">
+              <el-select v-model="addMerchant.account_id" placeholder="请选择" class="fullwidth">
                   <el-option
-                  v-for="item in optionGrade"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
+                  v-for="item in optionAccount"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
                   </el-option>
               </el-select>
           </el-form-item>
-        </el-col> -->
+        </el-col>
         <el-col :span="12">
           <el-form-item label="真实姓名">
               <el-input v-model="addMerchant.realname" placeholder="真实姓名"></el-input>
@@ -181,8 +182,8 @@
               </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="24">
-          <el-form-item label="证件号码">
+        <el-col :span="12">
+          <el-form-item label="证件号码" prop="pid">
               <el-input v-model="addMerchant.pid" placeholder="证件号码"></el-input>
           </el-form-item>
         </el-col>
@@ -211,9 +212,9 @@
         </el-col>
         </el-row>  
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div slot="footer" class="dialog-footer" style="margin-top: -50px;">
           <el-button @click="addCloseDialog">取消</el-button>
-          <el-button type="primary" @click="saveAdd">保存</el-button>
+          <el-button type="primary" @click="saveAdd('addMerchant')">保存</el-button>
       </div>
     </el-dialog>
     <!-- 添加弹窗end -->
@@ -226,16 +227,16 @@
             <el-input v-model="editMerchant.username" placeholder="请输入用户名"></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <!-- <el-col :span="12">
           <el-form-item label="登录密码">
               <el-input v-model="editMerchant.password" placeholder="密码"></el-input>
           </el-form-item>
-        </el-col>
-        <el-col :span="12">
+        </el-col> -->
+        <!-- <el-col :span="12">
           <el-form-item label="确认密码">
               <el-input v-model="editMerchant.password" placeholder="密码"></el-input>
           </el-form-item>
-        </el-col>
+        </el-col> -->
         <el-col :span="12">
           <el-form-item label="安全手机">
               <el-input v-model="editMerchant.phone" placeholder="安全手机"></el-input>
@@ -251,18 +252,18 @@
               <el-switch on-text="开" off-text="关" v-model="editMerchant.is_lock"></el-switch>
           </el-form-item>
         </el-col>
-        <!-- <el-col :span="12">
+        <el-col :span="12">
           <el-form-item label="用户归属">
-              <el-select v-model="editMerchant.grade" placeholder="请选择" class="fullwidth">
+              <el-select v-model="editMerchant.account_id" placeholder="请选择" class="fullwidth">
                   <el-option
-                  v-for="item in optionGrade"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
+                  v-for="item in optionAccount"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
                   </el-option>
               </el-select>
           </el-form-item>
-        </el-col> -->
+        </el-col>
         <el-col :span="12">
           <el-form-item label="真实姓名">
               <el-input v-model="editMerchant.realname" placeholder="真实姓名"></el-input>
@@ -285,7 +286,7 @@
               </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="24">
+        <el-col :span="12">
           <el-form-item label="证件号码">
               <el-input v-model="editMerchant.pid" placeholder="证件号码"></el-input>
           </el-form-item>
@@ -315,14 +316,14 @@
         </el-col>
         </el-row>  
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div slot="footer" class="dialog-footer" style="margin-top: -50px;">
           <el-button @click="editCloseDialog" >取消</el-button>
           <el-button type="primary" @click="saveEdit">保存</el-button>
       </div>
     </el-dialog>
     <!-- 修改弹窗end -->
     <!-- 删除弹框 -->
-    <el-dialog title="删除商户" v-model="deleteShowDialog" top="35%" size="tiny">
+    <el-dialog title="删除用户" v-model="deleteShowDialog" top="35%" size="tiny">
       <div style="padding-left: 50px;position: relative; height: 36px;">
         <div class="el-message-box__status el-icon-warning" style="position: absolute;top:0;left:0;"></div>
         <div style="position: absolute;top:-18px;left:50px;">
@@ -342,30 +343,170 @@
           <el-button type="primary" @click="saveDelete">确定</el-button>
       </div>
     </el-dialog>
+    <!-- 关联弹窗 -->
+    <el-dialog title="用户关联角色" v-model="relaShowDialog" top="5%">
+        <el-form :model="relaForm" label-width="80px">
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="登录名">
+                    <el-input v-model="relaForm.username" disabled placeholder="登录名"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="真实姓名">
+                    <el-input v-model="relaForm.realname" disabled placeholder="真实姓名"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="安全手机">
+                    <el-input v-model="relaForm.phone" disabled placeholder="安全手机"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-tabs v-model="activeName" @tab-click="handleClick" type="border-card">
+              <el-tab-pane label="已关联角色" name="first">
+                <already-rela v-if="isFirst" :userid="usersid"></already-rela>
+              </el-tab-pane>
+              <el-tab-pane label="待关联角色" name="second">
+                <no-rela v-if="isSecond" :userid="usersid"></no-rela>
+              </el-tab-pane>
+            </el-tabs>
+        </el-form>
+        <div slot="footer" class="dialog-footer" style="margin-top:-20px;">
+            <el-button @click="relaCloseDialog" >取消</el-button>
+            <el-button type="primary" @click="saveRela">保存</el-button>
+        </div>
+    </el-dialog>
   </div>
 </template>
 <script>
 import config from 'src/config'
 import api from 'src/api'
+import alreadyRela from './table/alreadyRela.vue'
+import noRela from './table/noRela.vue'
 export default {
   data () {
+    /* eslint-disable */
+    var checkname = (rule, value, callback) => {
+      // let name = /^(?!_)(?!.*?_$)[a-zA-Z0-9_]{5,17}$/
+      let name = /^[a-zA-Z0-9_-]{5,17}$/
+      if (!value) {
+        return callback(new Error('不能为空'))
+      } else if (!name.test(value)) {
+        return callback(new Error('用户名不能为中文，5-17为英文字母'))
+      }
+      api.GET(config.newuser.check, {username: value})
+      .then(response => {
+        if (response.data.errcode === '60000') {
+          return callback(new Error('有重名，请重新输入！'))
+        } else {
+          callback()
+        }
+      })
+    };
+    var checkphone = (rule, value, callback) => {
+      let phone = /^1[0-9]{10}$/
+      if (!value) {
+        return callback(new Error('手机号码不能为空'))
+      } else if (!phone.test(value)) {
+        callback(new Error('请输入正确手机号码'))
+      } else {
+        callback()
+      }
+    };
+    var checkpid = (rule, value, callback) => {
+      let pid = /^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$|^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X)$/
+      if (!value) {
+        return callback(new Error('证件号码不能为空'))
+      } else if (!pid.test(value)) {
+        callback(new Error('请输入正确证件号码'))
+      } else {
+        callback()
+      }
+    };
+    var checkemail = (rule, value, callback) => {
+      let email = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+      if (!value) {
+        return callback(new Error('邮箱不能为空'))
+      } else if (!email.test(value)) {
+        callback(new Error('请输入正确邮箱号码'))
+      } else {
+        callback()
+      }
+    };
+    var validatePass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入密码'));
+      } else if (value.length < 6){
+        callback(new Error('请输入6位以上的密码'));
+      } else {
+        if (this.addMerchant.checkPassword !== '') {
+          this.$refs.addMerchant.validateField('checkPassword');
+        }
+        callback();
+      }
+    };
+    var validatePass2 = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请再次输入密码'));
+      } else if (value !== this.addMerchant.password) {
+        callback(new Error('两次输入密码不一致!'));
+      } else {
+        callback();
+      }
+    };
+    /* eslint-enable */
     return {
       id: this.$route.query.id,
+      usersid: null,
+      activeName: 'first',
+      isFirst: true,
+      isSecond: false,
       dialogImageUrl: '',
       dialogVisible: false,
       uploadURL: config.serverURI + config.uploadFilesAPI,
       addShowDialog: false,
       editShowDialog: false,
       deleteShowDialog: false,
+      relaShowDialog: false,
       mailSended: false,
       mailCode: '',
       mailButtonText: '发送验证码',
       mailCountDown: 60,
       mailTimer: null,
       responseMail: '',
+      relaForm: {
+        realname: null,
+        phone: null,
+        username: null
+      },
+      rules: {
+        username: [
+          { validator: checkname, trigger: 'blur' }
+        ],
+        phone: [
+          { validator: checkphone, trigger: 'blur' }
+        ],
+        pid: [
+          { validator: checkpid, trigger: 'blur' }
+        ],
+        email: [
+          { validator: checkemail, trigger: 'blur' }
+        ],
+        password: [
+          { validator: validatePass, trigger: 'blur' }
+        ],
+        checkPassword: [
+          { validator: validatePass2, trigger: 'blur' }
+        ],
+        realname: [
+          { required: true, message: '请输入真实姓名', trigger: 'blur' }
+        ]
+      },
       addMerchant: {
         username: null,
         password: null,
+        checkPassword: null,
         phone: null,
         email: null,
         is_lock: null,
@@ -375,7 +516,8 @@ export default {
         pid: null,
         address: null,
         info: null,
-        avatar: null
+        avatar: null,
+        account_id: null
       },
       editMerchant: {
         username: null,
@@ -389,7 +531,8 @@ export default {
         pid: null,
         address: null,
         info: null,
-        avatar: null
+        avatar: null,
+        account_id: null
       },
       optionGrade: [{
         value: 1,
@@ -401,6 +544,7 @@ export default {
         value: 3,
         label: '保密'
       }],
+      optionAccount: [],
       multipleSelection: [],
       showDialog: false,
       response: {
@@ -409,17 +553,32 @@ export default {
       ids: [],
       selected: {
         keyword: '',
-        author: '',
-        active: null,
-        started_at: '',
-        ended_at: ''
+        username: '',
+        realname: '',
+        is_lock: null,
+        end_time: '',
+        start_time: ''
       },
       form: {
         keyword: ''
       }
     }
   },
+  components: {
+    alreadyRela,
+    noRela
+  },
   methods: {
+    handleClick (tab, event) {
+      console.log(tab, event)
+      if (tab.name === 'first') {
+        this.isFirst = true
+        this.isSecond = false
+      } else if (tab.name === 'second') {
+        this.isFirst = false
+        this.isSecond = true
+      }
+    },
     /* 上传图片函数 */
     handleAvatarSuccessIcon (res, file) {
       this.addMerchant.avatar = res.data[0]
@@ -445,22 +604,19 @@ export default {
         currentPage: this.response.currentPage
       }
       var obj = {
-        id: id,
-        isLock: this.changeNum(state)
+        id: id
       }
-      api.POST(config.updateStateAdvPointAPI, obj)
+      api.POST(config.newuser.lock, obj)
       .then(response => {
-        if (response.status !== 200) {
-          this.error = response.statusText
-          return
-        }
         if (response.data.errcode === '0000') {
           this.$notify({
             title: '成功',
             message: '修改状态成功！！！',
             type: 'success'
           })
-          this.updateList(data)
+          this.getList(data)
+        } else {
+          this.getList(data)
         }
       })
     },
@@ -487,13 +643,24 @@ export default {
         this.ids.push(v.id)
       })
     },
-    goAwardsDetail (id) {
-      this.$router.push({
-        path: '/admin/recycle/recovery/info',
-        query: {
-          id: id
+    getEditData (id) {
+      api.GET(config.newuser.show, {id: id})
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.editMerchant = {
+            ...this.editMerchant,
+            ...response.data.data
+          }
+          this.editMerchant.is_lock = Boolean(this.editMerchant.is_lock)
         }
       })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    goAwardsDetail (id) {
+      this.editShowDialog = true
+      this.getEditData(id)
     },
     openDialog () {
       this.showDialog = true
@@ -501,29 +668,87 @@ export default {
     closeDialog () {
       this.showDialog = false
     },
-    saveAdd () {
+    encrypt(string) {
+      const pubkey = config.basic.key
+      try {
+        let content = this.addMerchant.password
+        let crypt = new window.JSEncrypt()
+        crypt.setKey(pubkey)
+        let crypted = crypt.encrypt(content)
+        return crypted
+      } catch (ex) {
+        return false
+      }
+    },
+    saveAdd (formName) {
       console.log(this.addMerchant, 11111)
+      this.addMerchant.is_lock = Number(this.addMerchant.is_lock)
+      this.addMerchant.password = this.addMerchant.checkPassword = this.encrypt()
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          api.POST(config.newuser.add, this.addMerchant)
+          .then(response => {
+            if (response.data.errcode === '0000') {
+              this.onSuccess('添加成功')
+              this.addCloseDialog()
+            }
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
+        } else {
+          return false
+        }
+      })
     },
     saveEdit () {
       console.log(this.editMerchant, 11111)
+      this.editMerchant.is_lock = Number(this.editMerchant.is_lock)
+      api.POST(config.newuser.edit, this.editMerchant)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.onSuccess('修改成功')
+          this.editCloseDialog()
+          this.getList()
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     },
-    getNumber (val) {
-      let res
-      if (val) {
-        res = 1
-      } else {
-        res = 0
-      }
-      return res
+    saveRela () {
+      this.relaShowDialog = false
+    },
+    formatDate (value) {
+      let date = new Date(value)
+      let M = date.getMonth() + 1
+      M = M < 10 ? ('0' + M) : M
+      let d = date.getDate()
+      d = d < 10 ? ('0' + d) : d
+      // let h = date.getHours()
+      let m = date.getMinutes()
+      m = m < 10 ? ('0' + m) : m
+      let s = date.getSeconds()
+      s = s < 10 ? ('0' + s) : s
+      value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
+      return value
     },
     /* 高级搜索 */
     advancedSearch () {
+      this.selected.is_lock = Number(this.selected.is_lock)
+      if (this.selected.start_time) {
+        this.selected.start_time = this.formatDate(this.selected.start_time)
+      }
+      if (this.selected.end_time) {
+        this.selected.end_time = this.formatDate(this.selected.end_time)
+      }
       const data = {
         currentPage: 1,
         pageSize: this.response.pageSize,
         ...this.selected
       }
       this.getList(data)
+      this.closeDialog()
     },
     // 删除表单
     deleteType (id) {
@@ -544,6 +769,7 @@ export default {
         return
       }
       this.deleteShowDialog = true
+      this.mailCode = ''
       // this.$confirm('是否确认是否删除清运公司', '提示', {
       //   confirmButtonText: '确定',
       //   cancelButtonText: '取消',
@@ -613,12 +839,26 @@ export default {
     },
     addBaseinfo () {
       this.addShowDialog = true
+      Object.keys(this.addMerchant).forEach(k => {
+        this.addMerchant[k] = null
+      })
+    },
+    relaType (data) {
+      this.usersid = data.id
+      this.relaShowDialog = true
+      this.relaForm = {
+        ...this.relaForm,
+        ...data
+      }
     },
     addCloseDialog () {
       this.addShowDialog = false
     },
     editCloseDialog () {
       this.editShowDialog = false
+    },
+    relaCloseDialog () {
+      this.relaShowDialog = false
     },
     handleSizeChange (value) {
       const data = {
@@ -645,11 +885,36 @@ export default {
       }
       this.getList(data)
     },
+    transformDate (res) {
+      res.data.forEach(v => {
+        if (v.is_lock === 1) {
+          v.is_lock = true
+        }
+        if (v.is_lock === 0) {
+          v.is_lock = false
+        }
+      })
+      return res
+    },
     getList (data = {}) {
       api.GET(config.newuser.index, {account_id: this.id, ...data})
       .then(response => {
         if (response.data.errcode === '0000') {
           this.response = this.transformDate(response.data.data)
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    getMerchantList (data = {}) {
+      api.GET(config.merchant.index, {
+        currentPage: 1,
+        pageSize: 100
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.optionAccount = response.data.data.data
         }
       })
       .catch(error => {
@@ -662,10 +927,15 @@ export default {
         message: string,
         type: 'success'
       })
+    },
+    onFresh () {
+      this.getList()
+      this.getMerchantList()
     }
   },
   mounted () {
     this.getList()
+    this.getMerchantList()
   }
 }
 </script>

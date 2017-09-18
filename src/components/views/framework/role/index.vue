@@ -158,7 +158,7 @@
           <el-row>
               <el-col :span="12">
                 <el-form-item label="角色类别">
-                  <el-select v-model="value1" placeholder="请选择">
+                  <el-select v-model="value1" placeholder="请选择" class="fullwidth">
                     <el-option
                       v-for="item in roleClass"
                       :key="item.value"
@@ -170,7 +170,7 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="归属商户" filterable placeholder="输入或选择商户">
-                  <el-select v-model="value2" placeholder="请选择">
+                  <el-select v-model="value2" placeholder="请选择" class="fullwidth">
                     <el-option
                       v-for="item in origins"
                       :key="item.value"
@@ -301,7 +301,7 @@ export default {
       }],
       value1: '',
       value2: '',
-      formLabelWidth: '90px',
+      formLabelWidth: '80px',
       permissionForm: {
         name: ''
       },

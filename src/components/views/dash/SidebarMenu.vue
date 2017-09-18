@@ -5,14 +5,14 @@
     >
     <a v-if="isFolder" href="#">
       <i :class="model.icon"></i>
-      <span class="treeview-display-name">{{ model.displayName }}</span>
+      <span class="treeview-display-name">{{ model.display_name }}</span>
       <span class="pull-right-container">
         <i class="fa fa-angle-left fa-fw pull-right" v-show="isFolder"></i>
       </span>
     </a>
     <router-link class="sidebar-routes" v-if="!isFolder" :to="{ path: model.url }">
       <i :class="model.icon"></i>
-      <span class="page treeview-display-name">{{ model.displayName }}</span>
+      <span class="page treeview-display-name">{{ model.display_name }}</span>
       <span class="pull-right-container">
           <i class="fa fa-angle-left fa-fw pull-right" v-show="isFolder"></i>
       </span>

@@ -541,6 +541,7 @@ export default {
         return
       }
       this.deleteShowDialog = true
+      this.mailCode = ''
       // this.$confirm('是否确认是否删除商户', '提示', {
       //   confirmButtonText: '确定',
       //   cancelButtonText: '取消',

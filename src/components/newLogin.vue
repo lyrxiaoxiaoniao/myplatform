@@ -3,7 +3,7 @@
     <div class="login-logo">
       <a href="javascript:;">
         <!-- <h2>{{ title }}</h2> -->
-        <img src="../../static/img/login/logo--new@2x.png" alt="深传互动">
+        <img :src="toplogo" alt="深传互动">
       </a>
     </div>
 
@@ -88,6 +88,7 @@ export default {
       mailCode: '',
       loginSended: false,
       response: '',
+      toplogo: 'static/img/login/logo--new@2x.png',
       cover: 'static/img/login/banner@2x.png',
       urls: [
         'static/img/login/01.png',
@@ -206,6 +207,7 @@ export default {
   },
   mounted() {
     const title = document.getElementsByTagName('title')[0]
+    const fav = document.getElementById('fav')
     const scid = this.$route.query.scid
     // this.getAppInfo()
     console.log(title, scid)
@@ -214,7 +216,23 @@ export default {
         title.innerHTML = '安全光明'
         this.title = '安全光明'
         this.urls = ['static/img/login/gmaj.png']
+        this.toplogo = 'static/img/login/logo-gmaj@2x.png'
+        fav.href = 'static/img/login/16-16-gmaj@2x.png'
         break
+      // case 'gmcg':
+      //   title.innerHTML = '光明城管'
+      //   this.title = '光明城管'
+        // this.urls = ['static/img/login/gmaj.png']
+        // this.toplogo = 'static/img/login/logo-gmcg@2x.png'
+        // fav.href = 'static/img/login/16-16-gmcg@2x.png'
+      //   break
+      // case 'szaj':
+      //   title.innerHTML = '深圳市安监'
+      //   this.title = '深圳市安监'
+        // this.urls = ['static/img/login/gmaj.png']
+        // this.toplogo = 'static/img/login/logo-szsaj@2x.png'
+        // fav.href = 'static/img/login/16-16-szaj@2x.png'
+        // break
       default:
         title.innerHTML = '深传互动政务新媒体平台'
         this.title = '深传互动政务新媒体平台'

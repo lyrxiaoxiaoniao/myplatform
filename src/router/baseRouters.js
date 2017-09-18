@@ -5,6 +5,7 @@ import DashMainView from 'components/views/dash/Main.vue'
 import SBMerchantView from 'components/views/framework/merchant/index.vue'
 import SBMerchantConfigView from 'components/views/framework/merchant/config.vue'
 import SBNewUserView from 'components/views/framework/newuser/index.vue'
+import SBNewAuthView from 'components/views/framework/authority/index.vue'
 // 日志管理
 import LogIndex from 'components/views/framework/log/logIndex.vue'
 
@@ -42,6 +43,19 @@ const baseRouters = [
       path: 'index',
       component: SBNewUserView,
       name: '用户管理',
+      meta: {description: '列表'}
+    }]
+  }, {
+    // 权限模块路由
+    path: 'newauth',
+    component: DashMainView,
+    redirect: '/admin/newauth/index',
+    name: '权限',
+    meta: {description: '信息'},
+    children: [{
+      path: 'index',
+      component: SBNewAuthView,
+      name: '权限管理',
       meta: {description: '列表'}
     }]
   }, {

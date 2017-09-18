@@ -20,11 +20,34 @@ export default {
   newuser: {
     index: '/admin/user/index',
     add: '/admin/user/create',
+    show: '/admin/user/show',
+    check: '/admin/user/check',
+    lock: '/admin/user/lock',
+    edit: '/admin/user/update',
     delete: '/admin/user/delete',
-    edit: '/admin/user/update'
+    relate: '/admin/userrole/show/role/relate',
+    related: '/admin/userrole/show/role/related',
+    relateremove: '/admin/userrole/delete',
+    relateradd: '/admin/userrole/create',
+    relateractive: '/admin/role/active'
   },
   // 3.权限管理
   authority: {
+    index: '/admin/permission/index',
+    show: '/admin/permission/show',
+    edit: '/admin/permission/update',
+    add: '/admin/permission/create',
+    active: '/admin/permission/active',
+    delete: '/admin/permission/delete',
+    related: '/admin/rolepermission/show/role/related',
+    relate: '/admin/rolepermission/show/role/relate',
+    relateradd: '/admin/rolepermission/create',
+    relateremove: '/admin/rolepermission/delete',
+    relateractive: '/admin/role/active',
+    // 权限关联菜单
+    relatedmenu: '/admin/mp/menus/related',
+    relatedmenuAdd: '/admin/mp/create',
+    relatedmenuDelete: '/admin/mp/delete'
   },
   // 4.角色管理
   role: {
