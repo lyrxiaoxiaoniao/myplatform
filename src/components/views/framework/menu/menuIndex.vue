@@ -147,7 +147,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="菜单名称" prop="displayName">
+            <el-form-item label="菜单名称" prop="displayName" require>
               <el-input v-model="addData.display_name"></el-input>
             </el-form-item>
           </el-col>
