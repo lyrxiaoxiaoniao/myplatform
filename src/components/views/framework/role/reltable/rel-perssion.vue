@@ -18,17 +18,27 @@
                 <div slot="kobe-table-content" class="kobe-table">
                 <el-table
                     ref="multipleTable"
-                    height="400"
+                    height="300"
                     border
                     stripe
                     :data="response.data"
                     @selection-change="handleSelectionChange">
                     <el-table-column type="selection" width="40"></el-table-column>
                     <el-table-column prop="id" label="ID" sortable width="100"></el-table-column>
-                    <el-table-column prop="name" label="权限点名称" width="150"></el-table-column>
-                    <el-table-column prop="duty_name" label="权限标识" width="150"></el-table-column>
-                    <el-table-column prop="mobile" label="权限说明" width="150"></el-table-column>
-                    <el-table-column prop="address" label="有效状态"></el-table-column>
+                    <el-table-column prop="display_name" label="权限点名称" width="150"></el-table-column>
+                    <el-table-column prop="name" label="权限标识" width="150"></el-table-column>
+                    <el-table-column prop="description" label="权限说明" width="150"></el-table-column>
+                    <el-table-column label="有效状态" width="80">
+                      <template scope="scope">
+                        <el-switch
+                          style="width:60px;"
+                          v-model="scope.row.active"
+                          on-text="开"
+                          off-text="关"
+                          @change="toswitch(scope.row.active,scope.row.id)">
+                        </el-switch>
+                      </template>
+                    </el-table-column>
                     <el-table-column width="80" label="操作">
                     <template scope="scope">
                         <el-button size="small" @click="deleteType(scope.row.id)" icon="delete2" title="移除"></el-button>
@@ -60,10 +70,11 @@
 import config from 'src/config'
 import api from 'src/api'
 export default {
+  props: ['roleId'],
   data () {
     return {
       removeForm: {
-        community_id: this.$store.state.token,
+        community_id: this.roleId,
         tenement_id: ''
       },
       form: {
@@ -73,10 +84,44 @@ export default {
         data: null
       },
       multipleSelection: [],
-      ids: []
+      permissions: [],
+      roles: []
     }
   },
   methods: {
+    toswitch (active, id) {
+      let data = {
+        pageSize: this.response.pageSize,
+        currentPage: this.response.currentPage
+      }
+      var obj = {
+        id: id,
+        active: Number(active)
+      }
+      api.POST(config.fmrole.permissionActive, obj)
+      .then(response => {
+        if (response.status !== 200) {
+          this.error = response.statusText
+          return
+        }
+        if (response.data.errcode === '0000') {
+          this.$notify({
+            title: '成功',
+            message: '修改状态成功！！！',
+            type: 'success'
+          })
+          this.getList(data)
+        }
+      })
+    },
+    onSearch () {
+      const data = {
+        currentPage: 1,
+        pageSize: this.response.pageSize,
+        ...this.form
+      }
+      this.getList(data)
+    },
     toggleSelection (rows) {
       if (rows) {
         rows.forEach(row => {
@@ -88,9 +133,9 @@ export default {
     },
     handleSelectionChange (val) {
       this.multipleSelection = val
-      this.ids = []
+      this.permissions = []
       this.multipleSelection.forEach(v => {
-        this.ids.push(v.id)
+        this.permissions.push(v.id)
       })
     },
     handleSizeChange (value) {
@@ -110,15 +155,12 @@ export default {
       this.getList(data)
     },
     getList (data = {}) {
-      data = {
-        id: this.$store.state.token
-      }
-      api.GET(config.village.relServer, data)
+      api.GET(config.fmrole.relatedP, {
+        role_id: this.roleId,
+        ...data
+      })
       .then(response => {
-        this.response.data = this.transform(response.data.data)
-        if (response.data.errcode === '5000') {
-          this.response.data = null
-        }
+        this.response = this.transform(response.data.data)
       })
       .catch(error => {
         this.$message.error(error)
@@ -127,11 +169,11 @@ export default {
     // 删除表单
     deleteType (id) {
       if (id) {
-        this.ids = []
-        this.ids.push(id)
+        this.permissions = []
+        this.permissions.push(id)
       }
-      if (this.ids.length === 0) {
-        this.$confirm('请进行正确操作，请优先勾选表单？', '错误', {
+      if (this.permissions.length === 0) {
+        this.$confirm('请进行正确操作，请先勾选用户？', '错误', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'error'
@@ -142,17 +184,20 @@ export default {
         })
         return
       }
-      this.$confirm('此操作将移除选定权限,是否继续移除？', '移除', {
+      this.roles = []
+      this.roles.push(this.roleId)
+      this.$confirm('是否确认移除权限', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.POST(config.village.delete, {
-          ids: this.ids
+        api.POST(config.fmrole.rpdelete, {
+          permissions: this.permissions,
+          roles: this.roles
         })
         .then(response => {
           if (response.data.errcode === '0000') {
-            this.onSuccess('删除成功')
+            this.onSuccess('移除成功')
             this.getList()
           } else {
             this.$message.error('发生错误，请重试')
@@ -168,10 +213,14 @@ export default {
       })
     },
     // 转换数据
-    transform (data) {
-      var res = []
-      data.forEach(e => {
-        res.push(e.rubTenementVOS[0])
+    transform (res) {
+      res.data.forEach(v => {
+        if (v.active === 1) {
+          v.active = true
+        }
+        if (v.active === 0) {
+          v.active = false
+        }
       })
       return res
     }

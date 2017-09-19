@@ -80,7 +80,7 @@
               <template scope="scope">
                 <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button>
                 <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
-                <el-button @click="openPermission(scope.row.id)" size="small">联</el-button>
+                <el-button @click="openPermission(scope.row)" size="small" class="fa fa-th-large"></el-button>
               </template>
               
             </el-table-column>
@@ -140,14 +140,15 @@
                 :options="cascaderData"
                 :props="props"
                 :change-on-select="true"
-                v-model="addData.parent_id"
+                placeholder="请选择父级菜单"
+                v-model="stepsSelection"
                 @change="handleChange"
                 style="width:100%;">
               </el-cascader>
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="菜单名称" prop="displayName">
+            <el-form-item label="菜单名称">
               <el-input v-model="addData.display_name"></el-input>
             </el-form-item>
           </el-col>
@@ -166,7 +167,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="菜单标识" prop="name" require>
+            <el-form-item label="菜单标识" prop="name">
               <el-input v-model="addData.name"></el-input>
             </el-form-item>
           </el-col>
@@ -298,21 +299,21 @@
         </span>
     </el-dialog>
     <!-- 菜单关联权限弹框 -->
-       <el-dialog title="菜单关联权限" v-model="correlateShow">
+       <el-dialog v-if="reload" title="菜单关联权限" v-model="correlateShow">
         <el-form :model="permissionForm" :label-width="formLabelWidth">
-           <el-form-item label="角色名称">
-              <el-input v-model="permissionForm.name" auto-complete="off"></el-input>
+           <el-form-item label="菜单名称">
+              <el-input v-model="permissionForm.display_name" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="角色标识">
+            <el-form-item label="菜单标识">
               <el-input v-model="permissionForm.name" auto-complete="off"></el-input>
             </el-form-item>           
         </el-form>
         <el-tabs class="margin" v-model="activeName"  @tab-click="handleClick" style="margin:0 2em">
           <el-tab-pane label="已关联权限" name="first">
-            <rel-tab v-if='firstId'></rel-tab>
+            <rel-tab v-if='firstId' :menuId="permissionForm.id"></rel-tab>
           </el-tab-pane>
-          <el-tab-pane label="未关联权限" name="second">
-            <norel-tab v-if='secondId'></norel-tab>
+          <el-tab-pane label="待关联权限" name="second">
+            <norel-tab v-if='secondId' :menuId="permissionForm.id"></norel-tab>
           </el-tab-pane>  
         </el-tabs>
         <div slot="footer" class="dialog-footer">
@@ -331,27 +332,33 @@ import relTab from './reltable/rel-perssion'
 import norelTab from './reltable/noRel-perssion'
 export default {
   data () {
-    var displayName = (rule, value, callback) => {
+    var checkName = (rule, value, callback) => {
+      let name = /^[a-zA-Z0-9_-]{0,64}$/
       if (!value) {
-        return callback(new Error('菜单名称不能为空'))
-      } else {
-        api.POST(config.frameWorkMenu.check, {display_name: this.addData.display_name})
-        .then(response => {
-          this.onSuccess('启用操作成功！')
-        })
-        .catch(error => {
-          this.$message.error(error)
-        })
-        // callback(new Error('重名，该菜单已存在'))
+        return callback(new Error('菜单标识不能为空'))
+      } else if (!name.test(value)) {
+        return callback(new Error('菜单标识不能为中文，不超过64个英文字母'))
       }
+      api.GET(config.frameWorkMenu.check, {name: value})
+      .then(response => {
+        if (response.data.errcode === '60000') {
+          return callback(new Error('有重名，请重新输入！'))
+        } else {
+          callback()
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     }
     return {
       editDialog: false,
       addDialog: false,
       activeName: 'first',
       firstId: true,
-      secondId: true,
+      secondId: false,
       permissionForm: {
+        display_name: '',
         name: ''
       },
       correlateShow: false,
@@ -430,8 +437,8 @@ export default {
       parentId: null,
       ids: [],
       rules: {
-        display_name: [
-          { required: true, validator: displayName, trigger: 'blur' }
+        name: [
+          { validator: checkName, trigger: 'blur' }
         ],
         description: [
           { required: true, message: '分类说明50字以内', trigger: 'blur' },
@@ -440,14 +447,34 @@ export default {
       }
     }
   },
+  computed: {
+    reload: function () {
+      if (this.correlateShow) {
+        return true
+      } else {
+        return false
+      }
+    }
+  },
   components: {
     relTab,
     norelTab
   },
   methods: {
+    handleClick (tab, event) {
+      if (tab.name === 'first') {
+        this.firstId = true
+        this.secondId = false
+      }
+      if (tab.name === 'second') {
+        this.firstId = false
+        this.secondId = true
+      }
+    },
     // 打开关联权限弹框
-    openPermission (id) {
+    openPermission (form) {
       this.correlateShow = true
+      this.permissionForm = form
     },
     handleCommand (command) {
       if (command === '批量删除') {
@@ -579,24 +606,24 @@ export default {
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.classData.active = Number(this.classData.active)
-          var obj = this.classData
+          this.addData.active = Number(this.addData.active)
+          var obj = this.addData
           var pid = this.stepsSelection
           obj.parent_id = pid.shift()
           console.log(obj)
-          api.POST(config.createCategoryAPI, obj)
-            .then(response => {
-              if (response.status !== 200) {
-                this.error = response.statusText
-                return
-              }
-              if (response.data.errcode === '0000') {
-                this.onSuccess('创建成功')
-                this.getList()
-                this.getTree()
-                this.showDialog = false
-              }
-            })
+          api.POST(config.frameWorkMenu.create, obj)
+          .then(response => {
+            if (response.status !== 200) {
+              this.error = response.statusText
+              return
+            }
+            if (response.data.errcode === '0000') {
+              this.onSuccess('添加成功')
+              this.getList()
+              this.getTree()
+              this.addDialog = false
+            }
+          })
         } else {
           return false
         }
@@ -608,7 +635,7 @@ export default {
       var pid = this.stepsSelection
       obj.parent_id = pid.shift()
       obj.created_at = this.classData.created_at
-      api.POST(config.updateCategoryAPI, obj)
+      api.POST(config.frameWorkMenu.edit, obj)
       .then(response => {
         if (response.status !== 200) {
           this.error = response.statusText
@@ -618,7 +645,7 @@ export default {
           this.onSuccess('修改成功')
           this.getList()
           this.getTree()
-          this.showDialog = false
+          this.editDialog = false
         }
       })
     },
