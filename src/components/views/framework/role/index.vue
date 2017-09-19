@@ -55,8 +55,8 @@
                 <!-- <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button> -->
                 <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button>
                 <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
-                <el-button size="small" @click="openPermission(scope.row)">权</el-button>
-                <el-button size="small" @click="openUsers(scope.row)">用</el-button>
+                <el-button size="small" @click="openPermission(scope.row)" class="fa fa-th-large"></el-button>
+                <el-button size="small" @click="openUsers(scope.row)" class="fa fa-link"></el-button>
               </template>
             </el-table-column>
           </el-table>

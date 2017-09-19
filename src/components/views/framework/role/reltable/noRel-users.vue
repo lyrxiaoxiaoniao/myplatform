@@ -41,7 +41,7 @@
                     </el-table-column>
                     <el-table-column width="80" label="操作">
                     <template scope="scope">
-                        <el-button size="small" @click="correlation(scope.row.id)" title="关联">关联</el-button>
+                        <el-button size="small" @click="correlation(scope.row.id)" title="关联" class="fa fa-th-large"></el-button>
                     </template>
                     </el-table-column>
                 </el-table>
