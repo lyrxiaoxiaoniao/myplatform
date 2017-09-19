@@ -61,15 +61,41 @@ export default {
     relatedmenuDelete: '/admin/mp/delete'
   },
   // 4.角色管理
-  role: {
+  fmrole: {
+    index: '/admin/role/index',
+    delete: '/admin/role/delete',
+    update: '/admin/role/update',
+    active: '/admin/role/active',
+    show: '/admin/role/show',
+    aindex: '/admin/account/index',
+    create: '/admin/role/create',
+    check: '/admin/role/check',
+    relatedP: '/admin/rolepermission/show/permission/related',
+    norelP: '/admin/rolepermission/show/permission/relate',
+    rpdelete: '/admin/rolepermission/delete',
+    rpcreate: '/admin/rolepermission/create',
+    relatedU: '/admin/userrole/show/user/related',
+    rudelete: '/admin/userrole/delete',
+    norelU: '/admin/userrole/show/user/relate',
+    rucreate: '/admin/userrole/create',
+    permissionActive: '/admin/permission/active',
+    userLock: '/admin/user/lock'
   },
   // 5.菜单管理
   frameWorkMenu: {
     index: '/admin/menu/index',
     showLeft: '/admin/menu/show_left',
+    create: '/admin/menu/create',
     delete: '/admin/menu/delete',
+    edit: '/admin/menu/update',
     check: '/admin/menu/check',
-    active: '/admin/menu/active'
+    active: '/admin/menu/active',
+    // 菜单关联权限
+    related: '/admin/mp/show/permission/related',
+    relate: '/admin/mp/show/permission/relate',
+    relCreate: '/admin/mp/create',
+    relDelete: '/admin/mp/delete',
+    relactive: '/admin/permission/active'
   },
   // 9.日志管理
   journal: {

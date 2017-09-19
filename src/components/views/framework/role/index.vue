@@ -8,14 +8,6 @@
               <el-button @click="refresh" type="primary">刷新</el-button>
               <el-button @click="deleteType()" type="primary">批量删除</el-button>                 
             </el-col>
-            <el-select v-model="form.audit_state" placeholder="所有信息" style="width:140px;">
-              <el-option
-                v-for="item in option"
-                :key="item.audit_state"
-                :label="item.label"
-                :value="item.audit_state">
-              </el-option>
-            </el-select>
             <el-col :span="8">
               <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
                 <el-button slot="append" @click="onSearch" icon="search"></el-button>
@@ -35,21 +27,23 @@
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" sortable label="ID" width="80"></el-table-column>
-            <el-table-column prop="name" label="角色名称" width="150"></el-table-column>
-            <el-table-column prop="duty_name" label="角色标识" width="95">
+            <el-table-column prop="display_name" label="角色名称" width="150"></el-table-column>
+            <el-table-column prop="name" label="角色标识" width="95">
             </el-table-column>
-            <el-table-column prop="mobile" width="105" label="角色类别"></el-table-column>
-            <el-table-column prop="region_id" label="账号数量" width="90"></el-table-column>
-            <el-table-column prop="region_id" label="角色说明"></el-table-column>
-            <el-table-column prop="region_id" label="创建时间"></el-table-column>
+            <el-table-column prop="type" width="105" label="角色类别"></el-table-column>
+            <el-table-column prop="account.id" label="账号数量" width="90"></el-table-column>
+            <el-table-column prop="description" label="角色说明"></el-table-column>
+            <el-table-column label="创建时间">
+              <template scope="scope">{{scope.row.created_at | toDateTime}}</template>
+            </el-table-column>
             <el-table-column prop="detail_address" label="有效状态" width="90">
               <template scope="scope">
                 <el-switch
                   style="width:60px;"
-                  v-model="scope.row.audit_state"
+                  v-model="scope.row.active"
                   on-text="开"
                   off-text="关"
-                  @change="toswitch(scope.row.audit_state,scope.row.id)">
+                  @change="toswitch(scope.row.active,scope.row.id)">
                 </el-switch>
               </template>
             </el-table-column>
@@ -61,8 +55,8 @@
                 <!-- <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button> -->
                 <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button>
                 <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
-                <el-button size="small" @click="openPermission(scope.row.id)">权</el-button>
-                <el-button size="small" @click="openUsers(scope.row.id)">用</el-button>
+                <el-button size="small" @click="openPermission(scope.row)">权</el-button>
+                <el-button size="small" @click="openUsers(scope.row)">用</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -93,15 +87,15 @@
               <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
             </el-form-item>
             <el-form-item label="角色名称">
-              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
+              <el-input v-model="advancedSearch.display_name" auto-complete="off"></el-input>
             </el-form-item>
             <el-form-item label="角色标识">
-              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
+              <el-input v-model="advancedSearch.name" auto-complete="off"></el-input>
             </el-form-item>
             <el-row>
               <el-col :span="12">
                 <el-form-item label="角色类别">
-                  <el-select v-model="value1" placeholder="请选择">
+                  <el-select v-model="advancedSearch.type" placeholder="请选择">
                     <el-option
                       v-for="item in roleClass"
                       :key="item.value"
@@ -113,7 +107,7 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="归属商户" filterable placeholder="输入或选择商户">
-                  <el-select v-model="value2" placeholder="请选择">
+                  <el-select v-model="advancedSearch.account_id" placeholder="请选择">
                     <el-option
                       v-for="item in origins"
                       :key="item.value"
@@ -126,19 +120,19 @@
             </el-row>            
             <el-form-item label="是否启用">
               <el-switch
-                v-model="enabled"
+                v-model="advancedSearch.active"
                 on-text="是"
                 off-text="否">
               </el-switch>
             </el-form-item>
             <el-form-item label="创建时间">
               <el-date-picker
-                  v-model="advancedSearch.keyword"
+                  v-model="advancedSearch.start_time"
                   type="datetime"
                   placeholder="选择开始时间">
               </el-date-picker>
               <el-date-picker
-                  v-model="advancedSearch.keyword"
+                  v-model="advancedSearch.end_time"
                   type="datetime"
                   placeholder="选择结束时间">
                 </el-date-picker>
@@ -153,12 +147,12 @@
     <el-dialog :title="dialogTitle" v-model="addShow">
         <el-form :model="addForm" ref="addForm" :rules="rules" :label-width="formLabelWidth">
           <el-form-item label="角色名称" prop="id">
-            <el-input v-model="addForm.id" placeholder="请输入角色名称"></el-input>
+            <el-input v-model="addForm.display_name" placeholder="请输入角色名称"></el-input>
           </el-form-item>
           <el-row>
               <el-col :span="12">
                 <el-form-item label="角色类别">
-                  <el-select v-model="value1" placeholder="请选择">
+                  <el-select v-model="addForm.type" placeholder="请选择">
                     <el-option
                       v-for="item in roleClass"
                       :key="item.value"
@@ -170,7 +164,7 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="归属商户" filterable placeholder="输入或选择商户">
-                  <el-select v-model="value2" placeholder="请选择">
+                  <el-select v-model="addForm.account_id" placeholder="请选择">
                     <el-option
                       v-for="item in origins"
                       :key="item.value"
@@ -183,20 +177,20 @@
             </el-row>
             <el-form-item label="是否启用">
               <el-switch
-                v-model="enabled"
+                v-model="addForm.active"
                 on-text="是"
                 off-text="否">
               </el-switch>
             </el-form-item>
-          <el-form-item label="角色标识" prop="id">
-            <el-input v-model="addForm.id" placeholder="角色标识"></el-input>
+          <el-form-item label="角色标识" prop="name">
+            <el-input v-model="addForm.name" placeholder="角色标识"></el-input>
           </el-form-item>
           <el-form-item label="角色简介">
             <el-input
               type="textarea"
               :rows="4"
               placeholder="请输入内容"
-              v-model="form.id">
+              v-model="addForm.description">
             </el-input>
           </el-form-item>
         </el-form>
@@ -211,12 +205,12 @@
     <el-dialog :title="dialogTitle" v-model="detailShow">
         <el-form :model="detailForm" ref="detailForm" :label-width="formLabelWidth">
           <el-form-item label="角色名称" prop="id">
-            <el-input v-model="detailForm.id" placeholder="请输入角色名称"></el-input>
+            <el-input v-model="detailForm.display_name" placeholder="请输入角色名称"></el-input>
           </el-form-item>
           <el-row>
               <el-col :span="12">
                 <el-form-item label="角色类别">
-                  <el-select v-model="value1" placeholder="请选择" class="fullwidth">
+                  <el-select v-model="detailForm.type" placeholder="请选择" class="fullwidth">
                     <el-option
                       v-for="item in roleClass"
                       :key="item.value"
@@ -227,8 +221,8 @@
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="归属商户" filterable placeholder="输入或选择商户">
-                  <el-select v-model="value2" placeholder="请选择" class="fullwidth">
+                <el-form-item label="归属商户" placeholder="输入或选择商户">
+                  <el-select v-model="detailForm.account_id" filterable placeholder="请选择" class="fullwidth">
                     <el-option
                       v-for="item in origins"
                       :key="item.value"
@@ -241,20 +235,20 @@
             </el-row>
             <el-form-item label="是否启用">
               <el-switch
-                v-model="enabled"
+                v-model="detailForm.active"
                 on-text="是"
                 off-text="否">
               </el-switch>
             </el-form-item>
           <el-form-item label="角色标识" prop="id">
-            <el-input v-model="detailForm.id" placeholder="角色标识"></el-input>
+            <el-input v-model="detailForm.name" placeholder="角色标识"></el-input>
           </el-form-item>
           <el-form-item label="角色简介">
             <el-input
               type="textarea"
               :rows="4"
               placeholder="请输入内容"
-              v-model="form.id">
+              v-model="detailForm.description">
             </el-input>
           </el-form-item>
         </el-form>
@@ -266,10 +260,10 @@
         </div>
       </el-dialog>
     <!-- 角色关联权限弹框 -->
-       <el-dialog title="角色关联权限" v-model="correlateShow">
+       <el-dialog v-if="reload" title="角色关联权限" v-model="correlateShow">
         <el-form :model="permissionForm" :label-width="formLabelWidth">
            <el-form-item label="角色名称">
-              <el-input v-model="permissionForm.name" auto-complete="off"></el-input>
+              <el-input v-model="permissionForm.display_name" auto-complete="off"></el-input>
             </el-form-item>
             <el-form-item label="角色标识">
               <el-input v-model="permissionForm.name" auto-complete="off"></el-input>
@@ -277,10 +271,10 @@
         </el-form>
         <el-tabs class="margin" v-model="activeName"  @tab-click="handleClick" style="margin:0 2em">
           <el-tab-pane label="已关联权限" name="first">
-            <rel-tab v-if='firstId'></rel-tab>
+            <rel-tab v-if='firstId' :roleId="permissionForm.id"></rel-tab>
           </el-tab-pane>
           <el-tab-pane label="未关联权限" name="second">
-            <norel-tab v-if='secondId'></norel-tab>
+            <norel-tab v-if='secondId' :roleId="permissionForm.id"></norel-tab>
           </el-tab-pane>  
         </el-tabs>
         <div slot="footer" class="dialog-footer">
@@ -292,29 +286,36 @@
       </el-dialog>
          <!-- 角色关联用户弹框 -->
        <el-dialog title="角色关联用户" v-model="correlateShow2">
-        <el-form :model="permissionForm" :label-width="formLabelWidth">
+        <el-form :model="userForm" :label-width="formLabelWidth">
           <el-row>
             <el-col :span="12">
               <el-form-item label="角色名称">
-                <el-input v-model="permissionForm.name" auto-complete="off"></el-input>
+                <el-input v-model="userForm.display_name" auto-complete="off"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="角色标识">
-                <el-input v-model="permissionForm.name" auto-complete="off"></el-input>
+                <el-input v-model="userForm.name" auto-complete="off"></el-input>
               </el-form-item>
             </el-col>
           </el-row>         
             <el-form-item label="角色归属">
-              <el-input v-model="permissionForm.name" auto-complete="off"></el-input>
+              <el-select v-model="userForm.account_id" filterable placeholder="请选择" class="fullwidth">
+                    <el-option
+                      v-for="item in origins"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-select>
             </el-form-item>           
         </el-form>
         <el-tabs class="margin" v-model="activeName"  @tab-click="handleClick" style="margin:0 2em">
           <el-tab-pane label="已关联用户" name="first">
-            <rel v-if='firstId'></rel>
+            <rel v-if='firstId' :roleId="userForm.id"></rel>
           </el-tab-pane>
           <el-tab-pane label="待关联用户" name="second">
-            <norel v-if='secondId'></norel>
+            <norel v-if='secondId' :roleId="userForm.id"></norel>
           </el-tab-pane>  
         </el-tabs>
         <div slot="footer" class="dialog-footer">
@@ -335,27 +336,39 @@ import rel from './reltable/rel-users'
 import norel from './reltable/noRel-users'
 export default {
   data () {
+    var checkName = (rule, value, callback) => {
+      let name = /^[a-zA-Z0-9_-]{0,64}$/
+      if (!value) {
+        return callback(new Error('角色标识不能为空'))
+      } else if (!name.test(value)) {
+        return callback(new Error('角色标识不能为中文，不超过64个英文字母'))
+      }
+      api.GET(config.fmrole.check, {name: value})
+      .then(response => {
+        if (response.data.errcode === '60000') {
+          return callback(new Error('有重名，请重新输入！'))
+        } else {
+          callback()
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    }
     return {
       addShow: false,
       firstId: true,
-      secondId: true,
-      enabled: false,
+      secondId: false,
       correlateShow2: false,
       correlateShow: false,
       activeName: 'first',
-      origins: [{
-        value: '1',
-        label: '商户级别'
-      }, {
-        value: '2',
-        label: '系统级别'
-      }],
+      origins: [],
       roleClass: [{
-        value: '1',
-        label: '商户级别'
-      }, {
-        value: '2',
+        value: 1,
         label: '系统级别'
+      }, {
+        value: 2,
+        label: '商户级别'
       }],
       value1: '',
       value2: '',
@@ -363,16 +376,42 @@ export default {
       permissionForm: {
         name: ''
       },
+      userForm: {
+        id: '',
+        name: '',
+        display_name: '',
+        account_id: ''
+      },
       adSwitch: true,
       advancedSearch: {
-        keyword: ''
+        keyword: '',
+        display_name: '',
+        name: '',
+        active: '',
+        start_time: '',
+        end_time: '',
+        type: '',
+        account_id: ''
       },
       dialogAdvance: false,
       detailForm: {
-        id: ''
+        id: '',
+        account: {
+          id: '',
+          name: ''
+        },
+        active: '',
+        description: '',
+        display_name: '',
+        type: ''
       },
       addForm: {
-        id: ''
+        id: '',
+        account_id: '',
+        active: '',
+        description: '',
+        display_name: '',
+        type: ''
       },
       dialogVisibleMove: false,
       data: [],
@@ -407,8 +446,8 @@ export default {
       },
       ids: [],
       rules: {
-        display_name: [
-          { required: true, message: '请输入分类名称', trigger: 'blur' }
+        name: [
+          { validator: checkName, trigger: 'blur' }
         ],
         description: [
           { required: true, message: '分类说明50字以内', trigger: 'blur' },
@@ -423,14 +462,40 @@ export default {
     rel,
     norel
   },
+  computed: {
+    reload: function () {
+      if (this.correlateShow) {
+        return true
+      } else {
+        return false
+      }
+    }
+  },
   methods: {
+    handleClick (tab, event) {
+      if (tab.name === 'first') {
+        this.firstId = true
+        this.secondId = false
+      }
+      if (tab.name === 'second') {
+        this.firstId = false
+        this.secondId = true
+      }
+    },
     // 打开关联权限弹框
-    openPermission () {
+    openPermission (data) {
       this.correlateShow = true
+      this.permissionForm.name = data.name
+      this.permissionForm.id = data.id
+      this.permissionForm.display_name = data.display_name
     },
     // 打开关联用户弹框
-    openUsers () {
+    openUsers (data) {
       this.correlateShow2 = true
+      this.userForm.name = data.name
+      this.userForm.id = data.id
+      this.userForm.display_name = data.display_name
+      this.userForm.account_id = data.account_id
     },
     // 刷新
     refresh () {
@@ -458,11 +523,17 @@ export default {
     // 将数据中所有的时间转换成 yyyy-mm-dd hh:mm:ss  state 状态值
     transformDate (res) {
       res.data.forEach(v => {
-        if (v.audit_state === 0) {
-          v.audit_state = false
+        if (v.active === 1) {
+          v.active = true
         }
-        if (v.audit_state === 1) {
-          v.audit_state = true
+        if (v.active === 0) {
+          v.active = false
+        }
+        if (v.type === 1) {
+          v.type = '系统级别'
+        }
+        if (v.type === 2) {
+          v.type = '商户级别'
         }
       })
       return res
@@ -502,14 +573,13 @@ export default {
       this.dialogVisible = true
     },
     toswitch (active, id) {
-      if (active) {
-        active = 1
-      } else {
-        active = 0
+      let data = {
+        pageSize: this.response.pageSize,
+        currentPage: this.response.currentPage
       }
-      api.POST(config.village.audit, {id: id, audit_state: active})
+      api.POST(config.fmrole.active, {id: id, active: Number(active)})
       .then(response => {
-        this.getList()
+        this.getList(data)
         this.onSuccess('启用操作成功！')
       })
       .catch(error => {
@@ -517,20 +587,20 @@ export default {
       })
     },
     advance () {
-      this.dialogAdvance = false
-      this.adSwitch = false
+      this.advancedSearch.active = Number(this.advancedSearch.active)
+      if (this.advancedSearch.start_time) {
+        this.advancedSearch.start_time = this.formatDate(this.advancedSearch.start_time)
+      }
+      if (this.advancedSearch.end_time) {
+        this.advancedSearch.end_time = this.formatDate(this.advancedSearch.end_time)
+      }
       const data = {
         currentPage: 1,
         pageSize: this.response.pageSize,
         ...this.advancedSearch
       }
-      api.GET(config.village.advanced, data)
-      .then(response => {
-        this.response = this.transformDate(response.data)
-      })
-      .catch(error => {
-        this.$message.error(error)
-      })
+      this.getList(data)
+      this.dialogAdvance = false
     },
     toggleSelection (rows) {
       if (rows) {
@@ -550,7 +620,6 @@ export default {
     },
     // 模态框显示
     openDialog (e, data = null, type = null) {
-      console.log(data)
       if (data !== null && type === 'edit') {
         this.detailShow = true
         this.dialogType = 'edit'
@@ -558,6 +627,19 @@ export default {
         this.detailForm = {
           ...data
         }
+        api.GET(config.fmrole.show, {id: data.id})
+        .then(response => {
+          if (response.data.errcode === '0000') {
+            this.detailForm = {
+              // ...this.editMerchant,
+              ...response.data.data
+            }
+            this.detailForm.active = Boolean(this.detailForm.active)
+          }
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
       } else {
         this.addShow = true
         this.dialogType = 'add'
@@ -570,41 +652,41 @@ export default {
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          // let data = {}
-          console.log(111)
-          this.detailShow = false
-          // api.POST(config.createCategoryAPI, data)
-          //   .then(response => {
-          //     if (response.status !== 200) {
-          //       this.error = response.statusText
-          //       return
-          //     }
-          //     if (response.data.errcode === '0000') {
-          //       this.onSuccess('创建成功')
-          //       this.getList()
-          //       this.detailShow = false
-          //     }
-          //   })
+          this.addForm.active = Number(this.addForm.active)
+          api.POST(config.fmrole.create, this.addForm)
+          .then(response => {
+            if (response.status !== 200) {
+              this.error = response.statusText
+              return
+            }
+            if (response.data.errcode === '0000') {
+              this.addShow = false
+              this.onSuccess('修改成功')
+              this.getList()
+            }
+          })
         } else {
           return false
         }
       })
     },
     editForm () {
-      var obj = this.classData
-      var pid = this.stepsSelection
-      obj.parent_id = pid.shift()
-      obj.created_at = this.classData.created_at
-      api.POST(config.updateCategoryAPI, obj)
+      this.detailForm.active = Number(this.detailForm.active)
+      api.POST(config.fmrole.update, this.detailForm)
       .then(response => {
         if (response.status !== 200) {
           this.error = response.statusText
           return
         }
+        let data = {
+          pageSize: this.response.pageSize,
+          currentPage: this.response.currentPage
+        }
         if (response.data.errcode === '0000') {
-          this.onSuccess('修改成功')
-          this.getList()
           this.detailShow = false
+          console.log(this.detailShow)
+          this.onSuccess('修改成功')
+          this.getList(data)
         }
       })
     },
@@ -631,7 +713,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.POST(config.village.delete, {
+        api.POST(config.fmrole.delete, {
           ids: this.ids
         })
         .then(response => {
@@ -702,13 +784,33 @@ export default {
       })
     },
     getList (data = {}) {
-      api.GET(config.village.list, data)
+      api.GET(config.fmrole.index, data)
       .then(response => {
         this.response = this.transformDate(response.data.data)
       })
       .catch(error => {
         this.$message.error(error)
       })
+    },
+    getOrigins (data = {}) {
+      api.GET(config.fmrole.aindex, data)
+      .then(response => {
+        this.origins = this.transform(response.data.data.data)
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    transform (data) {
+      let res = []
+      data.forEach((e) => {
+        let obj = {
+          value: e.id,
+          label: e.name
+        }
+        res.push(obj)
+      })
+      return res
     },
     onSuccess (string) {
       this.$notify({
@@ -720,7 +822,7 @@ export default {
   },
   mounted () {
     this.getList()
-    this.getTree()
+    this.getOrigins()
   }
 }
 </script>
