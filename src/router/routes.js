@@ -80,6 +80,7 @@ import SCTrainingEdit from 'components/views/training/Edit'
 
 import SCFileResource from 'components/views/fileresource/FileTable.vue'
 
+// 积分商城系统
 import SCCommodity from 'components/views/produdcts/Commodity.vue'
 import SCProducts from 'components/views/produdcts/Products.vue'
 import SCAddProducts from 'components/views/produdcts/addGoods/addProduct.vue'
@@ -689,7 +690,7 @@ const routes = [
           }, {
             path: 'add',
             component: SCAddProducts,
-            name: '商品信息',
+            name: '新增商品',
             meta: {description: '添加'}
           }]
         }, {

@@ -26,7 +26,8 @@
                 </el-dropdown-menu>
               </el-dropdown>
             </el-col>
-            <el-select v-model="form.value" placeholder="所有信息" style="width:120px;">
+            <!--
+            <el-select v-model="form.value" placeholder="所有信息" style="width:120px;margin-right:10px;">
               <el-option
                 v-for="item in option"
                 :key="item.value"
@@ -34,6 +35,7 @@
                 :value="item.value">
               </el-option>
             </el-select>
+            -->
             <el-col :span="8">
               <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
                 <el-button slot="append" @click="onSearch" icon="search"></el-button>
@@ -52,7 +54,7 @@
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="ID" width="50"></el-table-column>
-            <el-table-column prop="display_name" label="分类名称"></el-table-column>
+            <el-table-column prop="display_name" label="栏目名称"></el-table-column>
             <el-table-column prop="type_key" label="图片" width="130">
               <template scope="scope">
                 <img width="100%" :src="scope.row.logo" @click="bigImg(scope.row.logo)" alt="">

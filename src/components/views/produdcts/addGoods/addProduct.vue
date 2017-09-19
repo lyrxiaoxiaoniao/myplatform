@@ -14,8 +14,23 @@
               <img :src="1111" alt="">
             </div>
             <el-form :model="ruleForm" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-                <el-form-item label="商品类型:">
-                    <p v-text="ruleForm.title"></p>
+                <el-form-item label="商品类型">
+                  <el-select v-model="value" placeholder="请选择">
+                    <el-option
+                      v-for="item in options"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="商品品牌">
+                  <el-select v-model="value" placeholder="请选择">
+                    <el-option
+                      v-for="item in options"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-select>
                 </el-form-item>
             </el-form>
           </div>
@@ -57,7 +72,7 @@ export default {
   data () {
     return {
       ruleForm: {},
-      activeName: 'second'
+      activeName: 'first'
     }
   },
   components: {

@@ -15,11 +15,18 @@
                 <el-table-column prop="display_name" label="销量"></el-table-column>
             </el-table>
         </el-form-item>
-        <el-form-item label="总库存">
-            <template>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="总库存">
+              <template>
                 <el-input-number v-model="form.num1" :min="1"></el-input-number>
-            </template>
-        </el-form-item>
+              </template>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-radio class="radio" v-model="radio" label="1">页面不显示商品库存</el-radio>
+          </el-col>
+        </el-row>
         <el-form-item label="商家编码">
             <el-input v-model="form.num"></el-input>
         </el-form-item>
