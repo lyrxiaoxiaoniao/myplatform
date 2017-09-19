@@ -4,50 +4,60 @@
         <div class="lh-header">
             <div>基本信息</div>
             <div>
-                <el-button>返回</el-button>
-                <el-button type="primary">添加</el-button>
+                <el-button @click="goBack">返回</el-button>
+                <!-- <el-button type="primary">添加</el-button> -->
             </div>
         </div>
         <div class="lh-form">
-            <el-form :model="selected" label-width="100px">
+            <el-form :model="response" label-width="110px">
             <el-row :gutter="20">
                 <el-col :span="12">
-                <el-form-item label="线路名称">
-                    <el-input placeholder="请输入"></el-input>
+                <el-form-item label="线路名称:">
+                    <p>{{response.name}}</p>
+                    <!-- <el-input disabled v-model="response.name" placeholder="请输入"></el-input> -->
                 </el-form-item>
                 </el-col>  
                 <el-col :span="12">
-                <el-form-item label="所属清运公司">
-                    <el-input placeholder="请输入"></el-input>
+                <el-form-item label="所属清运公司:">
+                    <p>{{response.companyName}}</p>
+                    <!-- <el-input disabled v-model="response.companyName" placeholder="请输入"></el-input> -->
                 </el-form-item>
                 </el-col>  
                 <el-col :span="24">
-                <el-form-item label="线路描述">
-                    <el-input type="textarea" placeholder="请输入"></el-input>
+                <el-form-item label="线路描述:">
+                    <p>{{response.description}}</p>
+                    <!-- <el-input disabled v-model="response.description" type="textarea" placeholder="请输入"></el-input> -->
                 </el-form-item>
                 </el-col> 
             </el-row>
             </el-form>
         </div>
     </div>
-    <div class="lh-top">
+    <div>
         <!-- 清除车辆 -->
-        <clear-car-table></clear-car-table>
+        <clear-car-table v-if="response.recycleId" :recycleId="response.recycleId" :wayId="id"></clear-car-table>
     </div>
-    <div class="lh-top">
+    <div>
         <!-- 服务企业 -->
-        <service-table></service-table>
+        <service-table v-if="response.recycleId" :recycleId="response.recycleId" :wayId="id"></service-table>
     </div>
 </div>
 </template>
 <script>
 import clearCarTable from './wayTable/clearCarTable'
 import serviceTable from './wayTable/serviceTable'
+import config from 'src/config'
+import api from 'src/api'
 export default {
   data () {
     return {
+      id: this.$route.query.id,
       response: {
-        data: null
+        name: null,
+        id: null,
+        companyName: null,
+        description: null,
+        recycleId: null
       },
       multipleSelection: [],
       ids: []
@@ -58,47 +68,19 @@ export default {
     serviceTable
   },
   methods: {
-    toggleSelection (rows) {
-      if (rows) {
-        rows.forEach(row => {
-          this.$refs.multipleTable.toggleRowSelection(row)
-        })
-      } else {
-        this.$refs.multipleTable.clearSelection()
-      }
-    },
-    handleSelectionChange (val) {
-      this.multipleSelection = val
-      this.ids = []
-      this.multipleSelection.forEach(v => {
-        this.ids.push(v.id)
-      })
-    },
-    handleSizeChange (value) {
-      const data = {
-        currentPage: this.response.currentPage,
-        pageSize: value,
-        ...this.form
-      }
-      this.getList(data)
-    },
-    handleCurrentChange (value) {
-      const data = {
-        currentPage: value,
-        pageSize: this.response.pageSize,
-        ...this.form
-      }
-      this.getList(data)
+    goBack () {
+      this.$router.go(-1)
     },
     getList (data = {}) {
-      console.log(1111)
-      // api.GET(config.showWordSourceListAPI, data)
-      // .then(response => {
-      //   this.response = response.data.data
-      // })
-      // .catch(error => {
-      //   this.$message.error(error)
-      // })
+      api.GET(config.recovery.wayShow, {...data, id: this.id})
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.response = response.data.data
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     }
   },
   mounted () {

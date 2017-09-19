@@ -542,23 +542,6 @@ export default {
       }
       this.deleteShowDialog = true
       this.mailCode = ''
-      // this.$confirm('是否确认是否删除商户', '提示', {
-      //   confirmButtonText: '确定',
-      //   cancelButtonText: '取消',
-      //   type: 'warning'
-      // }).then(() => {
-      //   api.POST(config.merchant.delete, {
-      //     ids: this.ids
-      //   })
-      //   .then(response => {
-      //     if (response.data.errcode === '0000') {
-      //       this.onSuccess('删除成功')
-      //       this.getList()
-      //     } else {
-      //       this.$message.error('发生错误，请重试')
-      //     }
-      //   })
-      // })
     },
     sendMail () {
       api.GET(config.merchant.sendMail)

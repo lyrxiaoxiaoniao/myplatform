@@ -4,7 +4,7 @@
       <div class="lh-header">
         <div>{{selected.name}}</div>
         <div>
-          <el-button>返回</el-button>
+          <el-button @click="goBack">返回</el-button>
           <el-button type="primary">修改</el-button>
         </div>
       </div>
@@ -81,10 +81,10 @@
         v-if="isLine"
         :companyId="id">
       </street-table>
-      <line-table
+      <!-- <line-table
         v-else
         :companyId="id">
-      </line-table>
+      </line-table> -->
     </div>
 	</div>      
 </template>
@@ -92,7 +92,7 @@
 import config from 'src/config'
 import api from 'src/api'
 import streetTable from '../addTable/street'
-import lineTable from '../addTable/line'
+// import lineTable from '../addTable/line'
 export default {
   props: ['id'],
   data () {
@@ -121,8 +121,7 @@ export default {
     }
   },
   components: {
-    streetTable,
-    lineTable
+    streetTable
   },
   methods: {
     selectedType (val) {
@@ -131,6 +130,9 @@ export default {
       } else if (val === 2) {
         this.isLine = false
       }
+    },
+    goBack () {
+      this.$router.go(-1)
     },
     /* 上传图片函数 */
     handleAvatarSuccess (res, file) {
@@ -170,6 +172,7 @@ export default {
       width: 100%;
       background-color: #fff;
       padding-bottom: 1rem;
+      margin-bottom: 1rem;
       .lh-header {
         padding: 0 2rem;
         width: 100%;
@@ -187,12 +190,6 @@ export default {
       }
     }
     .lh-bottom {
-      margin-top: 1rem;
-      border-radius: 5px;
-      border: 1px solid lightgray;
-      width: 100%;
-      background-color: #fff;
-      padding-bottom: 1rem;
       .lh-header {
         padding: 0 2rem;
         width: 100%;

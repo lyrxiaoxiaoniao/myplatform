@@ -13,6 +13,8 @@ import LogIndex from 'components/views/framework/log/logIndex.vue'
 import RoleIndex from 'components/views/framework/role/index.vue'
 // 菜单管理
 import RcMenu from 'components/views/framework/menu/menuIndex.vue'
+// 商户关联
+import MerchantRole from 'components/views/framework/merchant/relateRole.vue'
 const baseRouters = [
   {
     // 商户模块路由
@@ -31,6 +33,19 @@ const baseRouters = [
       component: SBMerchantConfigView,
       name: '商户管理配置',
       meta: {description: '详情'}
+    }]
+  }, {
+    // 商户关联权限菜单模块路由
+    path: 'merchantrole',
+    component: DashMainView,
+    redirect: '/admin/merchantrole/index',
+    name: '商户关联',
+    meta: {description: '信息'},
+    children: [{
+      path: 'index',
+      component: MerchantRole,
+      name: '商户关联管理',
+      meta: {description: '列表'}
     }]
   }, {
     // 用户模块路由

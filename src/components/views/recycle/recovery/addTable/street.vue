@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="st-container">
     <div class="lh-header">
         <div>服务街道列表</div>
         <div>
@@ -212,6 +212,10 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+  .st-container{
+    background-color: #fff;
+    border: 1px solid lightgray;
+    border-radius: 5px;
     .lh-header {
         padding: 0 2rem;
         width: 100%;
@@ -223,5 +227,6 @@ export default {
         div:nth-of-type(1){
           font-size: 16px;
         }
-      }
+    }
+  }
 </style>

@@ -196,7 +196,6 @@
         </div>
     </el-dialog>
     <!-- 关联菜单弹窗 -->
-    </el-dialog>
     <el-dialog title="权限关联菜单" v-model="dialogVisible">
         <el-form :model="relaForm" label-width="80px">
             <el-row>

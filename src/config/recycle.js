@@ -23,12 +23,15 @@ export default {
     carRemove: '/vehicle/delete',
     // 线路管理
     wayIndex: '/rounter/index',
+    wayShow: '/rounter/show',
     wayAdd: '/rounter/create',
     wayEdit: '/rounter/update',
     wayRemove: '/rounter/delete',
     wayActive: '/rounter/state/update',
     wayRecycle: '/rounter/recycle/show',
-    wayHistory: '/rounter/history/index'
+    wayHistory: '/rounter/history/index',
+    wayCar: '/rounter/vehicle/index',
+    wayCater: '/rounter/cater/index'
   },
   village: {
     list: '/rubbish/community/index',

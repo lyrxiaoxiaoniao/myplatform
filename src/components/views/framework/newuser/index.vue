@@ -570,7 +570,6 @@ export default {
   },
   methods: {
     handleClick (tab, event) {
-      console.log(tab, event)
       if (tab.name === 'first') {
         this.isFirst = true
         this.isSecond = false
