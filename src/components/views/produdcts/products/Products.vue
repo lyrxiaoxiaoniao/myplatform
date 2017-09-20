@@ -103,74 +103,7 @@
     </div>
     <el-dialog :title="dialog.title" v-model="dialog.visible" :size="dialog.size">
       <div class="dialog-advanceSearch" v-if="dialog.title === '高级搜索'">
-        <el-form ref="form" :model="form" label-width="80px">
-          <el-form-item label="关键字">
-            <el-input v-model="form.name"></el-input>
-          </el-form-item>
-          <el-row>
-            <el-col :span="12">
-              <el-form-item label="分类">
-                <el-select v-model="value" placeholder="请选择">
-                  <el-option
-                    v-for="item in options"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="状态">
-                <el-select v-model="value5" multiple placeholder="请选择">
-                  <el-option
-                    v-for="item in options"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-form-item label="时间">
-            <el-date-picker
-              v-model="value1"
-              type="datetime"
-              placeholder="选择开始时间">
-            </el-date-picker>
-            <el-date-picker
-              v-model="value1"
-              type="datetime"
-              placeholder="选择结束时间">
-            </el-date-picker>
-          </el-form-item>
-          <el-form-item label="价格">
-            <el-input v-model="form.name" class="number-input-two"></el-input>
-            ~~
-            <el-input v-model="form.name" class="number-input-two"></el-input>
-          </el-form-item>
-          <el-row>
-            <el-col :span="12">
-              <el-form-item label="库存">
-                <el-input v-model="form.name" class="number-input-four"></el-input>
-                ~~
-                <el-input v-model="form.name" class="number-input-four"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="销量">
-                <el-input v-model="form.name" class="number-input-four"></el-input>
-                ~~
-                <el-input v-model="form.name" class="number-input-four"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-row type="flex" justify="end">
-            <el-button @click="closeDialog">取 消</el-button>
-            <el-button type="primary" @click="onAdvancedSearch">搜索</el-button>
-          </el-row>
-        </div>
+        <advanced-search @closeDialog="closeDialog" @onAdvancedSearch="onAdvancedSearch"></advanced-search>
       </div>
       <div class="dialog-bigImg" v-if="dialog.title === '放大图片'">
         <img width="100%" :src="dialogImageUrl" alt="">
@@ -256,9 +189,12 @@
     </el-dialog>
   </div>
 </template>
+
 <script>
   import config from 'src/config'
   import api from 'src/api'
+  import advancedSearch from './components/advancedSearch'
+
   export default {
     data () {
       return {
@@ -302,6 +238,9 @@
           value: ''
         }
       }
+    },
+    components: {
+      advancedSearch
     },
     methods: {
       addProduct () {
@@ -434,10 +373,8 @@
         }
         this.getList(data)
       },
-      onAdvancedSearch () {
-        let data = {}
-        // data为高级搜索表单数据
-        this.getList(data)
+      onAdvancedSearch (obj) {
+        this.getList(obj)
       },
       /* 用户行为触发查操作的函数结束 */
       async operate (operationName, warnContent, dialogSize) {
@@ -568,6 +505,7 @@
     }
   }
 </script>
+
 <style lang="scss" scoped>
 .GD-container{
     height: 100%;
@@ -583,15 +521,6 @@
     position: absolute;
     top: 0;
     right: 0;
-}
-.number-input-two {
-  width: 15%;
-}
-.number-input-four {
-  width: 34%;
-}
-.dialog-main {
-  padding-bottom: 20rem;
 }
 </style>
 

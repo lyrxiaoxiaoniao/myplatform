@@ -80,15 +80,17 @@ import SCTrainingEdit from 'components/views/training/Edit'
 
 import SCFileResource from 'components/views/fileresource/FileTable.vue'
 
-// 积分商城系统
+/* 积分商城系统开始 */
 import SCCommodity from 'components/views/produdcts/Commodity.vue'
-import SCProducts from 'components/views/produdcts/Products.vue'
-import SCAddProducts from 'components/views/produdcts/addGoods/addProduct.vue'
+import SCProducts from 'components/views/produdcts/products/Products.vue'
+import SCAddProducts from 'components/views/produdcts/products/addProduct.vue'
+import SCProductsRecycle from 'components/views/produdcts/products/ProductsRecycle.vue'
 import SCInteract from 'components/views/produdcts/Interaction.vue'
-import SCOrder from 'components/views/produdcts/Order.vue'
+import SCOrder from 'components/views/produdcts/order/Order.vue'
 import SCSystemConfig from 'components/views/produdcts/SysConfig.vue'
-import SCOrderSet from 'components/views/produdcts/OrderSet.vue'
-import SCOrderDetail from 'components/views/produdcts/OrderDetail.vue'
+import SCOrderSet from 'components/views/produdcts/order/OrderSet.vue'
+import SCOrderDetail from 'components/views/produdcts/order/OrderDetail.vue'
+/* 积分商城系统结束 */
 
 import SCForm from 'components/views/form/Form.vue'
 import SCFormDetail from 'components/views/form/FormDetail.vue'
@@ -150,8 +152,6 @@ import ServerIndex from 'components/views/recycle/server/index.vue'
 import ServerDetail from 'components/views/recycle/server/serverDetail.vue'
 import ServerAdd from 'components/views/recycle/server/add.vue'
 import RelVillage from 'components/views/recycle/server/relVillage.vue'
-
-// 回收公司管理
 
 // 餐饮企业管理
 import RestaurantsList from 'components/views/recycle/restaurants/RestaurantsList.vue'
@@ -692,6 +692,11 @@ const routes = [
             component: SCAddProducts,
             name: '新增商品',
             meta: {description: '添加'}
+          }, {
+            path: 'recycle',
+            component: SCProductsRecycle,
+            name: '商品回收站',
+            meta: {description: '列表'}
           }]
         }, {
           path: 'interact',

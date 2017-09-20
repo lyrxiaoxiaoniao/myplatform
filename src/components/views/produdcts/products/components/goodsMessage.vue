@@ -161,6 +161,12 @@ export default {
       uploadUrl: config.serverURI + config.uploadImgAPI
     }
   },
+  props: ['getInfo'],
+  watch: {
+    getInfo: function () {
+      this.$emit('getComponentForm', {formName: 'goodsMessageForm', value: 5})
+    }
+  },
   methods: {
     handleClose (tag) {
       this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1)

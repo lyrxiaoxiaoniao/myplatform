@@ -94,6 +94,7 @@ export default {
       obj: []
     }
   },
+  props: ['getInfo'],
   methods: {
     addSetting () {
       this.showDialog = true
