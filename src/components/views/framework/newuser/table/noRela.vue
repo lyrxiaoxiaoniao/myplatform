@@ -14,7 +14,7 @@
             </el-col>
             </el-row>
         </div>
-        <div slot="kobe-table-content" class="kobe-table">
+        <div slot="kobe-table-content" class="kobe-table maxHeight">
             <el-table
               ref="multipleTable"
               border
@@ -225,4 +225,8 @@ export default {
 }
 </script>
 <style scoped>
+.maxHeight {
+  max-height: 300px;
+  overflow: auto;
+}
 </style>

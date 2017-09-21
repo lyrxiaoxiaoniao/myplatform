@@ -18,11 +18,10 @@
                         </el-col>
                         <el-col :span="8">
                             <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
-                            <el-button slot="append" @click="onSearch" icon="search"></el-button>
+                              <el-button slot="append" @click="onSearch" icon="search"></el-button>
                             </el-input>
                         </el-col>
-                          <el-button icon="search" type="primary" style="margin-left:10px;">高级</el-button>
-                          <el-button icon="upload2" type="primary"></el-button>
+                          <el-button icon="upload2" type="primary" style="margin-left:10px;"></el-button>
                           <el-button icon="setting" type="primary"></el-button>
                       </el-row>
                     </div>
@@ -84,11 +83,11 @@
                           <el-input v-model="selected.gpsSlug" placeholder="请输入"></el-input>
                         </el-form-item>
                       </el-col>  
-                      <el-col :span="24">
+                      <!-- <el-col :span="24">
                         <el-form-item label="所属公司">
-                          <el-input v-model="selectedEdit.companyName" placeholder="请输入"></el-input>
+                          <el-input v-model="selected.companyName" placeholder="请输入"></el-input>
                         </el-form-item>
-                      </el-col>  
+                      </el-col>   -->
                       <el-col :span="12">
                         <el-form-item label="车重"
                             prop="weight"
@@ -146,11 +145,11 @@
                           <el-input v-model="selectedEdit.gpsSlug" placeholder="请输入"></el-input>
                         </el-form-item>
                       </el-col>  
-                      <el-col :span="24">
+                      <!-- <el-col :span="24">
                         <el-form-item label="所属公司">
                           <el-input v-model="selectedEdit.companyName" placeholder="请输入"></el-input>
                         </el-form-item>
-                      </el-col>
+                      </el-col> -->
                        <el-col :span="12">
                         <el-form-item label="车重"
                             prop="weight"
@@ -250,17 +249,17 @@ export default {
         ...this.selectedEdit,
         ...data
       }
-      console.log(this.selectedEdit, 11111111111)
       this.showDialogEdit = true
     },
     addConfirm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          api.POST(config.recovery.carAdd, this.selected)
+          api.POST(config.recovery.carAdd, {recycleId: this.id, ...this.selected})
           .then(response => {
             if (response.data.errcode === '0000') {
               this.onSuccess('添加成功')
               this.closeDialogadd()
+              this.getList({id: this.id})
             } else {
               this.$message.error(response.data.errmsg)
             }
@@ -273,11 +272,12 @@ export default {
     editConfirm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          api.POST(config.recovery.carEdit, this.selectedEdit)
+          api.POST(config.recovery.carEdit, {recycleId: this.id, ...this.selectedEdit})
           .then(response => {
             if (response.data.errcode === '0000') {
               this.onSuccess('修改成功')
               this.showDialogEdit = true
+              this.getList({id: this.id})
             } else {
               this.$message.error(response.data.errmsg)
             }
@@ -332,10 +332,18 @@ export default {
         .then(response => {
           if (response.data.errcode === '0000') {
             this.onSuccess('删除成功')
+            this.getList({id: this.id})
           } else {
             this.$message.error(response.data.errmsg)
           }
         })
+      })
+    },
+    onSuccess (string) {
+      this.$notify({
+        title: '成功',
+        message: string,
+        type: 'success'
       })
     },
     onSearch () {

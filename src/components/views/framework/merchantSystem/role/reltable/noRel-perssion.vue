@@ -4,29 +4,29 @@
         <div class="lh-form">
             <kobe-table>
                 <div slot="kobe-table-header" class="kobe-table-header">
-                  <el-row type="flex">
+                 <el-row type="flex">
                   <el-col justify="start">
-                    <el-button @click="deleteType()" type="primary">批量移除</el-button>
+                    <el-button @click="correlation()" type="primary">批量关联</el-button>
                   </el-col>
                     <el-col justify="end">
                         <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
                         <el-button slot="append" @click="onSearch" icon="search"></el-button>
                         </el-input>
                     </el-col> 
-                  </el-row>          
+                  </el-row>    
                 </div>
                 <div slot="kobe-table-content" class="kobe-table">
                 <el-table
                     ref="multipleTable"
-                    max-height="400"
                     border
+                    max-height="400"
                     stripe
                     :data="response.data"
                     @selection-change="handleSelectionChange">
                     <el-table-column type="selection" width="40"></el-table-column>
                     <el-table-column prop="id" label="ID" sortable width="80"></el-table-column>
                     <el-table-column prop="display_name" label="权限点名称"></el-table-column>
-                    <el-table-column prop="name" label="权限标识" width="150"></el-table-column>
+                    <el-table-column prop="name" label="权限标识"></el-table-column>
                     <el-table-column prop="description" label="权限说明"></el-table-column>
                     <!-- <el-table-column label="有效状态" width="80">
                       <template scope="scope">
@@ -40,9 +40,9 @@
                       </template>
                     </el-table-column> -->
                     <el-table-column width="70" label="操作">
-                    <template scope="scope">
-                        <el-button size="small" @click="deleteType(scope.row.id)" icon="delete2" title="移除"></el-button>
-                    </template>
+                      <template scope="scope">
+                          <el-button size="small" @click="correlation(scope.row.id)" title="关联" class="fa fa-th-large"></el-button>
+                      </template>
                     </el-table-column>
                 </el-table>
                 </div>
@@ -73,9 +73,11 @@ export default {
   props: ['roleId'],
   data () {
     return {
-      removeForm: {
+      correlateForm: {
         community_id: this.roleId,
-        tenement_id: ''
+        tenement_id: '',
+        begin_time: '',
+        end_time: ''
       },
       form: {
         keyword: ''
@@ -138,6 +140,18 @@ export default {
         this.permissions.push(v.id)
       })
     },
+    // 转换数据
+    transform (res) {
+      res.data.forEach(v => {
+        if (v.active === 1) {
+          v.active = true
+        }
+        if (v.active === 0) {
+          v.active = false
+        }
+      })
+      return res
+    },
     handleSizeChange (value) {
       const data = {
         currentPage: this.response.currentPage,
@@ -155,7 +169,7 @@ export default {
       this.getList(data)
     },
     getList (data = {}) {
-      api.GET(config.fmrole.relatedP, {
+      api.GET(config.fmrole.norelP, {
         role_id: this.roleId,
         ...data
       })
@@ -166,8 +180,7 @@ export default {
         this.$message.error(error)
       })
     },
-    // 删除表单
-    deleteType (id) {
+    correlation (id) {
       if (id) {
         this.permissions = []
         this.permissions.push(id)
@@ -186,18 +199,18 @@ export default {
       }
       this.roles = []
       this.roles.push(this.roleId)
-      this.$confirm('是否确认移除权限', '提示', {
+      this.$confirm('是否确认关联权限', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.POST(config.fmrole.rpdelete, {
+        api.POST(config.fmrole.rpcreate, {
           permissions: this.permissions,
           roles: this.roles
         })
         .then(response => {
           if (response.data.errcode === '0000') {
-            this.onSuccess('移除成功')
+            this.onSuccess('关联成功')
             this.getList()
           } else {
             this.$message.error('发生错误，请重试')
@@ -211,21 +224,11 @@ export default {
         message: string,
         type: 'success'
       })
-    },
-    // 转换数据
-    transform (res) {
-      res.data.forEach(v => {
-        if (v.active === 1) {
-          v.active = true
-        }
-        if (v.active === 0) {
-          v.active = false
-        }
-      })
-      return res
     }
   },
   mounted () {
+    console.log(11111111111111)
+    console.log(this.roleId)
     this.getList()
   }
 }

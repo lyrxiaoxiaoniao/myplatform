@@ -23,12 +23,21 @@ export default {
     carRemove: '/vehicle/delete',
     // 线路管理
     wayIndex: '/rounter/index',
+    wayShow: '/rounter/show',
     wayAdd: '/rounter/create',
     wayEdit: '/rounter/update',
     wayRemove: '/rounter/delete',
     wayActive: '/rounter/state/update',
     wayRecycle: '/rounter/recycle/show',
-    wayHistory: '/rounter/history/index'
+    wayHistory: '/rounter/history/index',
+    wayCar: '/rounter/vehicle/index',
+    wayCater: '/rounter/cater/index',
+    wayCarRelate: '/rounter/vehicle/addition/index',
+    wayCaterRelate: '/rounter/cater/addition/index',
+    wayCarAdd: '/rounter/vehicle/add',
+    wayCarRemove: '/rounter/vehicle/delete',
+    wayCaterAdd: '/rounter/cater/add',
+    wayCaterRemove: '/rounter/cater/delete'
   },
   village: {
     list: '/rubbish/community/index',
@@ -84,5 +93,18 @@ export default {
     suttleMonth: '/rubbish/weighbridge/suttleMonth',
     suttleYear: '/rubbish/weighbridge/suttleYear',
     weighDetail: '/rubbish/weighbridge/weighDetail'
+  },
+  fence: {
+    index: '/rubbish/fence/index',
+    delete: '/rubbish/fence/delete',
+    region: '/rub/region/index',
+    create: '/rubbish/fence/create',
+    update: '/rubbish/fence/update',
+    query: '/rubbish/fence/query',
+    vehicleIndex: '/rubbish/fence/vehicle',
+    vehicleUnrelevance: '/rubbish/vehicle/unrelevance',
+    addVehicle: '/rubbish/vehicle/restrict',
+    deleteVehicle: '/rubbish/vehicle/remove',
+    gpsInfo: '/rubbish/gps/vehicle'
   }
 }

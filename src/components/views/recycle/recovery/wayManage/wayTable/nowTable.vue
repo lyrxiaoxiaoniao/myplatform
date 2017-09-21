@@ -47,7 +47,7 @@
                 >
                 <template scope="scope">
                 <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2" title="删除"></el-button>
-                <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit" title="修改"></el-button>
+                <el-button @click="openEdit(scope.row.id)" size="small" icon="edit" title="修改"></el-button>
                 </template>
             </el-table-column>
             </el-table>
@@ -71,6 +71,18 @@
     <el-dialog title="添加线路" v-model="showDialog" size="tiny">
          <el-form :model="selected" label-width="80px" ref="selected">
             <el-row>
+                <el-col :span="24">
+                    <el-form-item label="清运公司">
+                        <el-select v-model="selected.recycleId" placeholder="请选择清运公司" class="fullwidth">
+                          <el-option
+                            v-for="item in options"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id">
+                          </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
                 <el-col :span="24">
                     <el-form-item label="线路名称">
                         <el-input v-model="selected.name" placeholder="请输入线路名称"></el-input>
@@ -103,6 +115,7 @@ export default {
         keyword: ''
       },
       ids: [],
+      options: [],
       showDialog: false,
       selected: {
         state: null,
@@ -127,13 +140,13 @@ export default {
       })
       return res
     },
-    changeNum (val) {
-      if (val) {
-        val = 1
-      } else {
-        val = 0
-      }
-      return val
+    openEdit (id) {
+      this.$router.push({
+        path: '/admin/recycle/recovery/way/edit',
+        query: {
+          id: id
+        }
+      })
     },
     toswitch (state, id) {
       let data = {
@@ -142,7 +155,7 @@ export default {
       }
       var obj = {
         id: id,
-        state: this.changeNum(state)
+        state: Number(state)
       }
       api.POST(config.recovery.wayActive, obj)
       .then(response => {
@@ -214,12 +227,13 @@ export default {
     // 模态框显示
     openDialog () {
       this.showDialog = true
+      this.getCompany()
     },
     closeDialog () {
       this.showDialog = false
     },
     addType () {
-      this.selected.state = this.getNum(this.selected.state)
+      this.selected.state = Number(this.selected.state)
       api.POST(config.recovery.wayAdd, this.selected)
       .then(response => {
         if (response.data.errcode === '0000') {
@@ -229,14 +243,6 @@ export default {
           this.$message.error('发生错误，请重试')
         }
       })
-    },
-    getNum (res) {
-      if (res === true) {
-        res = 1
-      } else {
-        res = 0
-      }
-      return res
     },
     onSuccess (string) {
       this.$notify({
@@ -280,7 +286,20 @@ export default {
     getList (data = {}) {
       api.GET(config.recovery.wayIndex, data)
       .then(response => {
-        this.response = this.transformDate(response.data.data)
+        if (response.data.errcode === '0000') {
+          this.response = this.transformDate(response.data.data)
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    getCompany (data = {}) {
+      api.GET(config.recovery.wayRecycle, data)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.options = response.data.data
+        }
       })
       .catch(error => {
         this.$message.error(error)

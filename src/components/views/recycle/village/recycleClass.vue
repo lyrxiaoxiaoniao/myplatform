@@ -137,22 +137,23 @@
             <el-input v-model="advancedSearch.name" placeholder="请输入已关联物业名称"></el-input>
           </el-form-item>
             <el-row>
-              <el-col :span="13">
+              <el-col :span="11">
                 <el-form-item label="联系人">
                  <el-input v-model="advancedSearch.duty_name" placeholder="请输入小区负责人" auto-complete="off"></el-input>
                 </el-form-item>
               </el-col>
-            </el-row>
-            <el-row>
-              <el-form-item label="所属街道">
-                <el-cascader
-                  :options="cascaderData"
-                  :props="props"
-                  :show-all-levels="false"
-                  v-model="selectedOptions"
-                  @change="handleChange">
-                </el-cascader>
-              </el-form-item>
+              <el-col :offset="2" :span="11">
+                <el-form-item label="所属街道">
+                  <el-cascader
+                    style="width: 100%;"
+                    :options="cascaderData"
+                    :props="props"
+                    :show-all-levels="false"
+                    v-model="selectedOptions"
+                    @change="handleChange">
+                  </el-cascader>
+                </el-form-item>
+              </el-col>
             </el-row>
             <el-form-item label="数据状态">
               <el-radio class="radio" v-model="advancedSearch.audit_state" label="1" style="margin:0 10px;">开</el-radio>
@@ -205,7 +206,7 @@ export default {
       multipleSelection: [],
       option: [{
         audit_state: null,
-        label: '全部'
+        label: '所有信息'
       }, {
         audit_state: '1',
         label: '已审核'
@@ -319,7 +320,12 @@ export default {
       }
       api.GET(config.village.advanced, data)
       .then(response => {
-        this.response = this.transformDate(response.data)
+        if (response.data.errcode === '5000') {
+          this.response.data = null
+          this.response.count = 0
+        } else {
+          this.response = this.transformDate(response.data.data)
+        }
       })
       .catch(error => {
         this.$message.error(error)
@@ -559,6 +565,7 @@ export default {
       }
     },
     onSearch () {
+      this.adSwitch = true
       this.region_id = ''
       const data = {
         currentPage: 1,

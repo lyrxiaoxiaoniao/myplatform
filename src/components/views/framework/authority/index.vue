@@ -64,7 +64,7 @@
                 <el-table-column prop="name" label="权限标识" width="150"></el-table-column>
                 <el-table-column prop="description" label="权限说明"></el-table-column>
                 <el-table-column label="创建时间">
-                  <template scope="scope">{{scope.row.created_at | toDateTime}}</template>
+                  <template scope="scope">{{scope.row.createdAt | toDateTime}}</template>
                 </el-table-column>
                 <el-table-column label="有效状态" width="100px">
                   <template scope="scope">
@@ -196,7 +196,6 @@
         </div>
     </el-dialog>
     <!-- 关联菜单弹窗 -->
-    </el-dialog>
     <el-dialog title="权限关联菜单" v-model="dialogVisible">
         <el-form :model="relaForm" label-width="80px">
             <el-row>

@@ -10,7 +10,7 @@
         </span>
         <div class="logo-lg">
           <img src="static/img/LOGO2.png" alt="Logo" class="img-responsive">
-          <span>{{ appInfo ? appInfo.appName : '深传互动' }}</span>
+          <span>{{ appInfo ? appInfo.mng_config_name : '深传互动' }}</span>
         </div>
       </router-link>
 
@@ -148,7 +148,7 @@
     </div>
 
     <footer class="main-footer">
-      <strong>Copyright &copy; {{year}} <a href="http://www.shencom.cn/">{{ appInfo ? appInfo.systemAuthor : '深传互动' }}</a>.</strong> All rights reserved.
+      <strong>Copyright &copy; {{year}} <a href="http://www.shencom.cn/">{{ appInfo ? appInfo.mng_config_copyright : '深传互动' }}</a>.</strong> All rights reserved.
     </footer>
   </div>
 </template>
@@ -209,18 +209,37 @@ export default {
       this.appInfo = this.$store.state.appInfo
     },
     setAppInfo () {
-      const URI = config.appInfoAPI
+      // const URI = config.appInfoAPI
+      const URI = config.dashconfig
       api.GET(URI)
         .then(response => {
           if (response.status !== 200) {
             this.error = response.statusText
             return
           }
-          this.appInfo = response.data.data
+          this.getData(response.data.data)
+          console.log(this.appInfo, 11111)
         })
         .catch(error => {
           this.$message.error(error)
         })
+    },
+    getData (res) {
+      console.log(res, 11112222)
+      // mng_config_icon 站点图标
+      // mng_config_copyright 版权信息
+      // mng_config_name 站点名称
+      res.forEach(v => {
+        if (v.key.label === 'mng_config_name') {
+          this.appInfo.mng_config_name = v.value
+        }
+        if (v.key.label === 'mng_config_copyright') {
+          this.appInfo.mng_config_copyright = v.value
+        }
+        if (v.key.label === 'mng_config_icon') {
+          this.appInfo.mng_config_icon = v.value
+        }
+      })
     }
   },
   created () {

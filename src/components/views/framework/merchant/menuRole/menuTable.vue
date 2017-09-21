@@ -5,7 +5,7 @@
       <el-col :span="12">
          <!-- <el-button type="primary" @click="onFresh">反选</el-button> -->
         <el-button type="primary" @click="onFresh">刷新</el-button>
-       <el-button type="primary" @click="onRelate">确定</el-button>
+       <el-button type="primary" @click="onRelate">保存</el-button>
       </el-col>
        <el-col :span="12">
           <el-input
@@ -99,24 +99,26 @@ export default {
       this.users = []
       this.users.push(this.userid)
       if (this.old.length === 0) {
-        api.POST(config.authority.relatedmenuAdd, {
-          permissions: this.users,
+        api.POST(config.merchantRole.relateAddMenu, {
+          accounts: this.users,
           menus: this.checkKeys
         })
         .then(response => {
           if (response.data.errcode === '0000') {
             this.onSuccess('关联菜单成功')
+          } else {
+            this.$message.error(response.data.errmsg)
           }
         })
       } else {
-        api.POST(config.authority.relatedmenuDelete, {
-          permissions: this.users,
+        api.POST(config.merchantRole.relateRemoveMenu, {
+          accounts: this.users,
           menus: this.old
         })
         .then(response => {
           if (response.data.errcode === '0000') {
-            api.POST(config.authority.relatedmenuAdd, {
-              permissions: this.users,
+            api.POST(config.merchantRole.relateAddMenu, {
+              accounts: this.users,
               menus: this.checkKeys
             })
             .then(response => {
@@ -132,7 +134,7 @@ export default {
       }
     },
     getRelatedMenu (data = {}) {
-      api.GET(config.authority.relatedmenu, {permission_id: this.userid, ...data})
+      api.GET(config.merchantRole.relatedmenu, {account_id: this.userid, ...data})
       .then(response => {
         if (response.data.errcode === '0000') {
           this.checkKeys = []

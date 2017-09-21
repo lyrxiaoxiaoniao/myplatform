@@ -96,6 +96,7 @@ export default {
         mobile: '',
         name: ''
       },
+      street: false,
       options: [{
         value: 1,
         label: '大件垃圾'
@@ -158,6 +159,7 @@ export default {
       width: 100%;
       background-color: #fff;
       padding-bottom: 1rem;
+      margin-bottom: 1rem;      
       .lh-header {
         padding: 0 2rem;
         width: 100%;

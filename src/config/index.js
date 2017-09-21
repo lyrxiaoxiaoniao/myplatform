@@ -5,7 +5,7 @@ export default {
   ...Recycle,
   ...SuperBase,
   // serverURI: 'https://admin.gov.shencom.cn',
-  // serverURI: 'https://tst.admin.gov.shencom.cn',
+  serverURI: 'https://tst.admin.gov.shencom.cn',
   // serverURI: 'http://192.168.1.13:8080',
   // serverURI: 'http://192.168.1.60:8080',
   serverURI: 'http://192.168.1.87:8080',

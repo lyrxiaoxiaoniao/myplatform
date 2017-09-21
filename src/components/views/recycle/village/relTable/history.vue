@@ -116,7 +116,6 @@ export default {
       }
       api.GET(config.village.history, data)
       .then(response => {
-        console.log(response.data.data)
         this.response.data = this.transform(response.data.data.data)
         this.response.currentPage = response.data.data.currentPage
         this.response.pageSize = response.data.data.pageSize

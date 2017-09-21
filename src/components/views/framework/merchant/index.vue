@@ -109,11 +109,12 @@
                     </el-switch>
                   </template> 
                 </el-table-column>
-                <el-table-column prop="status" label="操作" width="160">
+                <el-table-column prop="status" label="操作" width="210">
                   <template scope="scope"> 
                       <el-button @click="editDetail(scope.row)" size="small" icon="edit"></el-button>
                       <el-button @click="toUser(scope.row.id)" size="small" class="fa fa-user-o"></el-button>
                       <el-button @click="toSetting(scope.row.id)" size="small" icon="setting"></el-button>
+                      <el-button @click="relaType(scope.row)" title="关联权限" size="small" class="fa fa-th-large"></el-button>
                   </template>
                 </el-table-column>
             </el-table>
@@ -331,14 +332,66 @@
           <el-button type="primary" @click="saveDelete">确定</el-button>
       </div>
     </el-dialog>
+    <!-- 关联弹窗 -->
+    <el-dialog title="商户关联权限" v-model="relaShowDialog" top="5%">
+        <el-form :model="relaForm" label-width="80px">
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="商户名称">
+                    <el-input v-model="relaForm.name" disabled placeholder="商户名称"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="负责人">
+                    <el-input v-model="relaForm.principal" disabled placeholder="商户负责人"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="商户简介">
+                    <el-input v-model="relaForm.brief" disabled placeholder="商户简介"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-tabs v-model="activeName" @tab-click="handleClick" type="border-card">
+              <el-tab-pane label="已关联权限" name="first">
+                <related-role-table v-if="isFirst" :userid="usersid"></related-role-table>
+              </el-tab-pane>
+              <el-tab-pane label="待关联权限" name="second">
+                <relate-role-table v-if="isSecond" :userid="usersid"></relate-role-table>
+              </el-tab-pane>
+              <el-tab-pane label="关联菜单" name="third">
+                <menu-role-table v-if="isThird" :userid="usersid"></menu-role-table>
+                <!-- <relate-role-table v-if="isThird" :userid="usersid"></relate-role-table> -->
+              </el-tab-pane>
+            </el-tabs>
+        </el-form>
+        <div slot="footer" class="dialog-footer" style="margin-top:-20px;">
+            <el-button @click="relaCloseDialog" >取消</el-button>
+            <el-button type="primary" @click="saveRela">关闭</el-button>
+        </div>
+    </el-dialog>
   </div>
 </template>
 <script>
 import config from 'src/config'
 import api from 'src/api'
+import relatedRoleTable from './roletable/alreadyRela.vue'
+import relateRoleTable from './roletable/noRela.vue'
+import menuRoleTable from './menuRole/menuTable.vue'
 export default {
   data () {
     return {
+      relaShowDialog: false,
+      relaForm: {
+        realname: null,
+        phone: null,
+        username: null
+      },
+      usersid: null,
+      activeName: 'first',
+      isFirst: true,
+      isSecond: false,
+      isThird: false,
       uploadURL: config.serverURI + config.uploadFilesAPI,
       addShowDialog: false,
       editShowDialog: false,
@@ -412,7 +465,41 @@ export default {
       }
     }
   },
+  components: {
+    relatedRoleTable,
+    relateRoleTable,
+    menuRoleTable
+  },
   methods: {
+    handleClick (tab, event) {
+      if (tab.name === 'first') {
+        this.isFirst = true
+        this.isSecond = false
+        this.isThird = false
+      } else if (tab.name === 'second') {
+        this.isFirst = false
+        this.isSecond = true
+        this.isThird = false
+      } else if (tab.name === 'third') {
+        this.isFirst = false
+        this.isSecond = false
+        this.isThird = true
+      }
+    },
+    relaType (data) {
+      this.usersid = data.id
+      this.relaShowDialog = true
+      this.relaForm = {
+        ...this.relaForm,
+        ...data
+      }
+    },
+    relaCloseDialog () {
+      this.relaShowDialog = false
+    },
+    saveRela () {
+      this.relaShowDialog = false
+    },
     /* 上传图片函数 */
     handleAvatarSuccessIcon (res, file) {
       this.addMerchant.license = res.data[0]
@@ -439,7 +526,7 @@ export default {
       }
       var obj = {
         id: id,
-        active: this.changeNum(state)
+        active: Number(state)
       }
       api.POST(config.updateStateAdvPointAPI, obj)
       .then(response => {
@@ -542,23 +629,6 @@ export default {
       }
       this.deleteShowDialog = true
       this.mailCode = ''
-      // this.$confirm('是否确认是否删除商户', '提示', {
-      //   confirmButtonText: '确定',
-      //   cancelButtonText: '取消',
-      //   type: 'warning'
-      // }).then(() => {
-      //   api.POST(config.merchant.delete, {
-      //     ids: this.ids
-      //   })
-      //   .then(response => {
-      //     if (response.data.errcode === '0000') {
-      //       this.onSuccess('删除成功')
-      //       this.getList()
-      //     } else {
-      //       this.$message.error('发生错误，请重试')
-      //     }
-      //   })
-      // })
     },
     sendMail () {
       api.GET(config.merchant.sendMail)
@@ -609,7 +679,7 @@ export default {
     addBaseinfo () {
       this.addShowDialog = true
       Object.keys(this.addMerchant).forEach(k => {
-        this.addMerchan[k] = null
+        this.addMerchant[k] = null
       })
     },
     getString (res) {
@@ -631,7 +701,7 @@ export default {
         ...data
       }
       this.editMerchant.level = this.getString(this.editMerchant.level)
-      this.editMerchant.active = Boolean(this.addMerchant.active)
+      this.editMerchant.active = Boolean(this.editMerchant.active)
     },
     closeDialogAdd () {
       this.addShowDialog = false

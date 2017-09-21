@@ -24,18 +24,12 @@
               @selection-change="handleSelectionChange">
               <el-table-column type="selection" width="55"></el-table-column>
               <el-table-column prop="id" label="ID" width="50"></el-table-column>
-              <el-table-column prop="display_name" label="角色名称"></el-table-column>
-              <el-table-column prop="name" label="角色标识"></el-table-column>
-              <el-table-column prop="description" label="角色说明"></el-table-column>
-              <el-table-column label="有效状态" width="100px">
+              <el-table-column prop="display_name" label="权限名称"></el-table-column>
+              <el-table-column prop="name" label="权限标识"></el-table-column>
+              <el-table-column prop="description" label="创建时间">
                 <template scope="scope">
-                  <el-switch
-                    v-model="scope.row.active"
-                    on-text="开"
-                    off-text="关"
-                    @change="toswitch(scope.row.active,scope.row.id)">
-                  </el-switch>
-                </template> 
+                  {{scope.row.created_at | toDateTime}}
+                </template>
               </el-table-column>
               <el-table-column prop="status" label="操作" width="60">
                 <template scope="scope"> 
@@ -109,7 +103,7 @@ export default {
         this.ids.push(id)
       }
       if (this.ids.length === 0) {
-        this.$confirm('请进行正确操作，请先勾选用户？', '错误', {
+        this.$confirm('请进行正确操作，请先勾选权限？', '错误', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'error'
@@ -127,9 +121,9 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.POST(config.newuser.relateremove, {
-          roles: this.ids,
-          users: this.users
+        api.POST(config.merchantRole.relateRemove, {
+          permissions: this.ids,
+          accounts: this.users
         })
         .then(response => {
           if (response.data.errcode === '0000') {
@@ -139,31 +133,6 @@ export default {
             this.$message.error('发生错误，请重试')
           }
         })
-      })
-    },
-    toswitch (active, id) {
-      let data = {
-        pageSize: this.response.pageSize,
-        currentPage: this.response.currentPage
-      }
-      var obj = {
-        id: id,
-        active: Number(active)
-      }
-      api.POST(config.newuser.relateractive, obj)
-      .then(response => {
-        if (response.status !== 200) {
-          this.error = response.statusText
-          return
-        }
-        if (response.data.errcode === '0000') {
-          this.$notify({
-            title: '成功',
-            message: '修改状态成功！！！',
-            type: 'success'
-          })
-          this.getList(data)
-        }
       })
     },
     handleSizeChange (value) {
@@ -204,7 +173,7 @@ export default {
       return res
     },
     getList (data = {}) {
-      api.GET(config.newuser.related, {user_id: this.userid, ...data})
+      api.GET(config.merchantRole.related, {account_id: this.userid, ...data})
       .then(response => {
         this.response = this.transformDate(response.data.data)
       })
