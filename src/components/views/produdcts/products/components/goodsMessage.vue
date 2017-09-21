@@ -20,8 +20,7 @@
                 :close-transition="false"
                 @close="handleClose(tag)"
                 type="primary"
-                style="margin:0 5px"
-            >
+                style="margin:0 5px">
             {{tag}}
             </el-tag>
             <el-input
@@ -30,8 +29,7 @@
                 v-model="inputValue"
                 ref="saveTagInput"
                 @keyup.enter.native="handleInputConfirm"
-                @blur="handleInputConfirm"
-                >
+                @blur="handleInputConfirm">
             </el-input>
             <el-button v-else class="button-new-tag" size="small" @click="showInput">新增</el-button>
         </el-form-item>
@@ -161,6 +159,12 @@ export default {
       imageList: [],
       imageURL: '',
       uploadUrl: config.serverURI + config.uploadImgAPI
+    }
+  },
+  props: ['getInfo'],
+  watch: {
+    getInfo: function () {
+      this.$emit('getComponentForm', {formName: 'goodsMessageForm', value: 5})
     }
   },
   methods: {

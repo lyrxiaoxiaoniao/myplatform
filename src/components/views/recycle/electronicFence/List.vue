@@ -10,7 +10,7 @@
                        icon="plus"
                        @click="addFence">新增</el-button>
           </el-col>
-          <el-select v-model="value"
+          <el-select v-model="searchForm.type"
                      placeholder="请选择">
             <el-option v-for="item in options"
                        :label="item.label"
@@ -19,10 +19,12 @@
           </el-select>
           <el-col :span="7">
             <el-input placeholder="请输入关键字"
-                      class="sc-table-header-select">
+                      class="sc-table-header-select"
+                      v-model="searchForm.keyword">
               <el-button slot="append"
                          class="sc-table-search-btn"
-                         icon="search"></el-button>
+                         icon="search"
+                         @click="getList(searchForm)"></el-button>
             </el-input>
           </el-col>
           <el-button type="primary"
@@ -33,15 +35,18 @@
       </div>
       <div slot="kobe-table-content"
            class="kobe-table">
-        <el-table :data="listData"
+        <el-table :data="response.data"
                   border>
           <el-table-column label="ID"
                            prop="id"></el-table-column>
-          <el-table-column label="围栏名称"></el-table-column>
-          <el-table-column label="围栏描述"></el-table-column>
-          <el-table-column label="划分方式">
-          </el-table-column>
-          <el-table-column label="限制车辆数"></el-table-column>
+          <el-table-column label="围栏名称"
+                           prop="name"></el-table-column>
+          <el-table-column label="围栏描述"
+                           prop="description"></el-table-column>
+          <el-table-column label="划分方式"
+                           prop="typeName"></el-table-column>
+          <el-table-column label="限制车辆数"
+                           prop="confine_vehicle"></el-table-column>
           <el-table-column label="操作"
                            width="200">
             <template scope="scope">
@@ -49,7 +54,6 @@
                          size="small"
                          @click="configItem(scope.row.id)"></el-button>
               <el-button icon="delete2"
-                         type="danger"
                          @click="deleteItem(scope.row.id)"
                          size="small"></el-button>
             </template>
@@ -77,6 +81,9 @@
 </template>
 
 <script>
+import config from 'src/config'
+import api from 'src/api'
+
 export default {
   data() {
     return {
@@ -84,12 +91,16 @@ export default {
       response: {},
       selectValue: '',
       options: [{
-        value: '1',
+        value: 1,
         label: '按多边形划分'
       },
       {
-        value: '2',
+        value: 0,
         label: '行政区域划分'
+      },
+      {
+        value: '',
+        label: '全部分类'
       }],
       advanceVisible: false,
       advanceSearchForm: {
@@ -98,6 +109,10 @@ export default {
         mobile: '',
         person: '',
         address: ''
+      },
+      searchForm: {
+        keyword: '',
+        type: ''
       },
       infoVisible: false,
       info: {
@@ -123,11 +138,68 @@ export default {
       this.$router.push('new')
     },
     configItem(id) {
-      this.$router.push('config')
+      this.$router.push({ path: 'config', query: { id } })
+    },
+    deleteItem(id) {
+      this.$confirm('此操作将永久删除该项目, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        api.POST(config.fence.delete, { ids: [id] }).then(res => {
+          if (res.status === 200 && res.data.errcode === '0000') {
+            this.getList()
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    transformData(data) {
+      data.data.forEach(i => {
+        if (i.type === 0) {
+          i.typeName = '行政区域划分'
+        } else if (i.type === 1) {
+          i.typeName = '多边形划分'
+        }
+      })
+      return data
+    },
+    getList(data = {}) {
+      api.GET(config.fence.index, data).then(res => {
+        if (res.status === 200 && res.data.errcode === '0000') {
+          this.response = this.transformData(res.data.data)
+        } else if (res.status === 200 && res.data.errcode === '5000') {
+          this.response.data = []
+        }
+      })
+    },
+    handleSizeChange(value) {
+      const data = {
+        currentPage: this.response.currentPage,
+        pageSize: value,
+        ...this.searchForm
+      }
+      this.getList(data)
+    },
+    handleCurrentChange(value) {
+      const data = {
+        currentPage: value,
+        pageSize: this.response.pageSize,
+        ...this.searchForm
+      }
+      this.getList(data)
     }
   },
   mounted() {
-
+    this.getList()
   }
 }
 </script>

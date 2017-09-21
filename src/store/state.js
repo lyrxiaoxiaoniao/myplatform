@@ -7,6 +7,8 @@ export default {
   },
   appInfo: {
   },
+  productInfo: {
+  },
   // Current Selected Case
   selectedCase: null,
   // Article Category

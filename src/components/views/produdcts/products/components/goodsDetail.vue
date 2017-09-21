@@ -15,6 +15,7 @@ export default {
       form: {}
     }
   },
+  props: ['getInfo'],
   methods: {
     updateData (data) {
       console.log(data)

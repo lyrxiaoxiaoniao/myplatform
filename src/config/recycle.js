@@ -93,5 +93,18 @@ export default {
     suttleMonth: '/rubbish/weighbridge/suttleMonth',
     suttleYear: '/rubbish/weighbridge/suttleYear',
     weighDetail: '/rubbish/weighbridge/weighDetail'
+  },
+  fence: {
+    index: '/rubbish/fence/index',
+    delete: '/rubbish/fence/delete',
+    region: '/rub/region/index',
+    create: '/rubbish/fence/create',
+    update: '/rubbish/fence/update',
+    query: '/rubbish/fence/query',
+    vehicleIndex: '/rubbish/fence/vehicle',
+    vehicleUnrelevance: '/rubbish/vehicle/unrelevance',
+    addVehicle: '/rubbish/vehicle/restrict',
+    deleteVehicle: '/rubbish/vehicle/remove',
+    gpsInfo: '/rubbish/gps/vehicle'
   }
 }
