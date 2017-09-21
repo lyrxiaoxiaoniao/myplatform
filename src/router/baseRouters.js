@@ -8,11 +8,14 @@ import SBNewUserView from 'components/views/framework/newuser/index.vue'
 import SBNewAuthView from 'components/views/framework/authority/index.vue'
 // 日志管理
 import LogIndex from 'components/views/framework/log/logIndex.vue'
+import MsLogIndex from 'components/views/framework/merchantSystem/log/logIndex.vue'
 
 // 角色管理
 import RoleIndex from 'components/views/framework/role/index.vue'
+import MsRoleIndex from 'components/views/framework/merchantSystem/role/index.vue'
 // 菜单管理
 import RcMenu from 'components/views/framework/menu/menuIndex.vue'
+import MsMenu from 'components/views/framework/merchantSystem/menu/menuIndex.vue'
 const baseRouters = [
   {
     // 商户模块路由
@@ -69,7 +72,12 @@ const baseRouters = [
       path: 'index',
       component: LogIndex,
       name: '日志管理',
-      meta: {description: '列表'}
+      meta: {description: '系统'}
+    }, {
+      path: 'merchant',
+      component: MsLogIndex,
+      name: '日志管理',
+      meta: {description: '商户'}
     }]
   }, {
     // 角色模块路由
@@ -82,7 +90,12 @@ const baseRouters = [
       path: 'index',
       component: RoleIndex,
       name: '角色管理',
-      meta: {description: '列表'}
+      meta: {description: '系统'}
+    }, {
+      path: 'merchant',
+      component: MsRoleIndex,
+      name: '角色管理',
+      meta: {description: '商户'}
     }]
   }, {
     // 菜单模块路由
@@ -95,7 +108,12 @@ const baseRouters = [
       path: 'index',
       component: RcMenu,
       name: '菜单管理',
-      meta: {description: '列表'}
+      meta: {description: '系统'}
+    }, {
+      path: 'merchant',
+      component: MsMenu,
+      name: '菜单管理',
+      meta: {description: '商户'}
     }]
   }
 ]
