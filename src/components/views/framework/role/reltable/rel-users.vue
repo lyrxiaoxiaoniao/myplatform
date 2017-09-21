@@ -18,16 +18,16 @@
                 <div slot="kobe-table-content" class="kobe-table">
                 <el-table
                     ref="multipleTable"
-                    height="300"
+                    max-height="400"
                     border
                     stripe
                     :data="response.data"
                     @selection-change="handleSelectionChange">
                     <el-table-column type="selection" width="40"></el-table-column>
-                    <el-table-column prop="id" label="ID" sortable width="100"></el-table-column>
+                    <el-table-column prop="id" label="ID" sortable width="80"></el-table-column>
                     <el-table-column prop="nickname" label="用户名称"></el-table-column>
                     <el-table-column prop="username" label="用户账号"></el-table-column>
-                    <el-table-column label="有效状态" width="90">
+                    <!-- <el-table-column label="有效状态" width="90">
                       <template scope="scope">
                         <el-switch
                           style="width:60px;"
@@ -37,8 +37,8 @@
                           @change="toswitch(scope.row.id)">
                         </el-switch>
                       </template>
-                    </el-table-column>
-                    <el-table-column width="80" label="操作">
+                    </el-table-column> -->
+                    <el-table-column width="70" label="操作">
                     <template scope="scope">
                         <el-button size="small" @click="deleteType(scope.row.id)" icon="delete2" title="移除"></el-button>
                     </template>

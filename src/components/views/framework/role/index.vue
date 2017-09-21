@@ -13,7 +13,7 @@
                 <el-button slot="append" @click="onSearch" icon="search"></el-button>
               </el-input>
             </el-col>
-            <el-button type="primary" @click="dialogAdvance = true">高级</el-button>
+            <el-button type="primary" @click="openAdvanced" icon="search" style="margin-left:10px;">高级</el-button>
             <el-button icon="upload2" type="primary" style="margin-left:10px;"></el-button>
             <el-button icon="setting" type="primary"></el-button>
           </el-row>
@@ -33,7 +33,7 @@
             <el-table-column prop="type" width="105" label="角色类别"></el-table-column>
             <el-table-column prop="account.id" label="账号数量" width="90"></el-table-column>
             <el-table-column prop="description" label="角色说明"></el-table-column>
-            <el-table-column label="创建时间">
+            <el-table-column label="创建时间" width="90">
               <template scope="scope">{{scope.row.created_at | toDateTime}}</template>
             </el-table-column>
             <el-table-column prop="detail_address" label="有效状态" width="90">
@@ -55,8 +55,8 @@
                 <!-- <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button> -->
                 <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button>
                 <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
-                <el-button size="small" @click="openPermission(scope.row)">权</el-button>
-                <el-button size="small" @click="openUsers(scope.row)">用</el-button>
+                <el-button size="small" @click="openPermission(scope.row)" class="fa fa-th-large"></el-button>
+                <el-button size="small" @click="openUsers(scope.row)" class="fa fa-link"></el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -83,64 +83,76 @@
 <!-- 高级搜索模态框 -->
     <el-dialog title="高级搜索" v-model="dialogAdvance">
         <el-form :model="advancedSearch" :label-width="formLabelWidth">
-           <el-form-item label="关键字">
-              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
+            <el-form-item label="关键字">
+              <el-input v-model="advancedSearch.keyword" auto-complete="off" placeholder="输入关键字"></el-input>
             </el-form-item>
             <el-form-item label="角色名称">
-              <el-input v-model="advancedSearch.display_name" auto-complete="off"></el-input>
-            </el-form-item>
+              <el-input v-model="advancedSearch.display_name" auto-complete="off" placeholder="输入角色名称"></el-input>
+            </el-form-item>         
             <el-form-item label="角色标识">
-              <el-input v-model="advancedSearch.name" auto-complete="off"></el-input>
+              <el-input v-model="advancedSearch.name" auto-complete="off" placeholder="角色标识"></el-input>
             </el-form-item>
-            <el-row>
-              <el-col :span="12">
-                <el-form-item label="角色类别">
-                  <el-select v-model="advancedSearch.type" placeholder="请选择">
-                    <el-option
-                      v-for="item in roleClass"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="归属商户" filterable placeholder="输入或选择商户">
-                  <el-select v-model="advancedSearch.account_id" placeholder="请选择">
-                    <el-option
-                      v-for="item in origins"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>            
-            <el-form-item label="是否启用">
-              <el-switch
-                v-model="advancedSearch.active"
-                on-text="是"
-                off-text="否">
-              </el-switch>
-            </el-form-item>
-            <el-form-item label="创建时间">
-              <el-date-picker
-                  v-model="advancedSearch.start_time"
-                  type="datetime"
-                  placeholder="选择开始时间">
-              </el-date-picker>
-              <el-date-picker
-                  v-model="advancedSearch.end_time"
-                  type="datetime"
-                  placeholder="选择结束时间">
-                </el-date-picker>
-            </el-form-item>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="角色类别">
+                <el-select v-model="advancedSearch.type" placeholder="请选择" style="width: 100%;">
+                  <el-option
+                    v-for="item in roleClass"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="归属商户" filterable placeholder="输入或选择商户">
+                <el-select v-model="advancedSearch.account_id" placeholder="请选择" style="width: 100%;">
+                  <el-option
+                    v-for="item in origins"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            </el-row>
+            <el-col :span="24">
+              <el-form-item label="是否启用">
+                <el-switch
+                  v-model="advancedSearch.active"
+                  on-text="是"
+                  off-text="否">
+                </el-switch>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="创建时间">
+                <el-col :span="11">
+                  <el-date-picker
+                    style="width: 100%;"
+                    v-model="advancedSearch.start_time"
+                    type="datetime"
+                    placeholder="选择开始时间">
+                  </el-date-picker>
+                </el-col>
+                <el-col class="line" :span="2">-</el-col>
+                <el-col :span="11">
+                  <el-date-picker
+                    style="width: 100%;"
+                    v-model="advancedSearch.end_time"
+                    type="datetime"
+                    placeholder="选择结束时间">
+                  </el-date-picker>
+                </el-col>
+              </el-form-item>
+            </el-col>
+          </el-row>            
         </el-form>
         <span slot="footer" class="dialog-footer">
-            <el-button @click="dialogAdvance = false">取 消</el-button>
-            <el-button type="primary" @click="advance">搜 索</el-button>
+          <el-button @click="dialogAdvance = false">取 消</el-button>
+          <el-button type="primary" @click="advance">搜 索</el-button>
         </span>
     </el-dialog>
     <!-- 新增 -->
@@ -152,7 +164,7 @@
           <el-row>
               <el-col :span="12">
                 <el-form-item label="角色类别">
-                  <el-select v-model="addForm.type" placeholder="请选择">
+                  <el-select v-model="addForm.type" placeholder="请选择" style="width: 100%;">
                     <el-option
                       v-for="item in roleClass"
                       :key="item.value"
@@ -164,7 +176,7 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="归属商户" filterable placeholder="输入或选择商户">
-                  <el-select v-model="addForm.account_id" placeholder="请选择">
+                  <el-select v-model="addForm.account_id" placeholder="请选择" style="width: 100%;">
                     <el-option
                       v-for="item in origins"
                       :key="item.value"
@@ -197,7 +209,7 @@
         <div slot="footer" class="dialog-footer">
           <el-row type="flex" justify="end">
             <el-button @click="addShow = false">取 消</el-button>
-            <el-button @click="submitForm('addForm')">确定</el-button>
+            <el-button type="primary" @click="submitForm('addForm')">确定</el-button>
           </el-row>
         </div>
       </el-dialog>
@@ -210,7 +222,7 @@
           <el-row>
               <el-col :span="12">
                 <el-form-item label="角色类别">
-                  <el-select v-model="detailForm.type" placeholder="请选择" class="fullwidth">
+                  <el-select v-model="detailForm.type" placeholder="请选择" style="width: 100%;">
                     <el-option
                       v-for="item in roleClass"
                       :key="item.value"
@@ -222,7 +234,7 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="归属商户" placeholder="输入或选择商户">
-                  <el-select v-model="detailForm.account_id" filterable placeholder="请选择" class="fullwidth">
+                  <el-select v-model="detailForm.account_id" filterable placeholder="请选择" style="width: 100%;">
                     <el-option
                       v-for="item in origins"
                       :key="item.value"
@@ -255,7 +267,7 @@
         <div slot="footer" class="dialog-footer">
           <el-row type="flex" justify="end">
             <el-button @click="detailShow = false">取 消</el-button>
-            <el-button @click="editForm()">确定</el-button>
+            <el-button type="primary" @click="editForm()">确定</el-button>
           </el-row>
         </div>
       </el-dialog>
@@ -337,23 +349,21 @@ import norel from './reltable/noRel-users'
 export default {
   data () {
     var checkName = (rule, value, callback) => {
-      let name = /^[a-zA-Z0-9_-]{0,64}$/
       if (!value) {
         return callback(new Error('角色标识不能为空'))
-      } else if (!name.test(value)) {
-        return callback(new Error('角色标识不能为中文，不超过64个英文字母'))
+      } else {
+        api.GET(config.fmrole.check, {name: value})
+        .then(response => {
+          if (response.data.errcode === '60000') {
+            return callback(new Error('有重名，请重新输入！'))
+          } else {
+            callback()
+          }
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
       }
-      api.GET(config.fmrole.check, {name: value})
-      .then(response => {
-        if (response.data.errcode === '60000') {
-          return callback(new Error('有重名，请重新输入！'))
-        } else {
-          callback()
-        }
-      })
-      .catch(error => {
-        this.$message.error(error)
-      })
     }
     return {
       addShow: false,
@@ -472,6 +482,10 @@ export default {
     }
   },
   methods: {
+    openAdvanced () {
+      this.advancedSearch.active = Boolean(this.advancedSearch.active)
+      this.dialogAdvance = true
+    },
     handleClick (tab, event) {
       if (tab.name === 'first') {
         this.firstId = true
@@ -644,8 +658,13 @@ export default {
         this.addShow = true
         this.dialogType = 'add'
         this.dialogTitle = '新增角色'
-        this.detailForm = {
-          id: ''
+        this.addForm = {
+          id: '',
+          account_id: '',
+          active: '',
+          description: '',
+          display_name: '',
+          type: ''
         }
       }
     },
@@ -860,5 +879,7 @@ export default {
     font-size: 14px;
     margin: 7px 0 0 7px;
 }
-
+.line{
+    text-align: center;
+}
 </style>

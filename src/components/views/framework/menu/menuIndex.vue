@@ -5,6 +5,7 @@
       <el-tree :data="data" :props="defaultProps"
               accordion
               :highlight-current="true"
+              :default-expanded-keys="[0]"
               node-key="id"
               @node-click="handleNodeClick">
       </el-tree>
@@ -26,20 +27,12 @@
                 </el-dropdown-menu>
               </el-dropdown>
             </el-col>
-            <el-select v-model="form.value" placeholder="所有信息" style="width:140px;">
-              <el-option
-                v-for="item in option"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
             <el-col :span="8">
               <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
                 <el-button slot="append" @click="onSearch" icon="search"></el-button>
               </el-input>
             </el-col>
-            <el-button type="primary" @click="dialogAdvance = true">高级</el-button>
+            <el-button type="primary" @click="openAdvance" icon="search" style="margin-left:10px;">高级</el-button>
             <el-button icon="upload2" type="primary" style="margin-left:10px;"></el-button>
             <el-button icon="setting" type="primary"></el-button>
           </el-row>
@@ -55,11 +48,17 @@
             <el-table-column prop="id" label="ID" width="60"></el-table-column>
             <el-table-column prop="display_name" label="菜单名称"></el-table-column>
             <el-table-column prop="name" label="菜单标识"></el-table-column>
-            <el-table-column prop="icon" label="图标" width="95">
+            <el-table-column prop="icon" label="图标" width="160">
+              <template scope="scope">
+                <el-row class="clearfix" style="vertical-align: middle;">
+                  <el-col :span="4" class="float-l"><i :class="scope.row.icon" class="margin-r"></i></el-col>
+                  <el-col :span="18" class="float-r">{{scope.row.icon}}</el-col>
+                </el-row>
+              </template>
             </el-table-column>
             <el-table-column prop="sort" label="同级排序" width="88"></el-table-column>
-            <el-table-column prop="url" label="菜单路由" width="88"></el-table-column>
-            <el-table-column label="创建时间">
+            <el-table-column prop="url" label="菜单路由" width="100"></el-table-column>
+            <el-table-column label="创建时间" width="90">
               <template scope="scope">{{scope.row.created_at | toDateTime}}</template>
             </el-table-column>
             <el-table-column label="有效状态" width="90">
@@ -74,7 +73,7 @@
               </template>
             </el-table-column>
             <el-table-column 
-              width="160"
+              width="158"
               label="操作"
               >
               <template scope="scope">
@@ -149,7 +148,7 @@
           </el-col>
           <el-col :span="24">
             <el-form-item label="菜单名称">
-              <el-input v-model="addData.display_name"></el-input>
+              <el-input v-model="addData.display_name" placeholder="请输入菜单名称"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -168,30 +167,30 @@
           </el-col>
           <el-col :span="24">
             <el-form-item label="菜单标识" prop="name">
-              <el-input v-model="addData.name"></el-input>
+              <el-input v-model="addData.name" placeholder="请输入菜单标识"></el-input>
             </el-form-item>
           </el-col>
           </el-col>
           <el-col :span="24">
             <el-form-item label="菜单图标">
-              <el-input v-model="addData.icon"></el-input>
+              <el-input v-model="addData.icon" placeholder="请输入菜单icon"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item label="访问路由">
-              <el-input v-model="addData.url"></el-input>
+              <el-input v-model="addData.url" placeholder="请输入访问路由"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item label="菜单说明">
-              <el-input type="textarea" v-model="addData.memo"></el-input>
+              <el-input type="textarea" v-model="addData.memo" placeholder="请输入菜单说明"></el-input>
             </el-form-item>
           </el-col>
         </el-row> 
       </el-form>
       <div slot="footer" class="dialog-footer">
           <el-button @click="addDialog = false">取消</el-button>
-          <el-button @click="submitForm('addData')">确定</el-button>
+          <el-button @click="submitForm('addData')" type="primary">确定</el-button>
       </div>
     </el-dialog>
     <!-- 新增 end -->
@@ -254,44 +253,50 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
           <el-button @click="editDialog = false">取消</el-button>
-          <el-button @click="editForm()">确定</el-button>
+          <el-button type="primary" @click="editForm()">确定</el-button>
       </div>
     </el-dialog>
     <!-- 修改 end -->
     <!-- 高级搜索模态框 -->
     <el-dialog title="高级搜索" v-model="dialogAdvance">
         <el-form :model="advancedSearch" :label-width="formLabelWidth">
-           <el-form-item label="关键字">
-              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="菜单名称">
-              <el-input v-model="advancedSearch.display_name" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="菜单标识">
-              <el-input v-model="advancedSearch.name" auto-complete="off"></el-input>
-            </el-form-item>            
-            <el-form-item label="是否启用">
-              <el-switch
-                on-text="是"
-                v-model="advancedSearch.active"
-                off-text="否">
-              </el-switch>
-            </el-form-item>       
-            <el-form-item label="创建时间">
-              <el-row type="flex" justify="space-around">
-                <el-date-picker
-                  v-model="advancedSearch.start_time"
-                  type="datetime"
-                  placeholder="选择开始时间">
-                </el-date-picker>
-                <el-date-picker
-                  v-model="advancedSearch.end_time"
-                  type="datetime"
-                  placeholder="选择结束时间">
-                </el-date-picker>
-              </el-row>
-            </el-form-item>
-            
+         <el-form-item label="关键字">
+            <el-input v-model="advancedSearch.keyword" placeholder="输入关键字"></el-input>
+          </el-form-item>
+          <el-form-item label="菜单名称">
+            <el-input v-model="advancedSearch.display_name" placeholder="输入菜单名称"></el-input>
+          </el-form-item>
+          <el-form-item label="菜单标识">
+            <el-input v-model="advancedSearch.name" placeholder="输入菜单标识"></el-input>
+          </el-form-item>            
+          <el-form-item label="是否启用">
+            <el-switch
+              on-text="是"
+              v-model="advancedSearch.active"
+              off-text="否">
+            </el-switch>
+          </el-form-item>    
+          <el-form-item label="创建时间">
+              <el-row>
+                <el-col :span="11">
+                  <el-date-picker
+                    v-model="advancedSearch.start_time"
+                    style="width: 100%"
+                    type="datetime"
+                    placeholder="选择开始时间">
+                  </el-date-picker>
+                </el-col>
+                <el-col :span="2" class="line">-</el-col>
+                <el-col :span="11">
+                  <el-date-picker
+                    v-model="advancedSearch.end_time"
+                    style="width: 100%"
+                    type="datetime"
+                    placeholder="选择结束时间">
+                  </el-date-picker>
+                </el-col>
+              </el-row>  
+          </el-form-item>            
         </el-form>
         <span slot="footer" class="dialog-footer">
             <el-button @click="dialogAdvance = false">取 消</el-button>
@@ -299,7 +304,7 @@
         </span>
     </el-dialog>
     <!-- 菜单关联权限弹框 -->
-       <el-dialog v-if="reload" title="菜单关联权限" v-model="correlateShow">
+      <el-dialog v-if="reload" title="菜单关联权限" v-model="correlateShow">
         <el-form :model="permissionForm" :label-width="formLabelWidth">
            <el-form-item label="菜单名称">
               <el-input v-model="permissionForm.display_name" auto-complete="off"></el-input>
@@ -333,23 +338,21 @@ import norelTab from './reltable/noRel-perssion'
 export default {
   data () {
     var checkName = (rule, value, callback) => {
-      let name = /^[a-zA-Z0-9_-]{0,64}$/
       if (!value) {
         return callback(new Error('菜单标识不能为空'))
-      } else if (!name.test(value)) {
-        return callback(new Error('菜单标识不能为中文，不超过64个英文字母'))
+      } else {
+        api.GET(config.frameWorkMenu.check, {name: value})
+        .then(response => {
+          if (response.data.errcode === '60000') {
+            return callback(new Error('有重名，请重新输入！'))
+          } else {
+            callback()
+          }
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
       }
-      api.GET(config.frameWorkMenu.check, {name: value})
-      .then(response => {
-        if (response.data.errcode === '60000') {
-          return callback(new Error('有重名，请重新输入！'))
-        } else {
-          callback()
-        }
-      })
-      .catch(error => {
-        this.$message.error(error)
-      })
     }
     return {
       editDialog: false,
@@ -461,6 +464,10 @@ export default {
     norelTab
   },
   methods: {
+    openAdvance () {
+      this.advancedSearch.active = Boolean(this.advancedSearch.active)
+      this.dialogAdvance = true
+    },
     handleClick (tab, event) {
       if (tab.name === 'first') {
         this.firstId = true
@@ -582,25 +589,29 @@ export default {
           ...this.classData,
           ...data
         }
+        console.log(data)
         this.stepsSelection = []
+        this.stepsSelection.push(0)
         if (data.parent) {
           this.stepsSelection.push(data.parent.id)
         } else {
           this.stepsSelection.push(data.id)
         }
       } else {
+        this.stepsSelection = []
         this.dialogType = 'add'
         this.dialogTitle = '新增菜单'
+        this.addData = {
+          parent_id: [],
+          display_name: '',
+          sort: null,
+          active: 1,
+          name: '',
+          memo: '',
+          url: '',
+          icon: ''
+        }
         this.addDialog = true
-        // this.classData = {
-        //   parent_id: [],
-        //   display_name: '',
-        //   sort: null,
-        //   active: 1,
-        //   description: '',
-        //   logo: '',
-        //   icon: ''
-        // }
       }
     },
     submitForm (formName) {
@@ -609,7 +620,7 @@ export default {
           this.addData.active = Number(this.addData.active)
           var obj = this.addData
           var pid = this.stepsSelection
-          obj.parent_id = pid.shift()
+          obj.parent_id = pid.pop()
           console.log(obj)
           api.POST(config.frameWorkMenu.create, obj)
           .then(response => {
@@ -749,9 +760,15 @@ export default {
       .then(response => {
         var newData = response.data.data
         this.iteration(newData)
-        newData.unshift({ id: 0, display_name: '根级分类', label: '根级分类', value: 0 })
-        this.data = newData
-        this.cascaderData = newData
+        var boot = [{
+          id: 0,
+          display_name: '根级分类',
+          label: '根级分类',
+          value: 0,
+          children: [...newData]
+        }]
+        this.data = boot
+        this.cascaderData = boot
       })
       .catch(error => {
         this.$message.error(error)
@@ -781,6 +798,22 @@ export default {
 }
 </script>
 <style scoped>
+.line{
+  text-align: center;
+}
+.clearfix {
+  *zoom:1;
+}
+.float-l {
+  float: left;
+}
+.float-r {
+  float:right;
+}
+.margin-r {
+  margin-top: 80%;
+  margin-right: 22px;
+}
 .GD-container{
     height: 100%;
     margin-top: 1.5rem;

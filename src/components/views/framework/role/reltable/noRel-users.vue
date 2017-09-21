@@ -19,7 +19,7 @@
                 <el-table
                     ref="multipleTable"
                     border
-                    height="300"
+                    max-height="400"
                     stripe
                     :data="response.data"
                     @selection-change="handleSelectionChange">
@@ -28,7 +28,7 @@
                     <el-table-column prop="nickname" label="用户名称"></el-table-column>
                     <el-table-column prop="username" label="用户账号"></el-table-column>
                     <!-- <el-table-column prop="description" label="用户说明" width="150"></el-table-column> -->
-                    <el-table-column label="有效状态" width="90">
+                    <!-- <el-table-column label="有效状态" width="90">
                       <template scope="scope">
                         <el-switch
                           style="width:60px;"
@@ -38,10 +38,10 @@
                           @change="toswitch(scope.row.id)">
                         </el-switch>
                       </template>
-                    </el-table-column>
+                    </el-table-column> -->
                     <el-table-column width="80" label="操作">
                     <template scope="scope">
-                        <el-button size="small" @click="correlation(scope.row.id)" title="关联">关联</el-button>
+                        <el-button size="small" @click="correlation(scope.row.id)" title="关联" class="fa fa-th-large"></el-button>
                     </template>
                     </el-table-column>
                 </el-table>

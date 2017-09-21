@@ -19,16 +19,16 @@
                 <el-table
                     ref="multipleTable"
                     border
-                    height="400"
+                    max-height="400"
                     stripe
                     :data="response.data"
                     @selection-change="handleSelectionChange">
-                    <el-table-column type="selection" width="40"></el-table-column>
-                    <el-table-column prop="id" label="ID" sortable width="80"></el-table-column>
-                    <el-table-column prop="display_name" label="权限点名称" width="150"></el-table-column>
-                    <el-table-column prop="name" label="权限标识" width="150"></el-table-column>
-                    <el-table-column prop="description" label="权限说明" width="150"></el-table-column>
-                    <el-table-column label="有效状态" width="90">
+                    <el-table-column type="selection" width="45"></el-table-column>
+                    <el-table-column prop="id" label="ID" sortable width="70"></el-table-column>
+                    <el-table-column prop="display_name" label="权限点名称" width="120"></el-table-column>
+                    <el-table-column prop="name" label="权限标识"></el-table-column>
+                    <el-table-column prop="description" label="权限说明"></el-table-column>
+                    <!-- <el-table-column label="有效状态" width="80">
                       <template scope="scope">
                         <el-switch
                           style="width:60px;"
@@ -38,8 +38,8 @@
                           @change="toswitch(scope.row.active,scope.row.id)">
                         </el-switch>
                       </template>
-                    </el-table-column>
-                    <el-table-column width="80" label="操作">
+                    </el-table-column> -->
+                    <el-table-column width="70" label="操作">
                     <template scope="scope">
                         <el-button size="small" @click="correlation(scope.row.id)" class="fa fa-th-large" title="关联"></el-button>
                     </template>
