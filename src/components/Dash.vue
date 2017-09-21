@@ -101,7 +101,8 @@
             <li class="dropdown user user-menu">
               <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
                 <img v-bind:src="user.avatar ? user.avatar : 'static/img/defimg1.png'" class="user-image" alt="User Image">
-                <span class="hidden-xs">{{ user.displayName }}</span>
+                <!-- <span class="hidden-xs">{{ user.displayName }}</span> -->
+                <span class="hidden-xs">{{ user.display_name }}</span>
               </a>
               <ul class="dropdown-menu user-setting-menu">
                 <li class="user-header">
@@ -128,7 +129,7 @@
         </div>
       </nav>
     </header>
-    <sidebar :display-name="user.displayName"
+    <sidebar :display-name="user.display_name"
              :picture-url="user.avatar ? user.avatar : 'static/img/defimg1.png'"/>
 
     <div class="content-wrapper">
@@ -182,7 +183,7 @@ export default {
     ]),
     user () {
       return {
-        displayName: this.userInfo.nickname,
+        display_name: this.userInfo.nickname,
         avatar: this.userInfo.avatar
       }
     }

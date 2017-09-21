@@ -10,7 +10,7 @@
         </div>
         <div class="pull-left info">
           <div>
-            <p class="white">{{ displayName }}</p>
+            <p class="white">{{ display_name }}</p>
           </div>
           <a href="javascript:;">
             <i class="fa fa-circle text-success"></i>在线
@@ -50,7 +50,7 @@ import config from 'src/config'
 
 export default {
   name: 'Sidebar',
-  props: ['displayName', 'pictureUrl'],
+  props: ['display_name', 'pictureUrl'],
   components: {SidebarMenu},
   data () {
     return {
