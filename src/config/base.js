@@ -3,6 +3,8 @@
  * 罗湖城管垃圾接口列表
  */
 export default {
+  // Dash 配置信息
+  dashconfig: '/admin/ext/config',
   // 商户关联
   merchantRole: {
     // 1312

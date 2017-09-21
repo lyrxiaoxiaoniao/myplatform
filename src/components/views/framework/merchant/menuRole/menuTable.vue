@@ -5,7 +5,7 @@
       <el-col :span="12">
          <!-- <el-button type="primary" @click="onFresh">反选</el-button> -->
         <el-button type="primary" @click="onFresh">刷新</el-button>
-       <el-button type="primary" @click="onRelate">确定</el-button>
+       <el-button type="primary" @click="onRelate">保存</el-button>
       </el-col>
        <el-col :span="12">
           <el-input
@@ -22,12 +22,14 @@
         :props="defaultProps"
         default-expand-all
         show-checkbox
+        check-strictly='true'
         node-key="id"
         :default-checked-keys="checkKeys"
         :filter-node-method="filterNode"
         ref="tree"
         @check-change="handleNodeClick">
       </el-tree>
+      <p style="margin-top:10px;">选择子菜单时，必须选择<span style="color: red;">父级菜单</span>。 已选择<span style="color: red;">{{checkKeys.length}}</span>个菜单</p>
   </div>
 </div>
 </template>

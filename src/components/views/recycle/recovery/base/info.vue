@@ -5,7 +5,7 @@
         <div>{{selected.name}}</div>
         <div>
           <el-button @click="goBack">返回</el-button>
-          <el-button type="primary">修改</el-button>
+          <el-button @click="editType" type="primary">修改</el-button>
         </div>
       </div>
       <div class="lh-form">
@@ -139,15 +139,32 @@ export default {
       this.selected.license = res.data[0]
     },
     beforeAvatarUpload (file) {
-      const isJPG = file.type === 'image/jpeg'
+      const isJPG = file.type === 'image/jpeg' || 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 10
       if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!')
+        this.$message.error('上传头像图片只能是 JPG/PNG 格式!')
       }
       if (!isLt2M) {
         this.$message.error('上传头像图片大小不能超过 10MB!')
       }
       return isJPG && isLt2M
+    },
+    onSuccess (string) {
+      this.$notify({
+        title: '成功',
+        message: string,
+        type: 'success'
+      })
+    },
+    editType () {
+      api.POST(config.recovery.edit, this.selected)
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.onSuccess('修改成功')
+        } else {
+          this.$message.error(response.data.err.msg)
+        }
+      })
     },
     getData () {
       api.GET(config.recovery.show, {id: this.id})

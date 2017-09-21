@@ -554,6 +554,10 @@ export default {
                 width: 100%;
                 height: 250px;
                 padding: 10px 30px;
+                img {
+                    width: 100%;
+                    height: 100%;
+                }
             }
             .ca-form {
                 padding: 1rem 2rem 1rem 1rem;

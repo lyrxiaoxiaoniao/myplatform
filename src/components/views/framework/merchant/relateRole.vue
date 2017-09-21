@@ -56,7 +56,7 @@
         </div>
     </kobe-table>
     <!-- 关联弹窗 -->
-    <el-dialog title="用户关联权限" v-model="relaShowDialog" top="5%">
+    <el-dialog title="商户关联权限" v-model="relaShowDialog" top="5%">
         <el-form :model="relaForm" label-width="80px">
             <el-row>
               <el-col :span="12">
@@ -82,6 +82,10 @@
               <el-tab-pane label="待关联权限" name="second">
                 <relate-role-table v-if="isSecond" :userid="usersid"></relate-role-table>
               </el-tab-pane>
+              <el-tab-pane label="关联菜单" name="third">
+                <menu-role-table v-if="isThird" :userid="usersid"></menu-role-table>
+                <!-- <relate-role-table v-if="isThird" :userid="usersid"></relate-role-table> -->
+              </el-tab-pane>
             </el-tabs>
         </el-form>
         <div slot="footer" class="dialog-footer" style="margin-top:-20px;">
@@ -90,7 +94,7 @@
         </div>
     </el-dialog>
     <!-- 商户关联菜单 -->
-    <el-dialog title="商户关联菜单" v-model="dialogVisible" top="5%">
+    <!-- <el-dialog title="商户关联菜单" v-model="dialogVisible" top="5%">
         <el-form :model="relaForm" label-width="80px">
             <el-row>
               <el-col :span="12">
@@ -115,7 +119,7 @@
             <el-button @click="saveRelaMenu" >取消</el-button>
             <el-button type="primary" @click="saveRelaMenu">关闭</el-button>
         </div>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 <script>
@@ -138,6 +142,7 @@ export default {
       activeName: 'first',
       isFirst: true,
       isSecond: false,
+      isThird: false,
       multipleSelection: [],
       response: {
         data: null
@@ -158,9 +163,15 @@ export default {
       if (tab.name === 'first') {
         this.isFirst = true
         this.isSecond = false
+        this.isThird = false
       } else if (tab.name === 'second') {
         this.isFirst = false
         this.isSecond = true
+        this.isThird = false
+      } else if (tab.name === 'third') {
+        this.isFirst = false
+        this.isSecond = false
+        this.isThird = true
       }
     },
     relaType (data) {
@@ -171,14 +182,14 @@ export default {
         ...data
       }
     },
-    relaMenuType (data) {
-      this.usersid = data.id
-      this.dialogVisible = true
-      this.relaForm = {
-        ...this.relaForm,
-        ...data
-      }
-    },
+    // relaMenuType (data) {
+    //   this.usersid = data.id
+    //   this.dialogVisible = true
+    //   this.relaForm = {
+    //     ...this.relaForm,
+    //     ...data
+    //   }
+    // },
     relaCloseDialog () {
       this.relaShowDialog = false
     },

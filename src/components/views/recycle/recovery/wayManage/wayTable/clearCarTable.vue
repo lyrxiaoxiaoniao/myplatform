@@ -3,7 +3,7 @@
     <div class="lh-header">
         <div>清运车辆</div>
         <div>
-          <el-button>解除</el-button>
+          <el-button @click="allDelete">解除</el-button>
           <el-button @click="openAdd" type="primary">添加</el-button>
         </div>
     </div>
@@ -17,14 +17,14 @@
             :data="response.data"
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="40"></el-table-column>
-            <el-table-column prop="id" label="ID" sortable width="80"></el-table-column>
-            <el-table-column prop="brand" label="品牌" width="200"></el-table-column>
+            <el-table-column prop="id" label="ID" width="70"></el-table-column>
+            <el-table-column prop="brand" label="品牌" width="150"></el-table-column>
             <el-table-column prop="companyName" label="所属清运公司"></el-table-column>
             <el-table-column prop="number" label="车牌号"></el-table-column>
             <el-table-column prop="id" label="驾驶人"></el-table-column>
-            <el-table-column width="95" label="操作">
+            <el-table-column width="80" label="操作">
               <template scope="scope">
-                <el-button>解除</el-button>
+                <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -46,7 +46,7 @@
         </div>
     </kobe-table>
     <el-dialog title="添加清运车辆" v-model="showDialog">
-        <kobe-table>
+        <kobe-table style="margin-top: -20px;">
           <div slot="kobe-table-header" class="kobe-table-header">
              <el-row type="flex" justify="end">
                 <el-col :span="8">
@@ -64,8 +64,8 @@
               :data="selected.data"
               @selection-change="handleSelectionChange">
               <el-table-column type="selection" width="40"></el-table-column>
-              <el-table-column prop="id" label="ID" sortable width="80"></el-table-column>
-              <el-table-column prop="brand" label="品牌" width="200"></el-table-column>
+              <el-table-column prop="id" label="ID" width="80"></el-table-column>
+              <el-table-column prop="brand" label="品牌" width="150"></el-table-column>
               <el-table-column prop="companyName" label="所属清运公司"></el-table-column>
               <el-table-column prop="number" label="车牌号"></el-table-column>
               <el-table-column prop="id" label="驾驶人"></el-table-column>
@@ -118,12 +118,35 @@ export default {
   methods: {
     openAdd () {
       this.showDialog = true
+      this.getNoList()
+    },
+    allDelete () {
+      this.deleteType()
     },
     closeDialog () {
       this.showDialog = false
     },
+    onSuccess (string) {
+      this.$notify({
+        title: '成功',
+        message: string,
+        type: 'success'
+      })
+    },
     addConfirm () {
-      console.log(1)
+      api.POST(config.recovery.wayCarAdd, {
+        ids: this.ids,
+        id: this.wayId
+      })
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.onSuccess('添加成功')
+          this.closeDialog()
+          this.getList()
+        } else {
+          this.$message.error('发生错误，请重试')
+        }
+      })
     },
     toggleSelection (rows) {
       if (rows) {
@@ -139,6 +162,41 @@ export default {
       this.ids = []
       this.multipleSelection.forEach(v => {
         this.ids.push(v.id)
+      })
+    },
+    deleteType (id) {
+      if (id) {
+        this.ids = []
+        this.ids.push(id)
+      }
+      if (this.ids.length === 0) {
+        this.$confirm('请进行正确操作，请先勾选清运车辆？', '错误', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'error'
+        }).then(() => {
+          return
+        }).catch(() => {
+          return
+        })
+        return
+      }
+      this.$confirm('是否确认是否删除清运车辆', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        api.POST(config.recovery.wayCarRemove, {
+          ids: this.ids
+        })
+        .then(response => {
+          if (response.data.errcode === '0000') {
+            this.onSuccess('删除成功')
+            this.getList()
+          } else {
+            this.$message.error('发生错误，请重试')
+          }
+        })
       })
     },
     handleSizeChange (value) {
@@ -191,15 +249,15 @@ export default {
       })
     },
     getNoList (data = {}) {
-      // api.GET(config.recovery.wayCar, {...data, recycleId: this.recycleId, id: this.wayId})
-      // .then(response => {
-      //   if (response.data.errcode === '0000') {
-      //     this.response = response.data.data
-      //   }
-      // })
-      // .catch(error => {
-      //   this.$message.error(error)
-      // })
+      api.GET(config.recovery.wayCarRelate, {...data, recycleId: this.recycleId, id: this.wayId})
+      .then(response => {
+        if (response.data.errcode === '0000') {
+          this.selected = response.data.data
+        }
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
     }
   },
   mounted () {

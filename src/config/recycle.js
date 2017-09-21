@@ -31,7 +31,13 @@ export default {
     wayRecycle: '/rounter/recycle/show',
     wayHistory: '/rounter/history/index',
     wayCar: '/rounter/vehicle/index',
-    wayCater: '/rounter/cater/index'
+    wayCater: '/rounter/cater/index',
+    wayCarRelate: '/rounter/vehicle/addition/index',
+    wayCaterRelate: '/rounter/cater/addition/index',
+    wayCarAdd: '/rounter/vehicle/add',
+    wayCarRemove: '/rounter/vehicle/delete',
+    wayCaterAdd: '/rounter/cater/add',
+    wayCaterRemove: '/rounter/cater/delete'
   },
   village: {
     list: '/rubbish/community/index',

@@ -117,7 +117,7 @@
     <!-- 添加弹窗start -->
     <el-dialog title="新增用户" v-model="addShowDialog" top="5%">
       <el-form :model="addMerchant" :rules="rules" label-width="80px" ref="addMerchant">
-        <el-row>
+        <el-row style="border-bottom: 1px solid lightgray;margin-bottom: 30px;">
         <el-col :span="24">
           <el-form-item label="用户名" prop="username">
             <el-input v-model="addMerchant.username" placeholder="请输入用户名"></el-input>
@@ -150,7 +150,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="用户归属">
-              <el-select v-model="addMerchant.account_id" placeholder="请选择" class="fullwidth">
+              <el-select v-model="addMerchant.account_id" filterable placeholder="请选择" class="fullwidth">
                   <el-option
                   v-for="item in optionAccount"
                   :key="item.id"
@@ -160,6 +160,8 @@
               </el-select>
           </el-form-item>
         </el-col>
+        </el-row>
+        <el-row>
         <el-col :span="12">
           <el-form-item label="真实姓名">
               <el-input v-model="addMerchant.realname" placeholder="真实姓名"></el-input>
@@ -221,22 +223,12 @@
     <!-- 修改弹窗start -->
     <el-dialog title="修改用户" v-model="editShowDialog" top="5%">
        <el-form :model="editMerchant" label-width="80px">
-        <el-row>
+        <el-row style="border-bottom: 1px solid lightgray;margin-bottom: 30px;">
         <el-col :span="24">
           <el-form-item label="用户名">
             <el-input v-model="editMerchant.username" placeholder="请输入用户名"></el-input>
           </el-form-item>
         </el-col>
-        <!-- <el-col :span="12">
-          <el-form-item label="登录密码">
-              <el-input v-model="editMerchant.password" placeholder="密码"></el-input>
-          </el-form-item>
-        </el-col> -->
-        <!-- <el-col :span="12">
-          <el-form-item label="确认密码">
-              <el-input v-model="editMerchant.password" placeholder="密码"></el-input>
-          </el-form-item>
-        </el-col> -->
         <el-col :span="12">
           <el-form-item label="安全手机">
               <el-input v-model="editMerchant.phone" placeholder="安全手机"></el-input>
@@ -254,7 +246,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="用户归属">
-              <el-select v-model="editMerchant.account_id" placeholder="请选择" class="fullwidth">
+              <el-select v-model="editMerchant.account_id" filterable placeholder="请选择" class="fullwidth">
                   <el-option
                   v-for="item in optionAccount"
                   :key="item.id"
@@ -264,6 +256,8 @@
               </el-select>
           </el-form-item>
         </el-col>
+        </el-row>
+        <el-row>
         <el-col :span="12">
           <el-form-item label="真实姓名">
               <el-input v-model="editMerchant.realname" placeholder="真实姓名"></el-input>
@@ -909,7 +903,7 @@ export default {
     getMerchantList (data = {}) {
       api.GET(config.merchant.index, {
         currentPage: 1,
-        pageSize: 100
+        pageSize: 10000
       })
       .then(response => {
         if (response.data.errcode === '0000') {

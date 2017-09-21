@@ -22,12 +22,14 @@
         :props="defaultProps"
         default-expand-all
         show-checkbox
+        check-strictly='true'
         node-key="id"
         :default-checked-keys="checkKeys"
         :filter-node-method="filterNode"
         ref="tree"
         @check-change="handleNodeClick">
       </el-tree>
+      <p style="margin-top:10px;">选择子菜单时，必须选择<span style="color: red;">父级菜单</span>。 已选择<span style="color: red;">{{checkKeys.length}}</span>个菜单</p>
   </div>
 </div>
 </template>

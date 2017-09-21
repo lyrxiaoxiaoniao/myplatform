@@ -17,6 +17,7 @@
         <div slot="kobe-table-content" class="kobe-table">
             <el-table
               ref="multipleTable"
+              style="max-height: 300px;overflow: auto;"
               border
               stripe
               :data="response.data"

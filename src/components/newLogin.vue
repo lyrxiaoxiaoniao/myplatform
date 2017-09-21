@@ -237,6 +237,7 @@ export default {
         title.innerHTML = '深传互动政务新媒体平台'
         this.title = '深传互动政务新媒体平台'
         this.cover = 'static/img/login/banner@2x.png'
+        fav.href = 'static/img/favicon-shencom2.ico'
     }
   },
   components: {
