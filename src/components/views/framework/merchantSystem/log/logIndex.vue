@@ -4,17 +4,8 @@
         <div slot="kobe-table-header" class="kobe-table-header">      
           <el-row type="flex" justify="end">
             <el-col :span="14">
-              <el-button @click="refresh" type="primary">刷新</el-button>
-              <el-button @click="deleteType()" type="primary">批量删除</el-button>                 
+              <el-button @click="refresh" type="primary">刷新</el-button>                
             </el-col>
-            <el-select v-model="form.audit_state" placeholder="所有信息" style="width:140px;">
-              <el-option
-                v-for="item in option"
-                :key="item.audit_state"
-                :label="item.label"
-                :value="item.audit_state">
-              </el-option>
-            </el-select>
             <el-col :span="8">
               <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
                 <el-button slot="append" @click="onSearch" icon="search"></el-button>
@@ -32,24 +23,29 @@
             stripe
             :data="response.data"
             @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="55"></el-table-column>
+            <el-table-column type="selection" width="45"></el-table-column>
             <el-table-column prop="id" sortable label="ID" width="80"></el-table-column>
-            <el-table-column prop="name" label="商户名" width="150"></el-table-column>
-            <el-table-column prop="duty_name" label="操作员" width="95">
+    <!--         <el-table-column prop="account.name" label="商户名" width="150"></el-table-column> -->
+            <el-table-column label="操作员" width="95">
+              <template scope="scope">
+                <div v-if="scope.row.user_type">{{scope.row.user.nickname}}（{{scope.row.user.username}}）</div>
+                <div v-if="!scope.row.user_type">{{scope.row.wx_user.nickname}}</div>
+              </template>
             </el-table-column>
-            <el-table-column prop="mobile" width="105" label="模块"></el-table-column>
-            <el-table-column prop="region_id" label="操作标识"></el-table-column>
-            <el-table-column prop="region_id" label="操作说明"></el-table-column>
-            <el-table-column prop="region_id" label="IP"></el-table-column>
-            <el-table-column prop="detail_address" label="操作时间"></el-table-column>
+            <!-- <el-table-column prop="module" width="105" label="模块"></el-table-column> -->
+            <el-table-column prop="url" label="url"></el-table-column>
+            <el-table-column prop="agent" label="agent"></el-table-column>
+            <el-table-column prop="created_ip" label="IP" width="101"></el-table-column>
+            <el-table-column prop="created_at" label="操作时间" width="90">
+              <template scope="scope">{{scope.row.created_at | toDateTime}}</template>
+            </el-table-column>
             <el-table-column 
-              width="170"
+              width="120"
               label="操作"
               >
               <template scope="scope">
                 <!-- <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button> -->
-                <el-button @click="detail(scope.row.id)" size="small" icon="edit"></el-button>
-                <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
+                <el-button @click="detail(scope.row)" size="small" icon="information"></el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -70,38 +66,42 @@
           </el-row>
         </div>
       </kobe-table>
-    <el-dialog v-model="dialogVisible" size="tiny">
-      <img width="100%" :src="dialogImageUrl" alt="">
-    </el-dialog>
 <!-- 高级搜索模态框 -->
     <el-dialog title="高级搜索" v-model="dialogAdvance">
-        <el-form :model="advancedSearch">
-           <el-form-item label="关键字" :label-width="formLabelWidth">
-              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
+        <el-form :model="advancedSearch" label-width="75px">
+           <el-form-item label="关键字">
+              <el-input v-model="advancedSearch.keyword"></el-input>
             </el-form-item>
-            <el-form-item label="商户名称" :label-width="formLabelWidth">
-              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
+   <!--          <el-form-item label="归属商户">
+              <el-select v-model="advancedSearch.account_id" filterable placeholder="请选择" style="width:100%;">
+                <el-option
+                  v-for="item in origins"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item> -->
+            <el-form-item label="用户名" >
+              <el-input v-model="advancedSearch.username"></el-input>
             </el-form-item>
-            <el-form-item label="用户名" :label-width="formLabelWidth">
-              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
+            <el-form-item label="url" >
+              <el-input v-model="advancedSearch.url"></el-input>
             </el-form-item>
-            <el-form-item label="操作标识" :label-width="formLabelWidth">
-              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
+            <el-form-item label="IP地址" >
+              <el-input v-model="advancedSearch.created_ip"></el-input>
             </el-form-item>
-            <el-form-item label="IP地址" :label-width="formLabelWidth">
-              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="操作模块" :label-width="formLabelWidth">
-              <el-input v-model="advancedSearch.keyword" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="操作时间" :label-width="formLabelWidth">
+          <!--   <el-form-item label="操作模块" >
+              <el-input v-model="advancedSearch.keyword"></el-input>
+            </el-form-item> -->
+            <el-form-item label="操作时间" >
               <el-date-picker
-                  v-model="advancedSearch.keyword"
+                  v-model="advancedSearch.start_time"
                   type="datetime"
                   placeholder="选择开始时间">
               </el-date-picker>
               <el-date-picker
-                  v-model="advancedSearch.keyword"
+                  v-model="advancedSearch.end_time"
                   type="datetime"
                   placeholder="选择结束时间">
                 </el-date-picker>
@@ -114,62 +114,73 @@
     </el-dialog>
     <el-dialog title="操作详情查看" v-model="detailShow">
         <el-form :model="detailForm" ref="detailForm" label-width="90px">
-          <el-form-item label="商户名" prop="id">
-            <el-input v-model="detailForm.id" placeholder="请输入商户名"></el-input>
+          <el-form-item label="商户名：">
+            <p class="border">{{detailForm.account.name}}</p>
           </el-form-item>
           <el-row>
-            <el-col :span="11">
-              <el-form-item label="操作员" prop="id">
-                <el-input v-model="detailForm.id" placeholder="请输入操作员"></el-input>
+            <el-col :span="12">
+              <el-form-item label="操作员类别：">
+                <p class="border" v-if="detailForm.user_type">
+                  管理员
+                </p>
+                <p class="border" v-if="!detailForm.user_type">
+                  微信用户
+                </p>
               </el-form-item>
             </el-col>
-            <el-col :offset="2" :span="11">
-              <el-form-item label="操作员姓名" prop="id">
-                <el-input v-model="detailForm.id" placeholder="请输入操作员姓名"></el-input>
+            <el-col :span="12">
+              <el-form-item label="操作员姓名：">
+                <p class="border" v-if="detailForm.user_type">
+                  {{detailForm.user.nickname}}
+                </p>
+                <p class="border" v-if="!detailForm.user_type">
+                  {{detailForm.wx_user.nickname}}
+                </p>
               </el-form-item>
             </el-col>
           </el-row>
 
           <el-row>
-            <el-col :span="11">
+            <!-- <el-col :span="11">
               <el-form-item label="操作模块" prop="id">
                 <el-input v-model="detailForm.id"></el-input>
               </el-form-item>
+            </el-col> -->
+            <el-col :span="12">
+              <el-form-item label="操作时间：">
+                <p class="border">{{detailForm.created_at | toDateTime}}</p>
+              </el-form-item>
             </el-col>
-            <el-col :offset="2" :span="11">
-              <el-form-item label="操作标识" prop="id">
-                <el-input v-model="detailForm.id"></el-input>
+            <el-col :span="12">
+              <el-form-item label="url">
+                <p class="border">
+                  {{detailForm.url}}
+                </p>
               </el-form-item>
             </el-col>
           </el-row>
 
-          <el-row>
-            <el-col :span="11">
-              <el-form-item label="操作时间" prop="id">
-                <el-input v-model="detailForm.id" placeholder="请输入操作员"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :offset="2" :span="11">
-              <el-form-item label="操作IP" prop="id">
-                <el-input v-model="detailForm.id" placeholder="请输入操作IP"></el-input>
+          <el-row> 
+            <el-col :span="12">
+              <el-form-item label="操作IP：" prop="id">
+                <p class="border">{detailForm.created_ip}}</p>
               </el-form-item>
             </el-col>
           </el-row>
-          <el-form-item label="操作说明">
-            <el-input
-              type="textarea"
-              :rows="4"
-              placeholder="请输入内容"
-              v-model="form.id">
-            </el-input>
+          <el-form-item label="入参：">
+            <p class="border">
+              {{detailForm.param}}
+            </p>
           </el-form-item>
-          <el-form-item label="浏览器Agent">
-            <el-input
-              type="textarea"
-              :rows="6"
-              placeholder="请输入内容"
-              v-model="form.id">
-            </el-input>
+          <el-form-item label="出参：">
+            <p class="border">
+              {{detailForm.result}}
+            </p>
+          </el-form-item>
+          <el-form-item label="浏览器Agent：">
+            <p class="border">
+              {{detailForm.agent}}
+            </p>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -187,14 +198,36 @@ import api from 'src/api'
 export default {
   data () {
     return {
+      origins: [],
       formLabelWidth: '80px',
       adSwitch: true,
       advancedSearch: {
-        keyword: ''
+        keyword: '',
+        account_id: '',
+        username: '',
+        url: '',
+        created_ip: '',
+        start_time: '',
+        end_time: ''
       },
       dialogAdvance: false,
       detailForm: {
-        id: ''
+        account: {
+          name: ''
+        },
+        agent: '',
+        created_at: '',
+        created_ip: '',
+        param: null,
+        result: null,
+        url: '',
+        user_type: '',
+        wx_user: {
+          nickname: ''
+        },
+        user: {
+          nickname: ''
+        }
       },
       dialogVisibleMove: false,
       data: [],
@@ -234,8 +267,7 @@ export default {
       tableData: null,
       dialogType: '',
       form: {
-        keyword: '',
-        audit_state: ''
+        keyword: ''
       },
       parentId: null,
       ids: [],
@@ -255,8 +287,11 @@ export default {
     refresh () {
       this.getList()
     },
-    detail () {
+    detail (data) {
       this.detailShow = true
+      this.detailForm = {
+        ...data
+      }
     },
     // 进入添加小区页面
     enterAdd () {
@@ -269,26 +304,6 @@ export default {
     enterRel (id) {
       this.$store.commit('SET_TOKEN', id)
       this.$router.push({ path: '/admin/recycle/village/relserver', query: { 'id': id } })
-    },
-    handleCommand (command) {
-      if (command === '批量删除') {
-        this.deleteType()
-      }
-      if (command === '移动') {
-        this.confirmMove()
-      }
-    },
-    // 将数据中所有的时间转换成 yyyy-mm-dd hh:mm:ss  state 状态值
-    transformDate (res) {
-      res.data.forEach(v => {
-        if (v.audit_state === 0) {
-          v.audit_state = false
-        }
-        if (v.audit_state === 1) {
-          v.audit_state = true
-        }
-      })
-      return res
     },
     // 时间转换 毫秒转换成 yyyy-mm-dd hh:mm:ss
     formatDate (value) {
@@ -340,20 +355,19 @@ export default {
       })
     },
     advance () {
-      this.dialogAdvance = false
-      this.adSwitch = false
+      if (this.advancedSearch.start_time) {
+        this.advancedSearch.start_time = this.formatDate(this.advancedSearch.start_time)
+      }
+      if (this.advancedSearch.end_time) {
+        this.advancedSearch.end_time = this.formatDate(this.advancedSearch.end_time)
+      }
       const data = {
         currentPage: 1,
         pageSize: this.response.pageSize,
         ...this.advancedSearch
       }
-      api.GET(config.village.advanced, data)
-      .then(response => {
-        this.response = this.transformDate(response.data)
-      })
-      .catch(error => {
-        this.$message.error(error)
-      })
+      this.getList(data)
+      this.dialogAdvance = false
     },
     toggleSelection (rows) {
       if (rows) {
@@ -446,42 +460,6 @@ export default {
         }
       })
     },
-    // 删除表单
-    deleteType (id) {
-      if (id) {
-        this.ids = []
-        this.ids.push(id)
-      }
-      if (this.ids.length === 0) {
-        this.$confirm('请进行正确操作，请优先勾选表单？', '错误', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'error'
-        }).then(() => {
-          return
-        }).catch(() => {
-          return
-        })
-        return
-      }
-      this.$confirm('此操作将删除该日志，删除后，操作日志将无法再显示，不过系统仍保留该操作记录。是否继续删除？', '删除', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        api.POST(config.village.delete, {
-          ids: this.ids
-        })
-        .then(response => {
-          if (response.data.errcode === '0000') {
-            this.onSuccess('删除成功')
-            this.getList()
-          } else {
-            this.$message.error('发生错误，请重试')
-          }
-        })
-      })
-    },
     handleSizeChange (value) {
       const data = {
         currentPage: this.response.currentPage,
@@ -540,13 +518,25 @@ export default {
       })
     },
     getList (data = {}) {
-      api.GET(config.village.list, data)
+      api.GET(config.journal.index, data)
       .then(response => {
         this.response = this.transformDate(response.data.data)
+        console.log(this.response)
       })
       .catch(error => {
         this.$message.error(error)
       })
+    },
+    transformDate (res) {
+      res.data.forEach(v => {
+        if (v.user_type === 1) {
+          v.user_type = true
+        }
+        if (v.user_type === 2) {
+          v.user_type = false
+        }
+      })
+      return res
     },
     onSuccess (string) {
       this.$notify({
@@ -554,15 +544,43 @@ export default {
         message: string,
         type: 'success'
       })
+    },
+    getOrigins (data = {}) {
+      api.GET(config.fmrole.aindex, data)
+      .then(response => {
+        this.origins = this.transform(response.data.data.data)
+      })
+      .catch(error => {
+        this.$message.error(error)
+      })
+    },
+    transform (data) {
+      let res = []
+      data.forEach((e) => {
+        let obj = {
+          value: e.id,
+          label: e.name
+        }
+        res.push(obj)
+      })
+      return res
     }
   },
   mounted () {
     this.getList()
-    this.getTree()
+    this.getOrigins()
   }
 }
 </script>
 <style scoped>
+.border {
+  border: 1px solid #bfcbd9;
+  border-radius: 4px;
+  padding-left: 10px;
+  color: #1f2d3d;
+  word-wrap: break-word; 
+  word-break: normal;
+}
 .GD-container{
     height: 100%;
     margin-top: 1.5rem;

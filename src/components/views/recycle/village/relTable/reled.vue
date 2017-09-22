@@ -132,6 +132,9 @@ export default {
         this.response.count = response.data.data.count
         if (response.data.errcode === '5000') {
           this.response.data = null
+          this.response.currentPage = 1
+          this.response.pageSize = 10
+          this.response.count = 0
         }
       })
       .catch(error => {
