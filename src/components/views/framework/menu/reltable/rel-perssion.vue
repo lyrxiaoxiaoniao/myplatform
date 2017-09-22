@@ -28,18 +28,12 @@
                     <el-table-column prop="display_name" label="权限点名称" width="120"></el-table-column>
                     <el-table-column prop="name" label="权限标识"></el-table-column>
                     <el-table-column prop="description" label="权限说明"></el-table-column>
-                   <!--  <el-table-column label="有效状态" width="80">
+                    <el-table-column label="有效状态" width="88">
                       <template scope="scope">
-                        <el-switch
-                          style="width:60px;"
-                          v-model="scope.row.active"
-                          disabled
-                          on-text="开"
-                          off-text="关"
-                          @change="toswitch(scope.row.active,scope.row.id)">
-                        </el-switch>
+                        <div v-if="scope.row.active">有效</div>
+                        <div v-if="!scope.row.active" class="text-red">无效</div>
                       </template>
-                    </el-table-column> -->
+                    </el-table-column>
                     <el-table-column width="70" label="操作">
                     <template scope="scope">
                         <el-button size="small" @click="deleteType(scope.row.id)" icon="delete2" title="移除"></el-button>
@@ -232,6 +226,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.text-red {
+  color:red;
+}
 .lh-container {
     // padding: 1rem 2rem;
     .lh-top {

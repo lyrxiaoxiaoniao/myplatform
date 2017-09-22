@@ -15,17 +15,7 @@
         <div slot="kobe-table-header" class="kobe-table-header">
           <el-row type="flex" justify="end">
             <el-col :span="14">
-              <el-button @click="openDialog" type="primary">+新增</el-button>
               <el-button @click="getList()" type="primary">刷新</el-button>
-              <el-dropdown @command="handleCommand" style="margin-left:10px;">
-                <el-button type="primary">
-                  批量操作<i class="el-icon-caret-bottom el-icon--right"></i>
-                </el-button>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="批量删除">批量删除</el-dropdown-item>
-                  <el-dropdown-item command="移动">移动</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
             </el-col>
             <el-col :span="8">
               <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
@@ -56,32 +46,12 @@
                 </el-row>
               </template>
             </el-table-column>
-            <el-table-column prop="sort" label="同级排序" width="88"></el-table-column>
-            <el-table-column prop="url" label="菜单路由" width="100"></el-table-column>
-            <el-table-column label="创建时间" width="90">
-              <template scope="scope">{{scope.row.created_at | toDateTime}}</template>
-            </el-table-column>
+            <el-table-column prop="sort" label="同级排序" width="88"></el-table-column> 
             <el-table-column label="有效状态" width="90">
               <template scope="scope">
-                <el-switch
-                  style="width:60px;"
-                  v-model="scope.row.active"
-                  on-text="开"
-                  off-text="关"
-                  @change="toswitch(scope.row.active,scope.row.id)">
-                </el-switch>
+                <div v-if="scope.row.active">有效</div>
+                <div v-if="!scope.row.active" class="text-red">无效</div>
               </template>
-            </el-table-column>
-            <el-table-column 
-              width="158"
-              label="操作"
-              >
-              <template scope="scope">
-                <el-button @click="openDialog(e, scope.row, 'edit')" size="small" icon="edit"></el-button>
-                <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
-                <el-button @click="openPermission(scope.row)" size="small" class="fa fa-th-large"></el-button>
-              </template>
-              
             </el-table-column>
           </el-table>
         </div>
@@ -103,160 +73,6 @@
       </kobe-table>
      </el-col>
     </el-row>
-    <el-dialog v-model="dialogVisible" size="tiny">
-      <img width="100%" :src="dialogImageUrl" alt="">
-    </el-dialog>
-    <el-dialog title="移动" v-model="dialogVisibleMove" size="tiny">
-        <div style="width:100%">
-            <el-row type="flex" justify="center">
-                <el-col :span="4">
-                  <p class="FS-moveName">移动到</p>
-                </el-col>
-                <el-col :span="20">
-                    <el-cascader
-                      style="width:100%;"
-                      change-on-select
-                      :options="cascaderData"
-                      :props="props"
-                      v-model="selectedOptions"
-                      @change="handleChangeMove">
-                  </el-cascader>
-                </el-col>
-            </el-row>
-        </div>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisibleMove = false">取 消</el-button>
-          <el-button type="primary" @click="confirmMove">确 定</el-button>
-        </span>
-    </el-dialog>
-    <!-- 新增 start -->
-    <el-dialog :title="dialogTitle" v-model="addDialog">
-      <el-form :model="addData" :rules="rules" ref="addData" label-width="80px">
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="父级菜单">
-              <el-cascader
-                :options="cascaderData"
-                :props="props"
-                :change-on-select="true"
-                placeholder="请选择父级菜单"
-                v-model="stepsSelection"
-                @change="handleChange"
-                style="width:100%;">
-              </el-cascader>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="菜单名称">
-              <el-input v-model="addData.display_name" placeholder="请输入菜单名称"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="同级排序">
-              <el-input-number v-model="addData.sort" style="width:120px;"></el-input-number>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="是否启用">
-              <el-switch
-                v-model="addData.active"
-                on-text="开"
-                off-text="关">
-              </el-switch>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="菜单标识" prop="name">
-              <el-input v-model="addData.name" placeholder="请输入菜单标识"></el-input>
-            </el-form-item>
-          </el-col>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="菜单图标">
-              <el-input v-model="addData.icon" placeholder="请输入菜单icon"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="访问路由">
-              <el-input v-model="addData.url" placeholder="请输入访问路由"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="菜单说明">
-              <el-input type="textarea" v-model="addData.memo" placeholder="请输入菜单说明"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row> 
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-          <el-button @click="addDialog = false">取消</el-button>
-          <el-button @click="submitForm('addData')" type="primary">确定</el-button>
-      </div>
-    </el-dialog>
-    <!-- 新增 end -->
-    <!-- 修改 start -->
-    <el-dialog :title="dialogTitle" v-model="editDialog">
-      <el-form :model="classData" ref="classData" label-width="80px">
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="父级菜单">
-              <el-cascader
-                :options="cascaderData"
-                :props="props"
-                :change-on-select="true"
-                v-model="stepsSelection"
-                @change="handleChange"
-                style="width:100%;">
-              </el-cascader>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="菜单名称" prop="display_name" require>
-              <el-input v-model="classData.display_name"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="同级排序">
-              <el-input-number v-model="classData.sort" style="width:120px;"></el-input-number>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="是否启用">
-              <el-switch
-                v-model="classData.active"
-                on-text="开"
-                off-text="关">
-              </el-switch>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="菜单标识">
-              <el-input v-model="classData.name"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="菜单图标">
-              <el-input v-model="classData.icon"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="访问路由">
-              <el-input v-model="classData.url"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="菜单说明">
-              <el-input type="textarea" v-model="classData.memo"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row> 
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-          <el-button @click="editDialog = false">取消</el-button>
-          <el-button type="primary" @click="editForm()">确定</el-button>
-      </div>
-    </el-dialog>
-    <!-- 修改 end -->
     <!-- 高级搜索模态框 -->
     <el-dialog title="高级搜索" v-model="dialogAdvance">
         <el-form :model="advancedSearch" :label-width="formLabelWidth">
@@ -268,14 +84,7 @@
           </el-form-item>
           <el-form-item label="菜单标识">
             <el-input v-model="advancedSearch.name" placeholder="输入菜单标识"></el-input>
-          </el-form-item>            
-          <el-form-item label="是否启用">
-            <el-switch
-              on-text="是"
-              v-model="advancedSearch.active"
-              off-text="否">
-            </el-switch>
-          </el-form-item>    
+          </el-form-item>               
           <el-form-item label="创建时间">
               <el-row>
                 <el-col :span="11">
@@ -355,28 +164,16 @@ export default {
       }
     }
     return {
-      editDialog: false,
-      addDialog: false,
       activeName: 'first',
-      firstId: true,
-      secondId: false,
-      permissionForm: {
-        display_name: '',
-        name: ''
-      },
-      correlateShow: false,
       formLabelWidth: '80px',
       advancedSearch: {
         keyword: '',
         display_name: '',
         name: '',
-        active: '',
         start_time: '',
         end_time: ''
       },
       dialogAdvance: false,
-      moveVal: null,
-      dialogVisibleMove: false,
       data: [],
       defaultProps: {
         children: 'children',
@@ -388,34 +185,11 @@ export default {
         label: 'display_name',
         value: 'id'
       },
-      uploadURL: config.serverURI + config.uploadFilesAPI,
       multipleSelection: [],
-      option: [{
-        value: '0',
-        label: '全部'
-      }, {
-        value: '1',
-        label: '栏目名称'
-      }, {
-        value: '2',
-        label: '访问路径'
-      }],
       response: {
         data: null
       },
-      icon: '',
-      logo: '',
       classData: {
-        parent_id: [],
-        display_name: '',
-        sort: null,
-        active: 1,
-        name: '',
-        memo: '',
-        url: '',
-        icon: ''
-      },
-      addData: {
         parent_id: [],
         display_name: '',
         sort: null,
@@ -465,35 +239,10 @@ export default {
   },
   methods: {
     openAdvance () {
-      this.advancedSearch.active = Boolean(this.advancedSearch.active)
       this.dialogAdvance = true
-    },
-    handleClick (tab, event) {
-      if (tab.name === 'first') {
-        this.firstId = true
-        this.secondId = false
-      }
-      if (tab.name === 'second') {
-        this.firstId = false
-        this.secondId = true
-      }
-    },
-    // 打开关联权限弹框
-    openPermission (form) {
-      this.correlateShow = true
-      this.permissionForm = form
-    },
-    handleCommand (command) {
-      if (command === '批量删除') {
-        this.deleteType()
-      }
-      if (command === '移动') {
-        this.confirmMove()
-      }
     },
     // 高级搜索
     advance () {
-      this.advancedSearch.active = Number(this.advancedSearch.active)
       if (this.advancedSearch.start_time) {
         this.advancedSearch.start_time = this.formatDate(this.advancedSearch.start_time)
       }
@@ -509,19 +258,6 @@ export default {
       this.getList(data)
       this.dialogAdvance = false
     },
-    // 将数据中所有的时间转换成 yyyy-mm-dd hh:mm:ss  state 状态值
-    transformDate (res) {
-      res.data.forEach(v => {
-        if (v.active === 1) {
-          v.active = true
-        }
-        if (v.active === 0) {
-          v.active = false
-        }
-      })
-      return res
-    },
-    // 时间转换 毫秒转换成 yyyy-mm-dd hh:mm:ss
     formatDate (value) {
       let date = new Date(value)
       let M = date.getMonth() + 1
@@ -536,19 +272,17 @@ export default {
       value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
       return value
     },
-    toswitch (active, id) {
-      let data = {
-        pageSize: this.response.pageSize,
-        currentPage: this.response.currentPage
-      }
-      api.POST(config.frameWorkMenu.active, {id: id, active: Number(active)})
-      .then(response => {
-        this.getList(data)
-        this.onSuccess('启用操作成功！')
+    // 将数据中所有的时间转换成 yyyy-mm-dd hh:mm:ss  state 状态值
+    transformDate (res) {
+      res.data.forEach(v => {
+        if (v.active === 1) {
+          v.active = true
+        }
+        if (v.active === 0) {
+          v.active = false
+        }
       })
-      .catch(error => {
-        this.$message.error(error)
-      })
+      return res
     },
     // 树形结构选择
     handleChange (value) {
@@ -577,143 +311,6 @@ export default {
       this.ids = []
       this.multipleSelection.forEach(v => {
         this.ids.push(v.id)
-      })
-    },
-    // 模态框显示
-    openDialog (e, data = null, type = null) {
-      if (data !== null && type === 'edit') {
-        this.dialogType = 'edit'
-        this.dialogTitle = '修改菜单'
-        this.editDialog = true
-        this.classData = {
-          ...this.classData,
-          ...data
-        }
-        console.log(data)
-        this.stepsSelection = []
-        this.stepsSelection.push(0)
-        if (data.parent) {
-          this.stepsSelection.push(data.parent.id)
-        } else {
-          this.stepsSelection.push(data.id)
-        }
-      } else {
-        this.stepsSelection = []
-        this.dialogType = 'add'
-        this.dialogTitle = '新增菜单'
-        this.addData = {
-          parent_id: [],
-          display_name: '',
-          sort: null,
-          active: 1,
-          name: '',
-          memo: '',
-          url: '',
-          icon: ''
-        }
-        this.addDialog = true
-      }
-    },
-    submitForm (formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          this.addData.active = Number(this.addData.active)
-          var obj = this.addData
-          var pid = this.stepsSelection
-          obj.parent_id = pid.pop()
-          console.log(obj)
-          api.POST(config.frameWorkMenu.create, obj)
-          .then(response => {
-            if (response.status !== 200) {
-              this.error = response.statusText
-              return
-            }
-            if (response.data.errcode === '0000') {
-              this.onSuccess('添加成功')
-              this.getList()
-              this.getTree()
-              this.addDialog = false
-            }
-          })
-        } else {
-          return false
-        }
-      })
-    },
-    editForm () {
-      this.classData.active = Number(this.classData.active)
-      var obj = this.classData
-      var pid = this.stepsSelection
-      obj.parent_id = pid.shift()
-      obj.created_at = this.classData.created_at
-      api.POST(config.frameWorkMenu.edit, obj)
-      .then(response => {
-        if (response.status !== 200) {
-          this.error = response.statusText
-          return
-        }
-        if (response.data.errcode === '0000') {
-          this.onSuccess('修改成功')
-          this.getList()
-          this.getTree()
-          this.editDialog = false
-        }
-      })
-    },
-    // 批量移动
-    confirmMove () {
-      this.dialogVisibleMove = true
-      this.parentId = null
-      this.parentId = this.moveVal.shift()
-      var obj = {}
-      obj.ids = this.ids
-      obj.id = this.parentId
-      api.POST(config.moveCategoryAPI, obj)
-      .then(response => {
-        if (response.data.errcode === '0000') {
-          this.getList()
-          this.getTree()
-          this.dialogVisibleMove = false
-        }
-      }).catch(error => {
-        this.$message.error(error)
-      })
-    },
-    // 删除表单
-    deleteType (id) {
-      if (id) {
-        this.ids = []
-        this.ids.push(id)
-      }
-      if (this.ids.length === 0) {
-        this.$confirm('请进行正确操作，请优先勾选表单？', '错误', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'error'
-        }).then(() => {
-          return
-        }).catch(() => {
-          return
-        })
-        return
-      }
-      this.$confirm('是否确认删除该表单', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        api.POST(config.frameWorkMenu.delete, {
-          ids: this.ids
-        })
-        .then(response => {
-          if (response.data.errcode === '0000') {
-            this.onSuccess('删除成功')
-            this.getList()
-            this.getTree()
-          } else {
-            this.$message.error(response.data.errmsg)
-          }
-        })
       })
     },
     handleSizeChange (value) {
@@ -798,6 +395,9 @@ export default {
 }
 </script>
 <style scoped>
+.text-red {
+  color: red;
+}
 .line{
   text-align: center;
 }

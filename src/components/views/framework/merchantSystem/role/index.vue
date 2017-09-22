@@ -25,13 +25,13 @@
             stripe
             :data="response.data"
             @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="id" sortable label="ID" width="80"></el-table-column>
-            <el-table-column prop="display_name" label="角色名称" width="150"></el-table-column>
+            <el-table-column type="selection" width="45"></el-table-column>
+            <el-table-column prop="id" sortable label="ID" width="70"></el-table-column>
+            <el-table-column prop="display_name" label="角色名称" width="140"></el-table-column>
             <el-table-column prop="name" label="角色标识" width="95">
             </el-table-column>
-            <el-table-column prop="type" width="105" label="角色类别"></el-table-column>
-            <el-table-column prop="account.id" label="账号数量" width="90"></el-table-column>
+            <el-table-column prop="type" width="85" label="角色类别"></el-table-column>
+            <el-table-column prop="user_amount" label="账号数量" width="85"></el-table-column>
             <el-table-column prop="description" label="角色说明"></el-table-column>
             <el-table-column label="创建时间" width="90">
               <template scope="scope">{{scope.row.created_at | toDateTime}}</template>
@@ -93,7 +93,7 @@
               <el-input v-model="advancedSearch.name" auto-complete="off" placeholder="角色标识"></el-input>
             </el-form-item>
           <el-row>
-            <el-col :span="12">
+<!--             <el-col :span="12">
               <el-form-item label="角色类别">
                 <el-select v-model="advancedSearch.type" placeholder="请选择" style="width: 100%;">
                   <el-option
@@ -116,8 +116,7 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-            </el-col>
-            </el-row>
+            </el-col> -->
             <el-col :span="24">
               <el-form-item label="是否启用">
                 <el-switch
@@ -161,7 +160,7 @@
           <el-form-item label="角色名称" prop="id">
             <el-input v-model="addForm.display_name" placeholder="请输入角色名称"></el-input>
           </el-form-item>
-          <el-row>
+          <!-- <el-row>
               <el-col :span="12">
                 <el-form-item label="角色类别">
                   <el-select v-model="addForm.type" placeholder="请选择" style="width: 100%;">
@@ -186,7 +185,7 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-            </el-row>
+          </el-row> -->
             <el-form-item label="是否启用">
               <el-switch
                 v-model="addForm.active"
@@ -219,7 +218,7 @@
           <el-form-item label="角色名称" prop="id">
             <el-input v-model="detailForm.display_name" placeholder="请输入角色名称"></el-input>
           </el-form-item>
-          <el-row>
+          <!-- <el-row>
               <el-col :span="12">
                 <el-form-item label="角色类别">
                   <el-select v-model="detailForm.type" placeholder="请选择" style="width: 100%;">
@@ -244,14 +243,14 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-            </el-row>
-            <el-form-item label="是否启用">
-              <el-switch
-                v-model="detailForm.active"
-                on-text="是"
-                off-text="否">
-              </el-switch>
-            </el-form-item>
+          </el-row> -->
+          <el-form-item label="是否启用">
+            <el-switch
+              v-model="detailForm.active"
+              on-text="是"
+              off-text="否">
+            </el-switch>
+          </el-form-item>
           <el-form-item label="角色标识" prop="id">
             <el-input v-model="detailForm.name" placeholder="角色标识"></el-input>
           </el-form-item>
@@ -313,13 +312,13 @@
           </el-row>         
             <el-form-item label="角色归属">
               <el-select v-model="userForm.account_id" filterable placeholder="请选择" class="fullwidth">
-                    <el-option
-                      v-for="item in origins"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value">
-                    </el-option>
-                  </el-select>
+                <el-option
+                  v-for="item in origins"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>           
         </el-form>
         <el-tabs class="margin" v-model="activeName"  @tab-click="handleClick" style="margin:0 2em">

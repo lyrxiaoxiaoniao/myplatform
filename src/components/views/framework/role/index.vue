@@ -25,13 +25,13 @@
             stripe
             :data="response.data"
             @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="id" sortable label="ID" width="80"></el-table-column>
-            <el-table-column prop="display_name" label="角色名称" width="150"></el-table-column>
+            <el-table-column type="selection" width="45"></el-table-column>
+            <el-table-column prop="id" sortable label="ID" width="70"></el-table-column>
+            <el-table-column prop="display_name" label="角色名称" width="140"></el-table-column>
             <el-table-column prop="name" label="角色标识" width="95">
             </el-table-column>
-            <el-table-column prop="type" width="105" label="角色类别"></el-table-column>
-            <el-table-column prop="account.id" label="账号数量" width="90"></el-table-column>
+            <el-table-column prop="type" width="85" label="角色类别"></el-table-column>
+            <el-table-column prop="user_amount" label="账号数量" width="85"></el-table-column>
             <el-table-column prop="description" label="角色说明"></el-table-column>
             <el-table-column label="创建时间" width="90">
               <template scope="scope">{{scope.row.created_at | toDateTime}}</template>
@@ -80,7 +80,7 @@
     <el-dialog v-model="dialogVisible" size="tiny">
       <img width="100%" :src="dialogImageUrl" alt="">
     </el-dialog>
-<!-- 高级搜索模态框 -->
+    <!-- 高级搜索模态框 -->
     <el-dialog title="高级搜索" v-model="dialogAdvance">
         <el-form :model="advancedSearch" :label-width="formLabelWidth">
             <el-form-item label="关键字">
@@ -212,7 +212,7 @@
             <el-button type="primary" @click="submitForm('addForm')">确定</el-button>
           </el-row>
         </div>
-      </el-dialog>
+    </el-dialog>
     <!-- 修改 -->
     <el-dialog :title="dialogTitle" v-model="detailShow">
         <el-form :model="detailForm" ref="detailForm" :label-width="formLabelWidth">
@@ -270,8 +270,8 @@
             <el-button type="primary" @click="editForm()">确定</el-button>
           </el-row>
         </div>
-      </el-dialog>
-    <!-- 角色关联权限弹框 -->
+    </el-dialog>
+       <!-- 角色关联权限弹框 -->
        <el-dialog v-if="reload" title="角色关联权限" v-model="correlateShow">
         <el-form :model="permissionForm" :label-width="formLabelWidth">
            <el-form-item label="角色名称">

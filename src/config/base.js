@@ -3,19 +3,6 @@
  * 罗湖城管垃圾接口列表
  */
 export default {
-  // Dash 配置信息
-  dashconfig: '/admin/ext/config',
-  // 商户关联
-  merchantRole: {
-    // 1312
-    related: '/admin/pa/show/permission/related',
-    relate: '/admin/pa/show/permission/relate',
-    relateRemoveMenu: '/admin/ma/delete',
-    relateAddMenu: '/admin/ma/create',
-    relateRemove: '/admin/pa/delete',
-    relateAdd: '/admin/pa/create',
-    relatedmenu: '/admin/ma/menus/related'
-  },
   // 1.商户管理
   merchant: {
     index: '/admin/account/index',
@@ -103,5 +90,8 @@ export default {
   },
   // 9.日志管理
   journal: {
+    index: '/admin/log/operate/index',
+    delete: '/admin/log/operate/delete',
+    show: '/admin/log/operate/show'
   }
 }

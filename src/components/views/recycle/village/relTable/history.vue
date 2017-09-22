@@ -116,10 +116,17 @@ export default {
       }
       api.GET(config.village.history, data)
       .then(response => {
-        this.response.data = this.transform(response.data.data.data)
-        this.response.currentPage = response.data.data.currentPage
-        this.response.pageSize = response.data.data.pageSize
-        this.response.count = response.data.data.count
+        if (response.data.errcode === '5000') {
+          this.response.data = null
+          this.response.currentPage = 1
+          this.response.pageSize = 10
+          this.response.count = 0
+        } else {
+          this.response.data = this.transform(response.data.data.data)
+          this.response.currentPage = response.data.data.currentPage
+          this.response.pageSize = response.data.data.pageSize
+          this.response.count = response.data.data.count
+        }
       })
       .catch(error => {
         this.$message.error(error)
