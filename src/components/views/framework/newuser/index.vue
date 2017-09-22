@@ -173,7 +173,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="姓别">
+          <el-form-item label="性别">
               <el-select v-model="addMerchant.sex" placeholder="请选择" class="fullwidth">
                   <el-option
                   v-for="item in optionGrade"
@@ -269,7 +269,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="姓别">
+          <el-form-item label="性别">
               <el-select v-model="editMerchant.sex" placeholder="请选择" class="fullwidth">
                   <el-option
                   v-for="item in optionGrade"
@@ -674,7 +674,6 @@ export default {
       }
     },
     saveAdd (formName) {
-      console.log(this.addMerchant, 11111)
       this.addMerchant.is_lock = Number(this.addMerchant.is_lock)
       this.addMerchant.password = this.addMerchant.checkPassword = this.encrypt()
       this.$refs[formName].validate((valid) => {
@@ -684,6 +683,7 @@ export default {
             if (response.data.errcode === '0000') {
               this.onSuccess('添加成功')
               this.addCloseDialog()
+              this.onFresh()
             }
           })
           .catch(error => {

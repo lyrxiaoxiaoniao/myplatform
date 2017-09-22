@@ -90,6 +90,9 @@ export default {
   },
   // 9.日志管理
   journal: {
+    index: '/admin/log/operate/index',
+    delete: '/admin/log/operate/delete',
+    show: '/admin/log/operate/show'
   },
   // Dash 配置信息
   dashconfig: '/admin/ext/config',

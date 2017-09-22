@@ -9,7 +9,7 @@
           <el-card>
             <div slot="header">
               <span style="font-size:18px;">站点配置</span>
-              <el-button type="primary" class="sc-siteconfig-btn clearfix">保存</el-button>
+              <el-button type="primary" class="sc-siteconfig-btn" @click="siteConfigPost">保存</el-button>
             </div>
             <div class="sc-siteconfig-form">
               <el-form label-width="100px">
@@ -42,7 +42,7 @@
           <el-card>
             <div slot="header">
               <span style="font-size:18px;">商品设置</span>
-              <el-button type="primary" class="sc-siteconfig-btn clearfix">保存</el-button>
+              <el-button type="primary" class="sc-siteconfig-btn" @click="shopConfigPost">保存</el-button>
             </div>
             <div class="sc-siteconfig-content">
               <el-row type="flex">
@@ -73,10 +73,10 @@
           <el-card>
             <div slot="header">
               <span style="font-size:18px;">水印设置</span>
-              <el-button type="primary" class="sc-siteconfig-btn clearfix">保存</el-button>
+              <el-button type="primary" class="sc-siteconfig-btn" @click="watermarkPost">保存</el-button>
             </div>
             <div class="sc-siteconfig-content">
-              <el-form label-width="100px">
+              <el-form label-width="100px" label-position="left">
                 <el-row type="flex">
                   <el-col>
                     <el-form-item label="是否开启水印">
@@ -172,36 +172,50 @@
 </template>
 
 <script>
-export default {
-  name: 'sc-systemconfig',
-  data () {
-    return {
-      radio: 3,
-      checked1: true,
-      checked2: true,
-      value1: true,
-      options: [{
-        value: 1,
-        label: '左上角'
-      }, {
-        value: 2,
-        label: '右上角'
-      }, {
-        value: 3,
-        label: '右下角'
-      }, {
-        value: 4,
-        label: '左下角'
-      }],
-      value2: 3
-    }
-  },
-  methods: {
-    onUploadSuccess () {
-      console.log(1)
+  // import config from 'src/config'
+  // import api from 'src/api'
+
+  export default {
+    name: 'sc-systemconfig',
+    data () {
+      return {
+        radio: 3,
+        checked1: true,
+        checked2: true,
+        value1: true,
+        options: [{
+          value: 1,
+          label: '左上角'
+        }, {
+          value: 2,
+          label: '右上角'
+        }, {
+          value: 3,
+          label: '右下角'
+        }, {
+          value: 4,
+          label: '左下角'
+        }],
+        value2: 3
+      }
+    },
+    methods: {
+      /* http请求函数开始 */
+      siteConfigPost () {
+        console.log('发起保存站点配置http请求')
+      },
+      shopConfigPost () {
+        console.log('发起保存商品设置http请求')
+      },
+      watermarkPost () {
+        console.log('发起保存水印设置http请求')
+      },
+      /* http请求函数结束 */
+      onUploadSuccess () {
+        console.log(1)
+      }
     }
   }
-}
 </script>
 
 <style scoped>

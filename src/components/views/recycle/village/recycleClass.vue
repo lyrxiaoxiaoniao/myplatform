@@ -611,6 +611,8 @@ export default {
         if (response.data.errcode === '5000') {
           this.response.data = null
           this.response.count = 0
+          this.response.currentPage = 1
+          this.response.pageSize = 10
         } else {
           this.response = this.transformDate(response.data.data)
         }

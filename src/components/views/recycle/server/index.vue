@@ -173,6 +173,8 @@ export default {
         if (response.data.errcode === '5000') {
           this.response.data = null
           this.response.count = 0
+          this.response.currentPage = 1
+          this.response.pageSize = 10
         }
         this.response = this.transformDate(response.data.data)
       })
@@ -281,10 +283,13 @@ export default {
       }
       api.GET(config.server.index, data)
       .then(response => {
-        this.response = this.transformDate(response.data.data)
         if (response.data.errcode === '5000') {
           this.response.data = null
+          this.response.count = 0
+          this.response.currentPage = 1
+          this.response.pageSize = 10
         }
+        this.response = this.transformDate(response.data.data)
       })
       .catch(error => {
         this.$message.error(error)
