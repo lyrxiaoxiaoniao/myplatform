@@ -297,7 +297,7 @@
         </div>
       </el-dialog>
          <!-- 角色关联用户弹框 -->
-       <el-dialog title="角色关联用户" v-model="correlateShow2">
+       <el-dialog v-if="correlateShow2" title="角色关联用户" v-model="correlateShow2">
         <el-form :model="userForm" :label-width="formLabelWidth">
           <el-row>
             <el-col :span="12">

@@ -5,6 +5,7 @@
       <el-tree :data="data" :props="defaultProps"
               accordion
               :highlight-current="true"
+              :default-expanded-keys="[0]"
               node-key="id"
               @node-click="handleNodeClick">
       </el-tree>
@@ -296,8 +297,12 @@ export default {
     },
     // 树形结构选择
     handleChange (val) {
-      this.classData.cids = val
-      this.classData.parent_id = JSON.parse(JSON.stringify(val)).pop()
+      let value = []
+      val.forEach(v => {
+        value.push(Number(v))
+      })
+      this.classData.cids = value
+      this.classData.parent_id = JSON.parse(JSON.stringify(value)).pop()
     },
     // 树形目录点击事件
     handleNodeClick (data, node) {
@@ -331,10 +336,10 @@ export default {
       this.classData.banner = res.data[0]
     },
     beforeAvatarUpload (file) {
-      const isJPG = file.type === 'image/jpeg'
+      const isJPG = file.type === 'image/jpeg' || 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 5
       if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!')
+        this.$message.error('上传头像图片只能是 JPG/PNG 格式!')
       }
       if (!isLt2M) {
         this.$message.error('上传头像图片大小不能超过 5MB!')
@@ -352,9 +357,11 @@ export default {
         }
         this.classData.cids = this.classData.cids.split(',')
         this.classData.banner = this.classData.banners[0]
-        let ids = []
+        let ids = [0]
         this.classData.cids.forEach(v => {
-          ids.push(Number(v))
+          if (v !== 0) {
+            ids.push(Number(v))
+          }
         })
         this.classData.cids = ids
       } else {
@@ -425,7 +432,7 @@ export default {
         .then(response => {
           if (response.data.errcode === '0000') {
             this.onSuccess('删除成功')
-            this.getList()
+            this.reFresh()
           } else {
             this.$message.error('发生错误，请重试')
           }
@@ -511,14 +518,33 @@ export default {
         }
       }
     },
+    // iteration (obj) {
+    //   obj.forEach(v => {
+    //     if (v.display_name) {
+    //       v.display_name = v.display_name + ' ' + ' ( ' + v.name + ' ) '
+    //       if (v.children && v.children.length !== 0) {
+    //         this.iteration(v.children)
+    //       }
+    //     }
+    //   })
+    // },
     getTree () {
       api.GET(config.newcms.ncmsCategotyAPI)
       .then(response => {
         var newData = response.data.data
         this.iteration(newData)
-        newData.push({ id: 0, display_name: '根级分类', label: '根级分类', value: 0 })
-        this.data = newData
-        this.options = newData
+        // newData.push({ id: 0, display_name: '根级分类', label: '根级分类', value: 0 })
+        var treeData = [
+          {
+            id: 0,
+            display_name: '根级分类',
+            label: '根级分类',
+            value: '0',
+            children: [...newData]
+          }
+        ]
+        this.data = treeData
+        this.options = treeData
       })
       .catch(error => {
         this.$message.error(error)

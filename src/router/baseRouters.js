@@ -100,9 +100,9 @@ const baseRouters = [
     }]
   }, {
     // 角色模块路由
-    path: 'recyclerole',
+    path: 'newrole',
     component: DashMainView,
-    redirect: '/admin/recyclerole/index',
+    redirect: '/admin/newrole/index',
     name: '角色',
     meta: {description: '信息'},
     children: [{

@@ -140,8 +140,8 @@
                 :props="props"
                 :change-on-select="true"
                 placeholder="请选择父级菜单"
-                v-model="stepsSelection"
-                @change="handleChange"
+                v-model="addData.cids"
+                @change="handleChangeAdd"
                 style="width:100%;">
               </el-cascader>
             </el-form-item>
@@ -201,10 +201,10 @@
           <el-col :span="24">
             <el-form-item label="父级菜单">
               <el-cascader
-                :options="cascaderData"
+                :options="cascaderDataEdit"
                 :props="props"
                 :change-on-select="true"
-                v-model="stepsSelection"
+                v-model="classData.cids"
                 @change="handleChange"
                 style="width:100%;">
               </el-cascader>
@@ -383,6 +383,7 @@ export default {
         label: 'display_name'
       },
       cascaderData: [],
+      cascaderDataEdit: [],
       props: {
         children: 'children',
         label: 'display_name',
@@ -406,31 +407,32 @@ export default {
       icon: '',
       logo: '',
       classData: {
-        parent_id: [],
+        parent_id: null,
         display_name: '',
         sort: null,
         active: 1,
         name: '',
         memo: '',
         url: '',
-        icon: ''
+        icon: '',
+        cids: []
       },
       addData: {
-        parent_id: [],
+        parent_id: null,
         display_name: '',
         sort: null,
         active: 1,
         name: '',
         memo: '',
         url: '',
-        icon: ''
+        icon: '',
+        cids: []
       },
       selectedOptions: [],
       showDialog: false,
       dialogVisible: false,
       dialogImageUrl: '',
       dialogTitle: '',
-      stepsSelection: [],
       tableData: null,
       dialogType: '',
       form: {
@@ -500,7 +502,6 @@ export default {
       if (this.advancedSearch.end_time) {
         this.advancedSearch.end_time = this.formatDate(this.advancedSearch.end_time)
       }
-      console.log(this.advancedSearch, 1111)
       const data = {
         currentPage: 1,
         pageSize: this.response.pageSize,
@@ -551,11 +552,25 @@ export default {
       })
     },
     // 树形结构选择
-    handleChange (value) {
-      console.log(value)
+    handleChangeAdd (val) {
+      let value = []
+      val.forEach(v => {
+        value.push(Number(v))
+      })
+      this.addData.cids = value
+      this.addData.parent_id = JSON.parse(JSON.stringify(value)).pop()
+    },
+    // 树形结构选择
+    handleChange (val) {
+      let value = []
+      val.forEach(v => {
+        value.push(Number(v))
+      })
+      this.classData.cids = value
+      this.classData.parent_id = JSON.parse(JSON.stringify(value)).pop()
     },
     handleChangeMove (value) {
-      console.log(value)
+      // console.log(value)
       this.moveVal = value
     },
     // 树形目录点击事件
@@ -589,16 +604,15 @@ export default {
           ...this.classData,
           ...data
         }
-        console.log(data)
-        this.stepsSelection = []
-        this.stepsSelection.push(0)
-        if (data.parent) {
-          this.stepsSelection.push(data.parent.id)
-        } else {
-          this.stepsSelection.push(data.id)
-        }
+        this.classData.cids = this.classData.cids.split(',')
+        let ids = [0]
+        this.classData.cids.forEach(v => {
+          if (v !== 0) {
+            ids.push(Number(v))
+          }
+        })
+        this.classData.cids = ids
       } else {
-        this.stepsSelection = []
         this.dialogType = 'add'
         this.dialogTitle = '新增菜单'
         this.addData = {
@@ -609,7 +623,8 @@ export default {
           name: '',
           memo: '',
           url: '',
-          icon: ''
+          icon: '',
+          cids: []
         }
         this.addDialog = true
       }
@@ -618,10 +633,8 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.addData.active = Number(this.addData.active)
+          this.addData.cids = this.addData.cids.join(',')
           var obj = this.addData
-          var pid = this.stepsSelection
-          obj.parent_id = pid.pop()
-          console.log(obj)
           api.POST(config.frameWorkMenu.create, obj)
           .then(response => {
             if (response.status !== 200) {
@@ -643,9 +656,8 @@ export default {
     editForm () {
       this.classData.active = Number(this.classData.active)
       var obj = this.classData
-      var pid = this.stepsSelection
-      obj.parent_id = pid.shift()
       obj.created_at = this.classData.created_at
+      obj.cids = this.classData.cids.join(',')
       api.POST(config.frameWorkMenu.edit, obj)
       .then(response => {
         if (response.status !== 200) {
@@ -764,11 +776,12 @@ export default {
           id: 0,
           display_name: '根级分类',
           label: '根级分类',
-          value: 0,
+          value: '0',
           children: [...newData]
         }]
         this.data = boot
         this.cascaderData = boot
+        this.cascaderDataEdit = boot
       })
       .catch(error => {
         this.$message.error(error)

@@ -16,7 +16,7 @@
                 <!-- <p>深传政务新媒体平台</p>
                 <p>一站式政务解决方案专家</p> -->
                 <div class="block">
-                  <el-carousel :interval="3000" initial-index="0" arrow="never" height="372px" indicator-position="none">
+                  <el-carousel :interval="3000" :initial-index="showIndex" arrow="never" height="372px" indicator-position="none">
                     <el-carousel-item v-for="item in urls" :key="item">
                       <!-- <h3>{{ item }}</h3> -->
                       <img :src="item">
@@ -78,6 +78,7 @@ export default {
   name: 'bs-login',
   data() {
     return {
+      showIndex: 0,
       title: '安全光明',
       mailButtonText: '发送验证码',
       username: '',
