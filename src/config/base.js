@@ -27,7 +27,9 @@ export default {
     wxupdate: '/admin/wxcfg/update',
     wxadd: '/admin/wxcfg/create',
     sendMail: '/admin/account/send',
-    delete: '/admin/account/delete'
+    delete: '/admin/account/delete',
+    /* 商户后台管理接口 */
+    current: '/admin/account/current'
   },
   // 2.用户管理
   newuser: {

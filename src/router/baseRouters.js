@@ -18,6 +18,10 @@ import RcMenu from 'components/views/framework/menu/menuIndex.vue'
 // 商户关联
 import MerchantRole from 'components/views/framework/merchant/relateRole.vue'
 import MsMenu from 'components/views/framework/merchantSystem/menu/menuIndex.vue'
+// 商户后台管理页面
+import PSmerchant from 'components/views/framework/merchantSystem/merchant/config.vue'
+import PSUser from 'components/views/framework/merchantSystem/newuser/index.vue'
+import PSAuth from 'components/views/framework/merchantSystem/authority/index.vue'
 const baseRouters = [
   {
     // 商户模块路由
@@ -129,6 +133,45 @@ const baseRouters = [
       component: MsMenu,
       name: '菜单管理',
       meta: {description: '商户'}
+    }]
+  }, {
+    // 商户管理后台路由
+    path: 'psmerchant',
+    component: DashMainView,
+    redirect: '/admin/psmerchant/index',
+    name: '商户管理后台',
+    meta: {description: '信息'},
+    children: [{
+      path: 'index',
+      component: PSmerchant,
+      name: '商户信息',
+      meta: {description: '管理'}
+    }]
+  }, {
+    // 商户后台用户管理路由
+    path: 'psuser',
+    component: DashMainView,
+    redirect: '/admin/psuser/index',
+    name: '商户后台用户',
+    meta: {description: '信息'},
+    children: [{
+      path: 'index',
+      component: PSUser,
+      name: '商户信息用户',
+      meta: {description: '管理'}
+    }]
+  }, {
+    // 商户后台权限管理路由
+    path: 'psauth',
+    component: DashMainView,
+    redirect: '/admin/psauth/index',
+    name: '商户后台权限',
+    meta: {description: '信息'},
+    children: [{
+      path: 'index',
+      component: PSAuth,
+      name: '商户信息权限',
+      meta: {description: '管理'}
     }]
   }
 ]

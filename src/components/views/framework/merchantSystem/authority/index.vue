@@ -4,8 +4,8 @@
         <div slot="kobe-table-header" class="kobe-table-header">
           <el-row type="flex" justify="end">
             <el-col :span="16">
-                <el-button @click="addBaseinfo" type="primary">新增</el-button>
-                <el-button @click="handleCommand" type="primary">批量删除</el-button>
+                <!-- <el-button @click="addBaseinfo" type="primary">新增</el-button> -->
+                <!-- <el-button @click="handleCommand" type="primary">批量删除</el-button> -->
                 <el-button @click="onFresh" type="primary">刷新</el-button>
             </el-col>
             <el-col :span="8">
@@ -76,12 +76,12 @@
                     </el-switch>
                   </template> 
                 </el-table-column>
-                <el-table-column prop="status" label="操作" width="200">
+                <el-table-column prop="status" label="操作" width="80">
                   <template scope="scope"> 
-                      <el-button @click="deleteType(scope.row.id)" title="删除" size="small" icon="delete2"></el-button>
-                      <el-button @click="goAwardsDetail(scope.row.id)" title="修改" size="small" icon="edit"></el-button>
+                      <!-- <el-button @click="deleteType(scope.row.id)" title="删除" size="small" icon="delete2"></el-button> -->
+                      <!-- <el-button @click="goAwardsDetail(scope.row.id)" title="修改" size="small" icon="edit"></el-button> -->
                       <el-button @click="relaType(scope.row)" title="关联角色" size="small" class="fa fa-th-large"></el-button>
-                      <el-button @click="relaMenuType(scope.row)" title="关联菜单" size="small" class="fa fa-link"></el-button>
+                      <!-- <el-button @click="relaMenuType(scope.row)" title="关联菜单" size="small" class="fa fa-link"></el-button> -->
                   </template>
                 </el-table-column>
             </el-table>
@@ -279,7 +279,6 @@ export default {
   },
   methods: {
     handleClick (tab, event) {
-      console.log(tab, event)
       if (tab.name === 'first') {
         this.isFirst = true
         this.isSecond = false
@@ -330,9 +329,9 @@ export default {
         }
       })
     },
-    handleCommand () {
-      this.deleteType()
-    },
+    // handleCommand () {
+    //   this.deleteType()
+    // },
     toggleSelection (rows) {
       if (rows) {
         rows.forEach(row => {
@@ -375,7 +374,6 @@ export default {
       this.showDialog = false
     },
     saveAdd () {
-      console.log(this.addMerchant, 11111)
       this.addMerchant.active = Number(this.addMerchant.active)
       api.POST(config.authority.add, this.addMerchant)
       .then(response => {
@@ -389,7 +387,6 @@ export default {
       })
     },
     saveEdit () {
-      console.log(this.editMerchant, 11111)
       this.editMerchant.active = Number(this.editMerchant.active)
       api.POST(config.authority.edit, this.editMerchant)
       .then(response => {
@@ -441,41 +438,41 @@ export default {
       this.closeDialog()
     },
     // 删除表单
-    deleteType (id) {
-      if (id) {
-        this.ids = []
-        this.ids.push(id)
-      }
-      if (this.ids.length === 0) {
-        this.$confirm('请进行正确操作，请先勾选权限？', '错误', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'error'
-        }).then(() => {
-          return
-        }).catch(() => {
-          return
-        })
-        return
-      }
-      this.$confirm('是否确认是否删除权限', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        api.POST(config.authority.delete, {
-          ids: this.ids
-        })
-        .then(response => {
-          if (response.data.errcode === '0000') {
-            this.onSuccess('删除成功')
-            this.getList()
-          } else {
-            this.$message.error('发生错误，请重试')
-          }
-        })
-      })
-    },
+    // deleteType (id) {
+    //   if (id) {
+    //     this.ids = []
+    //     this.ids.push(id)
+    //   }
+    //   if (this.ids.length === 0) {
+    //     this.$confirm('请进行正确操作，请先勾选权限？', '错误', {
+    //       confirmButtonText: '确定',
+    //       cancelButtonText: '取消',
+    //       type: 'error'
+    //     }).then(() => {
+    //       return
+    //     }).catch(() => {
+    //       return
+    //     })
+    //     return
+    //   }
+    //   this.$confirm('是否确认是否删除权限', '提示', {
+    //     confirmButtonText: '确定',
+    //     cancelButtonText: '取消',
+    //     type: 'warning'
+    //   }).then(() => {
+    //     api.POST(config.authority.delete, {
+    //       ids: this.ids
+    //     })
+    //     .then(response => {
+    //       if (response.data.errcode === '0000') {
+    //         this.onSuccess('删除成功')
+    //         this.getList()
+    //       } else {
+    //         this.$message.error('发生错误，请重试')
+    //       }
+    //     })
+    //   })
+    // },
     addBaseinfo () {
       this.addShowDialog = true
       Object.keys(this.addMerchant).forEach(k => {

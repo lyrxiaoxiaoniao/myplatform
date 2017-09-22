@@ -218,14 +218,12 @@ export default {
             return
           }
           this.getData(response.data.data)
-          console.log(this.appInfo, 11111)
         })
         .catch(error => {
           this.$message.error(error)
         })
     },
     getData (res) {
-      console.log(res, 11112222)
       // mng_config_icon 站点图标
       // mng_config_copyright 版权信息
       // mng_config_name 站点名称

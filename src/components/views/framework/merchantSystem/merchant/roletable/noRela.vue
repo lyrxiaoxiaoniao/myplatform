@@ -5,7 +5,7 @@
             <el-row type="flex" justify="end">
             <el-col :span="16">
               <el-button type="primary" @click="onFresh">刷新</el-button>
-              <el-button @click="deleteTypeAll" type="primary">批量删除</el-button>
+              <el-button @click="deleteTypeAll" type="primary">批量关联</el-button>
             </el-col>
             <el-col :span="8">
                 <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
@@ -24,23 +24,16 @@
               @selection-change="handleSelectionChange">
               <el-table-column type="selection" width="55"></el-table-column>
               <el-table-column prop="id" label="ID" width="50"></el-table-column>
-              <el-table-column prop="display_name" label="角色名称"></el-table-column>
-              <el-table-column prop="name" label="角色标识"></el-table-column>
-              <el-table-column prop="description" label="角色说明"></el-table-column>
-              <el-table-column label="有效状态" width="100px">
+              <el-table-column prop="display_name" label="权限名称"></el-table-column>
+              <el-table-column prop="name" label="权限标识"></el-table-column>
+              <el-table-column prop="description" label="创建时间">
                 <template scope="scope">
-                  <!-- <el-switch
-                    v-model="scope.row.active"
-                    on-text="开"
-                    off-text="关"
-                    @change="toswitch(scope.row.active,scope.row.id)">
-                  </el-switch> -->
-                  {{scope.row.active ? '有效' : '无效'}}
-                </template> 
+                  {{scope.row.created_at | toDateTime}}
+                </template>
               </el-table-column>
               <el-table-column prop="status" label="操作" width="60">
                 <template scope="scope"> 
-                    <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
+                    <el-button @click="deleteType(scope.row.id)" size="small" class="fa fa-th-large"></el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -110,7 +103,7 @@ export default {
         this.ids.push(id)
       }
       if (this.ids.length === 0) {
-        this.$confirm('请进行正确操作，请先勾选角色？', '错误', {
+        this.$confirm('请进行正确操作，请先勾选权限？', '错误', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'error'
@@ -123,48 +116,23 @@ export default {
       }
       this.users = []
       this.users.push(this.userid)
-      this.$confirm('是否确认是否解除关联', '提示', {
+      this.$confirm('是否确认是否关联权限', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.POST(config.authority.relateremove, {
-          roles: this.ids,
-          permissions: this.users
+        api.POST(config.merchantRole.relateAdd, {
+          permissions: this.ids,
+          accounts: this.users
         })
         .then(response => {
           if (response.data.errcode === '0000') {
-            this.onSuccess('解除成功')
+            this.onSuccess('关联成功')
             this.getList()
           } else {
             this.$message.error('发生错误，请重试')
           }
         })
-      })
-    },
-    toswitch (active, id) {
-      let data = {
-        pageSize: this.response.pageSize,
-        currentPage: this.response.currentPage
-      }
-      var obj = {
-        id: id,
-        active: Number(active)
-      }
-      api.POST(config.authority.relateractive, obj)
-      .then(response => {
-        if (response.status !== 200) {
-          this.error = response.statusText
-          return
-        }
-        if (response.data.errcode === '0000') {
-          this.$notify({
-            title: '成功',
-            message: '修改状态成功！！！',
-            type: 'success'
-          })
-          this.getList(data)
-        }
       })
     },
     handleSizeChange (value) {
@@ -205,7 +173,7 @@ export default {
       return res
     },
     getList (data = {}) {
-      api.GET(config.authority.related, {permission_id: this.userid, ...data})
+      api.GET(config.merchantRole.relate, {account_id: this.userid, ...data})
       .then(response => {
         this.response = this.transformDate(response.data.data)
       })
