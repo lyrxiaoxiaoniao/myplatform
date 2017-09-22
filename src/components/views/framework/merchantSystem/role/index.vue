@@ -312,13 +312,13 @@
           </el-row>         
             <el-form-item label="角色归属">
               <el-select v-model="userForm.account_id" filterable placeholder="请选择" class="fullwidth">
-                    <el-option
-                      v-for="item in origins"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value">
-                    </el-option>
-                  </el-select>
+                <el-option
+                  v-for="item in origins"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>           
         </el-form>
         <el-tabs class="margin" v-model="activeName"  @tab-click="handleClick" style="margin:0 2em">
