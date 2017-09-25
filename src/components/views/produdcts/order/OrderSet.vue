@@ -41,7 +41,7 @@ export default {
   },
   methods: {
     handleClick(tab, event) {
-      console.log(tab, event)
+      // console.log(tab, event)
     }
   },
   components: {

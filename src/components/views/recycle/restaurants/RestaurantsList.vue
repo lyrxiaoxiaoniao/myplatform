@@ -38,7 +38,7 @@
         <el-table-column prop="mobile" label="联系电话"></el-table-column>
         <el-table-column prop="license" label="营业执照">
           <template scope="scope">
-            <img :src="scope.row.license" />
+            <img :src="scope.row.license" alt="营业执照" width="96px" height="96px" />
           </template>
         </el-table-column>
         <el-table-column prop="signState" label="签约状态" width="100"></el-table-column>

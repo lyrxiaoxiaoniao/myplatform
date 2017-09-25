@@ -346,15 +346,25 @@ export default {
   },
   methods: {
     add () {
-      if (this.restaurantInfo.begin_time) {
-        this.restaurantInfo.begin_time = Date.parse(this.restaurantInfo.begin_time)
-      }
-      if (this.restaurantInfo.end_time) {
-        this.restaurantInfo.end_time = Date.parse(this.restaurantInfo.end_time)
-      }
-      this.restaurantInfo.checkState = Number(this.restaurantInfo.checkState).toString()
-      this.restaurantInfo.signState = Number(this.restaurantInfo.signState).toString()
-      api.POST(config.restaurants.create, this.restaurantInfo)
+      // 必须选择地图定位才能发起添加请求
+      if (!this.restaurantInfo.longitude) {
+        this.$confirm('请选择地图定位', '错误', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'error'
+        }).then(() => {
+        }).catch(() => {
+        })
+      } else {
+        if (this.restaurantInfo.begin_time) {
+          this.restaurantInfo.begin_time = Date.parse(this.restaurantInfo.begin_time)
+        }
+        if (this.restaurantInfo.end_time) {
+          this.restaurantInfo.end_time = Date.parse(this.restaurantInfo.end_time)
+        }
+        this.restaurantInfo.checkState = Number(this.restaurantInfo.checkState).toString()
+        this.restaurantInfo.signState = Number(this.restaurantInfo.signState).toString()
+        api.POST(config.restaurants.create, this.restaurantInfo)
         .then(response => {
           if (response.status !== 200) {
             this.error = response.statusText
@@ -362,17 +372,13 @@ export default {
           }
           if (response.data.errcode === '0000') {
             this.onSuccess('保存成功')
-            this.restaurantInfo = {
-              checkState: true,
-              license: '',
-              begin_time: '',
-              end_time: ''
-            }
+            this.toList()
           }
         })
         .catch(error => {
           this.$message.error(error)
         })
+      }
     },
     getRegion (data = {}) {
       api.GET(config.restaurants.getRegion, data)

@@ -4,19 +4,19 @@
       <div slot="kobe-table-header" class="kobe-table-header">
         <el-row type="flex" justify="end">
           <el-col :span="14">
-            <el-button type="primary">刷新</el-button>
+            <el-button type="primary" @click="refresh">刷新</el-button>
             <el-button type="primary" @click="batchDelete">批量删除</el-button>
           </el-col>
-          <el-select v-model="classData.region" placeholder="全部物流" style="width:130px;" @change="selectSearch('region')">
-            <el-option v-for="item in option" :key="item.value" :label="item.label" :value="item.value">
+          <el-select v-model="searchValueObj.freight_way" placeholder="全部物流" style="width:150px;margin-right: 10px" @change="onSearch">
+            <el-option v-for="item in freightWayOptions" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
-          <el-select v-model="classData.status" placeholder="全部状态" style="width:130px;" @change="selectSearch('region')">
-            <el-option v-for="item in option1" :key="item.value" :label="item.label" :value="item.value">
+          <el-select v-model="searchValueObj.send_status" placeholder="全部状态" style="width:150px;margin-right: 10px" @change="onSearch">
+            <el-option v-for="item in sendStatusOptions" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
           <el-col :span="8">
-            <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
+            <el-input v-model="searchValueObj.keyword" placeholder="请输入搜索关键字">
               <el-button slot="append" @click="onSearch" icon="search"></el-button>
             </el-input>
           </el-col>
@@ -29,22 +29,37 @@
         <el-table ref="multipleTable"
           border
           stripe
+          height="428"
           :data="response.data"
           @selection-change="selectIds"
           @row-dblclick="rowDbclick">
-          <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="id" label="ID" width="50"></el-table-column>
-          <el-table-column prop="orderNumber" label="订单号"></el-table-column>
-          <el-table-column prop="goodsName" label="商品" width="150"></el-table-column>
-          <el-table-column prop="phone" label="买家手机号"></el-table-column>
+          <el-table-column fixed type="selection"></el-table-column>
+          <el-table-column fixed prop="id" label="ID"></el-table-column>
+          <el-table-column prop="order_number" label="订单号" width="150"></el-table-column>
+          <el-table-column prop="awardOrderDetailBeans" label="商品" width="270">
+            <template scope="scope">
+              <ul class="goodsList">
+                <li v-for="value in scope.row.awardOrderDetailBeans" class="goodsList-item">
+                  <div>
+                    <span>{{value.awardGoodsBean.name}}</span>
+                  </div>
+                  <div>
+                    <p>￥{{value.awardGoodsBean.sell_price}}</p>
+                    <p>X{{value.goods_number}}</p>
+                  </div>
+                </li>
+              </ul>
+            </template>
+          </el-table-column>
+          <el-table-column prop="phone" label="买家手机号" width="150"></el-table-column>
           <el-table-column prop="price" label="成交金额" width="100"></el-table-column>
-          <el-table-column prop="payway" label="成交方式" width="100"></el-table-column>
-          <el-table-column prop="createdAt" label="订单时间" width="100"></el-table-column>
-          <el-table-column prop="payway" label="支付方式" width="100"></el-table-column>
-          <el-table-column prop="freightWay" label="物流方式" width="100"></el-table-column>
-          <el-table-column prop="buyerName" label="收货人" width="100"></el-table-column>
+          <el-table-column prop="bargain_type" label="成交方式" width="100"></el-table-column>
+          <el-table-column prop="created_at" label="订单时间" width="200"></el-table-column>
+          <el-table-column prop="pay_way" label="支付方式" width="100"></el-table-column>
+          <el-table-column prop="freight_way" label="物流方式" width="100"></el-table-column>
+          <el-table-column prop="consignee" label="收货人"></el-table-column>
           <el-table-column prop="address" label="收货地址"></el-table-column>
-          <el-table-column prop="status" label="状态" width="80"></el-table-column>
+          <el-table-column prop="send_status" label="状态"></el-table-column>
         </el-table>
       </div>
       <div slot="kobe-table-footer" class="kobe-table-footer">
@@ -57,61 +72,51 @@
       </div>
     </kobe-table>
     <el-dialog :title="dialog.title" v-model="dialog.visible" :size="dialog.size">
-      <el-form :model="classData" label-width="80px">
+      <el-form :model="advancedSearchForm" label-width="80px">
         <el-row>
           <el-col :span="24">
             <el-form-item label="订单号">
-              <el-input v-model="classData.explain"></el-input>
+              <el-input v-model="advancedSearchForm.order_number"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item label="时间">
               <el-col :span="11">
-                <el-date-picker type="datetime" placeholder="选择开始时间" v-model="classData.date1" style="width: 100%;"></el-date-picker>
+                <el-date-picker type="datetime" placeholder="选择开始时间" v-model="advancedSearchForm.date1" style="width: 100%;"></el-date-picker>
               </el-col>
               <el-col class="line" :span="2">~~</el-col>
               <el-col :span="11">
-                <el-date-picker type="datetime" placeholder="选择结束时间" v-model="classData.date2" style="width: 100%;"></el-date-picker>
+                <el-date-picker type="datetime" placeholder="选择结束时间" v-model="advancedSearchForm.date2" style="width: 100%;"></el-date-picker>
               </el-col>
             </el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item label="订单类型">
-              <el-select v-model="classData.region" placeholder="请选择活动区域" style="width:100%;">
-                <el-option label="全部" value="1"></el-option>
-                <el-option label="普通订单" value="2"></el-option>
-                <el-option label="代付订单" value="3"></el-option>
-                <el-option label="维权订单" value="4"></el-option>
-                <el-option label="积分兑换订单" value="5"></el-option>
+              <el-select v-model="advancedSearchForm.order_type" placeholder="请选择活动区域" style="width:100%;">
+                <el-option v-for="item in orderTypeOptions" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="订单状态">
-              <el-select v-model="classData.status" placeholder="请选择活动区域">
-                <el-option label="全部状态" value="1"></el-option>
-                <el-option label="待付款" value="2"></el-option>
-                <el-option label="待发货" value="3"></el-option>
-                <el-option label="已发货" value="4"></el-option>
-                <el-option label="已完成" value="5"></el-option>
-                <el-option label="已关闭" value="6"></el-option>
-                <el-option label="退款中" value="7"></el-option>
+              <el-select v-model="advancedSearchForm.send_status" placeholder="请选择活动区域">
+                <el-option v-for="item in sendStatusOptions" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="物流方式">
-              <el-select v-model="classData.region" placeholder="请选择活动区域">
-                <el-option label="全部物流" value="1"></el-option>
-                <el-option label="同城配送" value="2"></el-option>
-                <el-option label="上门自提" value="3"></el-option>
-                <el-option label="快递发货" value="4"></el-option>
+              <el-select v-model="advancedSearchForm.freight_way" placeholder="请选择活动区域">
+                <el-option v-for="item in freightWayOptions" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="维权状态">
-              <el-select v-model="classData.region" placeholder="请选择活动区域">
+              <el-select v-model="advancedSearchForm.region" placeholder="请选择活动区域">
                 <el-option label="全部状态" value="1"></el-option>
                 <el-option label="退款中" value="2"></el-option>
                 <el-option label="退款结束" value="3"></el-option>
@@ -120,23 +125,20 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="付款方式">
-              <el-select v-model="classData.region" placeholder="请选择活动区域">
-                <el-option label="全部" value="1"></el-option>
-                <el-option label="微信支付" value="2"></el-option>
-                <el-option label="支付宝支付" value="3"></el-option>
-                <el-option label="上门现金" value="4"></el-option>
-                <el-option label="积分兑换" value="5"></el-option>
+              <el-select v-model="advancedSearchForm.pay_way" placeholder="请选择活动区域">
+                <el-option v-for="item in payWayOptions" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="交易积分/金额">
+            <el-form-item label="交易金额/积分">
               <el-col :span="11">
-                <el-input v-model="classData.explain"></el-input>
+                <el-input v-model="advancedSearchForm.explain"></el-input>
               </el-col>
               <el-col class="line" :span="2">~~</el-col>
               <el-col :span="11">
-                <el-input v-model="classData.explain"></el-input>
+                <el-input v-model="advancedSearchForm.explain"></el-input>
               </el-col>
             </el-form-item>
           </el-col>
@@ -156,64 +158,67 @@
   export default {
     data() {
       return {
-        multipleSelection: [],
-        form: {
-          keyword: ''
+        searchValueObj: {
+          freight_way: '',
+          send_status: '',
+          keyword: '',
+          currentPage: 1,
+          pageSize: 10
         },
-        option: [{
-          value: '1',
+        freightWayOptions: [{
+          value: '',
           label: '全部物流'
         }, {
-          value: '2',
-          label: '同城配送'
-        }, {
-          value: '3',
+          value: 0,
           label: '上门自提'
         }, {
-          value: '4',
+          value: 1,
           label: '快递发货'
+        }, {
+          value: 2,
+          label: '同城配送'
         }],
-        option1: [{
-          value: '1',
+        sendStatusOptions: [{
+          value: '',
           label: '全部状态'
         }, {
-          value: '2',
-          label: '待付款'
+          value: 0,
+          label: '未发货'
         }, {
-          value: '3',
-          label: '待发货'
-        }, {
-          value: '4',
+          value: 1,
           label: '已发货'
-        }, {
-          value: '4',
-          label: '已完成'
-        }, {
-          value: '4',
-          label: '已关闭'
-        }, {
-          value: '4',
-          label: '退款中'
-        }, {
-          value: '4',
-          label: '退款结束'
         }],
-        options: [{
-          value: 'zhinan',
-          label: '指南',
-          children: []
+        orderTypeOptions: [{
+          value: '',
+          label: '全部状态'
+        }, {
+          value: 0,
+          label: '未发货'
+        }, {
+          value: 1,
+          label: '已发货'
+        }],
+        payWayOptions: [{
+          value: '',
+          label: '全部'
+        }, {
+          value: 0,
+          label: '微信'
+        }, {
+          value: 1,
+          label: '积分'
+        }, {
+          value: 2,
+          label: '借记卡'
         }],
         response: {
-          data: [{
-            sort: 1
-          }]
+          data: null
         },
-        classData: {
+        advancedSearchForm: {
           num1: '',
           date1: '',
           date2: ''
         },
-        tableData: null,
         dialog: {
           visible: false,
           title: '',
@@ -230,18 +235,30 @@
     methods: {
       /* http请求函数开始 */
       getList(data = {}) {
-        //   mallOrderAPI
-        api.GET(config.showOrderAPI, data)
-          .then(response => {
-            this.response = response.data.data
-            console.log(this.response)
-          })
-          .catch(error => {
-            this.$message.error(error)
-          })
+        api.GET(config.integralMall.order.index, data)
+        .then(response => {
+          this.response = this.transformData(response.data.data)
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
       },
       deletePost () {
-        console.log('发起删除http请求')
+        api.POST(config.integralMall.order.deleteOrder, {ids: this.selectedIds})
+        .then(response => {
+          if (response.status !== 200) {
+            this.error = response.statusText
+            return
+          }
+          if (response.data.errcode === '0000') {
+            this.onSuccess('删除成功')
+            this.selectedIds.length = 0
+            this.getList()
+          }
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
       },
       /* http请求函数结束 */
       /* 用户行为触发改或删操作的函数开始 */
@@ -261,27 +278,21 @@
             this.next = await this.warnSelection(this.next, warnContent)
           }
         }
-        // 弹出输入对话框或警告对话框/直接发起http请求
+        // 弹出输入对话框或警告对话框
         if (this.next) {
           if (this.needInput) {
             this.next = false
             this.openDialog(operationName, dialogSize)
           }
           if (this.needWarning) {
-            // 弹出警告对话框
             this.next = await this.confirmOperation(this.next, warnContent)
-          }
-          if (!this.needInput && !this.needWarning) {
-            this.next = false
-            // 发起http请求
-            console.log('直接发起http请求')
           }
         }
         // 警告对话框点击确定后的执行函数
         if (this.next) {
           switch (operationName) {
             case '删除':
-              console.log('警告对话框点击确定后发起删除http请求')
+              this.deletePost()
               break
           }
         }
@@ -320,41 +331,112 @@
         this.getList()
       },
       handleSizeChange (value) {
-        const data = {
-          currentPage: this.response.currentPage,
-          pageSize: value,
-          ...this.form
-        }
-
-        this.getList(data)
+        this.searchValueObj.pageSize = value
+        this.getListByParams()
       },
       handleCurrentChange (value) {
-        const data = {
-          currentPage: value,
-          pageSize: this.response.pageSize,
-          ...this.form
-        }
-
-        this.getList(data)
+        this.searchValueObj.currentPage = value
+        this.getListByParams()
       },
       onSearch () {
-        const data = {
-          currentPage: 1,
-          pageSize: this.response.pageSize,
-          ...this.form
-        }
-        this.getList(data)
+        this.getListByParams()
       },
-      onAdvancedSearch (obj) {
-        // data为高级搜索表单数据
+      // 以searchValueObj为基础，构造getList的参数
+      getListByParams () {
+        let obj = JSON.parse(JSON.stringify(this.searchValueObj))
+        for (var keyName in obj) {
+          if (obj[keyName] === '') {
+            delete obj[keyName]
+          }
+        }
+
         this.getList(obj)
       },
-      selectSearch (key) {
-        let obj = {}
-        obj[key] = this.classData[key]
+      onAdvancedSearch () {
+        let obj = this.advancedSearchForm
         this.getList(obj)
       },
       /* 用户行为触发查操作的函数结束 */
+      transformData (res) {
+        let obj = res
+        if (res.currentPage !== undefined) {
+          obj.data.forEach(v => {
+            if (v.created_at) {
+              v.created_at = this.formatDate(v.created_at)
+            }
+            this.changeState(v)
+          })
+        } else {
+          if (obj.created_at) {
+            obj.created_at = this.formatDate(obj.created_at)
+          }
+          this.changeState(obj)
+        }
+        return obj
+      },
+      // 时间转换 毫秒转换成 yyyy-mm-dd hh:mm:ss
+      formatDate (value) {
+        let date = new Date(value)
+        let M = date.getMonth() + 1
+        M = M < 10 ? ('0' + M) : M
+        let d = date.getDate()
+        d = d < 10 ? ('0' + d) : d
+        // let h = date.getHours()
+        let m = date.getMinutes()
+        m = m < 10 ? ('0' + m) : m
+        let s = date.getSeconds()
+        s = s < 10 ? ('0' + s) : s
+        value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
+        return value
+      },
+      changeState (obj) {
+        switch (obj.pay_status) {
+          case 0:
+            obj.pay_status = '未支付'
+            break
+          case 1:
+            obj.pay_status = '已支付'
+            break
+        }
+        switch (obj.pay_way) {
+          case 0:
+            obj.pay_way = '微信'
+            break
+          case 1:
+            obj.pay_way = '积分'
+            break
+          case 2:
+            obj.pay_way = '借记卡'
+            break
+        }
+        switch (obj.bargain_type) {
+          case 0:
+            obj.bargain_type = '微信'
+            break
+          case 1:
+            obj.bargain_type = '积分'
+            break
+          case 2:
+            obj.bargain_type = '借记卡'
+            break
+        }
+        switch (obj.freight_way) {
+          case 0:
+            obj.freight_way = '上门自提'
+            break
+          case 1:
+            obj.freight_way = '快递发货'
+            break
+        }
+        switch (obj.send_status) {
+          case 0:
+            obj.send_status = '未发货'
+            break
+          case 1:
+            obj.send_status = '已发货'
+            break
+        }
+      },
       // 勾选多行生成selectedIds数组
       selectIds (value) {
         let arr = value.map(v => {
@@ -371,7 +453,7 @@
         this.$router.push({
           path: '/admin/goods/order/detail',
           query: {
-            id: row
+            order_number: row.order_number
           }
         })
       },
@@ -397,7 +479,14 @@
     }
   }
 </script>
-<style scoped>
+<style lang="scss" scoped>
+  ul.goodsList {
+    padding: 0px;
+    .goodsList-item {
+      display: flex;
+      justify-content: space-between;
+    }
+  }
   .line {
     text-align: center;
   }
