@@ -6,7 +6,7 @@
           <div>基本信息</div>
           <div>
             <el-button @click="back">返回</el-button>  
-            <el-button type="primary" @click="submitForm('form')" style="margin-left: 10px;">保存</el-button> 
+            <el-button type="primary" @click="submitForm('form')" style="margin-left: 10px;">添加</el-button> 
           </div>
         </div>
         <div class="table-body">
@@ -194,7 +194,7 @@ export default {
 
       geolocationControl.addEventListener("locationSuccess", function(e) {
         // 定位成功事件
-        console.log(e)
+        // console.log(e)
       })
 
       geolocationControl.addEventListener("locationError", function(e) {
@@ -213,8 +213,8 @@ export default {
         that.form.latitude = that.point.lat
         // that.point.lat = e.point.lat
         // that.point.lng = e.point.lng
-        console.log(that.point)
-        console.log('that.form' + that.form)
+        // console.log(that.point)
+        // console.log('that.form' + that.form)
         const marker = new BMap.Marker(e.point)
         map.addOverlay(marker)
         geoc.getLocation(e.point, function(rs) {
@@ -241,7 +241,7 @@ export default {
         this.iteration(newData)
         this.data = newData
         this.cascaderData = newData
-        console.log(this.cascaderData)
+        // console.log(this.cascaderData)
       })
       .catch(error => {
         this.$message.error(error)
@@ -266,13 +266,24 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          if (this.searchInput === '') {
+            this.$notify({
+              title: '提示',
+              message: '请前往地图定位选择详细地址后再添加',
+              type: 'info'
+            })
+            return
+          }
           const data = {
             detail_address: this.searchInput,
             ...this.form
           }
           api.POST(config.village.create, data)
           .then(response => {
-            this.onSuccess('添加成功！')
+            if (response.data.errcode === '0000') {
+              this.onSuccess('添加成功！')
+              this.$router.push({path: '/admin/recycle/village/index'})
+            }
           })
           .catch(error => {
             this.$message.error(error)

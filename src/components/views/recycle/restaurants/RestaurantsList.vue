@@ -38,8 +38,8 @@
         <el-table-column prop="mobile" label="联系电话"></el-table-column>
         <el-table-column prop="license" label="营业执照">
           <template scope="scope">
-            <img :src="scope.row.license" />
-          </template>
+                <img style="width:58px;height:58px;" :src="scope.row.license" @click="bigImg(scope.row.license)" alt="">
+              </template>
         </el-table-column>
         <el-table-column prop="signState" label="签约状态" width="100"></el-table-column>
         <el-table-column prop="checkState" label="审核状态" width="120">
@@ -132,6 +132,10 @@
           </div>
         </div>
       </el-dialog>
+       <!-- 营业执照弹框 -->
+      <el-dialog v-model="dialogVisible" size="tiny">
+        <img width="100%" :src="dialogImageUrl" alt="">
+      </el-dialog>
     </div>
   </kobe-table>
 </template>
@@ -144,6 +148,8 @@
     name: 'sc-restaurants-table',
     data () {
       return {
+        dialogVisible: false,
+        dialogImageUrl: '',
         response: {
           data: null
         },
@@ -183,6 +189,10 @@
     },
     computed: {},
     methods: {
+      bigImg (url) {
+        this.dialogImageUrl = url
+        this.dialogVisible = true
+      },
       getList (data = {}) {
         api.GET(config.restaurants.index, data)
           .then(response => {

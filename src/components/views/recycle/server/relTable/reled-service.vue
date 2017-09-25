@@ -33,9 +33,9 @@
                 </el-table-column>
                 <el-table-column prop="title" label="所属街道" width="90"></el-table-column>
                 <el-table-column prop="detail_address" label="详细地址"></el-table-column>
-                <el-table-column width="160" label="操作">
+                <el-table-column width="80" label="操作">
                 <template scope="scope">
-                  <el-button size="small" icon="edit" title="修改"></el-button>
+                  <!-- <el-button size="small" icon="edit" title="修改"></el-button> -->
                   <el-button size="small" @click="remove(scope.row.id)" title="解除">解除</el-button>
                 </template>
                 </el-table-column>

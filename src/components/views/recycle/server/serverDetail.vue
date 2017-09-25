@@ -218,7 +218,7 @@ export default {
 
       geolocationControl.addEventListener("locationSuccess", function(e) {
         // 定位成功事件
-        console.log(e)
+        // console.log(e)
       })
 
       geolocationControl.addEventListener("locationError", function(e) {
@@ -257,17 +257,13 @@ export default {
       }
     },
     handleChange(value) {
-      console.log(value)
       this.detailForm.region_pid = value[0]
       this.detailForm.region_id = value[1]
     },
     // 上传营业执照
     handleAvatarSuccess(res, file) {
-      this.license = window.URL.createObjectURL(file.raw)
+      // this.license = window.URL.createObjectURL(file.raw)
       this.detailForm.license = res.data[0]
-      console.log(res)
-      console.log(this.license)
-      console.log(this.detailForm.license)
     },
     beforeAvatarUpload (file) {
       const isJPG = file.type === 'image/jpeg'
