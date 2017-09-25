@@ -159,7 +159,7 @@ export default {
       const that = this
       map.clearOverlays()
       geoc.getPoint(this.searchInput, function(e) {
-        console.log(e)
+        // console.log(e)
         if (e) {
           map.centerAndZoom(e, 17)
           map.addOverlay(new BMap.Marker(e))
@@ -196,7 +196,7 @@ export default {
 
       geolocationControl.addEventListener("locationSuccess", function(e) {
         // 定位成功事件
-        console.log(1111)
+        // console.log(1111)
       })
 
       geolocationControl.addEventListener("locationError", function(e) {
@@ -210,7 +210,7 @@ export default {
 
       map.addEventListener('click', function(e) {
         map.clearOverlays()
-        console.log(e.point)
+        // console.log(e.point)
         that.point = JSON.parse(JSON.stringify(e.point))
         that.detailForm.longitude = that.point.lng
         that.detailForm.latitude = that.point.lat
@@ -235,7 +235,7 @@ export default {
       }
     },
     handleChange(value) {
-      console.log(value)
+      // console.log(value)
       this.detailForm.region_pid = value[0]
       this.detailForm.region_id = value[1]
     },

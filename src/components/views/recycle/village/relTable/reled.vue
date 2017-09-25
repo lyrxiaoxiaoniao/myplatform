@@ -23,7 +23,7 @@
                     @selection-change="handleSelectionChange">
                     <!-- <el-table-column type="selection" width="40"></el-table-column> -->
                     <el-table-column prop="id" label="ID" sortable width="80"></el-table-column>
-                    <el-table-column prop="name" label="物业名称" width="140"></el-table-column>
+                    <el-table-column prop="name"></el-table-column>
                     <el-table-column prop="name" label="关联时间" width="130">
                       <template scope="scope">
                         {{scope.row.begin_time | toYM}} - {{scope.row.end_time | toYM}}
@@ -32,9 +32,9 @@
                     <el-table-column prop="duty_name" label="联系人" width="80"></el-table-column>
                     <el-table-column prop="mobile" label="联系电话" width="120"></el-table-column>
                     <el-table-column prop="address" label="公司地址"></el-table-column>
-                    <el-table-column width="140" label="操作">
+                    <el-table-column width="80" label="操作">
                     <template scope="scope">
-                        <el-button size="small" icon="edit" title="修改"></el-button>
+                        <!-- <el-button size="small" icon="edit" title="修改"></el-button> -->
                         <el-button size="small" @click="remove(scope.row.id)" title="解除">解除</el-button>
                     </template>
                     </el-table-column>

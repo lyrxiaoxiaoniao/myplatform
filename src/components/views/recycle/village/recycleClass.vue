@@ -173,7 +173,7 @@ import api from 'src/api'
 export default {
   data () {
     return {
-      regionSelect: true,
+      sendData: null,
       formLabelWidth: '90px',
       adSwitch: true,
       advancedSearch: {
@@ -244,6 +244,7 @@ export default {
       region_pid: null,
       region_id: null,
       ids: [],
+      cityOptions: [],
       rules: {
         display_name: [
           { required: true, message: '请输入小区名称', trigger: 'blur' }
@@ -343,21 +344,34 @@ export default {
     // 树形目录点击事件
     handleNodeClick (data, node) {
       if (data.type === 'district') {
-        this.region_id = data.id
-        this.regionSelect = false
-        this.getList({
-          region_pid: this.region_id,
-          currentPage: 1,
-          pageSize: this.response.pageSize,
-          ...this.form
-        })
+        this.cityOptions = []
+        this.cityOptions.push(data.id)
       } else {
-        this.region_id = data.id
+        if (this.cityOptions.length === 2) {
+          this.cityOptions.pop()
+          this.cityOptions.push(data.id)
+          // console.log(this.cityOptions)
+        } else {
+          this.cityOptions.push(data.id)
+          // console.log(this.cityOptions)
+        }
+      }
+      if (this.cityOptions.length === 1) {
+        this.region_pid = this.cityOptions[0]
+        this.getList({
+          region_pid: this.region_pid,
+          currentPage: 1,
+          pageSize: this.response.pageSize
+          // ...this.form
+        })
+      }
+      if (this.cityOptions.length === 2) {
+        this.region_id = this.cityOptions[1]
         this.getList({
           region_id: this.region_id,
-          currentPage: this.response.currentPage,
-          pageSize: this.response.pageSize,
-          ...this.form
+          currentPage: 1,
+          pageSize: this.response.pageSize
+          // ...this.form
         })
       }
     },
@@ -523,45 +537,72 @@ export default {
       })
     },
     handleSizeChange (value) {
-      const data = {
-        currentPage: this.response.currentPage,
-        pageSize: value,
-        region_id: this.region_id,
-        ...this.form
-      }
-      if (this.adSwitch) {
-        this.getList(data)
+      if (this.cityOptions.length === 1) {
+        const data = {
+          currentPage: this.response.currentPage,
+          pageSize: value,
+          region_pid: this.region_pid
+          // ...this.form
+        }
+        if (this.adSwitch) {
+          this.getList(data)
+        } else {
+          this.adSwitch = true
+        }
+      } else if (this.cityOptions.length === 2) {
+        const data = {
+          currentPage: this.response.currentPage,
+          pageSize: value,
+          region_id: this.region_id
+          // ...this.form
+        }
+        if (this.adSwitch) {
+          this.getList(data)
+        } else {
+          this.adSwitch = true
+        }
       } else {
-        this.adSwitch = true
+        const data = {
+          currentPage: this.response.currentPage,
+          pageSize: value,
+          ...this.form
+        }
+        this.getList(data)
       }
     },
     handleCurrentChange (value) {
       // console.log(value)
-      if (this.regionSelect === true) {
+      if (this.cityOptions.length === 1) {
         const data = {
           currentPage: value,
           pageSize: this.response.pageSize,
-          region_id: this.region_id,
-          ...this.form
+          region_pid: this.region_pid
+          // ...this.form
         }
         if (this.adSwitch) {
           this.getList(data)
         } else {
           this.adSwitch = true
         }
-        this.regionSelect = false
+      } else if (this.cityOptions.length === 2) {
+        const data = {
+          currentPage: value,
+          pageSize: this.response.pageSize,
+          region_id: this.region_id
+          // ...this.form
+        }
+        if (this.adSwitch) {
+          this.getList(data)
+        } else {
+          this.adSwitch = true
+        }
       } else {
         const data = {
           currentPage: value,
           pageSize: this.response.pageSize,
-          region_pid: this.region_id,
           ...this.form
         }
-        if (this.adSwitch) {
-          this.getList(data)
-        } else {
-          this.adSwitch = true
-        }
+        this.getList(data)
       }
     },
     onSearch () {

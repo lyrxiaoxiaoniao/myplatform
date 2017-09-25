@@ -147,6 +147,10 @@ import RecycleAdd from 'components/views/recycle/village/recycleAdd.vue'
 import VillageDetail from 'components/views/recycle/village/villageDetail.vue'
 import RelSeverList from 'components/views/recycle/village/relSever.vue'
 
+// 工作台
+import WorkBench from 'components/views/recycle/workbench/index.vue'
+import DoWork from 'components/views/recycle/workbench/dispatcherDetail.vue'
+
 // server
 import ServerIndex from 'components/views/recycle/server/index.vue'
 import ServerDetail from 'components/views/recycle/server/serverDetail.vue'
@@ -996,6 +1000,23 @@ const routes = [
         name: '罗湖城管垃圾分类',
         meta: {description: '列表'},
         children: [{
+          path: 'workbench',
+          component: DashMainView,
+          redirect: '/admin/recycle/workbench/index',
+          name: '工作台',
+          meta: {description: '列表'},
+          children: [{
+            path: 'index',
+            component: WorkBench,
+            name: '工作台',
+            meta: {description: '列表'}
+          }, {
+            path: 'do',
+            component: DoWork,
+            name: '待办工作',
+            meta: {description: ''}
+          }]
+        }, {
           path: 'village',
           component: DashMainView,
           redirect: '/admin/recycle/village/index',

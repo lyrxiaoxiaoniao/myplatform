@@ -5,7 +5,17 @@
             <kobe-table>
                 <div slot="kobe-table-header" class="kobe-table-header">
                   <el-row type="flex" justify="end">
-                    <el-col :span="10" :offset="14">
+                    <el-col :span="14">
+                    </el-col>
+                    <el-select v-model="form.audit_state" placeholder="所有信息" style="width:140px;">
+                      <el-option
+                        v-for="item in option"
+                        :key="item.audit_state"
+                        :label="item.label"
+                        :value="item.audit_state">
+                      </el-option>
+                    </el-select>
+                    <el-col :span="8">
                         <el-input v-model="form.keyword" placeholder="请输入关键字">
                         <el-button slot="append" @click="onSearch" icon="search"></el-button>
                         </el-input>
@@ -21,16 +31,17 @@
                     stripe
                     :data="response.data"
                     @selection-change="handleSelectionChange">
-                    <!-- <el-table-column type="selection" width="40"></el-table-column> -->
+                    <el-table-column type="selection" width="40"></el-table-column>
                     <el-table-column prop="id" label="ID" sortable width="80"></el-table-column>
-                    <el-table-column prop="name" label="物业名称"></el-table-column>
-                    <el-table-column prop="duty_name" label="联系人" width="80"></el-table-column>
-                    <el-table-column prop="mobile" label="联系电话" width="120"></el-table-column>
-                    <el-table-column prop="address" label="公司地址"></el-table-column>
-                    <el-table-column width="80" label="操作">
+                    <el-table-column prop="name" label="工单编号" width="140"></el-table-column>
+                    <el-table-column prop="name" label="工单名称" width="140"></el-table-column>
+                    <el-table-column prop="duty_name" label="已办内容" width="80"></el-table-column>
+                    <el-table-column prop="mobile" label="处理单位" width="120"></el-table-column>
+                    <el-table-column prop="address" label="处理状态"></el-table-column>
+                    <el-table-column width="115" label="操作">
                     <template scope="scope">
-                        <!-- <el-button size="small" icon="edit" title="修改"></el-button> -->
-                        <el-button size="small" @click="openDialog(scope.row.id)" title="关联">关联</el-button>
+                        <el-button size="small" icon="edit" title="查看"></el-button>
+                        <el-button @click="deleteType(scope.row.id)" size="small" icon="delete2"></el-button>
                     </template>
                     </el-table-column>
                 </el-table>
@@ -81,6 +92,16 @@ export default {
   props: ['communityId'],
   data () {
     return {
+      option: [{
+        audit_state: null,
+        label: '所有信息'
+      }, {
+        audit_state: '1',
+        label: '已指派'
+      }, {
+        audit_state: '0',
+        label: '已退单'
+      }],
       dialogAdvance: false,
       correlateForm: {
         community_id: this.communityId,
