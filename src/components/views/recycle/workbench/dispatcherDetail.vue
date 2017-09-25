@@ -12,7 +12,7 @@
       </div>
       <div class="lh-form">
         <el-form :model="info" label-width="100px" label-position="right">
-          <el-row :gutter="20">
+          <el-row>
             <el-col :span="11"> 
               <el-form-item label="提交单位">
                 <p class="border">{{info.name}}</p>
@@ -50,21 +50,22 @@
                 </el-cascader>
               </el-form-item>
             </el-col>
+          </el-row>
+          <el-col :span="11"> 
+            <el-form-item label="回收地址">
+              <p class="border">{{info.name}}</p>
+            </el-form-item>
+          </el-col>     
+          <el-col :span="11" :offset="2">      
+            <el-form-item disabled label="回收日期">
+              <p class="border">{{info.name}}</p>
+            </el-form-item> 
+          </el-col>
+          <el-row>
             <el-col :span="11"> 
-              <el-form-item label="回收地址">
-                <p class="border">{{info.name}}</p>
-              </el-form-item>
-            </el-col>     
-            <el-col :span="11" :offset="2">      
-              <el-form-item disabled label="回收日期">
-                <p class="border">{{info.name}}</p>
-              </el-form-item> 
-            </el-col>
-            <el-col :span="11"> 
-              <el-form-item label="回收点图片">
-                <template scope="scope">
-                  <img style="width:58px;height:58px;" :src="info.mobile" @click="bigImg(info.mobile)" alt="">
-                </template>
+              <el-form-item label="回收点图片">       
+                <img style="width:58px;height:58px;display: inline-block" :src="info.mobile" @click="bigImg(info.mobile)" alt="">
+                <img style="width:58px;height:58px;display: inline-block" :src="info.mobile" @click="bigImg(info.mobile)" alt="">
               </el-form-item>
             </el-col> 
           </el-row>

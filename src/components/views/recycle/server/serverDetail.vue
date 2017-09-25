@@ -286,6 +286,7 @@ export default {
           api.POST(config.server.update, this.detailForm)
           .then(response => {
             this.onSuccess('修改成功！')
+            this.$router.push({path: '/admin/recycle/village/index'})
           })
           .catch(error => {
             this.$message.error(error)
