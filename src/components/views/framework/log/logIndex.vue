@@ -30,7 +30,7 @@
             <el-table-column label="操作员" width="95">
               <template scope="scope">
                 <div v-if="scope.row.user_type === 1">{{scope.row.user.nickname}}（{{scope.row.user.username}}）</div>
-                <div v-if="scope.row.user_type === 2">{{scope.row.wx_user.nickname}}</div>
+                <div v-else-if="scope.row.user_type === 2">{{scope.row.wx_user.nickname}}</div>
                 <div v-else>无</div>
               </template>
             </el-table-column>
@@ -129,7 +129,7 @@
                 <p class="border" v-if="detailForm.user_type === 1">
                   管理员
                 </p>
-                <p class="border" v-if="detailForm.user_type === 2">
+                <p class="border" v-else-if="detailForm.user_type === 2">
                   微信用户
                 </p>
                 <p class="border" v-else>
@@ -141,7 +141,7 @@
                 <p class="border" v-if="detailForm.user_type === 1">
                   {{detailForm.user.nickname}}
                 </p>
-                <p class="border" v-if="detailForm.user_type === 2">
+                <p class="border" v-else-if="detailForm.user_type === 2">
                   {{detailForm.wx_user.nickname}}
                 </p>
                 <p class="border" v-else>
