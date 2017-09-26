@@ -27,7 +27,7 @@
             <el-table-column type="selection" width="45"></el-table-column>
             <el-table-column prop="id" sortable label="ID" width="80"></el-table-column>
             <el-table-column prop="account.name" label="商户名" width="150"></el-table-column>
-            <el-table-column label="操作员" width="95">
+            <el-table-column label="操作员" width="135">
               <template scope="scope">
                 <div v-if="scope.row.user_type === 1">{{scope.row.user.nickname}}（{{scope.row.user.username}}）</div>
                 <div v-if="scope.row.user_type === 2">{{scope.row.wx_user.nickname}}</div>
@@ -76,10 +76,10 @@
     <el-dialog title="高级搜索" v-model="dialogAdvance">
         <el-form :model="advancedSearch" label-width="75px">
            <el-form-item label="关键字">
-              <el-input v-model="advancedSearch.keyword"></el-input>
+              <el-input v-model="advancedSearch.keyword" placeholder="请输入关键字"></el-input>
             </el-form-item>
             <el-form-item label="归属商户">
-              <el-select v-model="advancedSearch.account_id" filterable placeholder="请选择" style="width:100%;">
+              <el-select v-model="advancedSearch.account_id" filterable placeholder="请选择归属商户" style="width:100%;">
                 <el-option
                   v-for="item in origins"
                   :key="item.value"
@@ -89,13 +89,13 @@
               </el-select>
             </el-form-item>
             <el-form-item label="用户名" >
-              <el-input v-model="advancedSearch.username"></el-input>
+              <el-input v-model="advancedSearch.username" placeholder="请输入用户名"></el-input>
             </el-form-item>
             <el-form-item label="url" >
-              <el-input v-model="advancedSearch.url"></el-input>
+              <el-input v-model="advancedSearch.url" placeholder="请输入url"></el-input>
             </el-form-item>
             <el-form-item label="IP地址" >
-              <el-input v-model="advancedSearch.created_ip"></el-input>
+              <el-input v-model="advancedSearch.created_ip" placeholder="请输入IP地址"></el-input>
             </el-form-item>
           <!--   <el-form-item label="操作模块" >
               <el-input v-model="advancedSearch.keyword"></el-input>

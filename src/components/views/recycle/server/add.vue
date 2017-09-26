@@ -57,29 +57,29 @@
                </el-col>
             </el-row>
             <el-row>
-                <el-col :span="24"> 
-                    <el-form-item label="物业说明" prop="memo">
-                      <el-input
-                        type="textarea"
-                        :rows="4"
-                        placeholder="请输入内容"
-                        v-model="detailForm.memo">
-                      </el-input>
-                    </el-form-item>
-                </el-col>
-              </el-row>
-             <el-form-item label="营业执照">
-                <el-upload
-                    class="avatar-uploader"
-                    :action="uploadURL"
-                    :show-file-list="false"
-                    :on-success="handleAvatarSuccess"
-                    :before-upload="beforeAvatarUpload">
-                    <img v-if="detailForm.license" :src="detailForm.license" class="avatar">
-                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                    <div class="el-upload__tip" slot="tip">上传有效、清晰的营业执照图片（最多上传1张，每张最大10M）</div>
-                </el-upload>
-              </el-form-item>
+              <el-col :span="24"> 
+                  <el-form-item label="物业说明" prop="memo">
+                    <el-input
+                      type="textarea"
+                      :rows="4"
+                      placeholder="请输入内容"
+                      v-model="detailForm.memo">
+                    </el-input>
+                  </el-form-item>
+              </el-col>
+            </el-row>
+            <el-form-item label="营业执照">
+              <el-upload
+                  class="avatar-uploader"
+                  :action="uploadURL"
+                  :show-file-list="false"
+                  :on-success="handleAvatarSuccess"
+                  :before-upload="beforeAvatarUpload">
+                  <img :src="detailForm.license" class="avatar" v-if="detailForm.license">
+                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                  <div class="el-upload__tip" slot="tip">上传有效、清晰的营业执照图片（最多上传1张，每张最大10M）</div>
+              </el-upload>
+            </el-form-item>
           </el-form>
         </div>
       </el-tab-pane>
@@ -215,7 +215,7 @@ export default {
 
       geolocationControl.addEventListener("locationSuccess", function(e) {
         // 定位成功事件
-        console.log(e)
+        // console.log(e)
       })
 
       geolocationControl.addEventListener("locationError", function(e) {
@@ -234,8 +234,8 @@ export default {
         that.detailForm.latitude = that.point.lat
         // that.point.lat = e.point.lat
         // that.point.lng = e.point.lng
-        console.log(that.point)
-        console.log('that.detailForm' + that.detailForm)
+        // console.log(that.point)
+        // console.log('that.detailForm' + that.detailForm)
         const marker = new BMap.Marker(e.point)
         map.addOverlay(marker)
         geoc.getLocation(e.point, function(rs) {
@@ -252,7 +252,7 @@ export default {
       }
     },
     handleChange(value) {
-      console.log(value)
+      // console.log(value)
       this.detailForm.region_pid = value[0]
       this.detailForm.region_id = value[1]
     },
@@ -260,6 +260,7 @@ export default {
     handleAvatarSuccess(res, file) {
       // this.license = window.URL.createObjectURL(file.raw)
       this.detailForm.license = res.data[0]
+      this.detailForm.show = true
     },
     beforeAvatarUpload (file) {
       const isJPG = file.type === 'image/jpeg' || 'image/png'
@@ -290,6 +291,7 @@ export default {
           api.POST(config.server.create, this.detailForm)
           .then(response => {
             this.onSuccess('添加成功！')
+            this.$router.push({path: '/admin/recycle/server/index'})
           })
           .catch(error => {
             this.$message.error(error)
@@ -307,7 +309,7 @@ export default {
       api.GET(config.village.streetTree)
       .then(response => {
         var newData = response.data.data[0].children[0].children
-        console.log(newData)
+        // console.log(newData)
         this.iteration(newData)
         this.data = newData
         this.cascaderData = newData
@@ -335,21 +337,9 @@ export default {
         message: string,
         type: 'success'
       })
-    },
-    getForm () {
-      api.GET(config.server.indexOne, {id: this.$route.query.id})
-      .then(response => {
-        if (response.data.errcode === '0000') {
-          this.detailForm = response.data.data
-        }
-      })
-      .catch(error => {
-        this.$message.error(error)
-      })
     }
   },
   mounted () {
-    this.getForm()
     this.getTree()
   }
 }
