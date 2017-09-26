@@ -29,15 +29,9 @@
             <el-table-column prop="account.name" label="商户名" width="150"></el-table-column>
             <el-table-column label="操作员" width="95">
               <template scope="scope">
-                <div v-if="scope.row.user_type">{{scope.row.user.nickname}}（{{scope.row.user.username}}）</div>
-                <div v-if="!scope.row.user_type">
-                  <div v-if="scope.row.wx_user.nickname">
-                    {{scope.row.wx_user.nickname}}
-                  </div>
-                  <div v-else>
-                    无
-                  </div>
-                </div>
+                <div v-if="scope.row.user_type === 1">{{scope.row.user.nickname}}（{{scope.row.user.username}}）</div>
+                <div v-if="scope.row.user_type === 2">{{scope.row.wx_user.nickname}}</div>
+                <div v-else>无</div>
               </template>
             </el-table-column>
             <!-- <el-table-column prop="module" width="105" label="模块"></el-table-column> -->
@@ -132,21 +126,25 @@
           <el-row>
             <el-col :span="11">
               <el-form-item label="操作员类别：">
-                <p class="border" v-if="detailForm.user_type">
+                <p class="border" v-if="detailForm.user_type === 1">
                   管理员
                 </p>
-                <p class="border" v-if="!detailForm.user_type">
+                <p class="border" v-if="detailForm.user_type === 2">
                   微信用户
+                </p>
+                <p class="border" v-else>
                 </p>
               </el-form-item>
             </el-col>
             <el-col :offset="2" :span="11">
               <el-form-item label="操作员姓名：">
-                <p class="border" v-if="detailForm.user_type">
+                <p class="border" v-if="detailForm.user_type === 1">
                   {{detailForm.user.nickname}}
                 </p>
-                <p class="border" v-if="!detailForm.user_type">
+                <p class="border" v-if="detailForm.user_type === 2">
                   {{detailForm.wx_user.nickname}}
+                </p>
+                <p class="border" v-else>
                 </p>
               </el-form-item>
             </el-col>
@@ -576,23 +574,11 @@ export default {
     getList (data = {}) {
       api.GET(config.journal.index, data)
       .then(response => {
-        this.response = this.transformDate(response.data.data)
-        console.log(this.response)
+        this.response = response.data.data
       })
       .catch(error => {
         this.$message.error(error)
       })
-    },
-    transformDate (res) {
-      res.data.forEach(v => {
-        if (v.user_type === 1) {
-          v.user_type = true
-        }
-        if (v.user_type === 2) {
-          v.user_type = false
-        }
-      })
-      return res
     },
     onSuccess (string) {
       this.$notify({
