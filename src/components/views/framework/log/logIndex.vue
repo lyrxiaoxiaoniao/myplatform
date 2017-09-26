@@ -100,17 +100,26 @@
           <!--   <el-form-item label="操作模块" >
               <el-input v-model="advancedSearch.keyword"></el-input>
             </el-form-item> -->
-            <el-form-item label="操作时间" >
-              <el-date-picker
-                  v-model="advancedSearch.start_time"
-                  type="datetime"
-                  placeholder="选择开始时间">
-              </el-date-picker>
-              <el-date-picker
-                  v-model="advancedSearch.end_time"
-                  type="datetime"
-                  placeholder="选择结束时间">
-                </el-date-picker>
+            <el-form-item label="创建时间">
+              <el-row>
+                <el-col :span="11">
+                  <el-date-picker
+                    v-model="advancedSearch.start_time"
+                    style="width: 100%"
+                    type="datetime"
+                    placeholder="选择开始时间">
+                  </el-date-picker>
+                </el-col>
+                <el-col :span="2" class="line">-</el-col>
+                <el-col :span="11">
+                  <el-date-picker
+                    v-model="advancedSearch.end_time"
+                    style="width: 100%"
+                    type="datetime"
+                    placeholder="选择结束时间">
+                  </el-date-picker>
+                </el-col>
+              </el-row>  
             </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -615,6 +624,9 @@ export default {
 }
 </script>
 <style scoped>
+.line{
+  text-align: center;
+}
 .border {
   border: 1px solid #bfcbd9;
   border-radius: 4px;
