@@ -27,7 +27,7 @@
             <el-table-column type="selection" width="45"></el-table-column>
             <el-table-column prop="id" sortable label="ID" width="80"></el-table-column>
             <el-table-column prop="account.name" label="商户名" width="150"></el-table-column>
-            <el-table-column label="操作员" width="95">
+            <el-table-column label="操作员" width="135">
               <template scope="scope">
                 <div v-if="scope.row.user_type === 1">{{scope.row.user.nickname}}（{{scope.row.user.username}}）</div>
                 <div v-else-if="scope.row.user_type === 2">{{scope.row.wx_user.nickname}}</div>
@@ -76,10 +76,10 @@
     <el-dialog title="高级搜索" v-model="dialogAdvance">
         <el-form :model="advancedSearch" label-width="75px">
            <el-form-item label="关键字">
-              <el-input v-model="advancedSearch.keyword"></el-input>
+              <el-input v-model="advancedSearch.keyword" placeholder="请输入关键字"></el-input>
             </el-form-item>
             <el-form-item label="归属商户">
-              <el-select v-model="advancedSearch.account_id" filterable placeholder="请选择" style="width:100%;">
+              <el-select v-model="advancedSearch.account_id" filterable placeholder="请选择归属商户" style="width:100%;">
                 <el-option
                   v-for="item in origins"
                   :key="item.value"
@@ -89,28 +89,37 @@
               </el-select>
             </el-form-item>
             <el-form-item label="用户名" >
-              <el-input v-model="advancedSearch.username"></el-input>
+              <el-input v-model="advancedSearch.username" placeholder="请输入用户名"></el-input>
             </el-form-item>
             <el-form-item label="url" >
-              <el-input v-model="advancedSearch.url"></el-input>
+              <el-input v-model="advancedSearch.url" placeholder="请输入url"></el-input>
             </el-form-item>
             <el-form-item label="IP地址" >
-              <el-input v-model="advancedSearch.created_ip"></el-input>
+              <el-input v-model="advancedSearch.created_ip" placeholder="请输入IP地址"></el-input>
             </el-form-item>
           <!--   <el-form-item label="操作模块" >
               <el-input v-model="advancedSearch.keyword"></el-input>
             </el-form-item> -->
-            <el-form-item label="操作时间" >
-              <el-date-picker
-                  v-model="advancedSearch.start_time"
-                  type="datetime"
-                  placeholder="选择开始时间">
-              </el-date-picker>
-              <el-date-picker
-                  v-model="advancedSearch.end_time"
-                  type="datetime"
-                  placeholder="选择结束时间">
-                </el-date-picker>
+            <el-form-item label="创建时间">
+              <el-row>
+                <el-col :span="11">
+                  <el-date-picker
+                    v-model="advancedSearch.start_time"
+                    style="width: 100%"
+                    type="datetime"
+                    placeholder="选择开始时间">
+                  </el-date-picker>
+                </el-col>
+                <el-col :span="2" class="line">-</el-col>
+                <el-col :span="11">
+                  <el-date-picker
+                    v-model="advancedSearch.end_time"
+                    style="width: 100%"
+                    type="datetime"
+                    placeholder="选择结束时间">
+                  </el-date-picker>
+                </el-col>
+              </el-row>  
             </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -615,6 +624,9 @@ export default {
 }
 </script>
 <style scoped>
+.line{
+  text-align: center;
+}
 .border {
   border: 1px solid #bfcbd9;
   border-radius: 4px;
