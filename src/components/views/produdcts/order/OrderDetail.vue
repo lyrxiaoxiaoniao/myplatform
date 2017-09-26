@@ -5,19 +5,19 @@
         <div slot="header" class="clearfix">
           <span style="line-height: 36px;font-size:18px;font-weight:600;">待发货</span>
           <el-button style="float: right;" type="primary" @click="openDialog('发货')">发货</el-button>
-          <p>
+          <!-- <p>
             <span>订单备注：</span>
-          </p>
+          </p> -->
         </div>
         <div>
           <h4>买家信息：</h4>
           <p>
-            <span>收货地址：</span>林先生，13688811903，广东 深圳市 南山区 前海路鼎太风华一期D4栋1103
-            <a href="javascript:;">修改地址</a>
+            <span>收货地址：</span>{{response.consignee}}，{{response.phone}}，{{response.address}}
+            <!-- <a href="javascript:;">修改地址</a> -->
           </p>
           <p>
-            <span>下单账号：</span>13688811903
-            <a href="javascript:;">联系买家</a>
+            <span>下单账号：</span>{{response.phone}}
+            <!-- <a href="javascript:;">联系买家</a> -->
           </p>
           <p>
             <span>买家留言：无</span>
@@ -42,9 +42,9 @@
         </el-tab-pane>
         <el-tab-pane label="物流信息" name="second">
           <el-steps :space="50" direction="vertical" :active="1">
-            <el-step title="步骤 3" icon="time"></el-step>
-            <el-step title="步骤 2" icon="time"></el-step>
-            <el-step title="步骤 1" icon="time"></el-step>
+            <el-step title="" icon="time"></el-step>
+            <el-step title="" icon="time"></el-step>
+            <el-step title="" icon="time"></el-step>
           </el-steps>
         </el-tab-pane>
       </el-tabs>
@@ -52,7 +52,7 @@
     <el-dialog :title="dialog.title" v-model="dialog.visible" :size="dialog.size">
       <el-form :model="classData" label-width="80px">
         <el-form-item>
-          <el-checkbox v-model="checked">全选所有商品</el-checkbox>
+          <el-checkbox v-model="classData.checked">全选所有商品</el-checkbox>
         </el-form-item>
         <el-form-item label="请选择发货商品">
           <el-row>
@@ -133,7 +133,7 @@
     methods: {
       /* http请求函数开始 */
       getList(data = {}) {
-        api.GET(config.showOrderAPI, data)
+        api.GET(config.integralMall.order.indexDetailOne, data)
         .then(response => {
           this.response = response.data.data
         })
@@ -230,6 +230,86 @@
       toggleDeliveryPattern () {
         // 点击单选框，切换display属性
       },
+      transformData (res) {
+        let obj = res
+        if (res.currentPage !== undefined) {
+          obj.data.forEach(v => {
+            if (v.created_at) {
+              v.created_at = this.formatDate(v.created_at)
+            }
+            this.changeState(v)
+          })
+        } else {
+          if (obj.created_at) {
+            obj.created_at = this.formatDate(obj.created_at)
+          }
+          this.changeState(obj)
+        }
+        return obj
+      },
+      // 时间转换 毫秒转换成 yyyy-mm-dd hh:mm:ss
+      formatDate (value) {
+        let date = new Date(value)
+        let M = date.getMonth() + 1
+        M = M < 10 ? ('0' + M) : M
+        let d = date.getDate()
+        d = d < 10 ? ('0' + d) : d
+        // let h = date.getHours()
+        let m = date.getMinutes()
+        m = m < 10 ? ('0' + m) : m
+        let s = date.getSeconds()
+        s = s < 10 ? ('0' + s) : s
+        value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
+        return value
+      },
+      changeState (obj) {
+        switch (obj.pay_status) {
+          case 0:
+            obj.pay_status = '未支付'
+            break
+          case 1:
+            obj.pay_status = '已支付'
+            break
+        }
+        switch (obj.pay_way) {
+          case 0:
+            obj.pay_way = '微信'
+            break
+          case 1:
+            obj.pay_way = '积分'
+            break
+          case 2:
+            obj.pay_way = '借记卡'
+            break
+        }
+        switch (obj.bargain_type) {
+          case 0:
+            obj.bargain_type = '微信'
+            break
+          case 1:
+            obj.bargain_type = '积分'
+            break
+          case 2:
+            obj.bargain_type = '借记卡'
+            break
+        }
+        switch (obj.freight_way) {
+          case 0:
+            obj.freight_way = '上门自提'
+            break
+          case 1:
+            obj.freight_way = '快递发货'
+            break
+        }
+        switch (obj.send_status) {
+          case 0:
+            obj.send_status = '未发货'
+            break
+          case 1:
+            obj.send_status = '已发货'
+            break
+        }
+      },
       selectIds (value) {
         let arr = value.map((v, index) => {
           // 返回商品列表对应的id
@@ -251,7 +331,7 @@
       }
     },
     mounted () {
-      this.getList({id: this.$route.query.id})
+      this.getList({order_number: this.$route.query.order_number})
       // 初始化productsCheckedList
     }
   }

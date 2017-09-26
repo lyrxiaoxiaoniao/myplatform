@@ -34,7 +34,7 @@
             </el-upload>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" :disabled="disable" @click="submitForm1('dataForm')">保 存</el-button>
+            <el-button type="primary" :disabled="disable" @click="editSubmit('dataForm')">保 存</el-button>
           </el-form-item>
         </el-form> 
       </el-card>
@@ -57,19 +57,14 @@ export default {
   methods: {
     statusChange () {
       if (this.switched) {
-        this.disable = true
-      } else {
         this.disable = false
+      } else {
+        this.disable = true
       }
     },
-    submitForm1(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
+    editSubmit () {
+      // 获取表格数据
+      this.updatePost()
     }
   }
 }

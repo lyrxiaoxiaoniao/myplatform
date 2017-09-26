@@ -6,7 +6,7 @@
           <div>基本信息</div>
           <div>
             <el-button @click="back">返回</el-button>
-            <el-button type="primary" @click="submitForm('detailForm')">保存</el-button>
+            <el-button type="primary" @click="submitForm('detailForm')">添加</el-button>
           </div>
         </div>
         <div class="table-body">
@@ -258,7 +258,7 @@ export default {
     },
     // 上传营业执照
     handleAvatarSuccess(res, file) {
-      this.license = window.URL.createObjectURL(file.raw)
+      // this.license = window.URL.createObjectURL(file.raw)
       this.detailForm.license = res.data[0]
     },
     beforeAvatarUpload (file) {
@@ -279,9 +279,17 @@ export default {
       this.detailForm.address = this.searchInput
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          if (this.searchInput === '') {
+            this.$notify({
+              title: '提示',
+              message: '请前往地图定位选择详细地址后再添加',
+              type: 'info'
+            })
+            return
+          }
           api.POST(config.server.create, this.detailForm)
           .then(response => {
-            this.onSuccess('修改成功！')
+            this.onSuccess('添加成功！')
           })
           .catch(error => {
             this.$message.error(error)

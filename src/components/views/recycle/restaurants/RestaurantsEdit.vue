@@ -81,12 +81,12 @@
                       :on-success="handleAvatarSuccess"
                       :before-upload="beforeAvatarUpload"
                       v-if="!restaurantInfo.license">
-                      <img v-if="restaurantInfo.license" :src="restaurantInfo.license" class="avatar">
+                      <img v-if="restaurantInfo.license" :src="restaurantInfo.license" class="avatar" alt="营业执照" width="96px" height="96px">
                       <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                       <div class="el-upload__tip" slot="tip">上传有效、清晰的营业执照图片（最多上传1张，每张最大10M）</div>
                   </el-upload>
                   <div v-else>
-                    <img src="restaurantInfo.license"/>
+                    <img :src="restaurantInfo.license" alt="营业执照" width="96px" height="96px" />
                     <el-button @click="uploadAgain">重新上传营业执照</el-button>
                   </div>
                 </el-form-item>
@@ -372,33 +372,30 @@
           })
       },
       update () {
-        if (this.restaurantInfo.begin_time) {
-          this.restaurantInfo.begin_time = Date.parse(this.restaurantInfo.begin_time)
+        let obj = this.restaurantInfo
+        if (obj.begin_time) {
+          obj.begin_time = Date.parse(obj.begin_time)
         }
-        if (this.restaurantInfo.end_time) {
-          this.restaurantInfo.end_time = Date.parse(this.restaurantInfo.end_time)
+        if (obj.end_time) {
+          obj.end_time = Date.parse(obj.end_time)
         }
-        this.restaurantInfo.checkState = Number(this.restaurantInfo.checkState).toString()
-        this.restaurantInfo.signState = Number(this.restaurantInfo.signState).toString()
-        api.POST(config.restaurants.update, this.restaurantInfo)
-          .then(response => {
-            if (response.status !== 200) {
-              this.error = response.statusText
-              return
-            }
-            if (response.data.errcode === '0000') {
-              this.onSuccess('保存成功')
-              this.restaurantInfo = {
-                checkState: true,
-                license: '',
-                begin_time: '',
-                end_time: ''
-              }
-            }
-          })
-          .catch(error => {
-            this.$message.error(error)
-          })
+        obj.checkState = Number(obj.checkState).toString()
+        obj.signState = Number(obj.signState).toString()
+        api.POST(config.restaurants.update, obj)
+        .then(response => {
+          if (response.status !== 200) {
+            this.error = response.statusText
+            return
+          }
+          if (response.data.errcode === '0000') {
+            console.log('保存成功')
+            this.onSuccess('保存成功')
+            this.toList()
+          }
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
       },
       uploadAgain () {
         this.restaurantInfo.license = ''
@@ -530,6 +527,13 @@
       toList () {
         this.$router.push({
           path: '/admin/recycle/restaurants/index'
+        })
+      },
+      onSuccess (string) {
+        this.$notify({
+          title: '成功',
+          message: string,
+          type: 'success'
         })
       }
     },
