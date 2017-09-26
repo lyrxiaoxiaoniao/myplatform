@@ -30,8 +30,14 @@
             <el-table-column label="操作员" width="95">
               <template scope="scope">
                 <div v-if="scope.row.user_type">{{scope.row.user.nickname}}（{{scope.row.user.username}}）</div>
-                <div v-if="!scope.row.user_type">{{scope.row.wx_user.nickname}}</div>
-                <div v-else>无</div>
+                <div v-if="!scope.row.user_type">
+                  <div v-if="scope.row.wx_user.nickname">
+                    {{scope.row.wx_user.nickname}}
+                  </div>
+                  <div v-else>
+                    无
+                  </div>
+                </div>
               </template>
             </el-table-column>
             <!-- <el-table-column prop="module" width="105" label="模块"></el-table-column> -->

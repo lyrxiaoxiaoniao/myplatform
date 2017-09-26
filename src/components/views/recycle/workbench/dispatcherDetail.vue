@@ -14,32 +14,32 @@
         <el-form :model="info" label-width="100px" label-position="right">
           <el-row>
             <el-col :span="11"> 
-              <el-form-item label="提交单位">
+              <el-form-item label="提交单位" class="form-item-margin">
                 <p class="border">{{info.name}}</p>
               </el-form-item>
             </el-col>     
             <el-col :span="11" :offset="2">      
-              <el-form-item disabled label="工单编号">
+              <el-form-item disabled label="工单编号" class="form-item-margin">
                 <p class="border">{{info.name}}</p>
               </el-form-item> 
             </el-col>
             <el-col :span="11"> 
-              <el-form-item label="联系人">
+              <el-form-item label="联系人" class="form-item-margin">
                 <p class="border">{{info.name}}</p>
               </el-form-item>
             </el-col>     
             <el-col :span="11" :offset="2">      
-              <el-form-item disabled label="联系电话">
+              <el-form-item disabled label="联系电话" class="form-item-margin">
                 <p class="border">{{info.name}}</p>
               </el-form-item> 
             </el-col>
             <el-col :span="11"> 
-              <el-form-item label="固定电话">
+              <el-form-item label="固定电话" class="form-item-margin">
                 <p class="border">{{info.name}}</p>
               </el-form-item>
             </el-col>     
             <el-col :span="11" :offset="2">      
-              <el-form-item label="所属街道" prop="region_id">
+              <el-form-item label="所属街道" prop="region_id" class="form-item-margin">
                <el-cascader
                   :options="cascaderData"
                   :props="props"
@@ -52,12 +52,12 @@
             </el-col>
           </el-row>
           <el-col :span="11"> 
-            <el-form-item label="回收地址">
+            <el-form-item label="回收地址" class="form-item-margin">
               <p class="border">{{info.name}}</p>
             </el-form-item>
           </el-col>     
           <el-col :span="11" :offset="2">      
-            <el-form-item disabled label="回收日期">
+            <el-form-item label="回收日期" class="form-item-margin">
               <p class="border">{{info.name}}</p>
             </el-form-item> 
           </el-col>
@@ -75,8 +75,28 @@
     <div class="lh-bottom">
       <div class="lh-header">
         <div>处理步骤</div>
-        <div>
-        </div>
+      </div>
+      <div> 
+        <ul style="position: relative">
+          <li class="clearfix" v-for="i in doList" style="list-style: none">
+            <el-row>
+              <el-col :span="2" class="float-l">
+                <img style="width:40px;height:40px;display: inline-block;border:1px solid;margin-top: 12%;position: relative;z-index: 4;background-color: blue" :src="i.licesen" @click="bigImg(info.mobile)" alt="">
+              </el-col>   
+              <el-col :span="22" class="float-r text-line">
+                <el-row>
+                  <el-col :span="10">{{i.name}}</el-col>
+                  <el-col :span="10">{{i.time}}</el-col>
+                </el-row> 
+                <el-row>
+                  <el-col :span="10" style="border-bottom:1px solid lightgray;padding-bottom: 15px">{{i.action}}</el-col>
+                  <el-col :span="10" style="border-bottom:1px solid lightgray;padding-bottom: 15px">{{i.active}}</el-col>
+                </el-row> 
+              </el-col>
+            </el-row>
+          </li>
+          <div style="height:90%;position: absolute;z-index: 2;border-left: 1px dotted lightgray;top:5%;left: 60px"></div>
+        </ul>
       </div>
     </div>
   </div>
@@ -88,6 +108,43 @@ import api from 'src/api'
 export default {
   data () {
     return {
+      doList: [{
+        name: '李一',
+        time: '2017-9-20',
+        action: '发起工单',
+        active: '已完成',
+        licesen: ''
+      }, {
+        name: '李一',
+        time: '',
+        action: '发起工单',
+        active: '已完成',
+        licesen: ''
+      }, {
+        name: '李一',
+        time: '2017-9-20',
+        action: '发起工单',
+        active: '已完成',
+        licesen: ''
+      }, {
+        name: '李一',
+        time: '',
+        action: '发起工单',
+        active: '已完成',
+        licesen: ''
+      }, {
+        name: '李一',
+        time: '2017-9-20',
+        action: '发起工单',
+        active: '已完成',
+        licesen: ''
+      }, {
+        name: '李一',
+        time: '',
+        action: '发起工单',
+        active: '已完成',
+        licesen: ''
+      }],
       tenementId: this.$route.query.id,
       data: [],
       response: {
@@ -210,5 +267,24 @@ export default {
   color: #1f2d3d;
   word-wrap: break-word; 
   word-break: normal;
+}
+.float-r {
+  float:right
+}
+.float-l {
+  float:left
+}
+.clearfix:after {
+  content: '';
+  display:block;
+  clear: both;
+  height: 0;
+  visibility:hidden
+}
+.text-line {
+  line-height: 32px;
+}
+.form-item-margin {
+  margin-bottom: 0;
 }
 </style>
