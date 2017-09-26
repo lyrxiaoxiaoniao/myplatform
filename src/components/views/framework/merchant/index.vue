@@ -354,16 +354,19 @@
               </el-col>
             </el-row>
             <el-tabs v-model="activeName" @tab-click="handleClick" type="border-card">
-              <el-tab-pane label="已关联权限" name="first">
+              <el-tab-pane label="关联菜单" name="first">
+                <menu-role-table v-if="isFirst" :userid="usersid"></menu-role-table>
+              </el-tab-pane>
+              <!-- <el-tab-pane label="已关联权限" name="first">
                 <related-role-table v-if="isFirst" :userid="usersid"></related-role-table>
               </el-tab-pane>
               <el-tab-pane label="待关联权限" name="second">
                 <relate-role-table v-if="isSecond" :userid="usersid"></relate-role-table>
               </el-tab-pane>
               <el-tab-pane label="关联菜单" name="third">
-                <menu-role-table v-if="isThird" :userid="usersid"></menu-role-table>
+                <menu-role-table v-if="isThird" :userid="usersid"></menu-role-table> -->
                 <!-- <relate-role-table v-if="isThird" :userid="usersid"></relate-role-table> -->
-              </el-tab-pane>
+              <!-- </el-tab-pane> -->
             </el-tabs>
         </el-form>
         <div slot="footer" class="dialog-footer" style="margin-top:-20px;">

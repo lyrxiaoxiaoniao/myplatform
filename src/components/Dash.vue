@@ -11,6 +11,7 @@
         <div class="logo-lg">
           <img src="static/img/LOGO2.png" alt="Logo" class="img-responsive">
           <span>{{ appInfo ? appInfo.mng_config_name : '深传互动' }}</span>
+          <!-- <span>{{ appInfo.mng_config_name }}</span> -->
         </div>
       </router-link>
 
@@ -149,6 +150,7 @@
 
     <footer class="main-footer">
       <strong>Copyright &copy; {{year}} <a href="http://www.shencom.cn/">{{ appInfo ? appInfo.mng_config_copyright : '深传互动' }}</a>.</strong> All rights reserved.
+      <!-- <strong>Copyright &copy; {{year}} <a href="http://www.shencom.cn/">{{ appInfo.mng_config_copyright }}</a>.</strong> All rights reserved. -->
     </footer>
   </div>
 </template>
@@ -240,7 +242,7 @@ export default {
       })
     }
   },
-  created () {
+  mounted () {
     this.setAppInfo()
   }
 }
