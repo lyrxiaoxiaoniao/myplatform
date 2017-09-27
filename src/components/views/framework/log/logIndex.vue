@@ -1,5 +1,5 @@
 <template>
-  <div class="GD-container">
+  <div>
       <kobe-table>
         <div slot="kobe-table-header" class="kobe-table-header">      
           <el-row type="flex" justify="end">
@@ -637,8 +637,8 @@ export default {
 }
 .GD-container{
     height: 100%;
-    margin-top: 1.5rem;
     padding: 1rem 2rem;
+    padding-top:0;
 }
 .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
