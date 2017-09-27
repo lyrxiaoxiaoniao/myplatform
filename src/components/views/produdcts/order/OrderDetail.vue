@@ -135,7 +135,7 @@
       getList(data = {}) {
         api.GET(config.integralMall.order.indexDetailOne, data)
         .then(response => {
-          this.response = response.data.data
+          this.response = this.transformData(response.data.data)
         })
         .catch(error => {
           this.$message.error(error)
@@ -232,7 +232,7 @@
       },
       transformData (res) {
         let obj = res
-        if (res.currentPage !== undefined) {
+        if (obj.currentPage !== undefined) {
           obj.data.forEach(v => {
             if (v.created_at) {
               v.created_at = this.formatDate(v.created_at)

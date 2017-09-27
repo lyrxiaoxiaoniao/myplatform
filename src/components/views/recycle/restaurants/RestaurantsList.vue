@@ -5,7 +5,7 @@
         <el-col :span="15">
           <el-button type="primary" @click="toAddStatus">添加</el-button>
         </el-col>
-        <el-col :span="2" style="margin-right:10px;">
+        <!-- <el-col :span="2" style="margin-right:10px;">
           <el-select v-model="searchSelectValue" placeholder="所有信息" style="width:105px;" @change="searchSelect">
             <el-option
               v-for="item in searchSelectOptions"
@@ -14,11 +14,22 @@
               :value="item.value">
             </el-option>
           </el-select>
-        </el-col>
-        <el-col :span="5">
-          <el-input v-model="form.keyword" placeholder="" class="sc-table-header-select">
-            <el-button slot="append" class="sc-table-search-btn" @click="onSearch" icon="search"></el-button>
+        </el-col> -->
+        <el-col :span="7">
+          <el-input placeholder="请输入内容" v-model="form.keyword" class="sc-table-header-select">
+            <el-select v-model="searchSelectValue" slot="prepend" placeholder="所有信息" style="width:105px;">
+              <el-option
+                v-for="item in searchSelectOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+            <el-button slot="append" icon="search" class="sc-table-search-btn" @click="onSearch"></el-button>
           </el-input>
+          <!-- <el-input v-model="form.keyword" placeholder="" class="sc-table-header-select">
+            <el-button slot="append" class="sc-table-search-btn" @click="onSearch" icon="search"></el-button>
+          </el-input> -->
         </el-col>
         <el-button @click="openDialog('高级搜索')" icon="search" type="primary" style="margin-left:10px;">高级</el-button>
         <el-button type="primary" icon="upload2"></el-button>
@@ -52,7 +63,7 @@
           <template scope="scope">
             <el-button size="small" icon="edit" @click="toEditStatus(scope.row.id)" title="修改"></el-button>
             <el-button size="small" icon="delete2" @click="deleteData(scope.row.id)" title="删除"></el-button>
-            <el-button size="small" v-show="scope.row.signState==='未签约'" @click="openDialog('签约',scope.row.id)">签约</el-button>
+            <el-button size="small" v-show="scope.row.signState==='未签约'" @click="openDialog('签约',scope.row.id,'tiny')">签约</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -72,9 +83,9 @@
           </el-pagination>
         </el-col>
       </el-row>
-      <el-dialog :title="dialogTitle" v-model="dialogFormVisible">
+      <el-dialog :title="dialogTitle" v-model="dialogFormVisible" :size="dialogSize">
         <div class="dialog-advancedSearch" v-show="dialogTitle==='高级搜索'">
-          <el-form :model="advancedSearchForm" :rules="rules" ref="advancedSearchForm" label-width="100px">
+          <el-form :model="advancedSearchForm" ref="advancedSearchForm" label-width="100px">
             <el-form-item label="企业名称" prop="name">
               <el-input v-model="advancedSearchForm.name" placeholder="例：京鹏"></el-input>
             </el-form-item>
@@ -103,7 +114,7 @@
           </div>
         </div>
         <div class="dialog-contract" v-show="dialogTitle==='签约'">
-          <el-form :model="contractForm" :rules="rules" ref="contractForm" label-width="100px">
+          <el-form :model="contractForm" :rules="rules" ref="contractForm" label-width="80px">
             <el-form-item label="签约人" prop="sign_name">
               <el-input v-model="contractForm.sign_name" placeholder="请输入签约人姓名"></el-input>
             </el-form-item>
@@ -119,15 +130,24 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="合同期限" prop="description">
-              <el-date-picker v-model="contractForm.begin_time" type="datetime" placeholder="选择开始时间"></el-date-picker>
-              <el-date-picker v-model="contractForm.end_time" type="datetime" placeholder="选择结束时间"></el-date-picker>
+            <el-form-item label="合同期限" required>
+              <el-col :span="11">
+                <el-form-item prop="begin_time">
+                  <el-date-picker v-model="contractForm.begin_time" type="datetime" placeholder="选择开始时间"></el-date-picker>
+                </el-form-item>
+              </el-col>
+              <el-col class="line" :span="2" style="text-align: center">~~</el-col>
+              <el-col :span="11">
+                <el-form-item prop="end_time">
+                  <el-date-picker v-model="contractForm.end_time" type="datetime" placeholder="选择结束时间"></el-date-picker>
+                </el-form-item>
+              </el-col>
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-row type="flex" justify="end">
               <el-button @click="closeDialog">取 消</el-button>
-              <el-button type="primary" @click="updateContract">保存</el-button>
+              <el-button type="primary" @click="updateContract('contractForm')">保存</el-button>
             </el-row>
           </div>
         </div>
@@ -147,6 +167,16 @@
   export default {
     name: 'sc-restaurants-table',
     data () {
+      var phoneValidator = (rule, value, callback) => {
+        let phone = /^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/
+        if (!value) {
+          return callback(new Error('号码不能为空'))
+        } else if (!phone.test(value)) {
+          callback(new Error('请输入正确号码'))
+        } else {
+          callback()
+        }
+      }
       return {
         dialogVisible: false,
         dialogImageUrl: '',
@@ -171,6 +201,7 @@
         },
         dialogTitle: '',
         dialogFormVisible: false,
+        dialogSize: 'small',
         searchSelectOptions: [{
           value: '',
           label: '所有信息'
@@ -184,7 +215,24 @@
         searchSelectValue: '', // 列表页顶部选择器的值
         restaurantsSelectedIds: [],
         editingId: 0,
-        recycleSelectOptions: []
+        recycleSelectOptions: [],
+        rules: {
+          sign_name: [
+            { required: true, message: '请输入签约人姓名', trigger: 'blur' }
+          ],
+          sign_phone: [
+            { required: true, validator: phoneValidator, trigger: 'blur' }
+          ],
+          recycle_id: [
+            { type: 'number', required: true, message: '请选择签约回收单位', trigger: 'change' }
+          ],
+          begin_time: [
+            { type: 'date', required: true, message: '请选择开始时间', trigger: 'change' }
+          ],
+          end_time: [
+            { type: 'date', required: true, message: '请选择结束时间', trigger: 'change' }
+          ]
+        }
       }
     },
     computed: {},
@@ -225,20 +273,20 @@
         }
         if (next) {
           api.POST(config.restaurants.delete, {ids: this.restaurantsSelectedIds})
-            .then(response => {
-              if (response.status !== 200) {
-                this.error = response.statusText
-                return
-              }
-              if (response.data.errcode === '0000') {
-                this.onSuccess('删除成功')
-                this.restaurantsSelectedIds = []
-                this.getList()
-              }
-            })
-            .catch(error => {
-              this.$message.error(error)
-            })
+          .then(response => {
+            if (response.status !== 200) {
+              this.error = response.statusText
+              return
+            }
+            if (response.data.errcode === '0000') {
+              this.onSuccess('删除成功')
+              this.restaurantsSelectedIds = []
+              this.getList()
+            }
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
         }
       },
       toggleSwicth (value) {
@@ -260,25 +308,38 @@
             this.$message.error(error)
           })
       },
-      updateContract () {
-        Object.assign(this.contractForm, {id: this.editingId})
-        api.POST(config.restaurants.updateSign, this.contractForm)
-          .then(response => {
-            if (response.data.errcode === '0000') {
-              this.onSuccess('修改成功')
-              let data = {
-                pageSize: this.response.pageSize,
-                currentPage: this.response.currentPage,
-                contractStatus: this.searchSelectValue, // 签约状态
-                ...this.form
+      updateContract (formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            Object.assign(this.contractForm, {id: this.editingId})
+            api.POST(config.restaurants.updateSign, this.contractForm)
+            .then(response => {
+              if (response.data.errcode === '0000') {
+                this.onSuccess('修改成功')
+                let data = {
+                  pageSize: this.response.pageSize,
+                  currentPage: this.response.currentPage,
+                  contractStatus: this.searchSelectValue, // 签约状态
+                  ...this.form
+                }
+                this.getList(data)
+                this.$refs[formName].resetFields()
+                this.closeDialog()
+                // this.contractForm = {
+                //   begin_time: '',
+                //   end_time: '',
+                //   recycle_id: ''
+                // }
               }
-              this.getList(data)
-              this.closeDialog()
-            }
-          })
-          .catch(error => {
-            this.$message.error(error)
-          })
+            })
+            .catch(error => {
+              this.$message.error(error)
+            })
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        })
       },
       handleSizeChange (value) {
         const data = {
@@ -298,15 +359,15 @@
         }
         this.getList(data)
       },
-      searchSelect () {
-        const data = {
-          currentPage: this.response.currentPage,
-          pageSize: this.response.pageSize,
-          signState: this.searchSelectValue, // 签约状态
-          ...this.form
-        }
-        this.getList(data)
-      },
+      // searchSelect () {
+      //   const data = {
+      //     currentPage: this.response.currentPage,
+      //     pageSize: this.response.pageSize,
+      //     signState: this.searchSelectValue, // 签约状态
+      //     ...this.form
+      //   }
+      //   this.getList(data)
+      // },
       // 搜索按钮
       onSearch () {
         let data = {
@@ -435,10 +496,11 @@
           }
         })
       },
-      openDialog (value, id) {
+      openDialog (value, id, size) {
         this.editingId = id
         this.dialogTitle = value
         this.dialogFormVisible = true
+        this.dialogSize = size
         if (this.dialogTitle === '签约') {
           this.getRecycle()
         }
@@ -464,43 +526,11 @@
 </script>
 
 <style scoped>
-  /*
-  .sc-report-table {
-    margin-left: 2rem;
-    margin-right: 2rem;
-    padding-bottom: 1rem;
-  }
-
-  .search-form {
-    padding: 1rem;
-  }
-
-  .sc-report-table-header {
-    margin: 1rem 2rem;
-    padding-bottom: 1rem;
-  }
-
-  .sc-report-table-content {
-    margin-bottom: 20px;
-  }
-
-  .fade-enter-active, .fade-leave-active {
-    transition: opacity .5s
-  }
-  .fade-enter, .fade-leave-active {
-    opacity: 0
-  }
-
-  .top-ruleForm .el-form-item {
-    margin-bottom: 10px;
-  }
-  */
-
   .name {
     width: 20%;
   }
 
-  .el-date-editor--datetime {
-    width: 49.6%;
+ .el-date-editor.el-input {
+    width: 100%;
   }
 </style>

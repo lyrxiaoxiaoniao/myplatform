@@ -7,16 +7,16 @@
             <el-button type="primary" @click="refresh">刷新</el-button>
             <el-button type="primary" @click="batchDelete">批量删除</el-button>
           </el-col>
-          <el-select v-model="searchValueObj.freight_way" placeholder="全部物流" style="width:150px;margin-right: 10px" @change="onSearch">
+          <el-select v-model="getListParamsObj.freight_way" placeholder="全部物流" style="width:150px;margin-right: 10px" @change="onSearch">
             <el-option v-for="item in freightWayOptions" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
-          <el-select v-model="searchValueObj.send_status" placeholder="全部状态" style="width:150px;margin-right: 10px" @change="onSearch">
+          <el-select v-model="getListParamsObj.send_status" placeholder="全部状态" style="width:150px;margin-right: 10px" @change="onSearch">
             <el-option v-for="item in sendStatusOptions" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
           <el-col :span="8">
-            <el-input v-model="searchValueObj.keyword" placeholder="请输入搜索关键字">
+            <el-input v-model="getListParamsObj.keyword" placeholder="请输入搜索关键字">
               <el-button slot="append" @click="onSearch" icon="search"></el-button>
             </el-input>
           </el-col>
@@ -65,7 +65,14 @@
       <div slot="kobe-table-footer" class="kobe-table-footer">
         <el-row type="flex" justify="center">
           <el-col :span="8">
-            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="response.currentPage" :page-sizes="[10, 20, 50, 100]" :page-size="response.pageSize" :total="response.count" layout="total, sizes, prev, pager, next, jumper">
+            <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page="response.currentPage"
+              :page-sizes="[10, 20, 50, 100]"
+              :page-size="response.pageSize"
+              :total="response.count"
+              layout="total, sizes, prev, pager, next, jumper">
             </el-pagination>
           </el-col>
         </el-row>
@@ -158,7 +165,7 @@
   export default {
     data() {
       return {
-        searchValueObj: {
+        getListParamsObj: {
           freight_way: '',
           send_status: '',
           keyword: '',
@@ -331,19 +338,19 @@
         this.getList()
       },
       handleSizeChange (value) {
-        this.searchValueObj.pageSize = value
+        this.getListParamsObj.pageSize = value
         this.getListByParams()
       },
       handleCurrentChange (value) {
-        this.searchValueObj.currentPage = value
+        this.getListParamsObj.currentPage = value
         this.getListByParams()
       },
       onSearch () {
         this.getListByParams()
       },
-      // 以searchValueObj为基础，构造getList的参数
+      // 以getListParamsObj为基础，构造getList的参数
       getListByParams () {
-        let obj = JSON.parse(JSON.stringify(this.searchValueObj))
+        let obj = JSON.parse(JSON.stringify(this.getListParamsObj))
         for (var keyName in obj) {
           if (obj[keyName] === '') {
             delete obj[keyName]
@@ -359,7 +366,7 @@
       /* 用户行为触发查操作的函数结束 */
       transformData (res) {
         let obj = res
-        if (res.currentPage !== undefined) {
+        if (obj.currentPage !== undefined) {
           obj.data.forEach(v => {
             if (v.created_at) {
               v.created_at = this.formatDate(v.created_at)

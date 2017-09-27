@@ -9,27 +9,27 @@
           <el-card>
             <div slot="header">
                 <span style="font-size:18px;">买家上门自提功能</span>
-                <el-switch @change="statuChange" style="float:right;" v-model="switched" on-text="开" off-text="关"></el-switch>
+                <el-switch @change="statusChange" style="float:right;" v-model="switched" on-text="开" off-text="关"></el-switch>
             </div>
             <el-button @click="singleAdd" :disabled="disables" style="margin-bottom:28px" type="primary">新增自提点</el-button>
             <div class="sc-disabled-statu">
-              <el-table :data="test" border stripe>
+              <el-table :data="response.data" border stripe>
                 <el-table-column prop="id" label="ID" width="80"></el-table-column>
                 <el-table-column prop="name" label="自提点名称"></el-table-column>
-                <el-table-column label="省份"></el-table-column>
-                <el-table-column label="城市"></el-table-column>
-                <el-table-column label="地区"></el-table-column>
-                <el-table-column label="联系地址"></el-table-column>
-                <el-table-column label="联系电话"></el-table-column>
-                <el-table-column label="启用">
+                <el-table-column prop="province" label="省份"></el-table-column>
+                <el-table-column prop="city" label="城市"></el-table-column>
+                <el-table-column prop="region" label="地区"></el-table-column>
+                <el-table-column prop="address" label="联系地址"></el-table-column>
+                <el-table-column prop="phone" label="联系电话"></el-table-column>
+                <el-table-column prop="active" label="启用" width="80">
                   <template scope="scope">
-                      <el-checkbox :disabled="disables" v-model="checked" @change="enableSubmit"></el-checkbox>
+                      <el-checkbox :disabled="disables" v-model="scope.row.active" @change="enableSubmit"></el-checkbox>
                   </template>
                 </el-table-column>
                 <el-table-column width="120" label="操作">
                   <template scope="scope">
                     <el-button type="small" :disabled="disables" @click="singleEdit" icon="edit"></el-button>
-                    <el-button type="small" :disabled="disables" @click="singleDelete" icon="delete2"></el-button>
+                    <el-button type="small" :disabled="disables" @click="singleDelete(scope.row.id)" icon="delete2"></el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -39,8 +39,10 @@
                       <el-pagination 
                       @size-change="handleSizeChange"
                       @current-change="handleCurrentChange"
-                      :page-sizes="[15, 20, 25, 30]"
-                      :total="20"
+                      :page-sizes="[10, 20, 50, 100]"
+                      :current-page="response.currentPage"
+                      :page-size="response.pageSize"
+                      :total="response.count"
                       layout="total, sizes, prev, pager, next, jumper">
                       </el-pagination>
                   </el-col>
@@ -52,7 +54,7 @@
         </div>
         <!--增加或修改自提点-->
         <el-dialog :title="dialog.title" v-model="dialog.visible" :size="dialog.size">
-          <el-tabs type="border-card" v-model="activeName2" @tab-click="handleClick">
+          <el-tabs type="border-card" v-model="activeName2" @tab-click="showMap">
             <el-tab-pane label="基本信息" name="first">
               <el-form label-position="left" label-width="100px">
                 <el-form-item label="自提点名称">
@@ -102,31 +104,34 @@
               </el-form>
             </el-tab-pane>
             <el-tab-pane label="地图定位" name="second">
-              <el-row type="flex" justify="end">
-                <el-col :span="12">
-                  <el-input
-                    v-model="address"
-                    placeholder="搜索地址"
-                    >
-                    <el-button
-                      @click="onSearch"
-                      @keyup.enter.native="onSearch"
-                      slot="append"
-                      icon="search"
-                      >
-                    </el-button>
-                  </el-input>
-                </el-col>
-              </el-row>
-              <div
-                id="b_map"
-                v-loading.body="loading"
-                element-loading-text="定位中...">
+              <div class="table-head">
+                <div>地图定位</div>
               </div>
-              <div id="bresult"></div>
+            <div class="table-body">
+              <el-form :model="pickupInfo"
+                      label-width="100px">
+                <el-form-item label="详细地址">
+                  <el-row>
+                    <el-col :span="12">
+                      <el-input v-model="pickupInfo.detailAddress"></el-input>
+                    </el-col>
+                    <el-col :span="12">
+                      <div class="btnWrapper">
+                        <el-button @click="posMarker"
+                                  style="margin-left: 10px">定位到地图</el-button>
+                        <el-button type="primary"
+                                  @click="useClick">使用地图当前点</el-button>
+                      </div>
+                    </el-col>
+                  </el-row>
+                </el-form-item>
+                <el-form-item label="地图定位">
+                  <div id="map"></div>
+                </el-form-item>
+              </el-form>
+            </div>
             </el-tab-pane>
           </el-tabs>
-            
           <div slot="footer" class="dialog-footer">
             <el-button @click="closeDialog">取 消</el-button>
             <el-button type="primary" v-show="dialog.title === '新增自提点'" @click="addSubmit">保 存</el-button>
@@ -149,40 +154,29 @@
     name: 'sc-ordersetting-takeself',
     data () {
       return {
-        test: [{
-          id: 1,
-          name: 'test'
-        }],
+        response: {
+          data: null
+        },
+        getListParamsObj: {
+          currentPage: 1,
+          pageSize: 10
+        },
+        point: {},
+        pointAddress: '',
+        map: null,
+        geoc: null,
         switched: true,
-        activeName1: 'first',
         activeName2: 'first',
-        addShow: false,
-        value1: '',
-        value2: '',
         value3: '',
         value4: '',
-        editShow: false,
         disables: false,
         imageUrl: '',
-        // 地图
-        loading: true,
-        geo: {
-        },
-        map: {
-        },
-        mapData: {
-          zoom: 14,
-          center: {
-            lng: '116.404',
-            lat: '39.915'
-          }
-        },
-        address: '',
         dialog: {
           visible: false,
           title: '',
           size: 'small'
         },
+        pickupInfo: {},
         isBatchOperation: false, // 是否是批量操作
         needInput: false, // 是否需要打开输入对话框
         needWarning: false, // 是否需要打开警告对话框
@@ -194,7 +188,7 @@
     methods: {
       /* http请求函数开始 */
       getList (data = {}) {
-        api.GET(config.goodsListAPI, data)
+        api.GET(config.integralMall.order.indexPickup, data)
         .then(response => {
           this.response = this.transformData(response.data.data)
         })
@@ -203,7 +197,21 @@
         })
       },
       deletePost () {
-        console.log('发起删除http请求')
+        api.POST(config.integralMall.order.deletePickup, {ids: this.selectedIds})
+        .then(response => {
+          if (response.status !== 200) {
+            this.error = response.statusText
+            return
+          }
+          if (response.data.errcode === '0000') {
+            this.onSuccess('删除成功')
+            this.selectedIds.length = 0
+            this.getList()
+          }
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
       },
       addPost () {
         console.log('发起新增http请求')
@@ -225,7 +233,9 @@
         this.needWarning = false
         this.operate('修改自提点', '')
       },
-      singleDelete () {
+      singleDelete (id) {
+        this.selectedIds.length = 0
+        this.selectedIds.push(id)
         this.isBatchOperation = false
         this.needInput = false
         this.needWarning = true
@@ -245,22 +255,23 @@
       /* 用户行为触发改、删、增操作的函数结束 */
       /* 用户行为触发查操作的函数开始 */
       handleSizeChange (value) {
-        const data = {
-          currentPage: this.response.currentPage,
-          pageSize: value,
-          ...this.form
-        }
-
-        this.getList(data)
+        this.getListParamsObj.pageSize = value
+        this.getListByParams()
       },
       handleCurrentChange (value) {
-        const data = {
-          currentPage: value,
-          pageSize: this.response.pageSize,
-          ...this.form
+        this.getListParamsObj.currentPage = value
+        this.getListByParams()
+      },
+      // 以getListParamsObj为基础，构造getList的参数
+      getListByParams () {
+        let obj = JSON.parse(JSON.stringify(this.getListParamsObj))
+        for (var keyName in obj) {
+          if (obj[keyName] === '') {
+            delete obj[keyName]
+          }
         }
 
-        this.getList(data)
+        this.getList(obj)
       },
       /* 用户行为触发查操作的函数结束 */
       /* 用户行为触发改或删操作的流程开始 */
@@ -272,7 +283,7 @@
             this.next = await this.warnSelection(this.next, warnContent)
           }
         }
-        // 弹出输入对话框或警告对话框/直接发起http请求
+        // 弹出输入对话框或警告对话框
         if (this.next) {
           if (this.needInput) {
             this.next = false
@@ -282,20 +293,13 @@
             // 弹出警告对话框
             this.next = await this.confirmOperation(this.next, warnContent)
           }
-          if (!this.needInput && !this.needWarning) {
-            this.next = false
-            // 发起http请求
-            console.log('直接发起http请求')
-          }
         }
         // 警告对话框点击确定后的执行函数
         if (this.next) {
           switch (operationName) {
-            case '':
-              console.log('')
-              break
             case '删除':
-              console.log('警告对话框点击确定后发起彻底删除http请求')
+              this.deletePost()
+              // console.log('警告对话框点击确定后发起彻底删除http请求')
               break
           }
         }
@@ -329,18 +333,53 @@
         })
       },
       /* 用户行为触发改或删操作的流程结束 */
-      statuChange () {
+      transformData (res) {
+        let obj = res
+        if (obj.currentPage !== undefined) {
+          obj.data.forEach(v => {
+            if (v.created_at) {
+              v.created_at = this.formatDate(v.created_at)
+            }
+            this.changeState(v)
+          })
+        } else {
+          if (obj.created_at) {
+            obj.created_at = this.formatDate(obj.created_at)
+          }
+          this.changeState(obj)
+        }
+        return obj
+      },
+      // 时间转换 毫秒转换成 yyyy-mm-dd hh:mm:ss
+      formatDate (value) {
+        let date = new Date(value)
+        let M = date.getMonth() + 1
+        M = M < 10 ? ('0' + M) : M
+        let d = date.getDate()
+        d = d < 10 ? ('0' + d) : d
+        // let h = date.getHours()
+        let m = date.getMinutes()
+        m = m < 10 ? ('0' + m) : m
+        let s = date.getSeconds()
+        s = s < 10 ? ('0' + s) : s
+        value = `${date.getFullYear()}-${M}-${d} ${date.getHours()}:${m}:${s}`
+        return value
+      },
+      changeState (obj) {
+        switch (obj.active) {
+          case 0:
+            obj.active = false
+            break
+          case 1:
+            obj.active = true
+            break
+        }
+      },
+      statusChange () {
         if (this.switched) {
           this.disables = false
         } else {
           this.disables = true
-        }
-      },
-      handleClick(tab, event) {
-        if (tab.name) {
-          this.$nextTick(() => {
-            this.init()
-          })
         }
       },
       handleAvatarSuccess (res, file) {
@@ -358,52 +397,76 @@
         return isJPG && isLt2M
       },
       // 百度地图
-      onSearch () {
+      useClick() {
+        this.pickupInfo.detailAddress = this.pointAddress
+      },
+      posMarker() {
         /* eslint-disable */
-        if (this.address === '') return
-        this.geo = new BMap.Geocoder();
-        const city = this.mapData.address ? this.mapData.address.city : '北京市'
-        this.geo.getPoint(this.address, point => {
-          if (point) {
-            this.map.centerAndZoom(point, 14)
-            this.map.addOverlay(new BMap.Marker(point))
+        const map = this.map
+        const geoc = this.geoc
+        const that = this
+        map.clearOverlays()
+        geoc.getPoint(this.pickupInfo.detailAddress, function(e) {
+          if (e) {
+            that.point = JSON.parse(JSON.stringify(e))
+            that.pickupInfo.longitude = that.point.lng
+            that.pickupInfo.latitude = that.point.lat
+            map.centerAndZoom(e, 14)
+            map.addOverlay(new BMap.Marker(e))
           } else {
-            this.$message.info('无法搜索该地址')
+            that.$message({
+              showClose: true,
+              message: '暂无搜索结果，请确认地点是否正确',
+              type: 'error'
+            })
           }
-        }, city)
-        var local = new BMap.LocalSearch(this.map, {
-          renderOptions: {map: this.map, panel: "bresult"}
-        })
-        local.search(this.address)
+        }, '深圳市')
         /* eslint-enable */
       },
-      init () {
+      mapInit() {
+        const that = this
         /* eslint-disable */
-        console.log('bmap')
-        this.map = new BMap.Map('b_map')
-        this.map.enableScrollWheelZoom()
-        this.map.clearOverlays()
-
-        const point = new BMap.Point(this.mapData.center.lng, this.mapData.center.lat)
-        this.map.centerAndZoom(point, 14)
-        const marker = new BMap.Marker(point)
-        this.map.addOverlay(marker)
-
-        let geolocation = new BMap.Geolocation()
-        geolocation.getCurrentPosition(r => {
-          this.loading = false
-          if (geolocation.getStatus() === window.BMAP_STATUS_SUCCESS) {
-            this.mapData.address = r.address
-            let marker = new BMap.Marker(r.point)
-            this.map.addOverlay(marker)
-            this.map.panTo(r.point)
-          }
-        }, {enableHighAccuracy: true})
-        var local = new BMap.LocalSearch(this.map, {
-          renderOptions: {map: this.map, panel: "bresult"}
+        const map = new BMap.Map("map")
+        this.map = map
+        map.centerAndZoom('深圳', 14)
+        map.enableScrollWheelZoom(true)
+        const navigationControl = new BMap.NavigationControl({
+          anchor: BMAP_ANCHOR_TOP_LEFT,
+          type: BMAP_NAVIGATION_CONTROL_SMALL,
+          enableGeolocation: true
         })
-        local.search('鸿昌广场')
+        map.addControl(navigationControl)
+        const geolocationControl = new BMap.GeolocationControl()
+        geolocationControl.addEventListener("locationSuccess", function(e) {
+          // 定位成功事件
+          console.log(e)
+        })
+        geolocationControl.addEventListener("locationError", function(e) {
+          // 定位失败事件
+          alert(e.message);
+        })
+        map.addControl(geolocationControl)
+        const geoc = new BMap.Geocoder()
+        that.geoc = geoc
+        map.addEventListener('click', function(e) {
+          map.clearOverlays()
+          that.point = JSON.parse(JSON.stringify(e.point))
+          that.pickupInfo.longitude = that.point.lng
+          that.pickupInfo.latitude = that.point.lat
+          const marker = new BMap.Marker(e.point)
+          map.addOverlay(marker)
+          geoc.getLocation(e.point, function(rs) {
+            that.pointAddress = rs.address
+          })
+        })
         /* eslint-enable */
+      },
+      showMap(e) {
+        if (e.label === '地图定位') {
+          this.$nextTick(() => {
+            this.mapInit()
+          })
+        }
       },
       // 勾选多行生成selectedIds数组
       selectIds (value) {
@@ -465,5 +528,8 @@
   height: 500px;
   margin-top: 10px;
   overflow: auto;
+}
+#map {
+  height: 400px;
 }
 </style>
