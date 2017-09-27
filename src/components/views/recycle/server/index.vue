@@ -1,5 +1,5 @@
 <template>
-  <div class="lh-container">
+  <div>
     <div class="lh-bottom">
       <kobe-table>
         <div slot="kobe-table-header" class="kobe-table-header">
@@ -15,16 +15,16 @@
                 </el-dropdown-menu>
               </el-dropdown>
             </el-col>
-            <el-select v-model="form.audit_state" placeholder="所有信息" style="width:140px;">
-              <el-option
-                v-for="item in option"
-                :key="item.audit_state"
-                :label="item.label"
-                :value="item.audit_state">
-              </el-option>
-            </el-select>
             <el-col :span="8">
               <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
+                <el-select v-model="form.audit_state" slot="prepend" placeholder="所有信息" style="width:105px;">
+                  <el-option
+                    v-for="item in option"
+                    :key="item.audit_state"
+                    :label="item.label"
+                    :value="item.audit_state">
+                  </el-option>
+                </el-select>
                 <el-button slot="append" @click="onSearch" icon="search"></el-button>
               </el-input>
             </el-col>
@@ -135,7 +135,7 @@ export default {
       ids: [],
       option: [{
         audit_state: null,
-        label: '全部'
+        label: '所有信息'
       }, {
         audit_state: '1',
         label: '已审核'
@@ -359,6 +359,7 @@ export default {
 <style lang="scss" scoped>
 .lh-container {
     padding: 1rem 2rem;
+    padding-top:0;
     .lh-top {
       border: 1px solid lightgray;
       border-radius: 5px;

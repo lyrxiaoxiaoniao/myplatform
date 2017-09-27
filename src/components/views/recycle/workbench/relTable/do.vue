@@ -54,25 +54,6 @@
                 </el-row>
             </div>
         </kobe-table>
-        <!-- 关联模态框 -->
-        <el-dialog title="关联物业" v-model="dialogAdvance" size="tiny">
-          <el-row  type="flex" justify="space-around">
-            <el-date-picker
-              v-model="correlateForm.begin_time"
-              type="datetime"
-              placeholder="选择开始时间">
-            </el-date-picker>
-            <el-date-picker
-              v-model="correlateForm.end_time"
-              type="datetime"
-              placeholder="选择结束时间">
-            </el-date-picker>
-          </el-row>
-          <span slot="footer" class="dialog-footer">
-              <el-button @click="dialogAdvance = false">取 消</el-button>
-              <el-button type="primary" @click="correlate">确 定</el-button>
-          </span>
-        </el-dialog>
         <!-- 高级搜索模态框 -->
         <el-dialog title="高级搜索" v-model="dialogAdvance">
             <el-form :model="advancedSearch" label-width="100px">
@@ -98,7 +79,7 @@
             </span>
         </el-dialog>
       </div>
-      </div>
+    </div>
   </div>    
 </template>
 <script>

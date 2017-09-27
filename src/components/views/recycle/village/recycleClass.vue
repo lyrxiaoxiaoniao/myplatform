@@ -1,7 +1,7 @@
 <template>
   <div class="GD-container">
     <el-row tpye="flex">
-      <el-col :span="3">
+      <el-col :span="3" style="margin-top: 1rem">
       <el-tree :data="data" :props="defaultProps"
               accordion
               :highlight-current="true"
@@ -13,7 +13,7 @@
       <kobe-table> 
         <div slot="kobe-table-header" class="kobe-table-header">      
           <el-row type="flex" justify="end">
-            <el-col :span="14">
+            <el-col :span="12">
               <el-button @click="enterAdd" type="primary">添加</el-button>      
               <el-dropdown @command="handleCommand" style="margin-left:10px;">
                 <el-button type="primary">
@@ -25,16 +25,16 @@
                 </el-dropdown-menu>
               </el-dropdown>
             </el-col>
-            <el-select v-model="form.audit_state" placeholder="所有信息" style="width:140px;">
-              <el-option
-                v-for="item in option"
-                :key="item.audit_state"
-                :label="item.label"
-                :value="item.audit_state">
-              </el-option>
-            </el-select>
-            <el-col :span="8">
+            <el-col :span="10">
               <el-input v-model="form.keyword" placeholder="请输入小区名称">
+                <el-select v-model="form.audit_state" slot="prepend" placeholder="所有信息" style="width:105px;">
+                  <el-option
+                    v-for="item in option"
+                    :key="item.audit_state"
+                    :label="item.label"
+                    :value="item.audit_state">
+                  </el-option>
+                </el-select>
                 <el-button slot="append" @click="onSearch" icon="search"></el-button>
               </el-input>
             </el-col>
@@ -679,8 +679,9 @@ export default {
 <style scoped>
 .GD-container{
     height: 100%;
-    margin-top: 1.5rem;
     padding: 1rem 2rem;
+    padding-top:0;
+    padding-right: 0; 
 }
 .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;

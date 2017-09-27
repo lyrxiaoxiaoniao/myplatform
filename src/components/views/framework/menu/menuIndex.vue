@@ -1,7 +1,7 @@
 <template>
-  <div class="GD-container">
+  <div style="margin-left: 2rem">
     <el-row tpye="flex">
-      <el-col :span="4">
+      <el-col :span="4" style="margin-top:1rem">
       <el-tree :data="data" :props="defaultProps"
               accordion
               :highlight-current="true"
@@ -829,8 +829,8 @@ export default {
 }
 .GD-container{
     height: 100%;
-    margin-top: 1.5rem;
     padding: 1rem 2rem;
+    padding-top:0;
 }
 .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;

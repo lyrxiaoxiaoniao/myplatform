@@ -1,6 +1,6 @@
 <template>
 <div>
-    <div class="lh-container">
+  <div class="lh-container">
     <div class="lh-top">
       <div class="lh-header">
         <div>基本信息</div>
@@ -82,23 +82,59 @@
             <el-row>
               <el-col :span="2" class="float-l">
                 <img style="width:40px;height:40px;display: inline-block;border:1px solid;margin-top: 12%;position: relative;z-index: 4;background-color: blue" :src="i.licesen" @click="bigImg(info.mobile)" alt="">
-              </el-col>   
+              </el-col>
               <el-col :span="22" class="float-r text-line">
                 <el-row>
-                  <el-col :span="10">{{i.name}}</el-col>
-                  <el-col :span="10">{{i.time}}</el-col>
+                  <el-col :span="8">{{i.name}}</el-col>
+                  <el-col :span="8" style="text-align: right">{{i.time}}</el-col>
                 </el-row> 
                 <el-row>
-                  <el-col :span="10" style="border-bottom:1px solid lightgray;padding-bottom: 15px">{{i.action}}</el-col>
-                  <el-col :span="10" style="border-bottom:1px solid lightgray;padding-bottom: 15px">{{i.active}}</el-col>
+                  <el-col :span="8" style="border-bottom:1px solid lightgray;padding-bottom: 12px">{{i.action}}</el-col>
+                  <el-col :span="8" style="border-bottom:1px solid lightgray;padding-bottom: 12px;text-align: right">{{i.active}}</el-col>
                 </el-row> 
               </el-col>
             </el-row>
           </li>
-          <div style="height:90%;position: absolute;z-index: 2;border-left: 1px dotted lightgray;top:5%;left: 60px"></div>
+          <div style="height:86%;position: absolute;z-index: 2;border-left: 1px dotted lightgray;top:5%;left: 60px"></div>
         </ul>
       </div>
     </div>
+    <!-- 处理模态框 -->
+    <el-dialog title="高级搜索" v-model="dialogAdvance">
+      <el-form :model="doForm" label-width="100px">
+          <el-form-item label="处理方式">
+            <el-select v-model="doForm.doType" placeholder="请选择处理方式">
+              <el-option
+                v-for="item in doOptions"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item v-if="doForm.doType === 1" label="下一处理人">
+            <el-select v-model="doForm.doType" placeholder="请选择下一处理人">
+              <el-option
+                v-for="item in doOptions"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>         
+          <el-form-item label="待办内容">
+            <el-input v-model="advancedSearch.name" placeholder="请输入待办内容"></el-input>
+          </el-form-item>
+          <el-form-item label="发起单位">
+            <el-input v-model="advancedSearch.name" placeholder="请输入发起单位"></el-input>
+          </el-form-item>
+          <el-form-item label="上一级处理人">
+            <el-input v-model="advancedSearch.name" placeholder="请输入上一级处理人"></el-input>
+          </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogAdvance = false">取 消</el-button>
+        <el-button type="primary" @click="advance">搜 索</el-button>
+      </span>
+    </el-dialog>
   </div>
 </div>
 </template>
@@ -165,7 +201,20 @@ export default {
       form: {
         keyword: '',
         value: ''
-      }
+      },
+      doForm: {
+        name: '',
+        doType: 1
+      },
+      doOptions: [
+        {
+          value: 1,
+          label: '接单'
+        }, {
+          value: 0,
+          label: '拒绝'
+        }
+      ]
     }
   },
   methods: {
@@ -216,6 +265,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .lh-container {
+    margin-top:0;
     padding: 1rem 2rem;
     .lh-top {
       border: 1px solid lightgray;

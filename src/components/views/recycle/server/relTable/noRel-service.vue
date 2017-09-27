@@ -56,14 +56,12 @@
           <el-row type="flex" justify="space-around">
             <el-date-picker
               v-model="correlateForm.begin_time"
-              align="center"
               type="datetime"
               placeholder="选择开始时间">
             </el-date-picker>
             <el-date-picker
               v-model="correlateForm.end_time"
               type="datetime"
-
               placeholder="选择结束时间">
             </el-date-picker>
           </el-row>
