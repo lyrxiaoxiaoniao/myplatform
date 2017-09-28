@@ -10,17 +10,20 @@
                        icon="plus"
                        @click="addFence">新增</el-button>
           </el-col>
-          <el-select v-model="searchForm.type"
-                     placeholder="请选择">
-            <el-option v-for="item in options"
-                       :label="item.label"
-                       :value="item.value">
-            </el-option>
-          </el-select>
-          <el-col :span="7">
+          <el-col :span="14">
             <el-input placeholder="请输入关键字"
                       class="sc-table-header-select"
                       v-model="searchForm.keyword">
+              <el-select v-model="searchForm.type"
+                         placeholder="请选择"
+                         slot="prepend"
+                         style="width:130px;"
+                         >
+                <el-option v-for="item in options"
+                           :label="item.label"
+                           :value="item.value">
+                </el-option>
+              </el-select>
               <el-button slot="append"
                          class="sc-table-search-btn"
                          icon="search"
@@ -28,7 +31,9 @@
             </el-input>
           </el-col>
           <el-button type="primary"
-                     icon="upload2"></el-button>
+                     icon="upload2"
+                     style="margin-left: 10px"
+                     ></el-button>
           <el-button type="primary"
                      icon="setting"></el-button>
         </el-row>

@@ -33,7 +33,7 @@ import expressGoods from './ordersetting/ExpressGoods'
 import tradeSet from './ordersetting/TradeSet'
 
 export default {
-  name: 'sc-ordersetting-takeself',
+  name: 'sc-ordersetting',
   data () {
     return {
       activeName: 'first'

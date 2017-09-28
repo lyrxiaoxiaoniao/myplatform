@@ -3,7 +3,17 @@
     <el-card class="box-card">
       <div class="clearfix"
            slot="header">
-        <span style="line-height: 36px;font-size: 18px;">基本信息</span>
+           <div style="float: left">
+             <span style="line-height: 36px;font-size: 18px;">基本信息</span>
+           </div>
+           <div style="float: right">
+             <el-row type="flex" justify="end" >
+                
+                <el-button type="primary" @click="submit">添加</el-button>
+                <el-button @click="back">取消</el-button>
+              
+              </el-row>
+           </div>
       </div>
       <el-form ref="form"
                :model="form"
@@ -49,13 +59,6 @@
           <el-button type="danger"
                      v-if="isEditing && type === '1'"
                      @click="finishPolygon">结束编辑多边形</el-button>
-        </el-form-item>
-        <el-form-item>
-          <div class="btnWrapper">
-            <el-button type="primary"
-                       @click="submit">添加</el-button>
-            <el-button @click="back">取消</el-button>
-          </div>
         </el-form-item>
       </el-form>
     </el-card>
