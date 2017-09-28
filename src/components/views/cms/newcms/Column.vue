@@ -37,9 +37,15 @@
               </el-option>
             </el-select> -->
             <el-col :span="8">
-              <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
+                <el-input placeholder="请输入内容" v-model="form.keyword">
+                    <el-select v-model="form.value" slot="prepend" placeholder="请选择" style="width:110px;">
+                      <el-option label="栏目名称" value="1"></el-option>
+                    </el-select>
+                    <el-button @click="onSearch" slot="append" icon="search"></el-button>
+                </el-input>
+              <!-- <el-input v-model="form.keyword" placeholder="请输入搜索关键字">
                 <el-button slot="append" @click="onSearch" icon="search"></el-button>
-              </el-input>
+              </el-input> -->
             </el-col>
             <el-button icon="upload2" type="primary" style="margin-left:10px;"></el-button>
             <el-button icon="setting" type="primary"></el-button>

@@ -243,7 +243,10 @@ export default {
     }
   },
   mounted () {
-    this.setAppInfo()
+    this.$nextTick(() => {
+      this.setAppInfo()
+    })
+    
   }
 }
 </script>
